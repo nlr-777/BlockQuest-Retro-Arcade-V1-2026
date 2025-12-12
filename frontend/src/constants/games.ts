@@ -5,6 +5,8 @@ export interface GameConfig {
   title: string;
   subtitle: string;
   description: string;
+  instructions: string;
+  controls: string;
   web3Concept: string;
   icon: string;
   color: string;
@@ -16,12 +18,14 @@ export interface GameConfig {
 }
 
 export const GAMES: GameConfig[] = [
-  // Playable Games (5)
+  // Playable Games (12)
   {
     id: 'block-muncher',
     title: 'Block Muncher',
     subtitle: 'Pac-Man Style',
     description: 'Gobble blocks to build an unbreakable chain trail. Ghosts attack your trail!',
+    instructions: 'Eat all the blocks to complete each level. Avoid ghosts or lose a life. Your chain trail shows your progress!',
+    controls: '⬆️⬇️⬅️➡️ D-PAD to move',
     web3Concept: 'Blockchain Basics',
     icon: '👾',
     color: '#FFD700',
@@ -36,6 +40,8 @@ export const GAMES: GameConfig[] = [
     title: 'Block Tumble',
     subtitle: 'Tetris Style',
     description: 'Rotate and stack blocks. Clear lines to grow your collection!',
+    instructions: 'Stack falling blocks to create complete rows. Clear rows to score points. Don\'t let blocks reach the top!',
+    controls: '⬅️➡️ Move | ⬆️ Rotate | ⬇️ Drop',
     web3Concept: 'Digital Collections',
     icon: '🧱',
     color: '#00CED1',
@@ -50,6 +56,8 @@ export const GAMES: GameConfig[] = [
     title: 'Chain Invaders',
     subtitle: 'Space Invaders Style',
     description: 'Defend your chain from alien invaders! Vote power-ups fire lasers.',
+    instructions: 'Shoot the aliens before they reach the bottom. Collect votes to unlock power-ups. Survive all waves!',
+    controls: '⬅️➡️ Move | 🔴 FIRE to shoot',
     web3Concept: 'Consensus Mechanism',
     icon: '👽',
     color: '#9400D3',
