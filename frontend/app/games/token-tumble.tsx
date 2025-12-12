@@ -37,8 +37,8 @@ const CELL_SIZE = Math.min((SCREEN_WIDTH - 100) / COLS, 20);
 const BOARD_WIDTH = COLS * CELL_SIZE;
 const BOARD_HEIGHT = ROWS * CELL_SIZE;
 
-// Token types (Tetrominos with crypto theme)
-const TOKENS = {
+// Block types (Tetrominos with collection theme)
+const BLOCKS = {
   BTC: { // I-piece
     shape: [[1, 1, 1, 1]],
     color: '#F7931A',
