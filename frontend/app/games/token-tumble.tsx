@@ -519,7 +519,7 @@ export default function BlockTumbleGame() {
           <VFXLayer type="glitch-lock" intensity={0.6} />
           <Animated.View entering={FadeInDown} style={styles.menuContent}>
             <PixelText size="xl" color={COLORS.error} glow>
-              WALLET FULL!
+              COLLECTION FULL!
             </PixelText>
             <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
               ${collectionValue}
