@@ -249,7 +249,7 @@ export default function TokenTumbleGame() {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [linesTotal, setLinesTotal] = useState(0);
-  const [walletValue, setWalletValue] = useState(0);
+  const [collectionValue, setCollectionValue] = useState(0);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
