@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
   },
-  nftPopup: {
+  collectPopup: {
     position: 'absolute',
     top: '30%',
     left: '20%',
@@ -841,25 +841,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.neonYellow,
   },
-  nftTitle: {
+  collectTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: COLORS.neonYellow,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  nftRarity: {
+  collectRarity: {
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
   },
-  nftTrait: {
+  collectTrait: {
     fontSize: 10,
     color: COLORS.textSecondary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 2,
   },
-  nftPoints: {
+  collectPoints: {
     fontSize: 12,
     color: COLORS.success,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
