@@ -84,7 +84,7 @@ export const GameCard: React.FC<GameCardProps> = ({ game, index }) => {
           </PixelText>
         </View>
       </View>
-    </AnimatedTouchable>
+    </TouchableOpacity>
   );
 };
 
