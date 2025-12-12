@@ -90,10 +90,10 @@ export const GAMES: GameConfig[] = [
   // Coming Soon Games (10)
   {
     id: 'crypto-climber',
-    title: 'Crypto Climber',
+    title: 'Treasure Climber',
     subtitle: 'Donkey Kong Style',
     description: 'Climb for unique-trait eggs. Trade for upgrades!',
-    web3Concept: 'NFTs',
+    web3Concept: 'Unique Collectibles',
     icon: '🦍',
     color: '#8B4513',
     accentColor: '#A0522D',
@@ -104,11 +104,11 @@ export const GAMES: GameConfig[] = [
   },
   {
     id: 'stake-smash',
-    title: 'Stake Smash',
+    title: 'Power Smash',
     subtitle: 'Breakout Style',
-    description: 'Stake for bigger paddle! Smash bricks, slash on errors.',
-    web3Concept: 'Staking',
-    icon: '🏓',
+    description: 'Smash power crystals to charge up! Higher tier = more power!',
+    web3Concept: 'Resource Building',
+    icon: '⚡',
     color: '#FF4500',
     accentColor: '#FF6600',
     isPlayable: true,
