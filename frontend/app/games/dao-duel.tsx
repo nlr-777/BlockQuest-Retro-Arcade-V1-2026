@@ -42,6 +42,9 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
 export default function DAODuelGame() {
   const router = useRouter();
   const { submitScore } = useGameStore();
+  
+  // Audio hook
+  const { playHit, playCollect, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'tension' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
