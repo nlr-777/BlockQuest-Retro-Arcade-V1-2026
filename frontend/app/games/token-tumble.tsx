@@ -460,7 +460,7 @@ export default function BlockTumbleGame() {
       {/* Web3 Info */}
       <View style={styles.infoBox}>
         <PixelText size="xs" color={COLORS.tokenPurple}>
-          WALLET LESSON:
+          COLLECTION LESSON:
         </PixelText>
         <PixelText size="xs" color={COLORS.textMuted}>
           Stack tokens wisely! Complete lines to add value to your wallet - just like managing a crypto portfolio.
