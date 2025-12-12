@@ -143,9 +143,31 @@ export default function ArcadeHub() {
           contentContainerStyle={styles.scrollContent}
         >
           <View style={styles.gamesGrid}>
-            {displayGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+            {displayGames.map((game) => {
+              console.log('Mapping game:', game.id);
+              return (
+                <TouchableOpacity
+                  key={game.id}
+                  style={[styles.gameCard, { borderColor: game.color }]}
+                  onPress={() => {
+                    if (game.isPlayable) {
+                      router.push(game.route as any);
+                    } else {
+                      router.push(`/games/coming-soon?id=${game.id}` as any);
+                    }
+                  }}
+                >
+                  <View style={[styles.gameIcon, { backgroundColor: `${game.color}30` }]}>
+                    <Text style={{ fontSize: 32 }}>{game.icon}</Text>
+                  </View>
+                  <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
+                  <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
+                  <Text style={[styles.gameStatus, { color: game.isPlayable ? COLORS.success : COLORS.textMuted }]}>
+                    {game.isPlayable ? 'PLAY' : 'COMING SOON'}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
           <View style={styles.footer}>
             <Text style={styles.footerText}>Learn Web3 while you play!</Text>
