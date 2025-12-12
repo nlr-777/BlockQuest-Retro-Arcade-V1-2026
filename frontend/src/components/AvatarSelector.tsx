@@ -16,6 +16,60 @@ interface AvatarSelectorProps {
   onSelect: (avatar: AvatarConfig) => void;
 }
 
+// Render individual avatar card
+const renderAvatarCard = (
+  avatar: AvatarConfig, 
+  selectedId: string | null, 
+  onSelect: (avatar: AvatarConfig) => void,
+  rarityColor: string
+) => {
+  const isSelected = selectedId === avatar.id;
+  
+  return (
+    <TouchableOpacity
+      key={avatar.id}
+      style={[
+        styles.avatarCard,
+        { borderColor: isSelected ? avatar.color : COLORS.bgMedium },
+        isSelected && { backgroundColor: `${avatar.color}20` },
+      ]}
+      onPress={() => onSelect(avatar)}
+      activeOpacity={0.7}
+    >
+      {/* Avatar Image */}
+      <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
+        <Image
+          source={{ uri: avatar.imageUrl }}
+          style={styles.avatarImage}
+          resizeMode="cover"
+        />
+      </View>
+      
+      {/* Rarity Badge */}
+      <View style={[styles.rarityBadge, { backgroundColor: rarityColor }]}>
+        <Text style={styles.rarityText}>{avatar.rarity.toUpperCase()}</Text>
+      </View>
+      
+      {/* Avatar Name */}
+      <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
+        {avatar.name}
+      </Text>
+      
+      {/* Era Tag */}
+      <Text style={styles.eraTag} numberOfLines={1}>
+        {avatar.era.split(':')[0]}
+      </Text>
+      
+      {/* Selection Indicator */}
+      {isSelected && (
+        <View style={[styles.selectedBadge, { backgroundColor: avatar.color }]}>
+          <Text style={styles.selectedText}>✓</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+};
+
 export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   selectedId,
   onSelect,
@@ -34,46 +88,15 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
       {/* Avatar Grid - 3x2 */}
       <View style={styles.gridContainer}>
         <View style={styles.gridRow}>
-          {AVATARS.slice(0, 3).map((avatar) => renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity)))}
+          {AVATARS.slice(0, 3).map((avatar) => 
+            renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity))
+          )}
         </View>
         <View style={styles.gridRow}>
-          {AVATARS.slice(3, 6).map((avatar) => renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity)))}
+          {AVATARS.slice(3, 6).map((avatar) => 
+            renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity))
+          )}
         </View>
-      </View>
-              
-              {/* Avatar Image */}
-              <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
-                <Image
-                  source={{ uri: avatar.imageUrl }}
-                  style={styles.avatarImage}
-                  resizeMode="cover"
-                />
-              </View>
-              
-              {/* Rarity Badge */}
-              <View style={[styles.rarityBadge, { backgroundColor: rarityColor }]}>
-                <Text style={styles.rarityText}>{avatar.rarity.toUpperCase()}</Text>
-              </View>
-              
-              {/* Avatar Name */}
-              <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
-                {avatar.name}
-              </Text>
-              
-              {/* Era Tag */}
-              <Text style={styles.eraTag} numberOfLines={1}>
-                {avatar.era.split(':')[0]}
-              </Text>
-              
-              {/* Selection Indicator */}
-              {isSelected && (
-                <View style={[styles.selectedBadge, { backgroundColor: avatar.color }]}>
-                  <Text style={styles.selectedText}>✓</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          );
-        })}
       </View>
 
       {/* Selected Avatar Story Panel */}
@@ -103,6 +126,7 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    paddingHorizontal: 8,
   },
   titleBar: {
     flexDirection: 'row',
@@ -123,11 +147,13 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     paddingHorizontal: 8,
   },
-  grid: {
+  gridContainer: {
+    width: '100%',
+  },
+  gridRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    marginBottom: 8,
   },
   avatarCard: {
     width: '31%',
@@ -136,21 +162,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     padding: 6,
-    marginBottom: 8,
     position: 'relative',
-    overflow: 'hidden',
-  },
-  selectedGlow: {
-    position: 'absolute',
-    top: -20,
-    left: -20,
-    right: -20,
-    bottom: -20,
-    opacity: 0.2,
   },
   imageContainer: {
-    width: 52,
-    height: 52,
+    width: 46,
+    height: 46,
     borderRadius: 6,
     borderWidth: 2,
     overflow: 'hidden',
@@ -191,14 +207,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 3,
     left: 3,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedText: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#FFF',
     fontWeight: 'bold',
   },
