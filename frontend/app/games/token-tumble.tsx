@@ -288,7 +288,7 @@ export default function TokenTumbleGame() {
         const lineScore = linesCleared * 100 * level;
         setScore(s => s + lineScore);
         setLinesTotal(l => l + linesCleared);
-        setWalletValue(w => w + linesCleared * 10);
+        setCollectionValue(w => w + linesCleared * 10);
         if (Platform.OS !== 'web') Vibration.vibrate(50);
         
         // Level up every 10 lines
