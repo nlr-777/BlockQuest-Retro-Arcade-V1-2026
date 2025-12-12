@@ -204,24 +204,24 @@ const ActivePiece: React.FC<{ piece: Piece }> = ({ piece }) => {
 };
 
 // Next piece preview
-const NextPiecePreview: React.FC<{ type: TokenType | null }> = ({ type }) => {
+const NextPiecePreview: React.FC<{ type: BlockType | null }> = ({ type }) => {
   if (!type) return null;
   
-  const token = TOKENS[type];
+  const block = BLOCKS[type];
   const previewSize = 12;
 
   return (
     <View style={styles.previewBox}>
       <PixelText size="xs" color={COLORS.textSecondary}>NEXT</PixelText>
       <View style={styles.previewGrid}>
-        {token.shape.map((row, y) =>
+        {block.shape.map((row, y) =>
           row.map((cell, x) => (
             <View
               key={`${x}-${y}`}
               style={[
                 styles.previewCell,
                 {
-                  backgroundColor: cell ? token.color : 'transparent',
+                  backgroundColor: cell ? block.color : 'transparent',
                   width: previewSize,
                   height: previewSize,
                 },
@@ -230,7 +230,7 @@ const NextPiecePreview: React.FC<{ type: TokenType | null }> = ({ type }) => {
           ))
         )}
       </View>
-      <PixelText size="xs" color={token.color}>{token.name}</PixelText>
+      <PixelText size="xs" color={block.color}>{block.name}</PixelText>
     </View>
   );
 };
