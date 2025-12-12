@@ -12,6 +12,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Text,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -27,8 +28,11 @@ import Animated, {
 
 import { COLORS } from '../src/constants/colors';
 import { GAMES, GameConfig } from '../src/constants/games';
+import { AVATARS, AvatarConfig, getAvatarById } from '../src/constants/avatars';
 import { useGameStore } from '../src/store/gameStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
+import { AvatarSelector } from '../src/components/AvatarSelector';
+import audioManager from '../src/utils/AudioManager';
 import {
   IconGhost,
   IconTetris,
