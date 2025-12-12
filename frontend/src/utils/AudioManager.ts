@@ -72,6 +72,9 @@ class AudioManager {
   private soundEnabled: boolean = true;
   private musicEnabled: boolean = true;
   private audioContext: AudioContext | null = null;
+  private musicInterval: NodeJS.Timeout | null = null;
+  private currentTrack: MusicTrack | null = null;
+  private musicVolume: number = 0.15;
 
   private constructor() {
     this.initAudioContext();
@@ -126,6 +129,75 @@ class AudioManager {
       oscillator.stop(this.audioContext.currentTime + config.duration / 1000);
     } catch (e) {
       // Ignore audio errors
+    }
+  }
+
+  // Start playing synthwave background music
+  startMusic(track: MusicTrack = 'menu') {
+    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext) return;
+    
+    // Stop current music if playing
+    this.stopMusic();
+    
+    this.currentTrack = track;
+    const pattern = SYNTHWAVE_PATTERNS[track];
+    let noteIndex = 0;
+    
+    const playNote = () => {
+      if (!this.audioContext || !this.musicEnabled) return;
+      
+      try {
+        const freq = pattern.notes[noteIndex];
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        // Add filter for that synthwave sound
+        const filter = this.audioContext.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000, this.audioContext.currentTime);
+        filter.Q.setValueAtTime(5, this.audioContext.currentTime);
+        
+        oscillator.type = pattern.waveform;
+        oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+        
+        // Envelope for that punchy synthwave feel
+        const now = this.audioContext.currentTime;
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(this.musicVolume, now + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(this.musicVolume * 0.3, now + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.start(now);
+        oscillator.stop(now + 0.3);
+        
+        noteIndex = (noteIndex + 1) % pattern.notes.length;
+      } catch (e) {
+        // Ignore audio errors
+      }
+    };
+    
+    // Start the loop
+    playNote();
+    this.musicInterval = setInterval(playNote, (60 / pattern.tempo) * 1000);
+  }
+
+  // Stop background music
+  stopMusic() {
+    if (this.musicInterval) {
+      clearInterval(this.musicInterval);
+      this.musicInterval = null;
+    }
+    this.currentTrack = null;
+  }
+
+  // Change music track
+  changeTrack(track: MusicTrack) {
+    if (this.currentTrack !== track) {
+      this.startMusic(track);
     }
   }
 
