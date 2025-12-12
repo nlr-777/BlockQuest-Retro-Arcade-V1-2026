@@ -111,8 +111,8 @@ export const GAMES: GameConfig[] = [
     icon: '🏓',
     color: '#FF4500',
     accentColor: '#FF6600',
-    isPlayable: false,
-    route: '/games/coming-soon/stake-smash',
+    isPlayable: true,
+    route: '/games/stake-smash',
     difficulty: 'Medium',
     bgm: 'proof_of_work'
   },
