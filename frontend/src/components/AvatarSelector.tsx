@@ -7,106 +7,111 @@ import {
   Image,
   Platform,
   Text,
-  Dimensions,
 } from 'react-native';
 import { COLORS } from '../constants/colors';
 import { AVATARS, AvatarConfig, getRarityColor } from '../constants/avatars';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const CARD_WIDTH = (SCREEN_WIDTH - 64) / 3 - 4; // 3 cards per row with spacing
 
 interface AvatarSelectorProps {
   selectedId: string | null;
   onSelect: (avatar: AvatarConfig) => void;
 }
 
+// Single avatar card component
+const AvatarCard: React.FC<{
+  avatar: AvatarConfig;
+  isSelected: boolean;
+  onSelect: () => void;
+}> = ({ avatar, isSelected, onSelect }) => {
+  const rarityColor = getRarityColor(avatar.rarity);
+  
+  return (
+    <TouchableOpacity
+      style={[
+        styles.avatarCard,
+        { borderColor: isSelected ? avatar.color : COLORS.bgMedium },
+        isSelected && { backgroundColor: `${avatar.color}20` },
+      ]}
+      onPress={onSelect}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
+        <Image
+          source={{ uri: avatar.imageUrl }}
+          style={styles.avatarImage}
+          resizeMode="cover"
+        />
+      </View>
+      
+      <View style={[styles.rarityBadge, { backgroundColor: rarityColor }]}>
+        <Text style={styles.rarityText}>{avatar.rarity[0]}</Text>
+      </View>
+      
+      <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
+        {avatar.name.split(' ')[0]}
+      </Text>
+      
+      {isSelected && (
+        <View style={[styles.selectedBadge, { backgroundColor: avatar.color }]}>
+          <Text style={styles.selectedText}>✓</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+};
+
 export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   selectedId,
   onSelect,
 }) => {
   const selectedAvatar = AVATARS.find(a => a.id === selectedId);
+  
+  // Split into two rows of 3
+  const row1 = AVATARS.slice(0, 3);
+  const row2 = AVATARS.slice(3, 6);
 
   return (
     <View style={styles.container}>
       {/* Section Title */}
       <View style={styles.titleBar}>
         <View style={styles.titleLine} />
-        <Text style={styles.title}>⬡ SELECT YOUR HERO ⬡</Text>
+        <Text style={styles.title}>⬡ SELECT HERO ⬡</Text>
         <View style={styles.titleLine} />
       </View>
 
-      {/* Avatar Grid - using inline widths for web compatibility */}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', width: '100%' }}>
-        {AVATARS.map((avatar) => {
-          const isSelected = selectedId === avatar.id;
-          const rarityColor = getRarityColor(avatar.rarity);
-          
-          return (
-            <TouchableOpacity
-              key={avatar.id}
-              style={{
-                width: CARD_WIDTH,
-                backgroundColor: COLORS.bgDark,
-                borderRadius: 8,
-                borderWidth: 2,
-                borderColor: isSelected ? avatar.color : COLORS.bgMedium,
-                alignItems: 'center',
-                padding: 6,
-                margin: 2,
-                position: 'relative',
-                ...(isSelected && { backgroundColor: `${avatar.color}20` }),
-              }}
-              onPress={() => onSelect(avatar)}
-              activeOpacity={0.7}
-            >
-              {/* Avatar Image */}
-              <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
-                <Image
-                  source={{ uri: avatar.imageUrl }}
-                  style={styles.avatarImage}
-                  resizeMode="cover"
-                />
-              </View>
-              
-              {/* Rarity Badge */}
-              <View style={[styles.rarityBadge, { backgroundColor: rarityColor }]}>
-                <Text style={styles.rarityText}>{avatar.rarity[0]}</Text>
-              </View>
-              
-              {/* Avatar Name */}
-              <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
-                {avatar.name.split(' ')[0]}
-              </Text>
-              
-              {/* Selection Indicator */}
-              {isSelected && (
-                <View style={[styles.selectedBadge, { backgroundColor: avatar.color }]}>
-                  <Text style={styles.selectedText}>✓</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          );
-        })}
+      {/* Row 1 */}
+      <View style={styles.row}>
+        {row1.map((avatar) => (
+          <AvatarCard
+            key={avatar.id}
+            avatar={avatar}
+            isSelected={selectedId === avatar.id}
+            onSelect={() => onSelect(avatar)}
+          />
+        ))}
+      </View>
+      
+      {/* Row 2 */}
+      <View style={styles.row}>
+        {row2.map((avatar) => (
+          <AvatarCard
+            key={avatar.id}
+            avatar={avatar}
+            isSelected={selectedId === avatar.id}
+            onSelect={() => onSelect(avatar)}
+          />
+        ))}
       </View>
 
       {/* Selected Avatar Story Panel */}
       {selectedAvatar && (
         <View style={[styles.storyPanel, { borderColor: selectedAvatar.color }]}>
-          <View style={styles.storyHeader}>
-            <Text style={[styles.heroTitle, { color: selectedAvatar.color }]}>
-              {selectedAvatar.title}
-            </Text>
-            <Text style={[styles.heroPower, { color: selectedAvatar.color }]}>
-              ⚡ {selectedAvatar.specialPower}
-            </Text>
-          </View>
+          <Text style={[styles.heroTitle, { color: selectedAvatar.color }]}>
+            {selectedAvatar.title} • ⚡{selectedAvatar.specialPower}
+          </Text>
           <Text style={styles.storyText}>{selectedAvatar.story}</Text>
-          <View style={styles.eraLine}>
-            <View style={[styles.eraDot, { backgroundColor: selectedAvatar.color }]} />
-            <Text style={[styles.eraText, { color: selectedAvatar.color }]}>
-              {selectedAvatar.era}
-            </Text>
-          </View>
+          <Text style={[styles.eraText, { color: selectedAvatar.color }]}>
+            ◆ {selectedAvatar.era}
+          </Text>
         </View>
       )}
     </View>
@@ -115,8 +120,8 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   titleBar: {
     flexDirection: 'row',
@@ -135,11 +140,26 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     letterSpacing: 2,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  avatarCard: {
+    flex: 1,
+    marginHorizontal: 3,
+    backgroundColor: COLORS.bgDark,
+    borderRadius: 8,
+    borderWidth: 2,
+    alignItems: 'center',
+    padding: 6,
+    position: 'relative',
   },
   imageContainer: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     borderRadius: 6,
     borderWidth: 2,
     overflow: 'hidden',
@@ -190,46 +210,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(13, 2, 33, 0.9)',
     borderWidth: 2,
     borderRadius: 8,
-    padding: 10,
-    marginTop: 8,
-  },
-  storyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
+    padding: 8,
+    marginTop: 6,
   },
   heroTitle: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  heroPower: {
-    fontSize: 7,
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginBottom: 4,
   },
   storyText: {
     fontSize: 8,
     color: COLORS.textSecondary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    lineHeight: 12,
-  },
-  eraLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 6,
-  },
-  eraDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    marginRight: 5,
+    lineHeight: 11,
   },
   eraText: {
     fontSize: 7,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 6,
   },
 });
 
