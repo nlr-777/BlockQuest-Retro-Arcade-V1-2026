@@ -81,10 +81,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   highScores: {},
   recentScores: [],
 
-  initProfile: async (username: string) => {
+  initProfile: async (username: string, avatarId: string = 'cyber-punk') => {
     const newProfile: PlayerProfile = {
       id: `player_${Date.now()}`,
       username,
+      avatarId,
       createdAt: Date.now(),
       totalScore: 0,
       gamesPlayed: 0,
