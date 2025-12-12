@@ -452,6 +452,7 @@ export default function CryptoClimberGame() {
 
   const handleJump = () => {
     if (!isJumping && !isClimbing) {
+      playJump();
       setPlayerVY(JUMP_FORCE);
       setIsJumping(true);
     }
