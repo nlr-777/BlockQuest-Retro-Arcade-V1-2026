@@ -384,6 +384,12 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.neonPink,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 32,
+    height: 32,
   },
   avatarText: {
     fontSize: 16,
