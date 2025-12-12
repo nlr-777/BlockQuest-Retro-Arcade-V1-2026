@@ -424,6 +424,11 @@ const styles = StyleSheet.create({
   gamesContent: {
     padding: GRID_PADDING,
   },
+  gamesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+  },
   gameRow: {
     flexDirection: 'row',
   },
@@ -439,6 +444,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
+    margin: 4,
   },
   cardLocked: {
     opacity: 0.7,
