@@ -147,11 +147,11 @@ const clearLines = (board: Board): { newBoard: Board; linesCleared: number } => 
 
 // Random piece
 const randomPiece = (): Piece => {
-  const types = Object.keys(TOKENS) as TokenType[];
+  const types = Object.keys(BLOCKS) as BlockType[];
   const type = types[Math.floor(Math.random() * types.length)];
   return {
     type,
-    shape: TOKENS[type].shape.map(row => [...row]),
+    shape: BLOCKS[type].shape.map(row => [...row]),
     x: Math.floor(COLS / 2) - 1,
     y: -1,
   };
