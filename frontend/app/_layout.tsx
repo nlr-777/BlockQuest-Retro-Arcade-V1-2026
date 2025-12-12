@@ -57,6 +57,9 @@ export default function RootLayout() {
         <Stack.Screen name="games/stake-smash" />
         <Stack.Screen name="games/ledger-leap" />
         <Stack.Screen name="games/dao-duel" />
+        <Stack.Screen name="games/mine-blaster" />
+        <Stack.Screen name="games/lightning-dash" />
+        <Stack.Screen name="games/bridge-bouncer" />
       </Stack>
     </GestureHandlerRootView>
   );
