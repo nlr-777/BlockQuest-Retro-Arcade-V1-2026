@@ -532,7 +532,7 @@ export default function CryptoClimberGame() {
             {/* Game overlays */}
             {gameState === 'ready' && (
               <View style={styles.overlay}>
-                <Text style={styles.overlayTitle}>CRYPTO CLIMBER</Text>
+                <Text style={styles.overlayTitle}>TREASURE CLIMBER</Text>
                 <Text style={styles.overlayText}>Climb to rescue your egg collection!</Text>
                 <Text style={styles.overlayText}>🥚 Collect unique eggs</Text>
                 <Text style={styles.overlayText}>🛢️ Avoid barrels</Text>
