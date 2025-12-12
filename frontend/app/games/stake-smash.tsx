@@ -167,6 +167,7 @@ export default function PowerSmashGame() {
     setCombo(0);
     ballSpeedRef.current = 5;
     setGameState('playing');
+    playGameStart();
   }, [initBricks, initBall]);
 
   // Next level

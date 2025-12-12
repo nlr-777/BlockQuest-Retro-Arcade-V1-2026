@@ -180,6 +180,7 @@ export default function CryptoClimberGame() {
   // Start game
   const startGame = () => {
     setGameState('playing');
+    playGameStart();
     setScore(0);
     setLives(3);
     setLevel(1);

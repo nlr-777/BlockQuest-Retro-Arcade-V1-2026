@@ -93,6 +93,7 @@ export default function DAODuelGame() {
     setAiSpeed(4);
     resetBall(1);
     setGameState('playing');
+    playGameStart();
   }, [resetBall]);
 
   // Cast vote (use power-up)

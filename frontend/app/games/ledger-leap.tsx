@@ -140,6 +140,7 @@ export default function LedgerLeapGame() {
     setRecordsCollected(0);
     setDistance(0);
     setGameState('playing');
+    playGameStart();
   }, [generatePlatforms]);
 
   // Check platform collision

@@ -103,6 +103,7 @@ export default function LightningDashGame() {
     setBoostMeter(0);
     setIsBoosting(false);
     setGameState('playing');
+    playGameStart();
   }, []);
 
   // Move player

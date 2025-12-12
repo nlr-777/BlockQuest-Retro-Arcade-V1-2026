@@ -112,6 +112,7 @@ export default function BridgeBouncerGame() {
     setBridgesCompleted(0);
     setTargetChain(1);
     setGameState('playing');
+    playGameStart();
   }, [initializeTiles]);
 
   // Continue to next level
@@ -123,6 +124,7 @@ export default function BridgeBouncerGame() {
     setLevel(prev => prev + 1);
     setTargetChain(prev => (prev % 3) + 1); // Cycle through chains
     setGameState('playing');
+    playGameStart();
   }, [initializeTiles]);
 
   // Move player

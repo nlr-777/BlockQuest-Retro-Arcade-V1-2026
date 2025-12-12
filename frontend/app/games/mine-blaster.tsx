@@ -142,6 +142,7 @@ export default function RockBlasterGame() {
     setParticles([]);
     setRocks(spawnRocks(4));
     setGameState('playing');
+    playGameStart();
   }, [spawnRocks]);
 
   // Shoot bullet
