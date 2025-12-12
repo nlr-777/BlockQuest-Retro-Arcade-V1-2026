@@ -52,7 +52,7 @@ interface GameState {
   recentScores: GameScore[];
   
   // Actions
-  initProfile: (username: string) => Promise<void>;
+  initProfile: (username: string, avatarId?: string) => Promise<void>;
   loadProfile: () => Promise<void>;
   updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
   mintBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
