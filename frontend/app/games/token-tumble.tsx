@@ -522,7 +522,7 @@ export default function BlockTumbleGame() {
               WALLET FULL!
             </PixelText>
             <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
-              ${walletValue}
+              ${collectionValue}
             </PixelText>
             <PixelText size="sm" color={COLORS.textSecondary}>
               Score: {score} | Level: {level}
