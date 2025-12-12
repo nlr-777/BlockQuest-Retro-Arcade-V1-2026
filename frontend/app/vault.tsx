@@ -1,4 +1,4 @@
-// BlockQuest Official - Retro Arcade - Treasure Vault (Self-Custodial Wallet Style Profile)
+// BlockQuest Official - Retro Arcade - Treasure Vault (Player Profile & Collection)
 // 80s/90s Retro Arcade Aesthetic
 import React, { useState, useEffect } from 'react';
 import {
