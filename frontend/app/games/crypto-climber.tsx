@@ -235,8 +235,8 @@ export default function CryptoClimberGame() {
         setScore(s => s + egg.trait.points);
         setCollectedEggs(c => [...c, egg.trait]);
         setLastCollectedEgg(egg.trait);
-        setShowNFTInfo(true);
-        setTimeout(() => setShowNFTInfo(false), 2000);
+        setShowCollectInfo(true);
+        setTimeout(() => setShowCollectInfo(false), 2000);
         if (Platform.OS !== 'web') Vibration.vibrate(50);
         return { ...egg, collected: true };
       }
