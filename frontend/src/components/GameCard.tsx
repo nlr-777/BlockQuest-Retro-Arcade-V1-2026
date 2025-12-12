@@ -1,13 +1,6 @@
 // Block Quest Official - Game Card Component
 import React from 'react';
 import { TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeIn,
-  FadeInDown,
-} from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { PixelText } from './PixelText';
 import { COLORS } from '../constants/colors';
@@ -22,22 +15,11 @@ interface GameCardProps {
   index: number;
 }
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-
 export const GameCard: React.FC<GameCardProps> = ({ game, index }) => {
   const router = useRouter();
   const { highScores } = useGameStore();
-  const scale = useSharedValue(1);
 
   const highScore = highScores[game.id] || 0;
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
 
   const handlePress = () => {
     if (game.isPlayable) {
@@ -47,18 +29,11 @@ export const GameCard: React.FC<GameCardProps> = ({ game, index }) => {
     }
   };
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
   return (
-    <AnimatedTouchable
-      entering={FadeInDown.delay(index * 100).springify()}
-      style={[styles.card, animatedStyle]}
+    <TouchableOpacity
+      style={styles.card}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      activeOpacity={0.9}
+      activeOpacity={0.8}
     >
       {/* Glow border */}
       <View style={[styles.glowBorder, { backgroundColor: game.color }]} />
