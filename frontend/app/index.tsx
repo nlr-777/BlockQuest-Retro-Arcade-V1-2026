@@ -137,49 +137,32 @@ export default function ArcadeHub() {
           </TouchableOpacity>
         </View>
 
-        {/* Game Grid */}
-        <ScrollView 
-          style={{ flex: 1, backgroundColor: 'rgba(50,50,50,0.3)' }}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20, minHeight: 200 }}
-        >
-          <Text style={{ color: 'white', marginBottom: 10, backgroundColor: 'red' }}>
-            DEBUG: {displayGames.length} games
+        {/* Game Grid - Test without ScrollView */}
+        <View style={{ flex: 1, backgroundColor: 'rgba(50,50,50,0.3)', padding: 16, overflow: 'scroll' }}>
+          <Text style={{ color: 'yellow', marginBottom: 10, backgroundColor: 'red' }}>
+            DEBUG: {displayGames.length} games - Testing render
           </Text>
-          <View style={styles.gamesGrid}>
-            {Array.isArray(displayGames) && displayGames.length > 0 ? (
-              displayGames.map((game, index) => {
-                console.log('Mapping game at index:', index, 'ID:', game.id);
-                return (
-                  <TouchableOpacity
-                    key={game.id}
-                    style={[styles.gameCard, { borderColor: game.color }]}
-                    onPress={() => {
-                      if (game.isPlayable) {
-                        router.push(game.route as any);
-                      } else {
-                        router.push(`/games/coming-soon?id=${game.id}` as any);
-                      }
-                    }}
-                  >
-                    <View style={[styles.gameIcon, { backgroundColor: `${game.color}30` }]}>
-                      <Text style={{ fontSize: 32 }}>{game.icon}</Text>
-                    </View>
-                    <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
-                    <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
-                    <Text style={[styles.gameStatus, { color: game.isPlayable ? COLORS.success : COLORS.textMuted }]}>
-                      {game.isPlayable ? 'PLAY' : 'COMING SOON'}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })
-            ) : (
-              <Text style={{ color: 'red' }}>NO GAMES FOUND</Text>
-            )}
-          </View>
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Learn Web3 while you play!</Text>
-          </View>
-        </ScrollView>
+          {displayGames.length > 0 && (
+            <View style={styles.gamesGrid}>
+              {displayGames.map((game) => (
+                <TouchableOpacity
+                  key={game.id}
+                  style={[styles.gameCard, { borderColor: game.color }]}
+                  onPress={() => router.push(game.route as any)}
+                >
+                  <View style={[styles.gameIcon, { backgroundColor: `${game.color}30` }]}>
+                    <Text style={{ fontSize: 32 }}>{game.icon}</Text>
+                  </View>
+                  <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
+                  <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
+                  <Text style={[styles.gameStatus, { color: COLORS.success }]}>
+                    {game.isPlayable ? 'PLAY' : 'SOON'}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
 
         {/* Bottom Nav */}
         <View style={styles.bottomNav}>
