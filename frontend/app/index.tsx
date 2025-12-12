@@ -632,6 +632,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: COLORS.neonPink,
     opacity: 0.3,
+    pointerEvents: 'none',
   },
   modalTitle: {
     fontSize: 28,
