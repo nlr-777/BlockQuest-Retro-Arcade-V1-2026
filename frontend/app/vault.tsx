@@ -55,11 +55,11 @@ const RARITY_CONFIG = {
   Legendary: { color: COLORS.rarityLegendary, glow: '#FFD700' },
 };
 
-// Token balances (simulated)
-const TOKEN_TYPES = [
-  { id: 'BQT', name: 'Block Quest Token', icon: IconToken, color: COLORS.neonPink },
+// Resource types (simulated)
+const RESOURCE_TYPES = [
+  { id: 'SCORE', name: 'Total Score', icon: IconToken, color: COLORS.neonPink },
   { id: 'XP', name: 'Experience Points', icon: IconStar, color: COLORS.neonYellow },
-  { id: 'PWR', name: 'DAO Power', icon: IconLightning, color: COLORS.neonCyan },
+  { id: 'VOTES', name: 'Team Votes', icon: IconLightning, color: COLORS.neonCyan },
 ];
 
 // Animated neon border
