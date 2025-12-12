@@ -284,45 +284,80 @@ export default function ArcadeHub() {
         </View>
       </SafeAreaView>
 
-      {/* Onboarding Modal */}
+      {/* Onboarding Modal - Bold Arcade Style */}
       <Modal visible={showOnboarding} transparent animationType="fade">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
-          <Starfield count={40} />
-          <Animated.View entering={FadeIn.duration(500)} style={styles.modalBox}>
-            <Text style={styles.modalTitle}>INSERT COIN</Text>
-            <Text style={styles.modalSub}>Press START to begin...</Text>
-            
-            {/* Avatar Selection */}
-            <AvatarSelector 
-              selectedId={selectedAvatar?.id || null}
-              onSelect={handleAvatarSelect}
-            />
-            
-            <Text style={styles.inputLabel}>ENTER HANDLE</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="AAA"
-              placeholderTextColor={COLORS.textMuted}
-              value={username}
-              onChangeText={setUsername}
-              maxLength={20}
-              autoCapitalize="characters"
-            />
-            
-            <TouchableOpacity
-              style={[styles.startBtn, (username.trim().length < 3 || !selectedAvatar) && styles.btnDisabled]}
-              onPress={handleCreateProfile}
-              disabled={username.trim().length < 3 || !selectedAvatar}
-            >
-              <Text style={styles.startBtnText}>▶ START</Text>
-            </TouchableOpacity>
-            
-            <Text style={styles.disclaimer}>KID SAFE • NO REAL CRYPTO</Text>
-          </Animated.View>
-        </KeyboardAvoidingView>
+        <View style={styles.modalOverlay}>
+          <Starfield count={50} />
+          
+          {/* Scanlines effect */}
+          <View style={styles.scanlineOverlay} />
+          
+          <ScrollView 
+            contentContainerStyle={styles.modalScrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Animated.View entering={FadeIn.duration(500)} style={styles.modalBox}>
+              {/* Arcade Cabinet Top */}
+              <View style={styles.cabinetTop}>
+                <View style={styles.cabinetLights}>
+                  <View style={[styles.cabinetLight, { backgroundColor: '#FF00FF' }]} />
+                  <View style={[styles.cabinetLight, { backgroundColor: '#00FFFF' }]} />
+                  <View style={[styles.cabinetLight, { backgroundColor: '#FFD700' }]} />
+                </View>
+              </View>
+              
+              {/* Title Section */}
+              <View style={styles.titleSection}>
+                <Text style={styles.modalTitle}>⬡ BLOCKQUEST ⬡</Text>
+                <Text style={styles.modalSubtitle}>RETRO ARCADE</Text>
+                <View style={styles.titleUnderline} />
+              </View>
+              
+              {/* Avatar Selection */}
+              <AvatarSelector 
+                selectedId={selectedAvatar?.id || null}
+                onSelect={handleAvatarSelect}
+              />
+              
+              {/* Player Name Input */}
+              <View style={styles.inputSection}>
+                <View style={styles.inputHeader}>
+                  <View style={styles.inputDot} />
+                  <Text style={styles.inputLabel}>ENTER PLAYER NAME</Text>
+                  <View style={styles.inputDot} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="YOUR NAME"
+                  placeholderTextColor={COLORS.textMuted}
+                  value={username}
+                  onChangeText={setUsername}
+                  maxLength={12}
+                  autoCapitalize="characters"
+                />
+              </View>
+              
+              {/* Start Button */}
+              <TouchableOpacity
+                style={[
+                  styles.startBtn, 
+                  (username.trim().length < 3 || !selectedAvatar) && styles.btnDisabled
+                ]}
+                onPress={handleCreateProfile}
+                disabled={username.trim().length < 3 || !selectedAvatar}
+              >
+                <View style={styles.startBtnInner}>
+                  <Text style={styles.startBtnText}>▶ INSERT COIN</Text>
+                </View>
+              </TouchableOpacity>
+              
+              {/* Footer */}
+              <View style={styles.disclaimerBox}>
+                <Text style={styles.disclaimer}>🎮 KID SAFE • NO REAL CRYPTO • AGES 5+ 🎮</Text>
+              </View>
+            </Animated.View>
+          </ScrollView>
+        </View>
       </Modal>
     </View>
   );
