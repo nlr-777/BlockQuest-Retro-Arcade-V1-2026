@@ -100,10 +100,8 @@ export default function ArcadeHub() {
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
-
-  const renderGameCard = ({ item }: { item: GameConfig }) => (
-    <GameCard game={item} />
-  );
+  
+  console.log('Display games count:', displayGames.length);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -177,26 +175,26 @@ export default function ArcadeHub() {
         </TouchableOpacity>
       </View>
 
-      {/* Game Grid */}
-      <FlatList
-        data={displayGames}
-        renderItem={renderGameCard}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.listRow}
+      {/* Game Grid - using ScrollView for reliability */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          <View style={styles.learnSection}>
-            <PixelText size="md" color={COLORS.textSecondary}>
-              Learn Web3 while you play!
-            </PixelText>
-            <PixelText size="xs" color={COLORS.textMuted}>
-              Each game teaches blockchain concepts
-            </PixelText>
-          </View>
-        }
-      />
+      >
+        <View style={styles.gameGrid}>
+          {displayGames.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </View>
+        <View style={styles.learnSection}>
+          <PixelText size="md" color={COLORS.textSecondary}>
+            Learn Web3 while you play!
+          </PixelText>
+          <PixelText size="xs" color={COLORS.textMuted}>
+            Each game teaches blockchain concepts
+          </PixelText>
+        </View>
+      </ScrollView>
 
       {/* Bottom Nav */}
       <View style={styles.bottomNav}>
