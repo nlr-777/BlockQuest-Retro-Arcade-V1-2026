@@ -52,6 +52,7 @@ export default function RootLayout() {
         <Stack.Screen name="badges" />
         <Stack.Screen name="leaderboard" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="vault" />
       </Stack>
     </GestureHandlerRootView>
   );
