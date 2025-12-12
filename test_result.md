@@ -227,8 +227,177 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Block Muncher Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/block-muncher.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Block Muncher game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Block Muncher Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/block-muncher.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Block Muncher START button, player movement controls, block collection, ghost AI, score updates, game over/victory screens"
+
+  - task: "Token Tumble Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/token-tumble.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Token Tumble game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Token Tumble Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/token-tumble.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Token Tumble START button, piece movement/rotation, line clearing, score updates, level progression, game over screen"
+
+  - task: "Chain Invaders Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/chain-invaders.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Chain Invaders game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Chain Invaders Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/chain-invaders.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Chain Invaders START button, player movement, shooting mechanics, alien movement, consensus voting system, power-ups, game over screen"
+
+  - task: "Hash Hopper Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/hash-hopper.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Hash Hopper game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Hash Hopper Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/hash-hopper.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Hash Hopper START button, player movement across lanes, obstacle collision, hash generation display, goal reaching, game over screen"
+
+  - task: "Seed Sprint Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/seed-sprint.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Seed Sprint game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Seed Sprint Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/seed-sprint.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Seed Sprint START button, jump mechanics, obstacle avoidance, word collection, checkpoint system, game over screen"
+
+  - task: "Crypto Climber Game - Navigation & Loading"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/crypto-climber.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Crypto Climber game navigation from main hub, game loading, UI elements, gameplay mechanics, and back navigation"
+
+  - task: "Crypto Climber Game - Gameplay Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/games/crypto-climber.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test Crypto Climber START button, player movement/jumping, ladder climbing, egg collection, barrel avoidance, win condition, game over screen"
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.1"
+  test_sequence: 2
+
+test_plan:
+  current_focus:
+    - "Block Muncher Game - Navigation & Loading"
+    - "Block Muncher Game - Gameplay Functionality"
+    - "Token Tumble Game - Navigation & Loading"
+    - "Token Tumble Game - Gameplay Functionality"
+    - "Chain Invaders Game - Navigation & Loading"
+    - "Chain Invaders Game - Gameplay Functionality"
+    - "Hash Hopper Game - Navigation & Loading"
+    - "Hash Hopper Game - Gameplay Functionality"
+    - "Seed Sprint Game - Navigation & Loading"
+    - "Seed Sprint Game - Gameplay Functionality"
+    - "Crypto Climber Game - Navigation & Loading"
+    - "Crypto Climber Game - Gameplay Functionality"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
 agent_communication:
     - agent: "testing"
     - message: "Starting comprehensive testing of BlockQuest Official - Retro Arcade app. Will test main hub functionality, navigation, vault screen, and visual elements using mobile viewport (390x844)."
     - agent: "testing"
     - message: "✅ TESTING COMPLETE: All major functionality tested and working correctly. The BlockQuest Official - Retro Arcade app is fully functional with proper onboarding, game grid display, navigation, vault screen, and neon/synthwave visual design. No critical issues found. App is ready for use."
+    - agent: "testing"
+    - message: "🎮 COMPREHENSIVE GAME TESTING: Starting detailed testing of all 6 playable games as requested. Will test navigation, loading, UI elements, gameplay functionality, and visual quality for Block Muncher, Token Tumble, Chain Invaders, Hash Hopper, Seed Sprint, and Crypto Climber games using mobile viewport (390x844)."
