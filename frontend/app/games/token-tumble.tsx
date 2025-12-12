@@ -409,7 +409,7 @@ export default function BlockTumbleGame() {
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <PixelText size="lg" color={COLORS.blockCyan} glow>
-          TOKEN TUMBLE
+          BLOCK TUMBLE
         </PixelText>
         <View style={{ width: 40 }} />
       </View>
@@ -493,7 +493,7 @@ export default function BlockTumbleGame() {
           <VFXLayer type="parallax-blocks" intensity={0.6} />
           <Animated.View entering={FadeInDown.delay(200)} style={styles.menuContent}>
             <PixelText size="xxl" color={COLORS.blockCyan} glow style={styles.menuTitle}>
-              TOKEN TUMBLE
+              BLOCK TUMBLE
             </PixelText>
             <PixelText size="md" style={styles.menuIcon}>🧱</PixelText>
             <PixelText size="sm" color={COLORS.textSecondary} style={styles.menuSubtitle}>
