@@ -471,18 +471,17 @@ const styles = StyleSheet.create({
   gamesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: 6,
   },
   
   // Cabinet Card Style
   cabinetCard: {
-    width: CARD_SIZE - 6,
-    height: CARD_SIZE + 10,
+    width: CARD_SIZE - 4,
+    height: CARD_SIZE + 8,
     backgroundColor: 'rgba(13, 2, 33, 0.95)',
     borderRadius: 8,
     borderWidth: 2,
-    padding: 8,
-    marginBottom: 8,
+    padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
