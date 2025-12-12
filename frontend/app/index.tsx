@@ -125,18 +125,13 @@ export default function ArcadeHub() {
   // Render a single game card
   const renderGameCard = (game: GameConfig, index: number) => {
     const IconComponent = getGameIcon(game.id);
-    const isLast = (index + 1) % 3 === 0;
     
     return (
       <TouchableOpacity
         key={game.id}
         style={[
           styles.gameCard,
-          { 
-            borderColor: game.color,
-            marginRight: isLast ? 0 : CARD_GAP,
-            marginBottom: CARD_GAP,
-          },
+          { borderColor: game.color },
           !game.isPlayable && styles.cardLocked,
         ]}
         onPress={() => handleGamePress(game)}
@@ -174,22 +169,13 @@ export default function ArcadeHub() {
     );
   };
 
-  // Split games into rows of 3
-  const renderGameRows = () => {
-    console.log('GAMES length:', GAMES.length);
-    console.log('GAMES:', GAMES.map(g => g.id));
-    const rows = [];
-    for (let i = 0; i < GAMES.length; i += 3) {
-      const rowGames = GAMES.slice(i, i + 3);
-      console.log('Row', i/3, 'games:', rowGames.map(g => g.id));
-      rows.push(
-        <View key={i} style={styles.gameRow}>
-          {rowGames.map((game, idx) => renderGameCard(game, i + idx))}
-        </View>
-      );
-    }
-    console.log('Total rows:', rows.length);
-    return rows;
+  // All games in a simple flex wrap grid
+  const renderAllGames = () => {
+    return (
+      <View style={styles.gamesGrid}>
+        {GAMES.map((game, index) => renderGameCard(game, index))}
+      </View>
+    );
   };
 
   return (
