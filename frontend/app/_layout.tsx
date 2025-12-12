@@ -53,6 +53,7 @@ export default function RootLayout() {
         <Stack.Screen name="leaderboard" />
         <Stack.Screen name="settings" />
         <Stack.Screen name="vault" />
+        <Stack.Screen name="games/crypto-climber" />
       </Stack>
     </GestureHandlerRootView>
   );
