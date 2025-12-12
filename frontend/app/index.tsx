@@ -1,4 +1,4 @@
-// Block Quest Official - Main Arcade Hub
+// BlockQuest Official - Retro Arcade - Main Hub
 // 80s/90s RETRO ARCADE AESTHETIC
 import React, { useState, useEffect } from 'react';
 import {
