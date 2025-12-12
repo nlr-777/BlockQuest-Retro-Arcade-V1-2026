@@ -118,7 +118,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   updateScore: async (gameId: string, score: number, duration: number) => {
-    const { profile, highScores, recentScores } = get();
+    const { profile, highScores, recentScores, mintBadge } = get();
     if (!profile) return;
 
     const newHighScores = { ...highScores };
@@ -134,10 +134,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       duration,
     };
 
+    const newGamesPlayed = profile.gamesPlayed + 1;
+    
     const updatedProfile = {
       ...profile,
       totalScore: profile.totalScore + score,
-      gamesPlayed: profile.gamesPlayed + 1,
+      gamesPlayed: newGamesPlayed,
     };
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
@@ -148,6 +150,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       highScores: newHighScores,
       recentScores: [newScore, ...recentScores.slice(0, 19)],
     });
+
+    // Award "Beginner" badge after 5 total plays
+    const hasBeginnerBadge = profile.badges.some(b => b.id.includes('beginner_badge'));
+    if (newGamesPlayed >= 5 && !hasBeginnerBadge) {
+      await mintBadge({
+        name: 'Arcade Rookie',
+        description: 'Played 5 games in the BlockQuest Arcade!',
+        rarity: 'Common',
+        gameId: 'arcade',
+        traits: { gamesPlayed: 5 },
+        icon: '🎮',
+      });
+    }
 
     return isNewHighScore;
   },
