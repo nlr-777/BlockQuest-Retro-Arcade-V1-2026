@@ -197,14 +197,16 @@ export default function ChainInvadersGame() {
     };
 
     setBullets(prev => [...prev, newBullet]);
+    playShoot();
     if (Platform.OS !== 'web') Vibration.vibrate(10);
-  }, [gameState, playerX, rapidFire]);
+  }, [gameState, playerX, rapidFire, playShoot]);
 
   // Vote for power-up (DAO mechanic)
   const voteForPowerUp = useCallback((type: 'rapid' | 'shield' | 'spread') => {
     if (consensusVotes < 10) return;
     
     setConsensusVotes(0);
+    playPowerup();
     
     if (type === 'shield') {
       setHasShield(true);
@@ -215,7 +217,7 @@ export default function ChainInvadersGame() {
     }
     
     if (Platform.OS !== 'web') Vibration.vibrate(50);
-  }, [consensusVotes]);
+  }, [consensusVotes, playPowerup]);
 
   // Game loop
   useEffect(() => {
