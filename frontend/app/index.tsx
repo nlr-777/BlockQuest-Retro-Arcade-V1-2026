@@ -75,6 +75,7 @@ export default function ArcadeHub() {
       </Text>
     </TouchableOpacity>
   );
+  };
 
   return (
     <View style={styles.container}>
