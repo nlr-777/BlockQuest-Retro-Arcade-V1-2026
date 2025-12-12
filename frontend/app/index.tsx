@@ -139,11 +139,11 @@ export default function ArcadeHub() {
 
         {/* Game Grid */}
         <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={{ flex: 1, backgroundColor: 'rgba(50,50,50,0.3)' }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20, minHeight: 200 }}
         >
-          <Text style={{ color: 'white', marginBottom: 10 }}>
-            DEBUG: {displayGames.length} games | Type: {typeof displayGames} | IsArray: {Array.isArray(displayGames) ? 'YES' : 'NO'}
+          <Text style={{ color: 'white', marginBottom: 10, backgroundColor: 'red' }}>
+            DEBUG: {displayGames.length} games
           </Text>
           <View style={styles.gamesGrid}>
             {Array.isArray(displayGames) && displayGames.length > 0 ? (
