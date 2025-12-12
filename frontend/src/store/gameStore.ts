@@ -62,6 +62,8 @@ interface GameState {
   setVfxIntensity: (intensity: number) => void;
   addXP: (amount: number) => void;
   addVotingPower: (amount: number) => void;
+  submitScore: (gameId: string, score: number) => Promise<void>;
+  addBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
 }
 
 const STORAGE_KEY = '@blockquest_profile';
