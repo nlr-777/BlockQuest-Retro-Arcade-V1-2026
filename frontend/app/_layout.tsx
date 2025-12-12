@@ -1,4 +1,4 @@
-// Block Quest Official - Root Layout
+// BlockQuest Official - Retro Arcade - Root Layout
 import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
