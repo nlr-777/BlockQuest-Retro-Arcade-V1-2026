@@ -151,16 +151,16 @@ const TransactionItem: React.FC<{
 export default function TreasureVaultScreen() {
   const router = useRouter();
   const { profile, highScores } = useGameStore();
-  const [activeSection, setActiveSection] = useState<'tokens' | 'badges' | 'history'>('tokens');
+  const [activeSection, setActiveSection] = useState<'stats' | 'badges' | 'history'>('stats');
 
   const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
-  const walletAddress = profile ? generateWalletAddress(profile.username) : '0x0000...0000';
+  const playerId = profile ? generatePlayerId(profile.username) : 'PLAYER-000000';
 
-  // Simulated transaction history
-  const transactions = [
+  // Simulated activity history
+  const activities = [
     { type: 'earned' as const, amount: 100, description: 'Block Muncher High Score', time: '2 min ago' },
-    { type: 'earned' as const, amount: 50, description: 'Badge Minted: Chain Master', time: '5 min ago' },
-    { type: 'spent' as const, amount: 25, description: 'Power-Up Purchase', time: '10 min ago' },
+    { type: 'earned' as const, amount: 50, description: 'Badge Earned: Chain Master', time: '5 min ago' },
+    { type: 'spent' as const, amount: 25, description: 'Power-Up Used', time: '10 min ago' },
     { type: 'earned' as const, amount: 200, description: 'Level Up Bonus', time: '15 min ago' },
   ];
 
