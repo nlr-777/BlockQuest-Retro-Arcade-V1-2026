@@ -10,7 +10,7 @@ import {
   Modal,
   Platform,
   KeyboardAvoidingView,
-  FlatList,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -24,48 +24,6 @@ import { useGameStore } from '../src/store/gameStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
-
-// Inline GameCard for reliability
-const GameCard: React.FC<{ game: GameConfig }> = ({ game }) => {
-  const router = useRouter();
-  const { highScores } = useGameStore();
-  const highScore = highScores[game.id] || 0;
-
-  const handlePress = () => {
-    if (game.isPlayable) {
-      router.push(game.route as any);
-    } else {
-      router.push(`/games/coming-soon?id=${game.id}` as any);
-    }
-  };
-
-  return (
-    <TouchableOpacity
-      style={[styles.card, { borderWidth: 1, borderColor: game.color }]}
-      onPress={handlePress}
-      activeOpacity={0.8}
-    >
-      <View style={[styles.cardInner, { borderColor: game.color, backgroundColor: COLORS.cardBg }]}>
-        <View style={[styles.iconContainer, { backgroundColor: `${game.color}40` }]}>
-          <PixelText size="xl">{game.icon}</PixelText>
-        </View>
-        <PixelText size="sm" color={game.color} style={styles.cardTitle}>
-          {game.title}
-        </PixelText>
-        <PixelText size="xs" color={COLORS.textSecondary} style={styles.subtitle}>
-          {game.subtitle}
-        </PixelText>
-        <View style={styles.footer}>
-          {game.isPlayable ? (
-            <PixelText size="xs" color={COLORS.success}>PLAY</PixelText>
-          ) : (
-            <PixelText size="xs" color={COLORS.textMuted}>SOON</PixelText>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-};
 
 export default function ArcadeHub() {
   const router = useRouter();
@@ -89,163 +47,124 @@ export default function ArcadeHub() {
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
-  
-  console.log('Display games count:', displayGames.length);
+
+  const GameCard = ({ game }: { game: GameConfig }) => (
+    <TouchableOpacity
+      style={[styles.gameCard, { borderColor: game.color }]}
+      onPress={() => {
+        if (game.isPlayable) {
+          router.push(game.route as any);
+        } else {
+          router.push(`/games/coming-soon?id=${game.id}` as any);
+        }
+      }}
+    >
+      <View style={[styles.gameIcon, { backgroundColor: `${game.color}30` }]}>
+        <Text style={{ fontSize: 32 }}>{game.icon}</Text>
+      </View>
+      <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
+      <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
+      <Text style={[styles.gameStatus, { color: game.isPlayable ? COLORS.success : COLORS.textMuted }]}>
+        {game.isPlayable ? 'PLAY' : 'COMING SOON'}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <PixelText size="xl" color={COLORS.chainGold} glow>
-            BLOCK QUEST
-          </PixelText>
-          <PixelText size="sm" color={COLORS.blockCyan}>
-            THE ARCADE
-          </PixelText>
-        </View>
-        
-        {profile && (
-          <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/badges')}>
-            <View style={styles.profileIcon}>
-              <PixelText size="md" color={COLORS.chainGold}>
-                {profile.username[0].toUpperCase()}
-              </PixelText>
-            </View>
-            <View>
-              <PixelText size="xs" color={COLORS.textSecondary}>LV {profile.level}</PixelText>
-              <PixelText size="xs" color={COLORS.chainGold}>{totalHighScore} PTS</PixelText>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Stats Bar */}
-      {profile && (
-        <View style={styles.statsBar}>
-          <View style={styles.stat}>
-            <Ionicons name="trophy" size={16} color={COLORS.chainGold} />
-            <PixelText size="xs" color={COLORS.textSecondary}> {profile.badges.length} Badges</PixelText>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.logoText}>BLOCK QUEST</Text>
+            <Text style={styles.logoSubtext}>THE ARCADE</Text>
           </View>
-          <View style={styles.stat}>
-            <Ionicons name="game-controller" size={16} color={COLORS.blockCyan} />
-            <PixelText size="xs" color={COLORS.textSecondary}> {profile.gamesPlayed} Played</PixelText>
-          </View>
-          <View style={styles.stat}>
-            <Ionicons name="flash" size={16} color={COLORS.seedRed} />
-            <PixelText size="xs" color={COLORS.textSecondary}> {profile.daoVotingPower} Power</PixelText>
-          </View>
-        </View>
-      )}
-
-      {/* Tab Switcher */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'playable' && styles.activeTab]}
-          onPress={() => setActiveTab('playable')}
-        >
-          <PixelText
-            size="sm"
-            color={activeTab === 'playable' ? COLORS.chainGold : COLORS.textMuted}
-          >
-            PLAY NOW ({PLAYABLE_GAMES.length})
-          </PixelText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'coming-soon' && styles.activeTab]}
-          onPress={() => setActiveTab('coming-soon')}
-        >
-          <PixelText
-            size="sm"
-            color={activeTab === 'coming-soon' ? COLORS.blockCyan : COLORS.textMuted}
-          >
-            COMING SOON ({COMING_SOON_GAMES.length})
-          </PixelText>
-        </TouchableOpacity>
-      </View>
-
-      {/* Game Grid - using ScrollView for reliability */}
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          {displayGames.map((game) => (
-            <TouchableOpacity
-              key={game.id}
-              style={{
-                width: CARD_WIDTH,
-                height: 180,
-                marginBottom: 16,
-                backgroundColor: COLORS.cardBg,
-                borderRadius: 12,
-                borderWidth: 2,
-                borderColor: game.color,
-                padding: 12,
-                alignItems: 'center',
-              }}
-              onPress={() => {
-                if (game.isPlayable) {
-                  router.push(game.route as any);
-                } else {
-                  router.push(`/games/coming-soon?id=${game.id}` as any);
-                }
-              }}
-              activeOpacity={0.8}
-            >
-              <View style={{
-                width: 50,
-                height: 50,
-                borderRadius: 25,
-                backgroundColor: `${game.color}40`,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 8,
-              }}>
-                <PixelText size="xl">{game.icon}</PixelText>
+          {profile && (
+            <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/badges')}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{profile.username[0].toUpperCase()}</Text>
               </View>
-              <PixelText size="sm" color={game.color} style={{ textAlign: 'center', marginBottom: 4 }}>
-                {game.title}
-              </PixelText>
-              <PixelText size="xs" color={COLORS.textSecondary} style={{ textAlign: 'center', marginBottom: 8 }}>
-                {game.subtitle}
-              </PixelText>
-              <PixelText size="xs" color={game.isPlayable ? COLORS.success : COLORS.textMuted}>
-                {game.isPlayable ? 'PLAY' : 'COMING SOON'}
-              </PixelText>
+              <View>
+                <Text style={styles.profileLevel}>LV {profile.level}</Text>
+                <Text style={styles.profilePts}>{totalHighScore} PTS</Text>
+              </View>
             </TouchableOpacity>
-          ))}
+          )}
         </View>
-        <View style={{ alignItems: 'center', paddingVertical: 24 }}>
-          <PixelText size="md" color={COLORS.textSecondary}>
-            Learn Web3 while you play!
-          </PixelText>
-          <PixelText size="xs" color={COLORS.textMuted}>
-            Each game teaches blockchain concepts
-          </PixelText>
-        </View>
-      </ScrollView>
 
-      {/* Bottom Nav */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('playable')}>
-          <Ionicons name="game-controller" size={24} color={COLORS.chainGold} />
-          <PixelText size="xs" color={COLORS.chainGold}>Games</PixelText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/badges')}>
-          <Ionicons name="ribbon" size={24} color={COLORS.textSecondary} />
-          <PixelText size="xs" color={COLORS.textSecondary}>Badges</PixelText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/leaderboard')}>
-          <Ionicons name="podium" size={24} color={COLORS.textSecondary} />
-          <PixelText size="xs" color={COLORS.textSecondary}>Ranks</PixelText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/settings')}>
-          <Ionicons name="settings" size={24} color={COLORS.textSecondary} />
-          <PixelText size="xs" color={COLORS.textSecondary}>Settings</PixelText>
-        </TouchableOpacity>
-      </View>
+        {/* Stats */}
+        {profile && (
+          <View style={styles.statsBar}>
+            <View style={styles.statItem}>
+              <Ionicons name="trophy" size={16} color={COLORS.chainGold} />
+              <Text style={styles.statText}> {profile.badges.length} Badges</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="game-controller" size={16} color={COLORS.blockCyan} />
+              <Text style={styles.statText}> {profile.gamesPlayed} Played</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="flash" size={16} color={COLORS.seedRed} />
+              <Text style={styles.statText}> {profile.daoVotingPower} Power</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Tabs */}
+        <View style={styles.tabs}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'playable' && styles.activeTab]}
+            onPress={() => setActiveTab('playable')}
+          >
+            <Text style={[styles.tabText, activeTab === 'playable' && styles.activeTabText]}>
+              PLAY NOW ({PLAYABLE_GAMES.length})
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'coming-soon' && styles.activeTab]}
+            onPress={() => setActiveTab('coming-soon')}
+          >
+            <Text style={[styles.tabText, activeTab === 'coming-soon' && styles.activeTabText]}>
+              COMING SOON ({COMING_SOON_GAMES.length})
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Game Grid */}
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.gamesGrid}>
+            {displayGames.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Learn Web3 while you play!</Text>
+          </View>
+        </ScrollView>
+
+        {/* Bottom Nav */}
+        <View style={styles.bottomNav}>
+          <TouchableOpacity style={styles.navItem}>
+            <Ionicons name="game-controller" size={24} color={COLORS.chainGold} />
+            <Text style={[styles.navText, { color: COLORS.chainGold }]}>Games</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/badges')}>
+            <Ionicons name="ribbon" size={24} color={COLORS.textSecondary} />
+            <Text style={styles.navText}>Badges</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/leaderboard')}>
+            <Ionicons name="podium" size={24} color={COLORS.textSecondary} />
+            <Text style={styles.navText}>Ranks</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/settings')}>
+            <Ionicons name="settings" size={24} color={COLORS.textSecondary} />
+            <Text style={styles.navText}>Settings</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
       {/* Onboarding Modal */}
       <Modal visible={showOnboarding} transparent animationType="fade">
@@ -254,14 +173,8 @@ export default function ArcadeHub() {
           style={styles.modalOverlay}
         >
           <View style={styles.modalContent}>
-            <PixelText size="xl" color={COLORS.chainGold} glow style={styles.modalTitle}>
-              WELCOME, PLAYER!
-            </PixelText>
-            
-            <PixelText size="sm" color={COLORS.textSecondary} style={styles.modalSubtitle}>
-              Enter your name to start your Web3 journey
-            </PixelText>
-            
+            <Text style={styles.modalTitle}>WELCOME, PLAYER!</Text>
+            <Text style={styles.modalSubtitle}>Enter your name to start your Web3 journey</Text>
             <TextInput
               style={styles.input}
               placeholder="Your name (3+ chars)"
@@ -269,9 +182,7 @@ export default function ArcadeHub() {
               value={username}
               onChangeText={setUsername}
               maxLength={20}
-              autoCapitalize="none"
             />
-            
             <PixelButton
               title="START QUEST"
               onPress={handleCreateProfile}
@@ -279,14 +190,11 @@ export default function ArcadeHub() {
               disabled={username.trim().length < 3}
               size="lg"
             />
-            
-            <PixelText size="xs" color={COLORS.textMuted} style={styles.disclaimer}>
-              Kid-friendly mode - No real blockchain
-            </PixelText>
+            <Text style={styles.disclaimer}>Kid-friendly mode - No real blockchain</Text>
           </View>
         </KeyboardAvoidingView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -295,6 +203,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.bgDark,
   },
+  safeArea: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -302,19 +213,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  logoContainer: {
-    alignItems: 'flex-start',
+  logoText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: COLORS.chainGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  profileButton: {
+  logoSubtext: {
+    fontSize: 12,
+    color: COLORS.blockCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  profileBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.cardBg,
     padding: 8,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.cardBorder,
   },
-  profileIcon: {
+  avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -322,6 +239,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
+  },
+  avatarText: {
+    color: COLORS.chainGold,
+    fontWeight: 'bold',
+  },
+  profileLevel: {
+    color: COLORS.textSecondary,
+    fontSize: 10,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  profilePts: {
+    color: COLORS.chainGold,
+    fontSize: 10,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   statsBar: {
     flexDirection: 'row',
@@ -332,11 +263,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
   },
-  stat: {
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  tabContainer: {
+  statText: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  tabs: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     marginBottom: 8,
@@ -351,107 +287,88 @@ const styles = StyleSheet.create({
   activeTab: {
     borderBottomColor: COLORS.chainGold,
   },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100,
+  tabText: {
+    color: COLORS.textMuted,
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
   },
-  listRow: {
-    justifyContent: 'space-between',
+  activeTabText: {
+    color: COLORS.chainGold,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
-  gameGrid: {
+  gamesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  learnSection: {
-    alignItems: 'center',
-    paddingVertical: 24,
-    marginTop: 16,
-  },
-  card: {
+  gameCard: {
     width: CARD_WIDTH,
-    height: 180,
-    marginBottom: 16,
-  },
-  glowBorder: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
-    right: -4,
-    bottom: -4,
-    borderRadius: 12,
-    opacity: 0.3,
-  },
-  cardInner: {
-    flex: 1,
     backgroundColor: COLORS.cardBg,
     borderRadius: 12,
     borderWidth: 2,
     padding: 12,
     alignItems: 'center',
+    marginBottom: 16,
   },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  gameIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
   },
-  cardTitle: {
+  gameTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
     marginBottom: 4,
   },
-  subtitle: {
+  gameSubtitle: {
+    fontSize: 10,
+    color: COLORS.textSecondary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
     marginBottom: 8,
   },
+  gameStatus: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    marginTop: 'auto',
+    paddingVertical: 24,
   },
-  comingSoon: {
-    backgroundColor: COLORS.bgLight,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  difficultyBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  footerText: {
+    color: COLORS.textSecondary,
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 12,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
     backgroundColor: COLORS.bgMedium,
     borderTopWidth: 1,
     borderTopColor: COLORS.cardBorder,
   },
   navItem: {
     alignItems: 'center',
-    paddingHorizontal: 16,
+  },
+  navText: {
+    color: COLORS.textSecondary,
+    fontSize: 10,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
   },
   modalOverlay: {
     flex: 1,
@@ -469,10 +386,16 @@ const styles = StyleSheet.create({
     borderColor: COLORS.chainGold,
   },
   modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: COLORS.chainGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 8,
-    textAlign: 'center',
   },
   modalSubtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -484,17 +407,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     color: COLORS.textPrimary,
-    fontFamily: Platform.select({
-      ios: 'Courier',
-      android: 'monospace',
-      default: 'Courier New',
-    }),
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontSize: 16,
     marginBottom: 24,
     textAlign: 'center',
   },
   disclaimer: {
+    color: COLORS.textMuted,
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 16,
-    textAlign: 'center',
   },
 });
