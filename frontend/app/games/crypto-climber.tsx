@@ -405,18 +405,45 @@ export default function CryptoClimberGame() {
     };
   }, [gameState]);
 
-  // Controls
-  const handleMove = (direction: 'left' | 'right' | 'up' | 'down') => {
+  // Controls - use interval-based continuous movement for web compatibility
+  const moveIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startMove = (direction: 'left' | 'right' | 'up' | 'down') => {
+    // Clear any existing interval
+    if (moveIntervalRef.current) {
+      clearInterval(moveIntervalRef.current);
+    }
+    
+    // Set initial direction
     moveDirectionRef.current = direction;
     if (direction === 'up' || direction === 'down') {
       const onLadder = checkLadderCollision(playerX, playerY);
       setIsClimbing(onLadder);
     }
+    
+    // Start continuous movement
+    moveIntervalRef.current = setInterval(() => {
+      moveDirectionRef.current = direction;
+    }, 50);
   };
 
-  const handleMoveEnd = () => {
+  const stopMove = () => {
+    if (moveIntervalRef.current) {
+      clearInterval(moveIntervalRef.current);
+      moveIntervalRef.current = null;
+    }
     moveDirectionRef.current = null;
+    setIsClimbing(false);
   };
+
+  // Clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (moveIntervalRef.current) {
+        clearInterval(moveIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleJump = () => {
     if (!isJumping && !isClimbing) {
