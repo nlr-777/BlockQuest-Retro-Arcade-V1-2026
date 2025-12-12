@@ -47,35 +47,6 @@ export default function ArcadeHub() {
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
-  
-  // Debug logging
-  console.log('PLAYABLE_GAMES:', JSON.stringify(PLAYABLE_GAMES.map(g => g.id)));
-  console.log('displayGames length:', displayGames.length);
-
-  const GameCard = ({ game }: { game: GameConfig }) => {
-    console.log('Rendering game:', game.id);
-    return (
-    <TouchableOpacity
-      style={[styles.gameCard, { borderColor: game.color }]}
-      onPress={() => {
-        if (game.isPlayable) {
-          router.push(game.route as any);
-        } else {
-          router.push(`/games/coming-soon?id=${game.id}` as any);
-        }
-      }}
-    >
-      <View style={[styles.gameIcon, { backgroundColor: `${game.color}30` }]}>
-        <Text style={{ fontSize: 32 }}>{game.icon}</Text>
-      </View>
-      <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
-      <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
-      <Text style={[styles.gameStatus, { color: game.isPlayable ? COLORS.success : COLORS.textMuted }]}>
-        {game.isPlayable ? 'PLAY' : 'COMING SOON'}
-      </Text>
-    </TouchableOpacity>
-  );
-  };
 
   return (
     <View style={styles.container}>
