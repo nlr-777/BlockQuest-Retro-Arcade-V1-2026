@@ -322,7 +322,8 @@ export default function CryptoClimberGame() {
         if (checkBarrelCollision(playerX, newY)) {
           setLives(l => {
             if (l <= 1) {
-              setGameState('gameover');
+              playGameOver();
+          setGameState('gameover');
               return 0;
             }
             // Reset player position

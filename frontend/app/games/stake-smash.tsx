@@ -395,7 +395,8 @@ export default function PowerSmashGame() {
         if (activeBalls.length === 0 && prevBalls.length > 0) {
           setLives(l => {
             if (l <= 1) {
-              setGameState('gameover');
+              playGameOver();
+          setGameState('gameover');
               submitScore('stake-smash', score);
               return 0;
             }

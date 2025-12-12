@@ -232,7 +232,8 @@ export default function LedgerLeapGame() {
         if (newY > GAME_HEIGHT + 50) {
           setLives(l => {
             if (l <= 1) {
-              setGameState('gameover');
+              playGameOver();
+          setGameState('gameover');
               submitScore('ledger-leap', score);
               return 0;
             }

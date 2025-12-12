@@ -319,7 +319,8 @@ export default function RockBlasterGame() {
             // Ship hit!
             setLives(l => {
               if (l <= 1) {
-                setGameState('gameover');
+                playGameOver();
+          setGameState('gameover');
                 submitScore('mine-blaster', score);
                 return 0;
               }

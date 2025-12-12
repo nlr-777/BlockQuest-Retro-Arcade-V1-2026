@@ -305,6 +305,7 @@ export default function BlockTumbleGame() {
       // Spawn new piece
       if (nextPiece) {
         if (checkCollision(clearedBoard, nextPiece)) {
+          playGameOver();
           setGameState('gameover');
         } else {
           setCurrentPiece(nextPiece);

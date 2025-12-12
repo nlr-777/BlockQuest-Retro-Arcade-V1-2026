@@ -198,7 +198,8 @@ export default function LightningDashGame() {
               obs.y + OBSTACLE_HEIGHT > playerY &&
               obs.y < playerY + PLAYER_HEIGHT) {
             // Collision!
-            setGameState('gameover');
+            playGameOver();
+          setGameState('gameover');
             submitScore('lightning-dash', score);
             if (Platform.OS !== 'web') Vibration.vibrate(300);
             return prev;

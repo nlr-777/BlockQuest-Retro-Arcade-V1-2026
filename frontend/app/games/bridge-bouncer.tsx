@@ -209,7 +209,8 @@ export default function BridgeBouncerGame() {
     setLives(prev => {
       const newLives = prev - 1;
       if (newLives <= 0) {
-        setGameState('gameover');
+        playGameOver();
+          setGameState('gameover');
         submitScore('bridge-bouncer', score);
       } else {
         // Reset position
