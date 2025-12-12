@@ -134,7 +134,7 @@ export default function CryptoClimberGame() {
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
   const [collectedEggs, setCollectedEggs] = useState<typeof EGG_TRAITS[0][]>([]);
-  const [showNFTInfo, setShowNFTInfo] = useState(false);
+  const [showCollectInfo, setShowCollectInfo] = useState(false);
   const [lastCollectedEgg, setLastCollectedEgg] = useState<typeof EGG_TRAITS[0] | null>(null);
   
   // Player state
