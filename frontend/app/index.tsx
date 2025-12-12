@@ -196,6 +196,8 @@ export default function ArcadeHub() {
         </View>
       </ScrollView>
 
+      </ScrollView>
+
       {/* Bottom Nav */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('playable')}>
