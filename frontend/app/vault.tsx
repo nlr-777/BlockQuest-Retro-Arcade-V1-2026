@@ -255,7 +255,7 @@ export default function TreasureVaultScreen() {
 
           {/* Section Tabs */}
           <View style={styles.sectionTabs}>
-            {(['tokens', 'badges', 'history'] as const).map((section) => (
+            {(['stats', 'badges', 'history'] as const).map((section) => (
               <TouchableOpacity
                 key={section}
                 style={[styles.sectionTab, activeSection === section && styles.activeTab]}
@@ -268,30 +268,30 @@ export default function TreasureVaultScreen() {
             ))}
           </View>
 
-          {/* Tokens Section */}
-          {activeSection === 'tokens' && (
+          {/* Stats Section */}
+          {activeSection === 'stats' && (
             <Animated.View entering={FadeIn} style={styles.section}>
-              <Text style={styles.sectionTitle}>TOKEN BALANCES</Text>
-              {TOKEN_TYPES.map((token, index) => {
-                const TokenIcon = token.icon;
-                const balance = token.id === 'BQT' ? totalScore : 
-                               token.id === 'XP' ? (profile?.xp || 0) : 
+              <Text style={styles.sectionTitle}>YOUR RESOURCES</Text>
+              {RESOURCE_TYPES.map((resource, index) => {
+                const ResourceIcon = resource.icon;
+                const balance = resource.id === 'SCORE' ? totalScore : 
+                               resource.id === 'XP' ? (profile?.xp || 0) : 
                                (profile?.daoVotingPower || 0);
                 return (
                   <Animated.View
-                    key={token.id}
+                    key={resource.id}
                     entering={FadeInDown.delay(index * 100)}
                     style={styles.tokenRow}
                   >
-                    <View style={[styles.tokenIcon, { backgroundColor: token.color + '20' }]}>
-                      <TokenIcon size={28} color={token.color} />
+                    <View style={[styles.tokenIcon, { backgroundColor: resource.color + '20' }]}>
+                      <ResourceIcon size={28} color={resource.color} />
                     </View>
                     <View style={styles.tokenInfo}>
-                      <Text style={styles.tokenName}>{token.name}</Text>
-                      <Text style={styles.tokenSymbol}>{token.id}</Text>
+                      <Text style={styles.tokenName}>{resource.name}</Text>
+                      <Text style={styles.tokenSymbol}>{resource.id}</Text>
                     </View>
                     <View style={styles.tokenBalance}>
-                      <Text style={[styles.tokenAmount, { color: token.color }]}>
+                      <Text style={[styles.tokenAmount, { color: resource.color }]}>
                         {balance.toLocaleString()}
                       </Text>
                     </View>
@@ -299,15 +299,15 @@ export default function TreasureVaultScreen() {
                 );
               })}
 
-              {/* Seed Phrase Reminder */}
+              {/* Recovery Code Reminder */}
               <View style={styles.seedReminder}>
                 <View style={styles.seedIcon}>
                   <IconKey size={24} color={COLORS.neonYellow} />
                 </View>
                 <View style={styles.seedInfo}>
-                  <Text style={styles.seedTitle}>BACKUP YOUR SEED PHRASE</Text>
+                  <Text style={styles.seedTitle}>SAVE YOUR RECOVERY CODE</Text>
                   <Text style={styles.seedText}>
-                    Your 12-word recovery phrase is the only way to restore your vault.
+                    Your 12-word recovery phrase helps you restore your progress.
                   </Text>
                 </View>
                 <TouchableOpacity style={styles.seedButton}>
