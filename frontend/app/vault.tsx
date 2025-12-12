@@ -190,19 +190,19 @@ export default function TreasureVaultScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Wallet Card */}
+          {/* Player Card */}
           <Animated.View entering={FadeIn.delay(100)}>
             <NeonGlowBorder color={COLORS.neonPink} style={styles.walletCard}>
-              {/* Wallet Header */}
+              {/* Player Header */}
               <View style={styles.walletHeader}>
                 <View style={styles.walletIcon}>
-                  <IconWallet size={40} color={COLORS.neonCyan} />
+                  <IconVault size={40} color={COLORS.neonCyan} />
                 </View>
                 <View style={styles.walletInfo}>
-                  <Text style={styles.walletLabel}>SELF-CUSTODY WALLET</Text>
+                  <Text style={styles.walletLabel}>PLAYER PROFILE</Text>
                   <Text style={styles.walletName}>{profile?.username || 'Guest'}</Text>
                   <View style={styles.addressRow}>
-                    <Text style={styles.walletAddress}>{walletAddress}</Text>
+                    <Text style={styles.walletAddress}>{playerId}</Text>
                     <TouchableOpacity style={styles.copyButton}>
                       <Ionicons name="copy-outline" size={14} color={COLORS.neonCyan} />
                     </TouchableOpacity>
@@ -210,38 +210,38 @@ export default function TreasureVaultScreen() {
                 </View>
               </View>
 
-              {/* Portfolio Value */}
+              {/* Total Score */}
               <View style={styles.portfolioSection}>
-                <Text style={styles.portfolioLabel}>TOTAL PORTFOLIO VALUE</Text>
+                <Text style={styles.portfolioLabel}>TOTAL SCORE</Text>
                 <View style={styles.portfolioValue}>
                   <Text style={styles.portfolioAmount}>{totalScore.toLocaleString()}</Text>
-                  <Text style={styles.portfolioCurrency}>BQT</Text>
+                  <Text style={styles.portfolioCurrency}>PTS</Text>
                 </View>
                 <View style={styles.portfolioChange}>
                   <Ionicons name="trending-up" size={14} color={COLORS.success} />
-                  <Text style={styles.changeText}>+{profile?.level || 1}% this session</Text>
+                  <Text style={styles.changeText}>Level {profile?.level || 1}</Text>
                 </View>
               </View>
 
               {/* Quick Actions */}
               <View style={styles.quickActions}>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/leaderboard')}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.success + '30' }]}>
-                    <Ionicons name="arrow-down" size={20} color={COLORS.success} />
+                    <Ionicons name="trophy" size={20} color={COLORS.success} />
                   </View>
-                  <Text style={styles.actionText}>RECEIVE</Text>
+                  <Text style={styles.actionText}>RANKS</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/badges')}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.neonPink + '30' }]}>
-                    <Ionicons name="arrow-up" size={20} color={COLORS.neonPink} />
+                    <IconShield size={20} color={COLORS.neonPink} />
                   </View>
-                  <Text style={styles.actionText}>SEND</Text>
+                  <Text style={styles.actionText}>BADGES</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/')}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.neonCyan + '30' }]}>
-                    <Ionicons name="swap-horizontal" size={20} color={COLORS.neonCyan} />
+                    <Ionicons name="game-controller" size={20} color={COLORS.neonCyan} />
                   </View>
-                  <Text style={styles.actionText}>SWAP</Text>
+                  <Text style={styles.actionText}>PLAY</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.neonYellow + '30' }]}>
