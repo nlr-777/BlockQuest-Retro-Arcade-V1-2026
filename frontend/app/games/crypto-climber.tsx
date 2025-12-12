@@ -321,6 +321,7 @@ export default function CryptoClimberGame() {
         
         // Check barrel collision
         if (checkBarrelCollision(playerX, newY)) {
+          playHit();
           setLives(l => {
             if (l <= 1) {
               playGameOver();
