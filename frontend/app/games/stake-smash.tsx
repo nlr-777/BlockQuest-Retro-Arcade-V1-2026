@@ -1,5 +1,5 @@
-// BlockQuest Official - Stake Smash
-// Breakout/Arkanoid Style Game - Teaches Staking Concepts
+// BlockQuest Official - Power Smash
+// Breakout/Arkanoid Style Game - Teaches Energy & Resource Concepts
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
@@ -41,20 +41,20 @@ const BRICK_WIDTH = (GAME_WIDTH - 20) / BRICK_COLS;
 const BRICK_HEIGHT = 20;
 const BRICK_PADDING = 2;
 
-// Staking tiers (brick types)
-const STAKING_TIERS = [
-  { name: 'Bronze', color: '#CD7F32', points: 10, apy: '5%', hits: 1 },
-  { name: 'Silver', color: '#C0C0C0', points: 20, apy: '8%', hits: 1 },
-  { name: 'Gold', color: '#FFD700', points: 30, apy: '12%', hits: 2 },
-  { name: 'Platinum', color: '#E5E4E2', points: 50, apy: '15%', hits: 2 },
-  { name: 'Diamond', color: '#B9F2FF', points: 100, apy: '20%', hits: 3 },
+// Power crystal tiers (brick types) - Kid-friendly terms
+const POWER_TIERS = [
+  { name: 'Bronze', color: '#CD7F32', points: 10, boost: '⚡1', hits: 1 },
+  { name: 'Silver', color: '#C0C0C0', points: 20, boost: '⚡2', hits: 1 },
+  { name: 'Gold', color: '#FFD700', points: 30, boost: '⚡3', hits: 2 },
+  { name: 'Platinum', color: '#E5E4E2', points: 50, boost: '⚡4', hits: 2 },
+  { name: 'Diamond', color: '#B9F2FF', points: 100, boost: '⚡5', hits: 3 },
 ];
 
 // Power-up types
 const POWER_UPS = {
   WIDE_PADDLE: { color: '#00FF00', name: 'Wide Paddle', icon: '↔️' },
   MULTI_BALL: { color: '#FF00FF', name: 'Multi Ball', icon: '⚪' },
-  STAKE_BOOST: { color: '#FFD700', name: 'Stake Boost', icon: '⬆️' },
+  ENERGY_BOOST: { color: '#FFD700', name: 'Energy Boost', icon: '⬆️' },
   SLOW_BALL: { color: '#00BFFF', name: 'Slow Ball', icon: '🐢' },
 };
 
@@ -88,7 +88,7 @@ interface PowerUp {
 
 type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
 
-export default function StakeSmashGame() {
+export default function PowerSmashGame() {
   const router = useRouter();
   const { submitScore, addBadge } = useGameStore();
 
@@ -97,8 +97,8 @@ export default function StakeSmashGame() {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
-  const [stakedAmount, setStakedAmount] = useState(0);
-  const [apy, setApy] = useState(0);
+  const [energyStored, setEnergyStored] = useState(0);
+  const [powerLevel, setPowerLevel] = useState(0);
   const [combo, setCombo] = useState(0);
 
   // Game objects
@@ -123,7 +123,7 @@ export default function StakeSmashGame() {
         // Higher tiers appear in higher levels and upper rows
         const tierIndex = Math.min(
           Math.floor((BRICK_ROWS - row - 1 + lvl - 1) / 2),
-          STAKING_TIERS.length - 1
+          POWER_TIERS.length - 1
         );
         
         newBricks.push({
@@ -131,7 +131,7 @@ export default function StakeSmashGame() {
           x: 10 + col * BRICK_WIDTH,
           y: startY + row * (BRICK_HEIGHT + BRICK_PADDING),
           tier: tierIndex,
-          hits: STAKING_TIERS[tierIndex].hits,
+          hits: POWER_TIERS[tierIndex].hits,
           active: true,
         });
       }
@@ -161,8 +161,8 @@ export default function StakeSmashGame() {
     setScore(0);
     setLives(3);
     setLevel(1);
-    setStakedAmount(0);
-    setApy(0);
+    setEnergyStored(0);
+    setPowerLevel(0);
     setCombo(0);
     ballSpeedRef.current = 5;
     setGameState('playing');
@@ -178,7 +178,7 @@ export default function StakeSmashGame() {
     setPaddleWidth(PADDLE_WIDTH);
     ballSpeedRef.current = Math.min(5 + newLevel * 0.5, 10);
     setScore(s => s + 500); // Level completion bonus
-    setStakedAmount(s => s + 100); // Staking reward
+    setEnergyStored(s => s + 100); // Energy reward
     if (Platform.OS !== 'web') Vibration.vibrate(100);
   }, [level, initBricks, initBall]);
 
@@ -242,9 +242,9 @@ export default function StakeSmashGame() {
           return prev;
         });
         break;
-      case 'STAKE_BOOST':
-        setStakedAmount(s => s + 50);
-        setApy(a => Math.min(a + 2, 25));
+      case 'ENERGY_BOOST':
+        setEnergyStored(s => s + 50);
+        setPowerLevel(a => Math.min(a + 1, 5));
         break;
       case 'SLOW_BALL':
         ballSpeedRef.current = Math.max(3, ballSpeedRef.current - 1);
@@ -332,11 +332,11 @@ export default function StakeSmashGame() {
 
                 if (brick.hits <= 1) {
                   // Brick destroyed
-                  const tier = STAKING_TIERS[brick.tier];
+                  const tier = POWER_TIERS[brick.tier];
                   scoreGained += tier.points * (1 + combo * 0.1);
                   setCombo(c => c + 1);
-                  setStakedAmount(s => s + tier.points / 2);
-                  setApy(parseFloat(tier.apy));
+                  setEnergyStored(s => s + tier.points / 2);
+                  setPowerLevel(parseInt(tier.boost.replace('⚡', '')));
                   spawnPowerUp(brick.x + BRICK_WIDTH / 2, brick.y);
                 }
 
@@ -432,8 +432,8 @@ export default function StakeSmashGame() {
   // Render brick
   const renderBrick = (brick: Brick) => {
     if (!brick.active) return null;
-    const tier = STAKING_TIERS[brick.tier];
-    const opacity = brick.hits / STAKING_TIERS[brick.tier].hits;
+    const tier = POWER_TIERS[brick.tier];
+    const opacity = brick.hits / POWER_TIERS[brick.tier].hits;
     
     return (
       <View
@@ -450,7 +450,7 @@ export default function StakeSmashGame() {
           },
         ]}
       >
-        <Text style={styles.brickText}>{tier.apy}</Text>
+        <Text style={styles.brickText}>{tier.boost}</Text>
       </View>
     );
   };
@@ -466,8 +466,8 @@ export default function StakeSmashGame() {
             <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>STAKE SMASH</Text>
-            <Text style={styles.subtitle}>Break bricks, earn staking rewards!</Text>
+            <Text style={styles.title}>POWER SMASH</Text>
+            <Text style={styles.subtitle}>Break crystals, charge your power!</Text>
           </View>
           <View style={styles.statsContainer}>
             <Text style={styles.score}>{score}</Text>
@@ -479,23 +479,23 @@ export default function StakeSmashGame() {
           </View>
         </View>
 
-        {/* Staking Info */}
-        <View style={styles.stakingBar}>
-          <View style={styles.stakingInfo}>
-            <Text style={styles.stakingLabel}>STAKED</Text>
-            <Text style={styles.stakingValue}>${stakedAmount}</Text>
+        {/* Energy Info */}
+        <View style={styles.energyBar}>
+          <View style={styles.energyInfo}>
+            <Text style={styles.energyLabel}>ENERGY</Text>
+            <Text style={styles.energyValue}>{energyStored}</Text>
           </View>
-          <View style={styles.stakingInfo}>
-            <Text style={styles.stakingLabel}>APY</Text>
-            <Text style={[styles.stakingValue, { color: COLORS.success }]}>{apy}%</Text>
+          <View style={styles.energyInfo}>
+            <Text style={styles.energyLabel}>POWER</Text>
+            <Text style={[styles.energyValue, { color: COLORS.success }]}>⚡{powerLevel}</Text>
           </View>
-          <View style={styles.stakingInfo}>
-            <Text style={styles.stakingLabel}>COMBO</Text>
-            <Text style={[styles.stakingValue, { color: COLORS.neonPink }]}>x{combo}</Text>
+          <View style={styles.energyInfo}>
+            <Text style={styles.energyLabel}>COMBO</Text>
+            <Text style={[styles.energyValue, { color: COLORS.neonPink }]}>x{combo}</Text>
           </View>
-          <View style={styles.stakingInfo}>
-            <Text style={styles.stakingLabel}>LEVEL</Text>
-            <Text style={styles.stakingValue}>{level}</Text>
+          <View style={styles.energyInfo}>
+            <Text style={styles.energyLabel}>LEVEL</Text>
+            <Text style={styles.energyValue}>{level}</Text>
           </View>
         </View>
 
@@ -550,10 +550,10 @@ export default function StakeSmashGame() {
           {/* Overlays */}
           {gameState === 'ready' && (
             <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>STAKE SMASH</Text>
-              <Text style={styles.overlayIcon}>💎</Text>
-              <Text style={styles.overlayText}>Break staking pools to earn rewards!</Text>
-              <Text style={styles.overlayHint}>Higher tier = Better APY</Text>
+              <Text style={styles.overlayTitle}>POWER SMASH</Text>
+              <Text style={styles.overlayIcon}>⚡</Text>
+              <Text style={styles.overlayText}>Break power crystals to charge up!</Text>
+              <Text style={styles.overlayHint}>Higher tier = More power</Text>
               <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                 <Text style={styles.startBtnText}>▶ START</Text>
               </TouchableOpacity>
@@ -562,10 +562,10 @@ export default function StakeSmashGame() {
 
           {gameState === 'gameover' && (
             <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>UNSTAKED!</Text>
+              <Text style={styles.overlayTitle}>POWER DOWN!</Text>
               <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Total Staked: ${stakedAmount}</Text>
-              <Text style={styles.overlayText}>Best APY: {apy}%</Text>
+              <Text style={styles.overlayText}>Energy Collected: {energyStored}</Text>
+              <Text style={styles.overlayText}>Max Power: ⚡{powerLevel}</Text>
               <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                 <Text style={styles.startBtnText}>▶ RETRY</Text>
               </TouchableOpacity>
@@ -577,11 +577,11 @@ export default function StakeSmashGame() {
 
           {gameState === 'victory' && (
             <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>🎉 MAX STAKED!</Text>
+              <Text style={styles.overlayTitle}>🎉 MAX POWER!</Text>
               <Text style={styles.overlayScore}>Score: {score + 1000}</Text>
-              <Text style={styles.overlayText}>You mastered staking!</Text>
+              <Text style={styles.overlayText}>You mastered power charging!</Text>
               <Text style={styles.lessonText}>
-                Staking = Locking crypto to earn rewards (APY)
+                Patience pays off! Charging up over time gives bigger rewards!
               </Text>
               <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                 <Text style={styles.startBtnText}>▶ PLAY AGAIN</Text>
@@ -592,9 +592,9 @@ export default function StakeSmashGame() {
 
         {/* Info Box */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoTitle}>STAKING LESSON:</Text>
+          <Text style={styles.infoTitle}>POWER LESSON:</Text>
           <Text style={styles.infoText}>
-            Break higher-tier pools for better APY! Stack combos to maximize rewards - just like compound staking!
+            Break higher-tier crystals for more power! Stack combos to charge up faster - patience gives bigger rewards!
           </Text>
         </View>
 
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     color: COLORS.neonPink,
     marginLeft: 2,
   },
-  stakingBar: {
+  energyBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: COLORS.bgMedium,
@@ -683,15 +683,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.neonCyan + '40',
   },
-  stakingInfo: {
+  energyInfo: {
     alignItems: 'center',
   },
-  stakingLabel: {
+  energyLabel: {
     fontSize: 8,
     color: COLORS.textMuted,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  stakingValue: {
+  energyValue: {
     fontSize: 14,
     fontWeight: 'bold',
     color: COLORS.neonCyan,
