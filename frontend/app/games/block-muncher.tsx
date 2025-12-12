@@ -346,8 +346,10 @@ export default function BlockMuncherGame() {
       // Check ghost collision
       const hitGhost = ghosts.some(g => g.x === playerPos.x && g.y === playerPos.y);
       if (hitGhost) {
+        playHit();
         setLives(l => {
           if (l <= 1) {
+            playGameOver();
             setGameState('gameover');
             return 0;
           }
@@ -360,6 +362,7 @@ export default function BlockMuncherGame() {
 
       // Check victory
       if (blocks.length === 0) {
+        playLevelUp();
         setLevel(l => l + 1);
         setBlocks(generateBlocks());
         setScore(s => s + 100); // Level bonus
