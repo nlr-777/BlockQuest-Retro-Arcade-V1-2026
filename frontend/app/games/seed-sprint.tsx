@@ -74,6 +74,9 @@ interface WordCollectable {
 export default function SeedSprintGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  
+  // Audio hook
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
