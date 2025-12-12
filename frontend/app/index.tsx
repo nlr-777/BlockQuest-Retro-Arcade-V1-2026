@@ -182,9 +182,9 @@ export default function ArcadeHub() {
         <View style={styles.header}>
           <View>
             <Animated.Text style={[styles.logoText, glowStyle]}>
-              BLOCK QUEST
+              BLOCKQUEST
             </Animated.Text>
-            <Text style={styles.logoSubtext}>⚡ THE ARCADE ⚡</Text>
+            <Text style={styles.logoSubtext}>RETRO ARCADE</Text>
           </View>
           {profile && (
             <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/vault')}>
