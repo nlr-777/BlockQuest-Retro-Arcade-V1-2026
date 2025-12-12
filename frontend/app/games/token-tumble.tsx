@@ -119,7 +119,7 @@ const checkCollision = (board: Board, piece: Piece, offsetX = 0, offsetY = 0): b
 // Merge piece to board
 const mergePiece = (board: Board, piece: Piece): Board => {
   const newBoard = board.map(row => [...row]);
-  const color = TOKENS[piece.type].color;
+  const color = BLOCKS[piece.type].color;
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
       if (piece.shape[y][x]) {
@@ -177,7 +177,7 @@ const Cell: React.FC<{ color: string | null; x: number; y: number }> = ({ color,
 // Active piece component
 const ActivePiece: React.FC<{ piece: Piece }> = ({ piece }) => {
   const cells: JSX.Element[] = [];
-  const color = TOKENS[piece.type].color;
+  const color = BLOCKS[piece.type].color;
 
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
