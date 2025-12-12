@@ -41,10 +41,10 @@ import { Scanlines, NeonBox, Starfield } from '../src/components/RetroEffects';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Generate fake wallet address
-const generateWalletAddress = (username: string) => {
+// Generate player ID
+const generatePlayerId = (username: string) => {
   const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return `0x${hash.toString(16).padStart(8, '0')}...${(hash * 7).toString(16).slice(-6)}`;
+  return `PLAYER-${hash.toString(16).padStart(6, '0').toUpperCase()}`;
 };
 
 // Rarity badge colors
