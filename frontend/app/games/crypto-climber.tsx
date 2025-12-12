@@ -463,7 +463,7 @@ export default function CryptoClimberGame() {
             <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>CRYPTO CLIMBER</Text>
+            <Text style={styles.title}>TREASURE CLIMBER</Text>
             <Text style={styles.subtitle}>Collect Rare Eggs!</Text>
           </View>
           <View style={styles.statsContainer}>
