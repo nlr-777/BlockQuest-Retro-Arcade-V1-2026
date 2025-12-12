@@ -81,7 +81,7 @@ type GameState = 'menu' | 'playing' | 'paused' | 'gameover';
 type Board = (string | null)[][];
 
 interface Piece {
-  type: TokenType;
+  type: BlockType;
   shape: number[][];
   x: number;
   y: number;
