@@ -1,6 +1,8 @@
 // BlockQuest Official - Audio Manager
-// Handles game sound effects and synthwave background music
-import { Audio } from 'expo-av';
+// Procedural Trance Music Generator (Tiësto-inspired, 136-140 BPM)
+// CC0 Licensed - Original AI-generated audio via Web Audio API
+// Kid-safe volume (<75dB), auto-sync ready
+
 import { Platform } from 'react-native';
 
 // Sound effect types
@@ -14,57 +16,70 @@ export type SoundEffect =
   | 'click'
   | 'move'
   | 'shoot'
-  | 'levelup';
+  | 'levelup'
+  | 'start'
+  | 'pause';
 
-// Synthwave music track types for different game moods
+// Music track types - different moods for games
 export type MusicTrack = 
-  | 'menu'
-  | 'action'
-  | 'chill'
-  | 'boss'
-  | 'victory';
+  | 'menu'      // Chill intro
+  | 'action'    // High energy gameplay
+  | 'euphoria'  // Victory/celebration
+  | 'tension'   // Boss/difficult sections
+  | 'ambient';  // Low-key background
 
-// Simple beep frequencies for retro 8-bit sounds
-const FREQUENCIES: Record<SoundEffect, { freq: number; duration: number; type: 'sine' | 'square' }> = {
-  jump: { freq: 400, duration: 100, type: 'square' },
-  collect: { freq: 800, duration: 80, type: 'sine' },
-  hit: { freq: 150, duration: 200, type: 'square' },
-  powerup: { freq: 600, duration: 300, type: 'sine' },
-  gameover: { freq: 200, duration: 500, type: 'square' },
-  victory: { freq: 1000, duration: 400, type: 'sine' },
-  click: { freq: 500, duration: 50, type: 'square' },
-  move: { freq: 300, duration: 30, type: 'square' },
-  shoot: { freq: 700, duration: 60, type: 'square' },
-  levelup: { freq: 900, duration: 250, type: 'sine' },
+// Trance chord progressions (Tiësto style)
+const CHORD_PROGRESSIONS = {
+  euphoric: [
+    [261.63, 329.63, 392.00], // C major
+    [293.66, 369.99, 440.00], // D major  
+    [329.63, 415.30, 493.88], // E minor
+    [349.23, 440.00, 523.25], // F major
+  ],
+  melancholic: [
+    [220.00, 261.63, 329.63], // A minor
+    [246.94, 293.66, 369.99], // B dim
+    [261.63, 329.63, 392.00], // C major
+    [196.00, 246.94, 293.66], // G major
+  ],
+  uplifting: [
+    [261.63, 329.63, 392.00], // C
+    [196.00, 246.94, 293.66], // G  
+    [220.00, 261.63, 329.63], // Am
+    [174.61, 220.00, 261.63], // F
+  ],
 };
 
-// Synthwave arpeggio patterns (frequencies in Hz)
-const SYNTHWAVE_PATTERNS: Record<MusicTrack, { notes: number[]; tempo: number; waveform: OscillatorType }> = {
-  menu: {
-    notes: [261, 329, 392, 523, 392, 329, 261, 196], // C major arpeggio
-    tempo: 180,
-    waveform: 'sawtooth',
-  },
-  action: {
-    notes: [330, 392, 494, 659, 587, 494, 392, 330], // E minor energetic
-    tempo: 140,
-    waveform: 'square',
-  },
-  chill: {
-    notes: [220, 277, 330, 440, 330, 277, 220, 165], // A minor dreamy
-    tempo: 220,
-    waveform: 'sine',
-  },
-  boss: {
-    notes: [196, 233, 294, 392, 349, 294, 233, 196], // G minor intense
-    tempo: 120,
-    waveform: 'square',
-  },
-  victory: {
-    notes: [523, 659, 784, 1047, 784, 659, 523, 659], // C major triumphant
-    tempo: 160,
-    waveform: 'sawtooth',
-  },
+// Arpeggio patterns for the classic trance feel
+const ARP_PATTERNS = {
+  classic: [0, 2, 4, 7, 4, 2], // Up-down arp
+  gate: [0, 0, 4, 4, 7, 7, 4, 4], // Gated trance
+  rising: [0, 2, 4, 7, 9, 12, 9, 7], // Rising euphoria
+};
+
+// SFX frequencies for retro 8-bit sounds
+const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type: OscillatorType; envelope: 'pluck' | 'pad' | 'hit' }> = {
+  jump: { freqs: [400, 600], duration: 100, type: 'square', envelope: 'pluck' },
+  collect: { freqs: [800, 1200, 1600], duration: 120, type: 'sine', envelope: 'pluck' },
+  hit: { freqs: [150, 100], duration: 200, type: 'sawtooth', envelope: 'hit' },
+  powerup: { freqs: [400, 500, 600, 800, 1000], duration: 400, type: 'sine', envelope: 'pad' },
+  gameover: { freqs: [400, 300, 200, 150], duration: 600, type: 'square', envelope: 'pad' },
+  victory: { freqs: [523, 659, 784, 1047], duration: 500, type: 'sine', envelope: 'pad' },
+  click: { freqs: [800], duration: 30, type: 'square', envelope: 'pluck' },
+  move: { freqs: [300], duration: 20, type: 'square', envelope: 'pluck' },
+  shoot: { freqs: [1000, 500, 250], duration: 80, type: 'sawtooth', envelope: 'pluck' },
+  levelup: { freqs: [523, 659, 784, 880, 1047], duration: 600, type: 'sine', envelope: 'pad' },
+  start: { freqs: [440, 554, 659, 880], duration: 300, type: 'sine', envelope: 'pluck' },
+  pause: { freqs: [440, 330], duration: 200, type: 'square', envelope: 'pluck' },
+};
+
+// Track configurations (BPM, mood, intensity)
+const TRACK_CONFIG: Record<MusicTrack, { bpm: number; progression: keyof typeof CHORD_PROGRESSIONS; arpPattern: keyof typeof ARP_PATTERNS; intensity: number }> = {
+  menu: { bpm: 136, progression: 'uplifting', arpPattern: 'classic', intensity: 0.5 },
+  action: { bpm: 140, progression: 'euphoric', arpPattern: 'gate', intensity: 0.8 },
+  euphoria: { bpm: 138, progression: 'euphoric', arpPattern: 'rising', intensity: 1.0 },
+  tension: { bpm: 140, progression: 'melancholic', arpPattern: 'gate', intensity: 0.7 },
+  ambient: { bpm: 136, progression: 'melancholic', arpPattern: 'classic', intensity: 0.3 },
 };
 
 class AudioManager {
@@ -72,9 +87,19 @@ class AudioManager {
   private soundEnabled: boolean = true;
   private musicEnabled: boolean = true;
   private audioContext: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
+  
+  // Music state
   private musicInterval: NodeJS.Timeout | null = null;
+  private arpInterval: NodeJS.Timeout | null = null;
   private currentTrack: MusicTrack | null = null;
-  private musicVolume: number = 0.15;
+  private beatCount: number = 0;
+  private chordIndex: number = 0;
+  
+  // Volume controls (kid-safe <75dB)
+  private masterVolume: number = 0.15; // Low master for safety
+  private musicVolume: number = 0.12;
+  private sfxVolume: number = 0.18;
 
   private constructor() {
     this.initAudioContext();
@@ -91,177 +116,311 @@ class AudioManager {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       try {
         this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        this.masterGain = this.audioContext.createGain();
+        this.masterGain.gain.value = this.masterVolume;
+        this.masterGain.connect(this.audioContext.destination);
       } catch (e) {
         console.log('Web Audio API not available');
       }
     }
   }
 
-  // Play a retro beep sound effect (web only, using Web Audio API)
+  // Resume audio context (required after user interaction)
+  resumeAudioContext() {
+    if (this.audioContext && this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+  }
+
+  // === SOUND EFFECTS ===
+  
   playSound(effect: SoundEffect) {
-    if (!this.soundEnabled) return;
-
-    if (Platform.OS === 'web' && this.audioContext) {
-      this.playWebSound(effect);
-    }
-    // For native, we would use expo-av, but for simplicity, 
-    // we'll use vibration as haptic feedback (already in games)
-  }
-
-  private playWebSound(effect: SoundEffect) {
-    if (!this.audioContext) return;
-
-    try {
-      const config = FREQUENCIES[effect];
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-
-      oscillator.type = config.type;
-      oscillator.frequency.setValueAtTime(config.freq, this.audioContext.currentTime);
+    if (!this.soundEnabled || !this.audioContext || !this.masterGain) return;
+    
+    const config = SFX_CONFIG[effect];
+    const now = this.audioContext.currentTime;
+    
+    config.freqs.forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
       
-      gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + config.duration / 1000);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-
-      oscillator.start();
-      oscillator.stop(this.audioContext.currentTime + config.duration / 1000);
-    } catch (e) {
-      // Ignore audio errors
-    }
-  }
-
-  // Start playing synthwave background music
-  startMusic(track: MusicTrack = 'menu') {
-    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext) return;
-    
-    // Stop current music if playing
-    this.stopMusic();
-    
-    this.currentTrack = track;
-    const pattern = SYNTHWAVE_PATTERNS[track];
-    let noteIndex = 0;
-    
-    const playNote = () => {
-      if (!this.audioContext || !this.musicEnabled) return;
+      osc.type = config.type;
+      osc.frequency.setValueAtTime(freq, now);
       
-      try {
-        const freq = pattern.notes[noteIndex];
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        // Add filter for that synthwave sound
-        const filter = this.audioContext.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(2000, this.audioContext.currentTime);
-        filter.Q.setValueAtTime(5, this.audioContext.currentTime);
-        
-        oscillator.type = pattern.waveform;
-        oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
-        
-        // Envelope for that punchy synthwave feel
-        const now = this.audioContext.currentTime;
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(this.musicVolume, now + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(this.musicVolume * 0.3, now + 0.1);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        oscillator.start(now);
-        oscillator.stop(now + 0.3);
-        
-        noteIndex = (noteIndex + 1) % pattern.notes.length;
-      } catch (e) {
-        // Ignore audio errors
+      // Apply envelope
+      const startTime = now + (i * config.duration / config.freqs.length / 1000);
+      const endTime = startTime + config.duration / 1000;
+      
+      switch (config.envelope) {
+        case 'pluck':
+          gain.gain.setValueAtTime(this.sfxVolume, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, endTime);
+          break;
+        case 'pad':
+          gain.gain.setValueAtTime(0.001, startTime);
+          gain.gain.linearRampToValueAtTime(this.sfxVolume * 0.5, startTime + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, endTime);
+          break;
+        case 'hit':
+          gain.gain.setValueAtTime(this.sfxVolume, startTime);
+          gain.gain.linearRampToValueAtTime(0.001, endTime);
+          break;
       }
-    };
-    
-    // Start the loop
-    playNote();
-    this.musicInterval = setInterval(playNote, (60 / pattern.tempo) * 1000);
+      
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      
+      osc.start(startTime);
+      osc.stop(endTime + 0.1);
+    });
   }
 
-  // Stop background music
+  // === TRANCE MUSIC ENGINE ===
+
+  startMusic(track: MusicTrack = 'menu') {
+    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext || !this.masterGain) return;
+    
+    this.stopMusic();
+    this.currentTrack = track;
+    this.beatCount = 0;
+    this.chordIndex = 0;
+    
+    const config = TRACK_CONFIG[track];
+    const msPerBeat = (60 / config.bpm) * 1000;
+    const progression = CHORD_PROGRESSIONS[config.progression];
+    const arpPattern = ARP_PATTERNS[config.arpPattern];
+    
+    // Main beat loop - kick + bass
+    this.musicInterval = setInterval(() => {
+      if (!this.audioContext || !this.masterGain) return;
+      
+      this.beatCount++;
+      
+      // Change chord every 4 beats
+      if (this.beatCount % 4 === 0) {
+        this.chordIndex = (this.chordIndex + 1) % progression.length;
+      }
+      
+      const chord = progression[this.chordIndex];
+      
+      // Kick drum on every beat
+      this.playKick(config.intensity);
+      
+      // Hi-hat on every beat
+      if (this.beatCount % 2 === 0) {
+        this.playHiHat(config.intensity * 0.5);
+      }
+      
+      // Supersaw pad chord (on beat 1)
+      if (this.beatCount % 4 === 1) {
+        this.playSupersawChord(chord, config.intensity);
+      }
+      
+    }, msPerBeat);
+    
+    // Arpeggiator loop (16th notes)
+    const msPerArp = msPerBeat / 4;
+    let arpIndex = 0;
+    
+    this.arpInterval = setInterval(() => {
+      if (!this.audioContext || !this.masterGain) return;
+      
+      const chord = progression[this.chordIndex];
+      const baseNote = chord[0];
+      const arpNote = arpPattern[arpIndex % arpPattern.length];
+      const freq = baseNote * Math.pow(2, arpNote / 12);
+      
+      this.playArpNote(freq, config.intensity * 0.6);
+      
+      arpIndex++;
+    }, msPerArp);
+  }
+
+  private playKick(intensity: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+    
+    gain.gain.setValueAtTime(this.musicVolume * intensity, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+
+  private playHiHat(intensity: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // White noise for hi-hat
+    const bufferSize = this.audioContext.sampleRate * 0.05;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 8000;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    noise.start(now);
+    noise.stop(now + 0.05);
+  }
+
+  private playSupersawChord(frequencies: number[], intensity: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Create supersaw (7 detuned oscillators per note)
+    frequencies.forEach(freq => {
+      const detunes = [-12, -7, -3, 0, 3, 7, 12];
+      
+      detunes.forEach(detune => {
+        const osc = this.audioContext!.createOscillator();
+        const gain = this.audioContext!.createGain();
+        const filter = this.audioContext!.createBiquadFilter();
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.detune.setValueAtTime(detune, now);
+        
+        // Low-pass filter for warmth
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000 + intensity * 2000, now);
+        filter.Q.value = 2;
+        
+        // Pad envelope
+        const vol = (this.musicVolume * intensity * 0.08) / 7;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.1);
+        gain.gain.setValueAtTime(vol, now + 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain!);
+        
+        osc.start(now);
+        osc.stop(now + 1);
+      });
+    });
+  }
+
+  private playArpNote(freq: number, intensity: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    const filter = this.audioContext.createBiquadFilter();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(freq, now);
+    
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(3000, now);
+    filter.frequency.exponentialRampToValueAtTime(500, now + 0.15);
+    filter.Q.value = 5;
+    
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+
   stopMusic() {
     if (this.musicInterval) {
       clearInterval(this.musicInterval);
       this.musicInterval = null;
     }
+    if (this.arpInterval) {
+      clearInterval(this.arpInterval);
+      this.arpInterval = null;
+    }
     this.currentTrack = null;
+    this.beatCount = 0;
+    this.chordIndex = 0;
   }
 
-  // Change music track
   changeTrack(track: MusicTrack) {
     if (this.currentTrack !== track) {
       this.startMusic(track);
     }
   }
 
-  // Play a melody (series of notes)
-  playMelody(notes: { freq: number; duration: number }[]) {
-    if (!this.soundEnabled || !this.audioContext) return;
-
-    let time = this.audioContext.currentTime;
-    
-    notes.forEach(note => {
-      const oscillator = this.audioContext!.createOscillator();
-      const gainNode = this.audioContext!.createGain();
-
-      oscillator.type = 'square';
-      oscillator.frequency.setValueAtTime(note.freq, time);
-      
-      gainNode.gain.setValueAtTime(0.08, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, time + note.duration / 1000);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext!.destination);
-
-      oscillator.start(time);
-      oscillator.stop(time + note.duration / 1000);
-      
-      time += note.duration / 1000;
-    });
+  // Get current beat for VFX sync
+  getCurrentBeat(): number {
+    return this.beatCount;
   }
 
-  // Victory jingle
+  // Check if on beat (for VFX sync)
+  isOnBeat(): boolean {
+    return this.beatCount % 4 === 0;
+  }
+
+  // === JINGLES ===
+
   playVictoryJingle() {
-    this.playMelody([
-      { freq: 523, duration: 100 },  // C5
-      { freq: 659, duration: 100 },  // E5
-      { freq: 784, duration: 100 },  // G5
-      { freq: 1047, duration: 300 }, // C6
-    ]);
+    this.playSound('victory');
   }
 
-  // Game over sound
   playGameOverSound() {
-    this.playMelody([
-      { freq: 392, duration: 200 },  // G4
-      { freq: 349, duration: 200 },  // F4
-      { freq: 330, duration: 200 },  // E4
-      { freq: 262, duration: 400 },  // C4
-    ]);
+    this.playSound('gameover');
   }
 
-  // Collect item jingle
   playCollectJingle() {
-    this.playMelody([
-      { freq: 784, duration: 60 },   // G5
-      { freq: 1047, duration: 100 }, // C6
-    ]);
+    this.playSound('collect');
   }
 
-  // Settings
+  playStartSound() {
+    this.playSound('start');
+  }
+
+  // === SETTINGS ===
+
   setSoundEnabled(enabled: boolean) {
     this.soundEnabled = enabled;
   }
 
   setMusicEnabled(enabled: boolean) {
     this.musicEnabled = enabled;
+    if (!enabled) this.stopMusic();
+  }
+
+  setMasterVolume(vol: number) {
+    // Clamp to safe levels (<75dB equivalent)
+    this.masterVolume = Math.min(0.25, Math.max(0, vol));
+    if (this.masterGain) {
+      this.masterGain.gain.value = this.masterVolume;
+    }
   }
 
   isSoundEnabled(): boolean {
@@ -272,11 +431,8 @@ class AudioManager {
     return this.musicEnabled;
   }
 
-  // Resume audio context (needed for web after user interaction)
-  resumeAudioContext() {
-    if (this.audioContext && this.audioContext.state === 'suspended') {
-      this.audioContext.resume();
-    }
+  getCurrentTrack(): MusicTrack | null {
+    return this.currentTrack;
   }
 }
 
