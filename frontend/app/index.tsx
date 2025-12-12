@@ -346,9 +346,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    height: CARD_WIDTH * 1.2,
+    height: 180,
     marginBottom: 16,
-    position: 'relative',
   },
   glowBorder: {
     position: 'absolute',
