@@ -103,6 +103,12 @@ const InvaderSprite: React.FC<{ invader: Invader }> = ({ invader }) => {
 export default function ChainInvadersGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  
+  // Audio hook for game sounds and music
+  const { 
+    playShoot, playCollect, playHit, playGameStart, playGameOver, 
+    playLevelUp, playPowerup, playMove 
+  } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
