@@ -234,6 +234,7 @@ export default function CryptoClimberGame() {
           py < egg.y + EGG_SIZE &&
           py + PLAYER_SIZE > egg.y) {
         // Collect egg
+        playCollect();
         setScore(s => s + egg.trait.points);
         setCollectedEggs(c => [...c, egg.trait]);
         setLastCollectedEgg(egg.trait);
