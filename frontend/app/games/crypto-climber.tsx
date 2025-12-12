@@ -1,5 +1,5 @@
-// BlockQuest Official - Crypto Climber
-// Donkey Kong Style Platformer - Teaches NFT Concepts
+// BlockQuest Official - Treasure Climber
+// Donkey Kong Style Platformer - Teaches Unique Collectibles Concepts
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
