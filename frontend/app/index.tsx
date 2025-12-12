@@ -80,6 +80,7 @@ export default function ArcadeHub() {
   const { profile, initProfile, highScores } = useGameStore();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [username, setUsername] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig | null>(AVATARS[0]);
 
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
@@ -98,14 +99,30 @@ export default function ArcadeHub() {
   useEffect(() => {
     if (!profile) {
       setShowOnboarding(true);
+    } else {
+      // Start menu music when hub loads
+      audioManager.resumeAudioContext();
+      audioManager.startMusic('menu');
     }
+    
+    return () => {
+      audioManager.stopMusic();
+    };
   }, [profile]);
 
   const handleCreateProfile = async () => {
-    if (username.trim().length >= 3) {
-      await initProfile(username.trim());
+    if (username.trim().length >= 3 && selectedAvatar) {
+      audioManager.playSound('powerup');
+      await initProfile(username.trim(), selectedAvatar.id);
       setShowOnboarding(false);
+      // Start menu music after profile created
+      audioManager.startMusic('menu');
     }
+  };
+
+  const handleAvatarSelect = (avatar: AvatarConfig) => {
+    setSelectedAvatar(avatar);
+    audioManager.playSound('click');
   };
 
   const handleGamePress = (game: GameConfig) => {
