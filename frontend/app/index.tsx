@@ -1,5 +1,5 @@
 // BlockQuest Official - Retro Arcade - Main Hub
-// 80s/90s RETRO ARCADE AESTHETIC
+// Retro Cabinet Style - All 15 Games Display
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -23,12 +23,13 @@ import Animated, {
   withSequence,
   withTiming,
   FadeInDown,
+  FadeIn,
 } from 'react-native-reanimated';
 
 import { COLORS } from '../src/constants/colors';
-import { GAMES, PLAYABLE_GAMES, COMING_SOON_GAMES, GameConfig } from '../src/constants/games';
+import { GAMES, GameConfig } from '../src/constants/games';
 import { useGameStore } from '../src/store/gameStore';
-import { Scanlines, Starfield, RetroGrid } from '../src/components/RetroEffects';
+import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import {
   IconGhost,
   IconTetris,
@@ -44,11 +45,10 @@ import {
   IconStar,
   IconHash,
   IconVault,
-  PIXEL_ICONS,
 } from '../src/components/PixelIcons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
+const CARD_SIZE = (SCREEN_WIDTH - 48) / 3; // 3 columns
 
 // Game icon mapping
 const getGameIcon = (gameId: string) => {
@@ -72,21 +72,94 @@ const getGameIcon = (gameId: string) => {
   return iconMap[gameId] || IconBlockChain;
 };
 
+// Compact Game Card for Cabinet Layout
+const CabinetGameCard = ({ game, index }: { game: GameConfig; index: number }) => {
+  const router = useRouter();
+  const { highScores } = useGameStore();
+  const IconComponent = getGameIcon(game.id);
+  
+  const handlePress = () => {
+    if (game.isPlayable) {
+      router.push(game.route as any);
+    } else {
+      router.push(`/games/coming-soon?id=${game.id}` as any);
+    }
+  };
+
+  return (
+    <Animated.View entering={FadeInDown.delay(index * 50).duration(400)}>
+      <TouchableOpacity
+        style={[
+          styles.cabinetCard,
+          { borderColor: game.color },
+          !game.isPlayable && styles.cabinetCardLocked,
+        ]}
+        onPress={handlePress}
+        activeOpacity={0.7}
+      >
+        {/* Top glow effect */}
+        <View style={[styles.cardGlow, { backgroundColor: game.color }]} />
+        
+        {/* Game Icon */}
+        <View style={[styles.iconContainer, { backgroundColor: `${game.color}20` }]}>
+          <IconComponent size={28} color={game.color} />
+        </View>
+        
+        {/* Game Title - Short version */}
+        <Text style={[styles.cardTitle, { color: game.color }]} numberOfLines={1}>
+          {game.title.split(' ')[0]}
+        </Text>
+        
+        {/* Status indicator */}
+        <View style={[
+          styles.statusDot,
+          { backgroundColor: game.isPlayable ? COLORS.success : COLORS.textMuted }
+        ]}>
+          <Text style={styles.statusIcon}>
+            {game.isPlayable ? '▶' : '◆'}
+          </Text>
+        </View>
+        
+        {/* High score if exists */}
+        {highScores[game.id] > 0 && (
+          <Text style={styles.miniScore}>{highScores[game.id]}</Text>
+        )}
+        
+        {/* Locked overlay for coming soon */}
+        {!game.isPlayable && (
+          <View style={styles.lockedOverlay}>
+            <Text style={styles.lockedText}>SOON</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
+
 export default function ArcadeHub() {
   const router = useRouter();
   const { profile, initProfile, highScores } = useGameStore();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [username, setUsername] = useState('');
-  const [activeTab, setActiveTab] = useState<'playable' | 'coming-soon'>('playable');
 
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
+  const marqueeGlow = useSharedValue(0.6);
 
   useEffect(() => {
     glowOpacity.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 1500 }),
         withTiming(0.5, { duration: 1500 })
+      ),
+      -1,
+      true
+    );
+    
+    marqueeGlow.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 800 }),
+        withTiming(0.6, { duration: 800 })
       ),
       -1,
       true
@@ -107,170 +180,102 @@ export default function ArcadeHub() {
   };
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
-  const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
+  const playableCount = GAMES.filter(g => g.isPlayable).length;
+  const comingSoonCount = GAMES.filter(g => !g.isPlayable).length;
 
   const glowStyle = useAnimatedStyle(() => ({
     textShadowRadius: 10 + glowOpacity.value * 10,
   }));
 
-  // Game Card Component
-  const GameCard = ({ game, index }: { game: GameConfig; index: number }) => {
-    const IconComponent = getGameIcon(game.id);
-    
-    return (
-      <Animated.View entering={FadeInDown.delay(index * 80)}>
-        <TouchableOpacity
-          style={[styles.gameCard, { borderColor: game.color }]}
-          onPress={() => {
-            if (game.isPlayable) {
-              router.push(game.route as any);
-            } else {
-              router.push(`/games/coming-soon?id=${game.id}` as any);
-            }
-          }}
-          activeOpacity={0.8}
-        >
-          {/* Glow effect */}
-          <View style={[styles.cardGlow, { backgroundColor: game.color }]} />
-          
-          {/* Icon */}
-          <View style={[styles.gameIcon, { backgroundColor: `${game.color}25` }]}>
-            <IconComponent size={36} color={game.color} />
-          </View>
-          
-          {/* Title */}
-          <Text style={[styles.gameTitle, { color: game.color }]}>{game.title}</Text>
-          
-          {/* Subtitle */}
-          <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
-          
-          {/* Status */}
-          <View style={styles.gameStatusContainer}>
-            <View style={[
-              styles.statusBadge, 
-              { backgroundColor: game.isPlayable ? COLORS.success + '30' : COLORS.textMuted + '30' }
-            ]}>
-              <Text style={[
-                styles.statusText, 
-                { color: game.isPlayable ? COLORS.success : COLORS.textMuted }
-              ]}>
-                {game.isPlayable ? '▶ PLAY' : 'SOON'}
-              </Text>
-            </View>
-            {highScores[game.id] > 0 && (
-              <Text style={styles.highScore}>HI:{highScores[game.id]}</Text>
-            )}
-          </View>
-          
-          {/* Difficulty indicator */}
-          <View style={[styles.difficultyDot, { backgroundColor: game.accentColor }]}>
-            <Text style={styles.difficultyText}>{game.difficulty[0]}</Text>
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
+  const marqueeStyle = useAnimatedStyle(() => ({
+    opacity: 0.6 + marqueeGlow.value * 0.4,
+  }));
 
   return (
     <View style={styles.container}>
       {/* Background Effects */}
-      <Starfield count={40} />
-      <Scanlines opacity={0.06} />
+      <Starfield count={30} />
+      <Scanlines opacity={0.05} />
       
       <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Animated.Text style={[styles.logoText, glowStyle]}>
-              BLOCKQUEST
-            </Animated.Text>
-            <Text style={styles.logoSubtext}>RETRO ARCADE</Text>
-          </View>
+        {/* Arcade Cabinet Header */}
+        <View style={styles.cabinetHeader}>
+          {/* Marquee Top */}
+          <Animated.View style={[styles.marquee, marqueeStyle]}>
+            <View style={styles.marqueeInner}>
+              <Animated.Text style={[styles.marqueeTitle, glowStyle]}>
+                BLOCKQUEST
+              </Animated.Text>
+              <Text style={styles.marqueeSubtitle}>RETRO ARCADE</Text>
+            </View>
+          </Animated.View>
+          
+          {/* Player Info Bar */}
           {profile && (
-            <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/vault')}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{profile.username[0].toUpperCase()}</Text>
+            <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
+              <View style={styles.playerAvatar}>
+                <Text style={styles.avatarLetter}>{profile.username[0]}</Text>
               </View>
-              <View>
-                <Text style={styles.profileLevel}>LV.{profile.level}</Text>
-                <Text style={styles.profilePts}>{totalHighScore}</Text>
+              <View style={styles.playerInfo}>
+                <Text style={styles.playerName}>{profile.username}</Text>
+                <Text style={styles.playerStats}>LV.{profile.level} • {totalHighScore} PTS</Text>
+              </View>
+              <View style={styles.coinSlot}>
+                <IconBlockChain size={20} color={COLORS.neonYellow} />
               </View>
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Stats */}
-        {profile && (
-          <View style={styles.statsBar}>
-            <View style={styles.statItem}>
-              <IconCrown size={18} color={COLORS.neonYellow} />
-              <Text style={styles.statText}>{profile.badges.length}</Text>
+        {/* Game Selection Panel */}
+        <View style={styles.selectionPanel}>
+          <View style={styles.panelHeader}>
+            <View style={styles.panelLights}>
+              <View style={[styles.light, { backgroundColor: COLORS.success }]} />
+              <View style={[styles.light, { backgroundColor: COLORS.neonYellow }]} />
+              <View style={[styles.light, { backgroundColor: COLORS.neonPink }]} />
             </View>
-            <View style={styles.statItem}>
-              <IconBlockChain size={18} color={COLORS.neonCyan} />
-              <Text style={styles.statText}>{profile.gamesPlayed}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <IconLightning size={18} color={COLORS.neonPink} />
-              <Text style={styles.statText}>{profile.daoVotingPower}</Text>
-            </View>
+            <Text style={styles.panelTitle}>SELECT GAME</Text>
+            <Text style={styles.gameCount}>{playableCount} READY • {comingSoonCount} COMING</Text>
           </View>
-        )}
-
-        {/* Tabs */}
-        <View style={styles.tabs}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'playable' && styles.activeTab]}
-            onPress={() => setActiveTab('playable')}
+          
+          {/* Games Grid - 3 columns, 5 rows */}
+          <ScrollView
+            style={styles.gamesScroll}
+            contentContainerStyle={styles.gamesContainer}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.tabText, activeTab === 'playable' && styles.activeTabText]}>
-              ▶ PLAY NOW ({PLAYABLE_GAMES.length})
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'coming-soon' && styles.activeTab]}
-            onPress={() => setActiveTab('coming-soon')}
-          >
-            <Text style={[styles.tabText, activeTab === 'coming-soon' && styles.activeTabText]}>
-              ⏳ COMING SOON ({COMING_SOON_GAMES.length})
-            </Text>
-          </TouchableOpacity>
+            <View style={styles.gamesGrid}>
+              {GAMES.map((game, index) => (
+                <CabinetGameCard key={game.id} game={game} index={index} />
+              ))}
+            </View>
+            
+            {/* Bottom Message */}
+            <View style={styles.bottomMessage}>
+              <Text style={styles.bottomText}>⬡ LEARN WEB3 WHILE YOU PLAY ⬡</Text>
+              <Text style={styles.bottomSubtext}>Each game teaches blockchain concepts</Text>
+            </View>
+          </ScrollView>
         </View>
 
-        {/* Game Grid */}
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.gamesGrid}>
-            {displayGames.map((game, index) => (
-              <GameCard key={game.id} game={game} index={index} />
-            ))}
-          </View>
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>⬡ LEARN WEB3 WHILE YOU PLAY ⬡</Text>
-            <Text style={styles.footerSubtext}>Each game teaches blockchain concepts</Text>
-          </View>
-        </ScrollView>
-
-        {/* Bottom Nav */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem}>
-            <IconBlockChain size={24} color={COLORS.neonPink} />
-            <Text style={[styles.navText, { color: COLORS.neonPink }]}>GAMES</Text>
+        {/* Bottom Control Panel */}
+        <View style={styles.controlPanel}>
+          <TouchableOpacity style={[styles.controlBtn, styles.activeBtn]}>
+            <IconBlockChain size={22} color={COLORS.neonPink} />
+            <Text style={[styles.controlText, styles.activeText]}>GAMES</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/vault')}>
-            <IconVault size={24} color={COLORS.textSecondary} />
-            <Text style={styles.navText}>VAULT</Text>
+          <TouchableOpacity style={styles.controlBtn} onPress={() => router.push('/vault')}>
+            <IconVault size={22} color={COLORS.textSecondary} />
+            <Text style={styles.controlText}>VAULT</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/leaderboard')}>
-            <IconCrown size={24} color={COLORS.textSecondary} />
-            <Text style={styles.navText}>RANKS</Text>
+          <TouchableOpacity style={styles.controlBtn} onPress={() => router.push('/leaderboard')}>
+            <IconCrown size={22} color={COLORS.textSecondary} />
+            <Text style={styles.controlText}>RANKS</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-sharp" size={24} color={COLORS.textSecondary} />
-            <Text style={styles.navText}>CONFIG</Text>
+          <TouchableOpacity style={styles.controlBtn} onPress={() => router.push('/settings')}>
+            <Ionicons name="settings-sharp" size={22} color={COLORS.textSecondary} />
+            <Text style={styles.controlText}>CONFIG</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -282,18 +287,17 @@ export default function ArcadeHub() {
           style={styles.modalOverlay}
         >
           <Starfield count={50} />
-          <View style={styles.modalContent}>
-            {/* Neon border effect */}
+          <Animated.View entering={FadeIn.duration(500)} style={styles.modalContent}>
             <View style={styles.modalGlow} />
             
-            <Text style={styles.modalTitle}>WELCOME PLAYER</Text>
-            <Text style={styles.modalSubtitle}>Insert coin to continue...</Text>
+            <Text style={styles.modalTitle}>INSERT COIN</Text>
+            <Text style={styles.modalSubtitle}>Press START to begin...</Text>
             
-            <View style={styles.insertCoin}>
+            <View style={styles.coinAnimation}>
               <IconBlockChain size={60} color={COLORS.neonPink} />
             </View>
             
-            <Text style={styles.inputLabel}>ENTER YOUR HANDLE</Text>
+            <Text style={styles.inputLabel}>ENTER HANDLE</Text>
             <TextInput
               style={styles.input}
               placeholder="AAA"
@@ -309,11 +313,11 @@ export default function ArcadeHub() {
               onPress={handleCreateProfile}
               disabled={username.trim().length < 3}
             >
-              <Text style={styles.startButtonText}>▶ START QUEST</Text>
+              <Text style={styles.startButtonText}>▶ START</Text>
             </TouchableOpacity>
             
-            <Text style={styles.disclaimer}>KID SAFE MODE • NO REAL CRYPTO</Text>
-          </View>
+            <Text style={styles.disclaimer}>KID SAFE • NO REAL CRYPTO</Text>
+          </Animated.View>
         </KeyboardAvoidingView>
       </Modal>
     </View>
@@ -328,252 +332,280 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  
+  // Cabinet Header
+  cabinetHeader: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
   },
-  logoText: {
-    fontSize: 24,
+  marquee: {
+    backgroundColor: COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 3,
+    borderColor: COLORS.neonPink,
+    padding: 12,
+    marginBottom: 8,
+  },
+  marqueeInner: {
+    alignItems: 'center',
+  },
+  marqueeTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: COLORS.neonPink,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textShadowColor: COLORS.neonPink,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
-    letterSpacing: 2,
+    letterSpacing: 4,
   },
-  logoSubtext: {
-    fontSize: 11,
+  marqueeSubtitle: {
+    fontSize: 12,
     color: COLORS.neonCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 3,
-    textShadowColor: COLORS.neonCyan,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
+    letterSpacing: 6,
+    marginTop: 2,
   },
-  profileBtn: {
+  
+  // Player Bar
+  playerBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 0, 255, 0.15)',
-    padding: 8,
+    backgroundColor: 'rgba(0, 255, 255, 0.1)',
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.neonPink,
+    borderWidth: 2,
+    borderColor: COLORS.neonCyan + '60',
+    padding: 8,
+    marginBottom: 8,
   },
-  avatar: {
+  playerAvatar: {
     width: 36,
     height: 36,
     borderRadius: 4,
     backgroundColor: COLORS.neonPink,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
   },
-  avatarText: {
-    color: COLORS.bgDark,
-    fontWeight: 'bold',
+  avatarLetter: {
     fontSize: 18,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  profileLevel: {
-    color: COLORS.neonCyan,
-    fontSize: 10,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
-  },
-  profilePts: {
-    color: COLORS.neonYellow,
-    fontSize: 12,
+    color: '#FFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
   },
-  statsBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    backgroundColor: 'rgba(0, 255, 255, 0.08)',
-    marginHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: COLORS.neonCyan + '40',
+  playerInfo: {
+    flex: 1,
+    marginLeft: 10,
   },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  statText: {
-    color: COLORS.textPrimary,
+  playerName: {
     fontSize: 14,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
+    color: COLORS.textPrimary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  tabs: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginBottom: 8,
+  playerStats: {
+    fontSize: 10,
+    color: COLORS.neonYellow,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
+  coinSlot: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.bgDark,
+    borderWidth: 2,
+    borderColor: COLORS.neonYellow,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 3,
-    borderBottomColor: 'transparent',
   },
-  activeTab: {
-    borderBottomColor: COLORS.neonPink,
+  
+  // Selection Panel
+  selectionPanel: {
+    flex: 1,
+    marginHorizontal: 12,
+    backgroundColor: COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: COLORS.neonPink + '80',
+    overflow: 'hidden',
   },
-  tabText: {
-    color: COLORS.textMuted,
-    fontSize: 11,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  panelHeader: {
+    backgroundColor: COLORS.bgDark,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.neonPink + '40',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  panelLights: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  light: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  panelTitle: {
+    flex: 1,
+    fontSize: 14,
     fontWeight: 'bold',
-    letterSpacing: 1,
+    color: COLORS.neonCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    letterSpacing: 2,
   },
-  activeTabText: {
-    color: COLORS.neonPink,
-    textShadowColor: COLORS.neonPink,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
+  gameCount: {
+    fontSize: 8,
+    color: COLORS.textMuted,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  scrollView: {
+  
+  // Games Grid
+  gamesScroll: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+  gamesContainer: {
+    padding: 8,
   },
   gamesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  gameCard: {
-    width: CARD_WIDTH,
-    backgroundColor: 'rgba(13, 2, 33, 0.9)',
-    borderRadius: 12,
+  
+  // Cabinet Card Style
+  cabinetCard: {
+    width: CARD_SIZE - 6,
+    height: CARD_SIZE + 10,
+    backgroundColor: 'rgba(13, 2, 33, 0.95)',
+    borderRadius: 8,
     borderWidth: 2,
-    padding: 14,
+    padding: 8,
+    marginBottom: 8,
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
   },
+  cabinetCardLocked: {
+    opacity: 0.7,
+  },
   cardGlow: {
     position: 'absolute',
-    top: -30,
+    top: -15,
     left: '50%',
-    marginLeft: -40,
-    width: 80,
-    height: 60,
-    borderRadius: 40,
-    opacity: 0.2,
+    marginLeft: -20,
+    width: 40,
+    height: 30,
+    borderRadius: 20,
+    opacity: 0.3,
   },
-  gameIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 6,
   },
-  gameTitle: {
-    fontSize: 13,
+  cardTitle: {
+    fontSize: 9,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    marginBottom: 4,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
+    letterSpacing: 0.5,
   },
-  gameSubtitle: {
-    fontSize: 9,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  gameStatusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  statusDot: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 14,
+    height: 14,
+    borderRadius: 3,
     justifyContent: 'center',
-    gap: 8,
+    alignItems: 'center',
   },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+  statusIcon: {
+    fontSize: 8,
+    color: '#FFF',
   },
-  statusText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  highScore: {
-    fontSize: 9,
+  miniScore: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    fontSize: 8,
     color: COLORS.neonYellow,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
-  difficultyDot: {
+  lockedOverlay: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingVertical: 2,
   },
-  difficultyText: {
-    fontSize: 10,
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  footer: {
-    alignItems: 'center',
-    paddingVertical: 24,
-  },
-  footerText: {
-    color: COLORS.neonCyan,
-    fontSize: 12,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-    textShadowColor: COLORS.neonCyan,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
-  },
-  footerSubtext: {
+  lockedText: {
+    fontSize: 7,
     color: COLORS.textMuted,
-    fontSize: 10,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 4,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: 'rgba(13, 2, 33, 0.95)',
-    borderTopWidth: 2,
-    borderTopColor: COLORS.neonPink + '60',
-  },
-  navItem: {
-    alignItems: 'center',
-    paddingHorizontal: 12,
-  },
-  navText: {
-    color: COLORS.textSecondary,
-    fontSize: 9,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-    marginTop: 4,
+    textAlign: 'center',
     letterSpacing: 1,
   },
+  
+  // Bottom Message
+  bottomMessage: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginTop: 8,
+  },
+  bottomText: {
+    color: COLORS.neonCyan,
+    fontSize: 11,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  bottomSubtext: {
+    color: COLORS.textMuted,
+    fontSize: 9,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+  },
+  
+  // Control Panel (Bottom Nav)
+  controlPanel: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: COLORS.bgDark,
+    borderTopWidth: 3,
+    borderTopColor: COLORS.neonPink + '80',
+  },
+  controlBtn: {
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  activeBtn: {
+    backgroundColor: COLORS.neonPink + '20',
+    borderRadius: 8,
+  },
+  controlText: {
+    color: COLORS.textSecondary,
+    fontSize: 8,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginTop: 2,
+    letterSpacing: 1,
+  },
+  activeText: {
+    color: COLORS.neonPink,
+  },
+  
+  // Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(13, 2, 33, 0.98)',
@@ -583,8 +615,8 @@ const styles = StyleSheet.create({
   modalContent: {
     width: SCREEN_WIDTH - 48,
     backgroundColor: COLORS.bgMedium,
-    borderRadius: 16,
-    padding: 28,
+    borderRadius: 12,
+    padding: 24,
     alignItems: 'center',
     borderWidth: 3,
     borderColor: COLORS.neonPink,
@@ -596,31 +628,27 @@ const styles = StyleSheet.create({
     left: -2,
     right: -2,
     bottom: -2,
-    borderRadius: 18,
+    borderRadius: 14,
     borderWidth: 4,
     borderColor: COLORS.neonPink,
     opacity: 0.3,
   },
   modalTitle: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
     color: COLORS.neonPink,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 4,
-    textShadowColor: COLORS.neonPink,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
-    letterSpacing: 3,
+    letterSpacing: 4,
   },
   modalSubtitle: {
     fontSize: 12,
     color: COLORS.neonCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginBottom: 24,
-    letterSpacing: 1,
+    marginBottom: 20,
   },
-  insertCoin: {
-    marginBottom: 24,
+  coinAnimation: {
+    marginBottom: 20,
   },
   inputLabel: {
     fontSize: 10,
@@ -635,18 +663,18 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.neonCyan,
     borderRadius: 8,
-    padding: 16,
+    padding: 14,
     color: COLORS.neonCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontSize: 20,
-    marginBottom: 24,
+    marginBottom: 20,
     textAlign: 'center',
     letterSpacing: 4,
   },
   startButton: {
     width: '100%',
     backgroundColor: COLORS.neonPink,
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
   },
@@ -654,17 +682,17 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   startButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 2,
+    letterSpacing: 3,
   },
   disclaimer: {
     color: COLORS.textMuted,
     fontSize: 9,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 16,
-    letterSpacing: 1,
+    letterSpacing: 2,
   },
 });
