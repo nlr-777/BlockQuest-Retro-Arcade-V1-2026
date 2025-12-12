@@ -153,8 +153,8 @@ export const GAMES: GameConfig[] = [
     icon: '⛏️',
     color: '#FFD700',
     accentColor: '#DAA520',
-    isPlayable: false,
-    route: '/games/coming-soon/mine-blaster',
+    isPlayable: true,
+    route: '/games/mine-blaster',
     difficulty: 'Hard',
     bgm: 'proof_of_work'
   },
@@ -167,8 +167,8 @@ export const GAMES: GameConfig[] = [
     icon: '⚡',
     color: '#FFFF00',
     accentColor: '#FFA500',
-    isPlayable: false,
-    route: '/games/coming-soon/lightning-dash',
+    isPlayable: true,
+    route: '/games/lightning-dash',
     difficulty: 'Medium',
     bgm: 'lightning_zap'
   },
@@ -181,8 +181,8 @@ export const GAMES: GameConfig[] = [
     icon: '🌉',
     color: '#00BFFF',
     accentColor: '#1E90FF',
-    isPlayable: false,
-    route: '/games/coming-soon/bridge-bouncer',
+    isPlayable: true,
+    route: '/games/bridge-bouncer',
     difficulty: 'Hard',
     bgm: 'bridge_bounce'
   },
