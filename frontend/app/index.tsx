@@ -10,21 +10,73 @@ import {
   Modal,
   Platform,
   KeyboardAvoidingView,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeIn, FadeInUp, SlideInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 
 import { PixelText } from '../src/components/PixelText';
 import { PixelButton } from '../src/components/PixelButton';
-import { GameCard } from '../src/components/GameCard';
-import VFXLayer from '../src/vfx/VFXManager';
 import { COLORS } from '../src/constants/colors';
-import { GAMES, PLAYABLE_GAMES, COMING_SOON_GAMES } from '../src/constants/games';
+import { GAMES, PLAYABLE_GAMES, COMING_SOON_GAMES, GameConfig } from '../src/constants/games';
 import { useGameStore } from '../src/store/gameStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
+
+// Inline GameCard for reliability
+const GameCard: React.FC<{ game: GameConfig }> = ({ game }) => {
+  const router = useRouter();
+  const { highScores } = useGameStore();
+  const highScore = highScores[game.id] || 0;
+
+  const handlePress = () => {
+    if (game.isPlayable) {
+      router.push(game.route as any);
+    } else {
+      router.push(`/games/coming-soon?id=${game.id}` as any);
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
+      <View style={[styles.glowBorder, { backgroundColor: game.color }]} />
+      <View style={[styles.cardInner, { borderColor: game.color }]}>
+        <View style={[styles.iconContainer, { backgroundColor: `${game.color}20` }]}>
+          <PixelText size="xxl">{game.icon}</PixelText>
+        </View>
+        <PixelText size="md" color={game.color} style={styles.cardTitle}>
+          {game.title}
+        </PixelText>
+        <PixelText size="xs" color={COLORS.textSecondary} style={styles.subtitle}>
+          {game.subtitle}
+        </PixelText>
+        <View style={styles.footer}>
+          {game.isPlayable ? (
+            <>
+              <PixelText size="xs" color={COLORS.success}>PLAY</PixelText>
+              {highScore > 0 && (
+                <PixelText size="xs" color={COLORS.chainGold}>HI: {highScore}</PixelText>
+              )}
+            </>
+          ) : (
+            <View style={styles.comingSoon}>
+              <PixelText size="xs" color={COLORS.textMuted}>COMING SOON</PixelText>
+            </View>
+          )}
+        </View>
+        <View style={[styles.difficultyBadge, { backgroundColor: game.accentColor }]}>
+          <PixelText size="xs" color="#FFF">{game.difficulty[0]}</PixelText>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default function ArcadeHub() {
   const router = useRouter();
@@ -47,16 +99,16 @@ export default function ArcadeHub() {
   };
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
+  const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
+
+  const renderGameCard = ({ item }: { item: GameConfig }) => (
+    <GameCard game={item} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Background VFX */}
-      <VFXLayer type="pixel-chain-rain" intensity={0.5} />
-      <VFXLayer type="crt-breathe" intensity={0.3} />
-      <VFXLayer type="parallax-blocks" intensity={0.4} />
-
       {/* Header */}
-      <Animated.View entering={FadeInUp.delay(300)} style={styles.header}>
+      <View style={styles.header}>
         <View style={styles.logoContainer}>
           <PixelText size="xl" color={COLORS.chainGold} glow>
             BLOCK QUEST
@@ -66,7 +118,6 @@ export default function ArcadeHub() {
           </PixelText>
         </View>
         
-        {/* Profile quick view */}
         {profile && (
           <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/badges')}>
             <View style={styles.profileIcon}>
@@ -75,43 +126,33 @@ export default function ArcadeHub() {
               </PixelText>
             </View>
             <View>
-              <PixelText size="xs" color={COLORS.textSecondary}>
-                LV {profile.level}
-              </PixelText>
-              <PixelText size="xs" color={COLORS.chainGold}>
-                {totalHighScore} PTS
-              </PixelText>
+              <PixelText size="xs" color={COLORS.textSecondary}>LV {profile.level}</PixelText>
+              <PixelText size="xs" color={COLORS.chainGold}>{totalHighScore} PTS</PixelText>
             </View>
           </TouchableOpacity>
         )}
-      </Animated.View>
+      </View>
 
       {/* Stats Bar */}
       {profile && (
-        <Animated.View entering={FadeIn.delay(400)} style={styles.statsBar}>
+        <View style={styles.statsBar}>
           <View style={styles.stat}>
             <Ionicons name="trophy" size={16} color={COLORS.chainGold} />
-            <PixelText size="xs" color={COLORS.textSecondary}>
-              {' '}{profile.badges.length} Badges
-            </PixelText>
+            <PixelText size="xs" color={COLORS.textSecondary}> {profile.badges.length} Badges</PixelText>
           </View>
           <View style={styles.stat}>
             <Ionicons name="game-controller" size={16} color={COLORS.blockCyan} />
-            <PixelText size="xs" color={COLORS.textSecondary}>
-              {' '}{profile.gamesPlayed} Played
-            </PixelText>
+            <PixelText size="xs" color={COLORS.textSecondary}> {profile.gamesPlayed} Played</PixelText>
           </View>
           <View style={styles.stat}>
             <Ionicons name="flash" size={16} color={COLORS.seedRed} />
-            <PixelText size="xs" color={COLORS.textSecondary}>
-              {' '}{profile.daoVotingPower} Power
-            </PixelText>
+            <PixelText size="xs" color={COLORS.textSecondary}> {profile.daoVotingPower} Power</PixelText>
           </View>
-        </Animated.View>
+        </View>
       )}
 
       {/* Tab Switcher */}
-      <Animated.View entering={FadeIn.delay(500)} style={styles.tabContainer}>
+      <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'playable' && styles.activeTab]}
           onPress={() => setActiveTab('playable')}
@@ -134,33 +175,31 @@ export default function ArcadeHub() {
             COMING SOON ({COMING_SOON_GAMES.length})
           </PixelText>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
 
       {/* Game Grid */}
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+      <FlatList
+        data={displayGames}
+        renderItem={renderGameCard}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.listRow}
         showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.gameGrid}>
-          {(activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES).map((game, index) => (
-            <GameCard key={game.id} game={game} index={index} />
-          ))}
-        </View>
-        
-        {/* Web3 Learn Section */}
-        <View style={styles.learnSection}>
-          <PixelText size="md" color={COLORS.textSecondary}>
-            Learn Web3 while you play!
-          </PixelText>
-          <PixelText size="xs" color={COLORS.textMuted}>
-            Each game teaches blockchain concepts
-          </PixelText>
-        </View>
-      </ScrollView>
+        ListFooterComponent={
+          <View style={styles.learnSection}>
+            <PixelText size="md" color={COLORS.textSecondary}>
+              Learn Web3 while you play!
+            </PixelText>
+            <PixelText size="xs" color={COLORS.textMuted}>
+              Each game teaches blockchain concepts
+            </PixelText>
+          </View>
+        }
+      />
 
       {/* Bottom Nav */}
-      <Animated.View entering={SlideInDown.delay(600)} style={styles.bottomNav}>
+      <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('playable')}>
           <Ionicons name="game-controller" size={24} color={COLORS.chainGold} />
           <PixelText size="xs" color={COLORS.chainGold}>Games</PixelText>
@@ -177,7 +216,7 @@ export default function ArcadeHub() {
           <Ionicons name="settings" size={24} color={COLORS.textSecondary} />
           <PixelText size="xs" color={COLORS.textSecondary}>Settings</PixelText>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
 
       {/* Onboarding Modal */}
       <Modal visible={showOnboarding} transparent animationType="fade">
@@ -185,10 +224,7 @@ export default function ArcadeHub() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalOverlay}
         >
-          <VFXLayer type="genesis-birth" />
           <View style={styles.modalContent}>
-            <VFXLayer type="holographic-scan" intensity={0.3} />
-            
             <PixelText size="xl" color={COLORS.chainGold} glow style={styles.modalTitle}>
               WELCOME, PLAYER!
             </PixelText>
@@ -216,7 +252,7 @@ export default function ArcadeHub() {
             />
             
             <PixelText size="xs" color={COLORS.textMuted} style={styles.disclaimer}>
-              Kid-friendly mode • No real blockchain
+              Kid-friendly mode - No real blockchain
             </PixelText>
           </View>
         </KeyboardAvoidingView>
@@ -286,22 +322,79 @@ const styles = StyleSheet.create({
   activeTab: {
     borderBottomColor: COLORS.chainGold,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
+  listContent: {
     paddingHorizontal: 16,
     paddingBottom: 100,
   },
-  gameGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  listRow: {
     justifyContent: 'space-between',
   },
   learnSection: {
     alignItems: 'center',
     paddingVertical: 24,
     marginTop: 16,
+  },
+  card: {
+    width: CARD_WIDTH,
+    height: CARD_WIDTH * 1.2,
+    marginBottom: 16,
+    position: 'relative',
+  },
+  glowBorder: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    right: -4,
+    bottom: -4,
+    borderRadius: 12,
+    opacity: 0.3,
+  },
+  cardInner: {
+    flex: 1,
+    backgroundColor: COLORS.cardBg,
+    borderRadius: 12,
+    borderWidth: 2,
+    padding: 12,
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardTitle: {
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 'auto',
+  },
+  comingSoon: {
+    backgroundColor: COLORS.bgLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  difficultyBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bottomNav: {
     position: 'absolute',
