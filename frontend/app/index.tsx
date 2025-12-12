@@ -431,10 +431,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   
-  // Game Card
+  // Game Card - using percentage width for web compatibility
   gameCard: {
-    width: CARD_WIDTH,
-    height: CARD_WIDTH + 12,
+    width: '30%',
+    aspectRatio: 1,
     backgroundColor: 'rgba(13, 2, 33, 0.95)',
     borderRadius: 8,
     borderWidth: 2,
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
-    margin: 4,
+    margin: '1.5%',
   },
   cardLocked: {
     opacity: 0.7,
