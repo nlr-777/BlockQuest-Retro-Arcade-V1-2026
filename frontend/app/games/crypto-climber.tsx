@@ -894,7 +894,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
   },
-  nftLesson: {
+  collectLesson: {
     fontSize: 12,
     color: COLORS.neonCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
