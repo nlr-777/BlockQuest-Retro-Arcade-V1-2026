@@ -1,4 +1,4 @@
-// BlockQuest Official - Avatar Selector Component
+// BlockQuest Official - Avatar Selector Component (Bold Arcade Style)
 import React from 'react';
 import {
   View,
@@ -7,10 +7,9 @@ import {
   Image,
   Platform,
   Text,
-  ScrollView,
 } from 'react-native';
 import { COLORS } from '../constants/colors';
-import { AVATARS, AvatarConfig } from '../constants/avatars';
+import { AVATARS, AvatarConfig, getRarityColor } from '../constants/avatars';
 
 interface AvatarSelectorProps {
   selectedId: string | null;
@@ -21,127 +20,252 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   selectedId,
   onSelect,
 }) => {
+  const selectedAvatar = AVATARS.find(a => a.id === selectedId);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CHOOSE AVATAR</Text>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {AVATARS.map((avatar) => (
-          <TouchableOpacity
-            key={avatar.id}
-            style={[
-              styles.avatarCard,
-              { borderColor: avatar.color },
-              selectedId === avatar.id && styles.selectedCard,
-            ]}
-            onPress={() => onSelect(avatar)}
-            activeOpacity={0.7}
-          >
-            <Image
-              source={{ uri: avatar.imageUrl }}
-              style={styles.avatarImage}
-              resizeMode="contain"
-            />
-            <View style={[
-              styles.rarityBadge,
-              {
-                backgroundColor: 
-                  avatar.rarity === 'Epic' ? '#BF00FF' :
-                  avatar.rarity === 'Rare' ? '#FFD700' : '#888',
-              }
-            ]}>
-              <Text style={styles.rarityText}>
-                {avatar.rarity === 'Epic' ? '★★★' : avatar.rarity === 'Rare' ? '★★' : '★'}
-              </Text>
-            </View>
-            <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
-              {avatar.name}
-            </Text>
-            {selectedId === avatar.id && (
-              <View style={styles.checkmark}>
-                <Text style={styles.checkmarkText}>✓</Text>
+      {/* Section Title */}
+      <View style={styles.titleBar}>
+        <View style={styles.titleLine} />
+        <Text style={styles.title}>⬡ SELECT YOUR HERO ⬡</Text>
+        <View style={styles.titleLine} />
+      </View>
+
+      {/* Avatar Grid - 3x2 */}
+      <View style={styles.grid}>
+        {AVATARS.map((avatar) => {
+          const isSelected = selectedId === avatar.id;
+          const rarityColor = getRarityColor(avatar.rarity);
+          
+          return (
+            <TouchableOpacity
+              key={avatar.id}
+              style={[
+                styles.avatarCard,
+                { borderColor: isSelected ? avatar.color : COLORS.bgMedium },
+                isSelected && { 
+                  backgroundColor: `${avatar.color}15`,
+                  shadowColor: avatar.color,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.8,
+                  shadowRadius: 10,
+                },
+              ]}
+              onPress={() => onSelect(avatar)}
+              activeOpacity={0.7}
+            >
+              {/* Glow effect for selected */}
+              {isSelected && (
+                <View style={[styles.selectedGlow, { backgroundColor: avatar.glowColor }]} />
+              )}
+              
+              {/* Avatar Image */}
+              <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
+                <Image
+                  source={{ uri: avatar.imageUrl }}
+                  style={styles.avatarImage}
+                  resizeMode="cover"
+                />
               </View>
-            )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              
+              {/* Rarity Badge */}
+              <View style={[styles.rarityBadge, { backgroundColor: rarityColor }]}>
+                <Text style={styles.rarityText}>{avatar.rarity.toUpperCase()}</Text>
+              </View>
+              
+              {/* Avatar Name */}
+              <Text style={[styles.avatarName, { color: avatar.color }]} numberOfLines={1}>
+                {avatar.name}
+              </Text>
+              
+              {/* Era Tag */}
+              <Text style={styles.eraTag} numberOfLines={1}>
+                {avatar.era.split(':')[0]}
+              </Text>
+              
+              {/* Selection Indicator */}
+              {isSelected && (
+                <View style={[styles.selectedBadge, { backgroundColor: avatar.color }]}>
+                  <Text style={styles.selectedText}>✓</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* Selected Avatar Story Panel */}
+      {selectedAvatar && (
+        <View style={[styles.storyPanel, { borderColor: selectedAvatar.color }]}>
+          <View style={styles.storyHeader}>
+            <Text style={[styles.heroTitle, { color: selectedAvatar.color }]}>
+              {selectedAvatar.title}
+            </Text>
+            <Text style={[styles.heroPower, { color: selectedAvatar.color }]}>
+              ⚡ {selectedAvatar.specialPower}
+            </Text>
+          </View>
+          <Text style={styles.storyText}>{selectedAvatar.story}</Text>
+          <View style={styles.eraLine}>
+            <View style={[styles.eraDot, { backgroundColor: selectedAvatar.color }]} />
+            <Text style={[styles.eraText, { color: selectedAvatar.color }]}>
+              {selectedAvatar.era}
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 12,
+    width: '100%',
+  },
+  titleBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  titleLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: COLORS.neonPink,
+    opacity: 0.5,
   },
   title: {
-    fontSize: 10,
-    color: COLORS.textMuted,
+    fontSize: 11,
+    color: COLORS.neonCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
     letterSpacing: 2,
-    marginBottom: 8,
-    textAlign: 'center',
+    paddingHorizontal: 8,
   },
-  scrollContent: {
-    paddingHorizontal: 4,
-    gap: 10,
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   avatarCard: {
-    width: 72,
-    height: 90,
+    width: '31%',
+    aspectRatio: 0.85,
     backgroundColor: COLORS.bgDark,
     borderRadius: 8,
     borderWidth: 2,
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 4,
+    padding: 6,
+    marginBottom: 8,
     position: 'relative',
+    overflow: 'hidden',
   },
-  selectedCard: {
-    borderWidth: 3,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+  selectedGlow: {
+    position: 'absolute',
+    top: -20,
+    left: -20,
+    right: -20,
+    bottom: -20,
+    opacity: 0.2,
+  },
+  imageContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 6,
+    borderWidth: 2,
+    overflow: 'hidden',
+    backgroundColor: COLORS.bgMedium,
   },
   avatarImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 4,
+    width: '100%',
+    height: '100%',
   },
   rarityBadge: {
     position: 'absolute',
-    top: 2,
-    right: 2,
-    paddingHorizontal: 3,
+    top: 3,
+    right: 3,
+    paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 3,
   },
   rarityText: {
-    fontSize: 6,
+    fontSize: 5,
     color: '#FFF',
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   avatarName: {
-    fontSize: 7,
+    fontSize: 8,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
     textAlign: 'center',
   },
-  checkmark: {
+  eraTag: {
+    fontSize: 6,
+    color: COLORS.textMuted,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 1,
+  },
+  selectedBadge: {
     position: 'absolute',
-    bottom: 2,
-    left: 2,
+    bottom: 3,
+    left: 3,
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: COLORS.success,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  checkmarkText: {
+  selectedText: {
     fontSize: 10,
     color: '#FFF',
     fontWeight: 'bold',
+  },
+  storyPanel: {
+    backgroundColor: 'rgba(13, 2, 33, 0.9)',
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 4,
+  },
+  storyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  heroTitle: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
+  },
+  heroPower: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  storyText: {
+    fontSize: 9,
+    color: COLORS.textSecondary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    lineHeight: 13,
+  },
+  eraLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  eraDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 6,
+  },
+  eraText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
   },
 });
 
