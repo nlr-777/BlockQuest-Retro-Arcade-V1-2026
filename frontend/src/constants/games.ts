@@ -33,10 +33,10 @@ export const GAMES: GameConfig[] = [
   },
   {
     id: 'token-tumble',
-    title: 'Token Tumble',
+    title: 'Block Tumble',
     subtitle: 'Tetris Style',
-    description: 'Rotate and stack tokens. Clear lines to grow your wallet!',
-    web3Concept: 'Wallets & Tokens',
+    description: 'Rotate and stack blocks. Clear lines to grow your collection!',
+    web3Concept: 'Digital Collections',
     icon: '🧱',
     color: '#00CED1',
     accentColor: '#20B2AA',
