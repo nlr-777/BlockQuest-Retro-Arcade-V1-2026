@@ -74,6 +74,9 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
 export default function RockBlasterGame() {
   const router = useRouter();
   const { submitScore } = useGameStore();
+  
+  // Audio hook
+  const { playShoot, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
