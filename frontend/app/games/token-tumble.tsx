@@ -1,5 +1,5 @@
-// Block Quest Official - Token Tumble (Tetris Style Game)
-// Teaches: Wallets & Tokens - Organizing digital assets
+// BlockQuest Official - Block Tumble
+// Tetris Style Game - Teaches Digital Collection Concepts
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
