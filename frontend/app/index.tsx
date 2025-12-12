@@ -176,15 +176,19 @@ export default function ArcadeHub() {
 
   // Split games into rows of 3
   const renderGameRows = () => {
+    console.log('GAMES length:', GAMES.length);
+    console.log('GAMES:', GAMES.map(g => g.id));
     const rows = [];
     for (let i = 0; i < GAMES.length; i += 3) {
       const rowGames = GAMES.slice(i, i + 3);
+      console.log('Row', i/3, 'games:', rowGames.map(g => g.id));
       rows.push(
         <View key={i} style={styles.gameRow}>
           {rowGames.map((game, idx) => renderGameCard(game, i + idx))}
         </View>
       );
     }
+    console.log('Total rows:', rows.length);
     return rows;
   };
 
