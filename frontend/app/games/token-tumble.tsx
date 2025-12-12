@@ -263,7 +263,7 @@ export default function TokenTumbleGame() {
     setScore(0);
     setLevel(1);
     setLinesTotal(0);
-    setWalletValue(0);
+    setCollectionValue(0);
   }, []);
 
   // Start game
