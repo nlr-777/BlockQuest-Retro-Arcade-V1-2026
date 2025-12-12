@@ -223,7 +223,7 @@ export default function ArcadeHub() {
             contentContainerStyle={styles.gamesContent}
             showsVerticalScrollIndicator={false}
           >
-            {renderGameRows()}
+            {renderAllGames()}
             
             <View style={styles.footer}>
               <Text style={styles.footerText}>⬡ LEARN WEB3 WHILE YOU PLAY ⬡</Text>
