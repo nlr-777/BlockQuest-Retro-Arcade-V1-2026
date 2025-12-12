@@ -76,7 +76,7 @@ const BLOCKS = {
   },
 };
 
-type TokenType = keyof typeof TOKENS;
+type BlockType = keyof typeof BLOCKS;
 type GameState = 'menu' | 'playing' | 'paused' | 'gameover';
 type Board = (string | null)[][];
 
