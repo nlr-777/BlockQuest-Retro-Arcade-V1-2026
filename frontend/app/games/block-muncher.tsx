@@ -333,6 +333,7 @@ export default function BlockMuncherGame() {
         if (collected) {
           setScore(s => s + 10);
           setChain(c => [...c, { ...playerPos }]);
+          playCollect();
           if (Platform.OS !== 'web') Vibration.vibrate(10);
           return prev.filter(b => !(b.x === playerPos.x && b.y === playerPos.y));
         }
