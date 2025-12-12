@@ -47,9 +47,7 @@ import {
 } from '../src/components/PixelIcons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const GRID_PADDING = 12;
-const CARD_GAP = 8;
-const CARD_WIDTH = (SCREEN_WIDTH - (GRID_PADDING * 2) - (CARD_GAP * 2)) / 3;
+const GRID_PADDING = 8;
 
 // Game icon mapping
 const getGameIcon = (gameId: string): React.FC<any> => {
