@@ -63,6 +63,9 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
 export default function LedgerLeapGame() {
   const router = useRouter();
   const { submitScore } = useGameStore();
+  
+  // Audio hook
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
