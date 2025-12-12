@@ -122,12 +122,14 @@ export default function SeedSprintGame() {
     initGame();
     setGameState('playing');
     startTimeRef.current = Date.now();
-  }, [initGame]);
+    playGameStart();
+  }, [initGame, playGameStart]);
 
   // Jump
   const jump = useCallback(() => {
     if (gameState !== 'playing' || isJumping) return;
     
+    playJump();
     setIsJumping(true);
     playerY.value = withSequence(
       withTiming(-100, { duration: 300 }),
