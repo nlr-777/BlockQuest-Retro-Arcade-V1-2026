@@ -16,6 +16,7 @@ export interface Badge {
 export interface PlayerProfile {
   id: string;
   username: string;
+  avatarId: string;
   createdAt: number;
   totalScore: number;
   gamesPlayed: number;
