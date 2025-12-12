@@ -169,15 +169,17 @@ export default function ChainInvadersGame() {
     initGame();
     setGameState('playing');
     startTimeRef.current = Date.now();
-  }, [initGame]);
+    playGameStart();
+  }, [initGame, playGameStart]);
 
   // Move player
   const movePlayer = useCallback((direction: -1 | 1) => {
+    playMove();
     setPlayerX(prev => {
       const newX = prev + direction * 15;
       return Math.max(0, Math.min(GAME_WIDTH - PLAYER_WIDTH, newX));
     });
-  }, []);
+  }, [playMove]);
 
   // Shoot
   const shoot = useCallback(() => {
