@@ -321,7 +321,7 @@ export default function TreasureVaultScreen() {
           {activeSection === 'badges' && (
             <Animated.View entering={FadeIn} style={styles.section}>
               <Text style={styles.sectionTitle}>
-                NFT BADGES ({profile?.badges.length || 0})
+                ACHIEVEMENT BADGES ({profile?.badges.length || 0})
               </Text>
               {profile?.badges && profile.badges.length > 0 ? (
                 <View style={styles.badgesGrid}>
@@ -333,7 +333,7 @@ export default function TreasureVaultScreen() {
                 <View style={styles.emptyBadges}>
                   <IconShield size={60} color={COLORS.textMuted} />
                   <Text style={styles.emptyText}>No badges yet!</Text>
-                  <Text style={styles.emptySubtext}>Play games to earn NFT badges</Text>
+                  <Text style={styles.emptySubtext}>Play games to earn badges</Text>
                   <TouchableOpacity
                     style={styles.playButton}
                     onPress={() => router.push('/')}
@@ -348,8 +348,8 @@ export default function TreasureVaultScreen() {
           {/* History Section */}
           {activeSection === 'history' && (
             <Animated.View entering={FadeIn} style={styles.section}>
-              <Text style={styles.sectionTitle}>TRANSACTION HISTORY</Text>
-              {transactions.map((tx, index) => (
+              <Text style={styles.sectionTitle}>ACTIVITY HISTORY</Text>
+              {activities.map((tx, index) => (
                 <Animated.View key={index} entering={FadeInDown.delay(index * 50)}>
                   <TransactionItem {...tx} />
                 </Animated.View>
