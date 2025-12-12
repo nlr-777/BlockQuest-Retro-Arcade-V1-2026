@@ -97,8 +97,8 @@ export const GAMES: GameConfig[] = [
     icon: '🦍',
     color: '#8B4513',
     accentColor: '#A0522D',
-    isPlayable: false,
-    route: '/games/coming-soon/crypto-climber',
+    isPlayable: true,
+    route: '/games/crypto-climber',
     difficulty: 'Medium',
     bgm: 'nft_flip'
   },
