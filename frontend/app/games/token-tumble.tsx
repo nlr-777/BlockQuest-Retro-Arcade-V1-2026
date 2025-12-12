@@ -122,8 +122,13 @@ const mergePiece = (board: Board, piece: Piece): Board => {
   const color = TOKENS[piece.type].color;
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
-      if (piece.shape[y][x] && piece.y + y >= 0) {
-        newBoard[piece.y + y][piece.x + x] = color;
+      if (piece.shape[y][x]) {
+        const boardY = piece.y + y;
+        const boardX = piece.x + x;
+        // Bounds check before writing
+        if (boardY >= 0 && boardY < ROWS && boardX >= 0 && boardX < COLS) {
+          newBoard[boardY][boardX] = color;
+        }
       }
     }
   }
