@@ -293,7 +293,8 @@ export default function BlockMuncherGame() {
     initGame();
     setGameState('playing');
     startTimeRef.current = Date.now();
-  }, [initGame]);
+    playGameStart();
+  }, [initGame, playGameStart]);
 
   // Move player
   const movePlayer = useCallback((dir: Direction) => {
