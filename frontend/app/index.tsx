@@ -87,52 +87,50 @@ const CabinetGameCard = ({ game, index }: { game: GameConfig; index: number }) =
   };
 
   return (
-    <Animated.View entering={FadeInDown.delay(index * 50).duration(400)}>
-      <TouchableOpacity
-        style={[
-          styles.cabinetCard,
-          { borderColor: game.color },
-          !game.isPlayable && styles.cabinetCardLocked,
-        ]}
-        onPress={handlePress}
-        activeOpacity={0.7}
-      >
-        {/* Top glow effect */}
-        <View style={[styles.cardGlow, { backgroundColor: game.color }]} />
-        
-        {/* Game Icon */}
-        <View style={[styles.iconContainer, { backgroundColor: `${game.color}20` }]}>
-          <IconComponent size={28} color={game.color} />
-        </View>
-        
-        {/* Game Title - Short version */}
-        <Text style={[styles.cardTitle, { color: game.color }]} numberOfLines={1}>
-          {game.title.split(' ')[0]}
+    <TouchableOpacity
+      style={[
+        styles.cabinetCard,
+        { borderColor: game.color },
+        !game.isPlayable && styles.cabinetCardLocked,
+      ]}
+      onPress={handlePress}
+      activeOpacity={0.7}
+    >
+      {/* Top glow effect */}
+      <View style={[styles.cardGlow, { backgroundColor: game.color }]} />
+      
+      {/* Game Icon */}
+      <View style={[styles.iconContainer, { backgroundColor: `${game.color}20` }]}>
+        <IconComponent size={28} color={game.color} />
+      </View>
+      
+      {/* Game Title - Short version */}
+      <Text style={[styles.cardTitle, { color: game.color }]} numberOfLines={1}>
+        {game.title.split(' ')[0]}
+      </Text>
+      
+      {/* Status indicator */}
+      <View style={[
+        styles.statusDot,
+        { backgroundColor: game.isPlayable ? COLORS.success : COLORS.textMuted }
+      ]}>
+        <Text style={styles.statusIcon}>
+          {game.isPlayable ? '▶' : '◆'}
         </Text>
-        
-        {/* Status indicator */}
-        <View style={[
-          styles.statusDot,
-          { backgroundColor: game.isPlayable ? COLORS.success : COLORS.textMuted }
-        ]}>
-          <Text style={styles.statusIcon}>
-            {game.isPlayable ? '▶' : '◆'}
-          </Text>
+      </View>
+      
+      {/* High score if exists */}
+      {highScores[game.id] > 0 && (
+        <Text style={styles.miniScore}>{highScores[game.id]}</Text>
+      )}
+      
+      {/* Locked overlay for coming soon */}
+      {!game.isPlayable && (
+        <View style={styles.lockedOverlay}>
+          <Text style={styles.lockedText}>SOON</Text>
         </View>
-        
-        {/* High score if exists */}
-        {highScores[game.id] > 0 && (
-          <Text style={styles.miniScore}>{highScores[game.id]}</Text>
-        )}
-        
-        {/* Locked overlay for coming soon */}
-        {!game.isPlayable && (
-          <View style={styles.lockedOverlay}>
-            <Text style={styles.lockedText}>SOON</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    </Animated.View>
+      )}
+    </TouchableOpacity>
   );
 };
 
