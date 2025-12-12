@@ -1,5 +1,5 @@
 // BlockQuest Official - Bridge Bouncer
-// Q*Bert Style Game - Teaches Connection/Bridge Concepts
+// Q*Bert Style Game - Teaches Cross-Chain Bridge Concepts
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
@@ -22,34 +22,35 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Game constants
 const GAME_WIDTH = SCREEN_WIDTH - 32;
-const GAME_HEIGHT = SCREEN_HEIGHT * 0.45;
-const GRID_ROWS = 7;
-const TILE_SIZE = 40;
-const PLAYER_SIZE = 28;
+const GAME_HEIGHT = SCREEN_HEIGHT * 0.5;
+const PYRAMID_ROWS = 5;
+const TILE_SIZE = 50;
+const ENEMY_SIZE = 30;
 
-// Connection types (tile colors when stepped on)
-const CONNECTION_TYPES = [
-  { name: 'Disconnected', color: '#444444' },
-  { name: 'Connected', color: '#00FF00' },
-  { name: 'Bridged', color: '#00BFFF' },
+// Chain colors (represents different blockchains)
+const CHAIN_COLORS = [
+  { name: 'Empty', color: '#2a2a3e', bridged: false },
+  { name: 'Blue Chain', color: '#00BFFF', bridged: true },
+  { name: 'Gold Chain', color: '#FFD700', bridged: true },
+  { name: 'Pink Chain', color: '#FF69B4', bridged: true },
 ];
 
 interface Tile {
   row: number;
   col: number;
-  connected: boolean;
-  bridged: boolean;
+  chainIndex: number;
+  x: number;
+  y: number;
 }
 
 interface Enemy {
   id: number;
   row: number;
   col: number;
-  type: 'ball' | 'snake';
-  direction: number;
+  type: 'snake' | 'ball';
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'levelcomplete';
 
 export default function BridgeBouncerGame() {
   const router = useRouter();
@@ -60,75 +61,71 @@ export default function BridgeBouncerGame() {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [lives, setLives] = useState(3);
-  const [bridgesBuilt, setBridgesBuilt] = useState(0);
+  const [bridgesCompleted, setBridgesCompleted] = useState(0);
 
-  // Player state
+  // Player position
   const [playerRow, setPlayerRow] = useState(0);
   const [playerCol, setPlayerCol] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
 
-  // Grid state
+  // Game objects
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
+  const [targetChain, setTargetChain] = useState(1);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
-  const enemyMoveTimer = useRef(0);
+  const enemyTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Generate pyramid grid
-  const generateGrid = useCallback(() => {
+  // Initialize pyramid tiles
+  const initializeTiles = useCallback(() => {
     const newTiles: Tile[] = [];
-    for (let row = 0; row < GRID_ROWS; row++) {
-      const colsInRow = row + 1;
-      for (let col = 0; col < colsInRow; col++) {
+    const startX = GAME_WIDTH / 2;
+    const startY = 40;
+
+    for (let row = 0; row < PYRAMID_ROWS; row++) {
+      for (let col = 0; col <= row; col++) {
+        const x = startX - (row * TILE_SIZE / 2) + (col * TILE_SIZE);
+        const y = startY + row * (TILE_SIZE * 0.8);
         newTiles.push({
           row,
           col,
-          connected: false,
-          bridged: false,
+          chainIndex: 0, // Start empty
+          x,
+          y,
         });
       }
     }
     return newTiles;
   }, []);
 
-  // Get tile position on screen
-  const getTilePosition = useCallback((row: number, col: number) => {
-    const rowOffset = (GRID_ROWS - 1 - row) * TILE_SIZE * 0.4;
-    const colOffset = col * TILE_SIZE - (row * TILE_SIZE) / 2;
-    return {
-      x: GAME_WIDTH / 2 + colOffset - TILE_SIZE / 2,
-      y: 30 + row * TILE_SIZE * 0.8 + rowOffset,
-    };
-  }, []);
-
-  // Check if position is valid
-  const isValidPosition = (row: number, col: number) => {
-    if (row < 0 || row >= GRID_ROWS) return false;
-    if (col < 0 || col > row) return false;
-    return true;
-  };
-
   // Start game
   const startGame = useCallback(() => {
-    const grid = generateGrid();
-    setTiles(grid);
-    setEnemies([]);
+    setTiles(initializeTiles());
     setPlayerRow(0);
     setPlayerCol(0);
+    setEnemies([]);
     setScore(0);
     setLevel(1);
     setLives(3);
-    setBridgesBuilt(0);
+    setBridgesCompleted(0);
+    setTargetChain(1);
     setGameState('playing');
-    
-    // Connect starting tile
-    grid[0].connected = true;
-  }, [generateGrid]);
+  }, [initializeTiles]);
+
+  // Continue to next level
+  const nextLevel = useCallback(() => {
+    setTiles(initializeTiles());
+    setPlayerRow(0);
+    setPlayerCol(0);
+    setEnemies([]);
+    setLevel(prev => prev + 1);
+    setTargetChain(prev => (prev % 3) + 1); // Cycle through chains
+    setGameState('playing');
+  }, [initializeTiles]);
 
   // Move player
-  const movePlayer = useCallback((direction: 'ul' | 'ur' | 'dl' | 'dr') => {
-    if (isJumping || gameState !== 'playing') return;
+  const movePlayer = (direction: 'ul' | 'ur' | 'dl' | 'dr') => {
+    if (gameState !== 'playing' || isJumping) return;
 
     let newRow = playerRow;
     let newCol = playerCol;
@@ -152,156 +149,135 @@ export default function BridgeBouncerGame() {
         break;
     }
 
-    if (!isValidPosition(newRow, newCol)) {
+    // Check bounds
+    if (newRow < 0 || newRow >= PYRAMID_ROWS || newCol < 0 || newCol > newRow) {
       // Fell off!
-      setLives(l => {
-        if (l <= 1) {
-          setGameState('gameover');
-          submitScore('bridge-bouncer', score);
-          return 0;
-        }
-        // Reset to top
-        setPlayerRow(0);
-        setPlayerCol(0);
-        if (Platform.OS !== 'web') Vibration.vibrate(200);
-        return l - 1;
-      });
+      handleFallOff();
       return;
     }
 
     // Animate jump
     setIsJumping(true);
+    if (Platform.OS !== 'web') Vibration.vibrate(15);
+
     setTimeout(() => {
       setPlayerRow(newRow);
       setPlayerCol(newCol);
       setIsJumping(false);
 
-      // Connect tile
-      setTiles(prev => {
-        const updated = [...prev];
-        const tileIndex = prev.findIndex(t => t.row === newRow && t.col === newCol);
-        if (tileIndex !== -1 && !updated[tileIndex].connected) {
-          updated[tileIndex].connected = true;
-          setScore(s => s + 25);
-          setBridgesBuilt(b => b + 1);
-          
-          // Check if tile becomes bridged (connected to multiple)
-          const neighbors = getNeighborTiles(newRow, newCol, updated);
-          if (neighbors.filter(n => n.connected).length >= 2) {
-            updated[tileIndex].bridged = true;
-            setScore(s => s + 50);
-          }
-          
-          if (Platform.OS !== 'web') Vibration.vibrate(20);
-        }
-        return updated;
-      });
+      // Bridge the tile
+      bridgeTile(newRow, newCol);
+
+      // Check enemy collision
+      checkEnemyCollision(newRow, newCol);
     }, 150);
-
-    if (Platform.OS !== 'web') Vibration.vibrate(10);
-  }, [playerRow, playerCol, isJumping, gameState, score, submitScore]);
-
-  // Get neighboring tiles
-  const getNeighborTiles = (row: number, col: number, tileList: Tile[]) => {
-    const positions = [
-      { row: row - 1, col: col - 1 }, // ul
-      { row: row - 1, col: col },     // ur
-      { row: row + 1, col: col },     // dl
-      { row: row + 1, col: col + 1 }, // dr
-    ];
-    return positions
-      .filter(p => isValidPosition(p.row, p.col))
-      .map(p => tileList.find(t => t.row === p.row && t.col === p.col))
-      .filter(Boolean) as Tile[];
   };
 
-  // Game loop
+  // Bridge a tile (change its chain)
+  const bridgeTile = (row: number, col: number) => {
+    setTiles(prev => {
+      const newTiles = [...prev];
+      const tileIndex = newTiles.findIndex(t => t.row === row && t.col === col);
+      
+      if (tileIndex !== -1 && newTiles[tileIndex].chainIndex !== targetChain) {
+        newTiles[tileIndex] = {
+          ...newTiles[tileIndex],
+          chainIndex: targetChain,
+        };
+        setScore(s => s + 25);
+        setBridgesCompleted(b => b + 1);
+
+        // Check if level complete
+        const allBridged = newTiles.every(t => t.chainIndex === targetChain);
+        if (allBridged) {
+          setScore(s => s + level * 100);
+          setGameState('levelcomplete');
+          if (Platform.OS !== 'web') Vibration.vibrate(200);
+        }
+      }
+      return newTiles;
+    });
+  };
+
+  // Handle falling off
+  const handleFallOff = () => {
+    if (Platform.OS !== 'web') Vibration.vibrate(300);
+    setLives(prev => {
+      const newLives = prev - 1;
+      if (newLives <= 0) {
+        setGameState('gameover');
+        submitScore('bridge-bouncer', score);
+      } else {
+        // Reset position
+        setPlayerRow(0);
+        setPlayerCol(0);
+      }
+      return newLives;
+    });
+  };
+
+  // Check enemy collision
+  const checkEnemyCollision = (row: number, col: number) => {
+    const collision = enemies.some(e => e.row === row && e.col === col);
+    if (collision) {
+      handleFallOff();
+    }
+  };
+
+  // Enemy spawning and movement
   useEffect(() => {
     if (gameState !== 'playing') return;
 
-    gameLoopRef.current = setInterval(() => {
-      // Move enemies
-      enemyMoveTimer.current += 1;
-      if (enemyMoveTimer.current > 60) {
-        enemyMoveTimer.current = 0;
-
-        setEnemies(prev => {
-          return prev.map(enemy => {
-            // Simple downward movement
-            let newRow = enemy.row + 1;
-            let newCol = enemy.col + (Math.random() > 0.5 ? 1 : 0);
-            
-            if (!isValidPosition(newRow, newCol)) {
-              // Enemy fell off, respawn at top
-              return {
-                ...enemy,
-                row: 0,
-                col: 0,
-              };
-            }
-            return { ...enemy, row: newRow, col: newCol };
-          });
-        });
+    enemyTimerRef.current = setInterval(() => {
+      // Spawn new enemy occasionally
+      if (Math.random() > 0.7 && enemies.length < level + 1) {
+        const startCol = Math.random() > 0.5 ? 0 : 0;
+        setEnemies(prev => [...prev, {
+          id: Date.now(),
+          row: 0,
+          col: startCol,
+          type: Math.random() > 0.5 ? 'snake' : 'ball',
+        }]);
       }
 
-      // Check enemy collision
+      // Move enemies down
       setEnemies(prev => {
-        for (const enemy of prev) {
-          if (enemy.row === playerRow && enemy.col === playerCol) {
-            setLives(l => {
-              if (l <= 1) {
-                setGameState('gameover');
-                submitScore('bridge-bouncer', score);
-                return 0;
-              }
-              setPlayerRow(0);
-              setPlayerCol(0);
-              if (Platform.OS !== 'web') Vibration.vibrate(200);
-              return l - 1;
-            });
+        return prev.map(enemy => {
+          const goLeft = Math.random() > 0.5;
+          const newRow = enemy.row + 1;
+          const newCol = goLeft ? enemy.col : enemy.col + 1;
+
+          // Remove if fell off
+          if (newRow >= PYRAMID_ROWS || newCol < 0 || newCol > newRow) {
+            return null;
           }
+
+          return { ...enemy, row: newRow, col: newCol };
+        }).filter(Boolean) as Enemy[];
+      });
+
+      // Check collision with player
+      setEnemies(prev => {
+        const collision = prev.some(e => e.row === playerRow && e.col === playerCol);
+        if (collision) {
+          handleFallOff();
         }
         return prev;
       });
-
-      // Check victory (all tiles connected)
-      setTiles(prev => {
-        const allConnected = prev.every(t => t.connected);
-        if (allConnected) {
-          const newLevel = level + 1;
-          if (newLevel > 5) {
-            setGameState('victory');
-            submitScore('bridge-bouncer', score + 1000);
-          } else {
-            setLevel(newLevel);
-            setScore(s => s + 200);
-            // Reset grid but keep some connections
-            const newGrid = generateGrid();
-            // Spawn enemy
-            setEnemies(prev => [...prev, {
-              id: Date.now(),
-              row: 0,
-              col: 0,
-              type: 'ball',
-              direction: 1,
-            }]);
-            return newGrid;
-          }
-        }
-        return prev;
-      });
-
-    }, 1000 / 60);
+    }, 1500 - (level * 100));
 
     return () => {
-      if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+      if (enemyTimerRef.current) clearInterval(enemyTimerRef.current);
     };
-  }, [gameState, playerRow, playerCol, level, score, generateGrid, submitScore]);
+  }, [gameState, enemies.length, level, playerRow, playerCol]);
 
-  // Calculate completion percentage
-  const connectedCount = tiles.filter(t => t.connected).length;
-  const totalTiles = tiles.length;
-  const completionPercent = totalTiles > 0 ? Math.floor((connectedCount / totalTiles) * 100) : 0;
+  // Get tile position
+  const getTilePosition = (row: number, col: number) => {
+    const tile = tiles.find(t => t.row === row && t.col === col);
+    return tile ? { x: tile.x, y: tile.y } : { x: 0, y: 0 };
+  };
+
+  const playerPos = getTilePosition(playerRow, playerCol);
 
   return (
     <View style={styles.container}>
@@ -315,50 +291,47 @@ export default function BridgeBouncerGame() {
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>BRIDGE BOUNCER</Text>
-            <Text style={styles.subtitle}>Connect all tiles!</Text>
+            <Text style={[styles.chainTarget, { color: CHAIN_COLORS[targetChain].color }]}>
+              Bridge to {CHAIN_COLORS[targetChain].name}!
+            </Text>
           </View>
           <View style={styles.statsContainer}>
             <Text style={styles.score}>{score}</Text>
-            <View style={styles.lives}>
-              {[...Array(lives)].map((_, i) => (
-                <Text key={i} style={styles.heart}>🟢</Text>
-              ))}
-            </View>
+            <Text style={styles.level}>LVL {level}</Text>
           </View>
         </View>
 
-        {/* Progress */}
-        <View style={styles.progressBar}>
-          <Text style={styles.levelText}>LEVEL {level}</Text>
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${completionPercent}%` }]} />
+        {/* Lives and Bridges */}
+        <View style={styles.infoBar}>
+          <View style={styles.livesContainer}>
+            {[...Array(3)].map((_, i) => (
+              <Text key={i} style={[styles.lifeIcon, i >= lives && styles.lifeIconLost]}>
+                ❤️
+              </Text>
+            ))}
           </View>
-          <Text style={styles.progressText}>{completionPercent}%</Text>
+          <Text style={styles.bridgesText}>🌉 {bridgesCompleted} Bridged</Text>
         </View>
 
         {/* Game Area */}
         <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
-          {/* Tiles */}
-          {tiles.map((tile, index) => {
-            const pos = getTilePosition(tile.row, tile.col);
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.tile,
-                  {
-                    left: pos.x,
-                    top: pos.y,
-                    backgroundColor: tile.bridged ? CONNECTION_TYPES[2].color :
-                                    tile.connected ? CONNECTION_TYPES[1].color :
-                                    CONNECTION_TYPES[0].color,
-                  },
-                ]}
-              >
-                <View style={styles.tileTop} />
-              </View>
-            );
-          })}
+          {/* Pyramid Tiles */}
+          {tiles.map((tile, index) => (
+            <View
+              key={index}
+              style={[
+                styles.tile,
+                {
+                  left: tile.x - TILE_SIZE / 2,
+                  top: tile.y,
+                  backgroundColor: CHAIN_COLORS[tile.chainIndex].color,
+                  borderColor: tile.chainIndex > 0 ? '#FFFFFF' : '#444',
+                },
+              ]}
+            >
+              <View style={styles.tileTop} />
+            </View>
+          ))}
 
           {/* Enemies */}
           {enemies.map(enemy => {
@@ -369,29 +342,32 @@ export default function BridgeBouncerGame() {
                 style={[
                   styles.enemy,
                   {
-                    left: pos.x + TILE_SIZE / 2 - 12,
-                    top: pos.y - 10,
+                    left: pos.x - ENEMY_SIZE / 2,
+                    top: pos.y - ENEMY_SIZE / 2,
+                    backgroundColor: enemy.type === 'snake' ? '#FF4444' : '#AA44FF',
                   },
                 ]}
               >
-                <Text style={styles.enemyIcon}>🔴</Text>
+                <Text style={styles.enemyIcon}>
+                  {enemy.type === 'snake' ? '🐍' : '⚫'}
+                </Text>
               </View>
             );
           })}
 
           {/* Player */}
-          {gameState === 'playing' && (
+          {tiles.length > 0 && (
             <View
               style={[
                 styles.player,
                 {
-                  left: getTilePosition(playerRow, playerCol).x + TILE_SIZE / 2 - PLAYER_SIZE / 2,
-                  top: getTilePosition(playerRow, playerCol).y - PLAYER_SIZE / 2,
+                  left: playerPos.x - 20,
+                  top: playerPos.y - 30,
                   transform: [{ scale: isJumping ? 1.2 : 1 }],
                 },
               ]}
             >
-              <Text style={styles.playerIcon}>🟢</Text>
+              <Text style={styles.playerIcon}>🦘</Text>
             </View>
           )}
 
@@ -400,55 +376,57 @@ export default function BridgeBouncerGame() {
             <View style={styles.overlay}>
               <Text style={styles.overlayTitle}>BRIDGE BOUNCER</Text>
               <Text style={styles.overlayIcon}>🌉</Text>
-              <Text style={styles.overlayText}>Hop on tiles to connect them!</Text>
-              <Text style={styles.overlayHint}>Connect ALL tiles to win!</Text>
+              <Text style={styles.overlayText}>Hop to bridge all tiles!</Text>
+              <Text style={styles.overlayHint}>Connect chains by changing tile colors</Text>
               <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                 <Text style={styles.startBtnText}>▶ START</Text>
               </TouchableOpacity>
             </View>
           )}
 
+          {gameState === 'levelcomplete' && (
+            <View style={styles.overlay}>
+              <Text style={styles.overlayTitle}>LEVEL COMPLETE!</Text>
+              <Text style={styles.overlayScore}>+{level * 100} Bonus!</Text>
+              <Text style={styles.overlayText}>All tiles bridged to {CHAIN_COLORS[targetChain].name}!</Text>
+              <TouchableOpacity style={styles.startBtn} onPress={nextLevel}>
+                <Text style={styles.startBtnText}>▶ NEXT LEVEL</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {gameState === 'gameover' && (
             <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>FELL OFF!</Text>
+              <Text style={styles.overlayTitle}>GAME OVER</Text>
               <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Bridges Built: {bridgesBuilt}</Text>
+              <Text style={styles.overlayText}>Level: {level}</Text>
+              <Text style={styles.overlayText}>Tiles Bridged: {bridgesCompleted}</Text>
+              <Text style={styles.lessonText}>
+                Bridges connect different chains - like translators between languages!
+              </Text>
               <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                 <Text style={styles.startBtnText}>▶ RETRY</Text>
               </TouchableOpacity>
             </View>
           )}
-
-          {gameState === 'victory' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>🎉 ALL CONNECTED!</Text>
-              <Text style={styles.overlayScore}>Score: {score + 1000}</Text>
-              <Text style={styles.lessonText}>
-                Bridges connect different places - just like how networks connect computers!
-              </Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ PLAY AGAIN</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
 
-        {/* Controls */}
+        {/* Controls - Q*Bert style diagonal */}
         <View style={styles.controls}>
           <View style={styles.controlRow}>
-            <TouchableOpacity style={styles.dpadBtn} onPress={() => movePlayer('ul')}>
-              <Text style={styles.dpadText}>↖</Text>
+            <TouchableOpacity style={styles.dirBtn} onPress={() => movePlayer('ul')}>
+              <Text style={styles.dirBtnText}>↖</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.dpadBtn} onPress={() => movePlayer('ur')}>
-              <Text style={styles.dpadText}>↗</Text>
+            <TouchableOpacity style={styles.dirBtn} onPress={() => movePlayer('ur')}>
+              <Text style={styles.dirBtnText}>↗</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.controlRow}>
-            <TouchableOpacity style={styles.dpadBtn} onPress={() => movePlayer('dl')}>
-              <Text style={styles.dpadText}>↙</Text>
+            <TouchableOpacity style={styles.dirBtn} onPress={() => movePlayer('dl')}>
+              <Text style={styles.dirBtnText}>↙</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.dpadBtn} onPress={() => movePlayer('dr')}>
-              <Text style={styles.dpadText}>↘</Text>
+            <TouchableOpacity style={styles.dirBtn} onPress={() => movePlayer('dr')}>
+              <Text style={styles.dirBtnText}>↘</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -463,35 +441,34 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6 },
   backBtn: { padding: 8 },
   titleContainer: { flex: 1, alignItems: 'center' },
-  title: { fontSize: 16, fontWeight: 'bold', color: '#00FF00', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
-  subtitle: { fontSize: 9, color: COLORS.textMuted, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
+  title: { fontSize: 16, fontWeight: 'bold', color: '#00BFFF', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
+  chainTarget: { fontSize: 10, fontWeight: 'bold', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
   statsContainer: { alignItems: 'flex-end' },
   score: { fontSize: 18, fontWeight: 'bold', color: COLORS.neonYellow, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
-  lives: { flexDirection: 'row' },
-  heart: { fontSize: 12, marginLeft: 2 },
-  progressBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 6, gap: 8 },
-  levelText: { fontSize: 10, color: '#00FF00', fontWeight: 'bold', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
-  progressTrack: { flex: 1, height: 8, backgroundColor: COLORS.bgMedium, borderRadius: 4, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#00FF00', borderRadius: 4 },
-  progressText: { fontSize: 10, color: COLORS.textSecondary, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', width: 35 },
-  gameArea: { alignSelf: 'center', backgroundColor: '#0a0a1a', borderRadius: 8, borderWidth: 2, borderColor: '#00FF00', position: 'relative', overflow: 'hidden' },
-  tile: { position: 'absolute', width: TILE_SIZE, height: TILE_SIZE * 0.6, borderRadius: 4 },
-  tileTop: { position: 'absolute', top: -6, left: 2, right: 2, height: 8, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2 },
-  enemy: { position: 'absolute', width: 24, height: 24, justifyContent: 'center', alignItems: 'center' },
+  level: { fontSize: 10, color: COLORS.textMuted, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
+  infoBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 6 },
+  livesContainer: { flexDirection: 'row', gap: 4 },
+  lifeIcon: { fontSize: 18 },
+  lifeIconLost: { opacity: 0.3 },
+  bridgesText: { fontSize: 12, color: COLORS.neonCyan, fontWeight: 'bold', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
+  gameArea: { alignSelf: 'center', backgroundColor: '#0a0a1a', borderRadius: 8, borderWidth: 2, borderColor: '#00BFFF', position: 'relative', overflow: 'hidden' },
+  tile: { position: 'absolute', width: TILE_SIZE, height: TILE_SIZE * 0.6, borderWidth: 2, borderRadius: 4, transform: [{ rotate: '45deg' }] },
+  tileTop: { position: 'absolute', top: -8, left: '25%', width: '50%', height: 8, backgroundColor: 'rgba(255,255,255,0.3)', borderTopLeftRadius: 4, borderTopRightRadius: 4 },
+  enemy: { position: 'absolute', width: ENEMY_SIZE, height: ENEMY_SIZE, borderRadius: ENEMY_SIZE / 2, justifyContent: 'center', alignItems: 'center', zIndex: 5 },
   enemyIcon: { fontSize: 20 },
-  player: { position: 'absolute', width: PLAYER_SIZE, height: PLAYER_SIZE, justifyContent: 'center', alignItems: 'center' },
-  playerIcon: { fontSize: 24 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(13, 2, 33, 0.95)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-  overlayTitle: { fontSize: 24, fontWeight: 'bold', color: '#00FF00', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', marginBottom: 8 },
+  player: { position: 'absolute', width: 40, height: 40, justifyContent: 'center', alignItems: 'center', zIndex: 10 },
+  playerIcon: { fontSize: 32 },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(13, 2, 33, 0.95)', justifyContent: 'center', alignItems: 'center', padding: 20, zIndex: 100 },
+  overlayTitle: { fontSize: 24, fontWeight: 'bold', color: '#00BFFF', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', marginBottom: 8 },
   overlayIcon: { fontSize: 50, marginVertical: 8 },
   overlayScore: { fontSize: 22, fontWeight: 'bold', color: COLORS.neonYellow, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', marginBottom: 8 },
   overlayText: { fontSize: 12, color: COLORS.textSecondary, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', marginBottom: 4 },
   overlayHint: { fontSize: 10, color: COLORS.neonYellow, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', marginTop: 8 },
   lessonText: { fontSize: 11, color: COLORS.neonCyan, fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace', textAlign: 'center', marginVertical: 12, paddingHorizontal: 16 },
-  startBtn: { backgroundColor: '#00FF00', paddingHorizontal: 28, paddingVertical: 12, borderRadius: 8, marginTop: 16 },
+  startBtn: { backgroundColor: '#00BFFF', paddingHorizontal: 28, paddingVertical: 12, borderRadius: 8, marginTop: 16 },
   startBtnText: { fontSize: 16, fontWeight: 'bold', color: '#000', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
-  controls: { alignItems: 'center', paddingVertical: 12 },
-  controlRow: { flexDirection: 'row', gap: 40, marginVertical: 4 },
-  dpadBtn: { width: 60, height: 60, backgroundColor: COLORS.bgMedium, borderRadius: 12, borderWidth: 2, borderColor: '#00FF00', justifyContent: 'center', alignItems: 'center' },
-  dpadText: { fontSize: 28, color: '#00FF00', fontWeight: 'bold' },
+  controls: { alignItems: 'center', paddingVertical: 16, gap: 8 },
+  controlRow: { flexDirection: 'row', gap: 60 },
+  dirBtn: { width: 60, height: 60, backgroundColor: COLORS.bgMedium, borderRadius: 12, borderWidth: 2, borderColor: '#00BFFF', justifyContent: 'center', alignItems: 'center' },
+  dirBtnText: { fontSize: 28, color: '#00BFFF', fontWeight: 'bold' },
 });
