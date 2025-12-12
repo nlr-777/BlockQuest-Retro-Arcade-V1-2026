@@ -219,8 +219,16 @@ export default function ArcadeHub() {
         {/* Player Bar */}
         {profile && (
           <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{profile.username[0]}</Text>
+            <View style={[styles.avatar, { borderColor: playerAvatar?.color || COLORS.neonPink }]}>
+              {playerAvatar?.imageUrl ? (
+                <Image 
+                  source={{ uri: playerAvatar.imageUrl }} 
+                  style={styles.avatarImage} 
+                  resizeMode="cover"
+                />
+              ) : (
+                <Text style={styles.avatarText}>{profile.username[0]}</Text>
+              )}
             </View>
             <View style={styles.playerInfo}>
               <Text style={styles.playerName}>{profile.username}</Text>
