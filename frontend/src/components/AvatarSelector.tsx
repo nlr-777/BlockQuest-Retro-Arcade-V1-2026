@@ -154,9 +154,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
+    width: '100%',
   },
   avatarCard: {
-    width: '31%',
+    width: 100,
     backgroundColor: COLORS.bgDark,
     borderRadius: 8,
     borderWidth: 2,
