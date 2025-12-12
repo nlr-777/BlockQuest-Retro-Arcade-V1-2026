@@ -239,6 +239,7 @@ const NextPiecePreview: React.FC<{ type: BlockType | null }> = ({ type }) => {
 export default function BlockTumbleGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');

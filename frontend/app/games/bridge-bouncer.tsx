@@ -56,6 +56,7 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'levelcomplete';
 export default function BridgeBouncerGame() {
   const router = useRouter();
   const { submitScore } = useGameStore();
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
