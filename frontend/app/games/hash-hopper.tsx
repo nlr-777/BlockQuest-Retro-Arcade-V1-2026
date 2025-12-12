@@ -112,12 +112,14 @@ export default function HashHopperGame() {
     initGame();
     setGameState('playing');
     startTimeRef.current = Date.now();
-  }, [initGame]);
+    playGameStart();
+  }, [initGame, playGameStart]);
 
   // Move player
   const movePlayer = useCallback((dx: number, dy: number) => {
     if (gameState !== 'playing') return;
 
+    playJump();
     setPlayerPos(prev => {
       const newX = Math.max(0, Math.min(GRID_COLS - 1, prev.x + dx));
       const newY = Math.max(0, Math.min(GRID_ROWS - 1, prev.y + dy));
