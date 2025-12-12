@@ -381,7 +381,7 @@ export default function BlockTumbleGame() {
             : 'Scored 1000+ in Block Tumble!',
           rarity: score >= 3000 ? 'Epic' : 'Rare',
           gameId: 'token-tumble',
-          traits: { score, level, lines_cleared: linesTotal, wallet_value: walletValue },
+          traits: { score, level, lines_cleared: linesTotal, collection_value: collectionValue },
           icon: score >= 3000 ? '🐋' : '💰',
         });
       }
