@@ -295,9 +295,11 @@ export default function ArcadeHub() {
             <Text style={styles.modalTitle}>INSERT COIN</Text>
             <Text style={styles.modalSub}>Press START to begin...</Text>
             
-            <View style={styles.coinIcon}>
-              <IconBlockChain size={50} color={COLORS.neonPink} />
-            </View>
+            {/* Avatar Selection */}
+            <AvatarSelector 
+              selectedId={selectedAvatar?.id || null}
+              onSelect={handleAvatarSelect}
+            />
             
             <Text style={styles.inputLabel}>ENTER HANDLE</Text>
             <TextInput
@@ -311,9 +313,9 @@ export default function ArcadeHub() {
             />
             
             <TouchableOpacity
-              style={[styles.startBtn, username.trim().length < 3 && styles.btnDisabled]}
+              style={[styles.startBtn, (username.trim().length < 3 || !selectedAvatar) && styles.btnDisabled]}
               onPress={handleCreateProfile}
-              disabled={username.trim().length < 3}
+              disabled={username.trim().length < 3 || !selectedAvatar}
             >
               <Text style={styles.startBtnText}>▶ START</Text>
             </TouchableOpacity>
