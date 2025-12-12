@@ -375,7 +375,7 @@ export default function TokenTumbleGame() {
       // Award badge
       if (score >= 1000) {
         mintBadge({
-          name: score >= 3000 ? 'Wallet Whale' : 'Token Stacker',
+          name: score >= 3000 ? 'Block Master' : 'Block Stacker',
           description: score >= 3000 
             ? 'Scored 3000+ in Token Tumble!' 
             : 'Scored 1000+ in Token Tumble!',
