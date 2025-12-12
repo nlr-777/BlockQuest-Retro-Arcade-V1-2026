@@ -329,6 +329,18 @@ const styles = StyleSheet.create({
   listRow: {
     justifyContent: 'space-between',
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+  },
+  gameGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
   learnSection: {
     alignItems: 'center',
     paddingVertical: 24,
