@@ -42,7 +42,7 @@ const JUMP_FORCE = -12;
 const MOVE_SPEED = 4;
 const CLIMB_SPEED = 3;
 
-// NFT Egg traits for educational element
+// Unique Egg traits for educational element
 const EGG_TRAITS = [
   { rarity: 'Common', color: '#A0A0A0', points: 10, trait: 'Gray Shell' },
   { rarity: 'Rare', color: '#00BFFF', points: 25, trait: 'Crystal Shell' },
