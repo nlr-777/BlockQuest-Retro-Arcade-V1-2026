@@ -301,6 +301,7 @@ export default function BlockMuncherGame() {
     if (gameState !== 'playing') return;
 
     setPlayerDir(dir);
+    playMove();
     const delta = DIRECTIONS[dir];
     
     setPlayerPos(prev => {
