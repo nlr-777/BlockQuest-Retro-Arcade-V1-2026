@@ -449,9 +449,9 @@ export default function BlockTumbleGame() {
         <View style={styles.sidePanel}>
           <NextPiecePreview type={nextPiece?.type || null} />
           <View style={styles.walletBox}>
-            <PixelText size="xs" color={COLORS.textSecondary}>WALLET</PixelText>
+            <PixelText size="xs" color={COLORS.textSecondary}>COLLECTION</PixelText>
             <PixelText size="sm" color={COLORS.chainGold}>
-              ${walletValue}
+              ${collectionValue}
             </PixelText>
           </View>
         </View>
