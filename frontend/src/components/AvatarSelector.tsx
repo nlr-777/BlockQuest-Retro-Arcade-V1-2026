@@ -32,32 +32,14 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
       </View>
 
       {/* Avatar Grid - 3x2 */}
-      <View style={styles.grid}>
-        {AVATARS.map((avatar) => {
-          const isSelected = selectedId === avatar.id;
-          const rarityColor = getRarityColor(avatar.rarity);
-          
-          return (
-            <TouchableOpacity
-              key={avatar.id}
-              style={[
-                styles.avatarCard,
-                { borderColor: isSelected ? avatar.color : COLORS.bgMedium },
-                isSelected && { 
-                  backgroundColor: `${avatar.color}15`,
-                  shadowColor: avatar.color,
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.8,
-                  shadowRadius: 10,
-                },
-              ]}
-              onPress={() => onSelect(avatar)}
-              activeOpacity={0.7}
-            >
-              {/* Glow effect for selected */}
-              {isSelected && (
-                <View style={[styles.selectedGlow, { backgroundColor: avatar.glowColor }]} />
-              )}
+      <View style={styles.gridContainer}>
+        <View style={styles.gridRow}>
+          {AVATARS.slice(0, 3).map((avatar) => renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity)))}
+        </View>
+        <View style={styles.gridRow}>
+          {AVATARS.slice(3, 6).map((avatar) => renderAvatarCard(avatar, selectedId, onSelect, getRarityColor(avatar.rarity)))}
+        </View>
+      </View>
               
               {/* Avatar Image */}
               <View style={[styles.imageContainer, { borderColor: avatar.color }]}>
