@@ -59,6 +59,9 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover';
 export default function LightningDashGame() {
   const router = useRouter();
   const { submitScore } = useGameStore();
+  
+  // Audio hook
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'euphoria' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
