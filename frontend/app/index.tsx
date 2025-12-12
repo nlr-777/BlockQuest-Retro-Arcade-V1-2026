@@ -126,6 +126,8 @@ export default function ArcadeHub() {
   };
 
   const handleGamePress = (game: GameConfig) => {
+    audioManager.playSound('click');
+    audioManager.stopMusic(); // Stop menu music when entering game
     if (game.isPlayable) {
       router.push(game.route as any);
     } else {
@@ -136,6 +138,9 @@ export default function ArcadeHub() {
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const playableCount = GAMES.filter(g => g.isPlayable).length;
   const comingSoonCount = GAMES.filter(g => !g.isPlayable).length;
+  
+  // Get player's avatar
+  const playerAvatar = profile?.avatarId ? getAvatarById(profile.avatarId) : AVATARS[0];
 
   const glowStyle = useAnimatedStyle(() => ({
     textShadowRadius: 10 + glowOpacity.value * 10,
