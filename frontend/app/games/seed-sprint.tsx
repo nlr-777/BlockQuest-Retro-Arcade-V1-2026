@@ -29,6 +29,7 @@ import { PixelButton } from '../../src/components/PixelButton';
 import VFXLayer from '../../src/vfx/VFXManager';
 import { COLORS } from '../../src/constants/colors';
 import { useGameStore } from '../../src/store/gameStore';
+import { useGameAudio } from '../../src/hooks/useGameAudio';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
