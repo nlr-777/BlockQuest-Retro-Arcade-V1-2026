@@ -146,10 +146,10 @@ export const GAMES: GameConfig[] = [
   },
   {
     id: 'mine-blaster',
-    title: 'Mine Blaster',
+    title: 'Rock Blaster',
     subtitle: 'Asteroids Style',
-    description: 'Mine rocks in space. Bigger ship = more power!',
-    web3Concept: 'Mining',
+    description: 'Blast rocks in space. Bigger ship = more power!',
+    web3Concept: 'Resource Gathering',
     icon: '⛏️',
     color: '#FFD700',
     accentColor: '#DAA520',
