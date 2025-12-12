@@ -166,16 +166,58 @@ export default function ArcadeHub() {
 
       {/* Game Grid - using ScrollView for reliability */}
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.gameGrid}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {displayGames.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <TouchableOpacity
+              key={game.id}
+              style={{
+                width: CARD_WIDTH,
+                height: 180,
+                marginBottom: 16,
+                backgroundColor: COLORS.cardBg,
+                borderRadius: 12,
+                borderWidth: 2,
+                borderColor: game.color,
+                padding: 12,
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                if (game.isPlayable) {
+                  router.push(game.route as any);
+                } else {
+                  router.push(`/games/coming-soon?id=${game.id}` as any);
+                }
+              }}
+              activeOpacity={0.8}
+            >
+              <View style={{
+                width: 50,
+                height: 50,
+                borderRadius: 25,
+                backgroundColor: `${game.color}40`,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 8,
+              }}>
+                <PixelText size="xl">{game.icon}</PixelText>
+              </View>
+              <PixelText size="sm" color={game.color} style={{ textAlign: 'center', marginBottom: 4 }}>
+                {game.title}
+              </PixelText>
+              <PixelText size="xs" color={COLORS.textSecondary} style={{ textAlign: 'center', marginBottom: 8 }}>
+                {game.subtitle}
+              </PixelText>
+              <PixelText size="xs" color={game.isPlayable ? COLORS.success : COLORS.textMuted}>
+                {game.isPlayable ? 'PLAY' : 'COMING SOON'}
+              </PixelText>
+            </TouchableOpacity>
           ))}
         </View>
-        <View style={styles.learnSection}>
+        <View style={{ alignItems: 'center', paddingVertical: 24 }}>
           <PixelText size="md" color={COLORS.textSecondary}>
             Learn Web3 while you play!
           </PixelText>
