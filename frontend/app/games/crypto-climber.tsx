@@ -533,7 +533,7 @@ export default function CryptoClimberGame() {
             {gameState === 'ready' && (
               <View style={styles.overlay}>
                 <Text style={styles.overlayTitle}>CRYPTO CLIMBER</Text>
-                <Text style={styles.overlayText}>Climb to rescue your NFT collection!</Text>
+                <Text style={styles.overlayText}>Climb to rescue your egg collection!</Text>
                 <Text style={styles.overlayText}>🥚 Collect unique eggs</Text>
                 <Text style={styles.overlayText}>🛢️ Avoid barrels</Text>
                 <TouchableOpacity style={styles.startBtn} onPress={startGame}>
