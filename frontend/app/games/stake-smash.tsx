@@ -92,6 +92,9 @@ type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
 export default function PowerSmashGame() {
   const router = useRouter();
   const { submitScore, addBadge } = useGameStore();
+  
+  // Audio hook
+  const { playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
