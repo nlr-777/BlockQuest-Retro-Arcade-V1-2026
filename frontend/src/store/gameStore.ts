@@ -207,4 +207,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
     set({ profile: updatedProfile });
   },
+
+  // Simplified submitScore for games to call
+  submitScore: async (gameId: string, score: number) => {
+    const { updateScore } = get();
+    await updateScore(gameId, score, 0);
+  },
+
+  // Alias for mintBadge for backwards compatibility  
+  addBadge: async (badgeData) => {
+    const { mintBadge } = get();
+    return mintBadge(badgeData);
+  },
 }));
