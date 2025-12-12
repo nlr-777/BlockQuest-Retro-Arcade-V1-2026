@@ -517,15 +517,15 @@ export default function CryptoClimberGame() {
             {/* Player */}
             <PixelPlayer x={playerX} y={playerY} facing={facing} climbing={isClimbing} />
 
-            {/* NFT Info popup */}
-            {showNFTInfo && lastCollectedEgg && (
-              <View style={styles.nftPopup}>
-                <Text style={styles.nftTitle}>NFT COLLECTED!</Text>
-                <Text style={[styles.nftRarity, { color: lastCollectedEgg.color }]}>
+            {/* Collect Info popup */}
+            {showCollectInfo && lastCollectedEgg && (
+              <View style={styles.collectPopup}>
+                <Text style={styles.collectTitle}>RARE FIND!</Text>
+                <Text style={[styles.collectRarity, { color: lastCollectedEgg.color }]}>
                   {lastCollectedEgg.rarity} Egg
                 </Text>
-                <Text style={styles.nftTrait}>Trait: {lastCollectedEgg.trait}</Text>
-                <Text style={styles.nftPoints}>+{lastCollectedEgg.points} pts</Text>
+                <Text style={styles.collectTrait}>Trait: {lastCollectedEgg.trait}</Text>
+                <Text style={styles.collectPoints}>+{lastCollectedEgg.points} pts</Text>
               </View>
             )}
 
