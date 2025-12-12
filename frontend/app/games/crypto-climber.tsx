@@ -586,32 +586,36 @@ export default function CryptoClimberGame() {
           <View style={styles.dpad}>
             <TouchableOpacity
               style={[styles.dpadBtn, styles.dpadUp]}
-              onPressIn={() => handleMove('up')}
-              onPressOut={handleMoveEnd}
+              onPressIn={() => startMove('up')}
+              onPressOut={stopMove}
+              delayPressOut={0}
             >
               <Text style={styles.dpadText}>▲</Text>
             </TouchableOpacity>
             <View style={styles.dpadMiddle}>
               <TouchableOpacity
                 style={[styles.dpadBtn, styles.dpadLeft]}
-                onPressIn={() => handleMove('left')}
-                onPressOut={handleMoveEnd}
+                onPressIn={() => startMove('left')}
+                onPressOut={stopMove}
+                delayPressOut={0}
               >
                 <Text style={styles.dpadText}>◀</Text>
               </TouchableOpacity>
               <View style={styles.dpadCenter} />
               <TouchableOpacity
                 style={[styles.dpadBtn, styles.dpadRight]}
-                onPressIn={() => handleMove('right')}
-                onPressOut={handleMoveEnd}
+                onPressIn={() => startMove('right')}
+                onPressOut={stopMove}
+                delayPressOut={0}
               >
                 <Text style={styles.dpadText}>▶</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
               style={[styles.dpadBtn, styles.dpadDown]}
-              onPressIn={() => handleMove('down')}
-              onPressOut={handleMoveEnd}
+              onPressIn={() => startMove('down')}
+              onPressOut={stopMove}
+              delayPressOut={0}
             >
               <Text style={styles.dpadText}>▼</Text>
             </TouchableOpacity>
