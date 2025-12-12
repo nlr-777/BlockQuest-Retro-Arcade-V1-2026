@@ -557,9 +557,9 @@ export default function CryptoClimberGame() {
               <View style={styles.overlay}>
                 <Text style={styles.overlayTitle}>🎉 RESCUED!</Text>
                 <Text style={styles.overlayScore}>Score: {score + 500}</Text>
-                <Text style={styles.overlayText}>You learned about NFTs!</Text>
-                <Text style={styles.nftLesson}>
-                  NFTs are unique digital items with different traits and rarity levels!
+                <Text style={styles.overlayText}>You learned about unique collectibles!</Text>
+                <Text style={styles.collectLesson}>
+                  Unique items have different traits and rarity levels - just like trading cards!
                 </Text>
                 <TouchableOpacity style={styles.startBtn} onPress={startGame}>
                   <Text style={styles.startBtnText}>▶ PLAY AGAIN</Text>
