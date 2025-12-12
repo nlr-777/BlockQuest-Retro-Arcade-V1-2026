@@ -1,5 +1,5 @@
 // BlockQuest Official - Audio Manager
-// Handles game sound effects and background music
+// Handles game sound effects and synthwave background music
 import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
 
@@ -16,6 +16,14 @@ export type SoundEffect =
   | 'shoot'
   | 'levelup';
 
+// Synthwave music track types for different game moods
+export type MusicTrack = 
+  | 'menu'
+  | 'action'
+  | 'chill'
+  | 'boss'
+  | 'victory';
+
 // Simple beep frequencies for retro 8-bit sounds
 const FREQUENCIES: Record<SoundEffect, { freq: number; duration: number; type: 'sine' | 'square' }> = {
   jump: { freq: 400, duration: 100, type: 'square' },
@@ -28,6 +36,35 @@ const FREQUENCIES: Record<SoundEffect, { freq: number; duration: number; type: '
   move: { freq: 300, duration: 30, type: 'square' },
   shoot: { freq: 700, duration: 60, type: 'square' },
   levelup: { freq: 900, duration: 250, type: 'sine' },
+};
+
+// Synthwave arpeggio patterns (frequencies in Hz)
+const SYNTHWAVE_PATTERNS: Record<MusicTrack, { notes: number[]; tempo: number; waveform: OscillatorType }> = {
+  menu: {
+    notes: [261, 329, 392, 523, 392, 329, 261, 196], // C major arpeggio
+    tempo: 180,
+    waveform: 'sawtooth',
+  },
+  action: {
+    notes: [330, 392, 494, 659, 587, 494, 392, 330], // E minor energetic
+    tempo: 140,
+    waveform: 'square',
+  },
+  chill: {
+    notes: [220, 277, 330, 440, 330, 277, 220, 165], // A minor dreamy
+    tempo: 220,
+    waveform: 'sine',
+  },
+  boss: {
+    notes: [196, 233, 294, 392, 349, 294, 233, 196], // G minor intense
+    tempo: 120,
+    waveform: 'square',
+  },
+  victory: {
+    notes: [523, 659, 784, 1047, 784, 659, 523, 659], // C major triumphant
+    tempo: 160,
+    waveform: 'sawtooth',
+  },
 };
 
 class AudioManager {
