@@ -377,8 +377,8 @@ export default function BlockTumbleGame() {
         mintBadge({
           name: score >= 3000 ? 'Block Master' : 'Block Stacker',
           description: score >= 3000 
-            ? 'Scored 3000+ in Token Tumble!' 
-            : 'Scored 1000+ in Token Tumble!',
+            ? 'Scored 3000+ in Block Tumble!' 
+            : 'Scored 1000+ in Block Tumble!',
           rarity: score >= 3000 ? 'Epic' : 'Rare',
           gameId: 'token-tumble',
           traits: { score, level, lines_cleared: linesTotal, wallet_value: walletValue },
