@@ -41,16 +41,15 @@ const GameCard: React.FC<{ game: GameConfig }> = ({ game }) => {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { borderWidth: 1, borderColor: game.color }]}
       onPress={handlePress}
       activeOpacity={0.8}
     >
-      <View style={[styles.glowBorder, { backgroundColor: game.color }]} />
-      <View style={[styles.cardInner, { borderColor: game.color }]}>
-        <View style={[styles.iconContainer, { backgroundColor: `${game.color}20` }]}>
-          <PixelText size="xxl">{game.icon}</PixelText>
+      <View style={[styles.cardInner, { borderColor: game.color, backgroundColor: COLORS.cardBg }]}>
+        <View style={[styles.iconContainer, { backgroundColor: `${game.color}40` }]}>
+          <PixelText size="xl">{game.icon}</PixelText>
         </View>
-        <PixelText size="md" color={game.color} style={styles.cardTitle}>
+        <PixelText size="sm" color={game.color} style={styles.cardTitle}>
           {game.title}
         </PixelText>
         <PixelText size="xs" color={COLORS.textSecondary} style={styles.subtitle}>
@@ -58,20 +57,10 @@ const GameCard: React.FC<{ game: GameConfig }> = ({ game }) => {
         </PixelText>
         <View style={styles.footer}>
           {game.isPlayable ? (
-            <>
-              <PixelText size="xs" color={COLORS.success}>PLAY</PixelText>
-              {highScore > 0 && (
-                <PixelText size="xs" color={COLORS.chainGold}>HI: {highScore}</PixelText>
-              )}
-            </>
+            <PixelText size="xs" color={COLORS.success}>PLAY</PixelText>
           ) : (
-            <View style={styles.comingSoon}>
-              <PixelText size="xs" color={COLORS.textMuted}>COMING SOON</PixelText>
-            </View>
+            <PixelText size="xs" color={COLORS.textMuted}>SOON</PixelText>
           )}
-        </View>
-        <View style={[styles.difficultyBadge, { backgroundColor: game.accentColor }]}>
-          <PixelText size="xs" color="#FFF">{game.difficulty[0]}</PixelText>
         </View>
       </View>
     </TouchableOpacity>
