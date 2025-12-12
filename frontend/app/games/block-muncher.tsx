@@ -240,6 +240,12 @@ const ChainSegment: React.FC<{ position: Position; index: number }> = ({ positio
 export default function BlockMuncherGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  
+  // Audio hook for game sounds and music
+  const { 
+    playCollect, playHit, playMove, playGameStart, playGameOver, 
+    playLevelUp, playPowerup 
+  } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
