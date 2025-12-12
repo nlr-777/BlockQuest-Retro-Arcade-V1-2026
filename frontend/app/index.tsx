@@ -47,8 +47,14 @@ export default function ArcadeHub() {
 
   const totalHighScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const displayGames = activeTab === 'playable' ? PLAYABLE_GAMES : COMING_SOON_GAMES;
+  
+  // Debug logging
+  console.log('PLAYABLE_GAMES:', JSON.stringify(PLAYABLE_GAMES.map(g => g.id)));
+  console.log('displayGames length:', displayGames.length);
 
-  const GameCard = ({ game }: { game: GameConfig }) => (
+  const GameCard = ({ game }: { game: GameConfig }) => {
+    console.log('Rendering game:', game.id);
+    return (
     <TouchableOpacity
       style={[styles.gameCard, { borderColor: game.color }]}
       onPress={() => {
