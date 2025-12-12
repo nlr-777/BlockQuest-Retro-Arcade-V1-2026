@@ -61,6 +61,9 @@ const generateHash = (input: string): string => {
 export default function HashHopperGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  
+  // Audio hook
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
