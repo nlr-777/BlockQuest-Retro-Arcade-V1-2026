@@ -235,7 +235,7 @@ const NextPiecePreview: React.FC<{ type: BlockType | null }> = ({ type }) => {
   );
 };
 
-export default function TokenTumbleGame() {
+export default function BlockTumbleGame() {
   const router = useRouter();
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
 
