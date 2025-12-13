@@ -523,21 +523,41 @@ export default function BlockMuncherGame() {
           <VFXLayer type="pixel-chain-rain" intensity={0.6} />
           <Animated.View entering={FadeInDown.delay(200)} style={styles.menuContent}>
             <PixelText size="xxl" color={COLORS.chainGold} glow style={styles.menuTitle}>
-              BLOCK MUNCHER
+              {GAME_CONFIG.title.toUpperCase()}
             </PixelText>
-            <PixelText size="md" style={styles.menuIcon}>👾</PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary} style={styles.menuSubtitle}>
-              Gobble blocks to build your chain!
+            <PixelText size="md" style={styles.menuIcon}>{GAME_CONFIG.icon}</PixelText>
+            
+            {/* Instructions */}
+            <View style={styles.instructionBox}>
+              <PixelText size="xs" color={COLORS.neonCyan}>HOW TO PLAY</PixelText>
+              <PixelText size="xs" color={COLORS.textSecondary} style={styles.instructionText}>
+                {GAME_CONFIG.instructions}
+              </PixelText>
+            </View>
+            
+            {/* Controls */}
+            <View style={styles.controlsInfo}>
+              <PixelText size="xs" color={COLORS.neonYellow}>CONTROLS</PixelText>
+              <PixelText size="sm" color={COLORS.chainGold} glow>
+                {GAME_CONFIG.controls}
+              </PixelText>
+            </View>
+            
+            {/* Difficulty */}
+            <PixelText size="xs" color={
+              GAME_CONFIG.difficulty === 'Easy' ? '#32CD32' :
+              GAME_CONFIG.difficulty === 'Medium' ? '#FFD700' : '#FF4500'
+            }>
+              {GAME_CONFIG.difficulty === 'Easy' ? '★☆☆' :
+               GAME_CONFIG.difficulty === 'Medium' ? '★★☆' : '★★★'} {GAME_CONFIG.difficulty}
             </PixelText>
-            <PixelText size="xs" color={COLORS.blockCyan} style={styles.menuHint}>
-              Avoid the ghosts - they'll break your chain!
-            </PixelText>
+            
             <PixelButton
-              title="START GAME"
+              title="▶ PLAY"
               onPress={startGame}
               color={COLORS.chainGold}
               size="lg"
-              style={{ marginTop: 32 }}
+              style={{ marginTop: 20 }}
             />
           </Animated.View>
         </View>
