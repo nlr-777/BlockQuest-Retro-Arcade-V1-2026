@@ -102,55 +102,82 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "BlockQuest Official - Retro Arcade game selection app with 15 mini-games (5 playable, 10 coming soon) displayed in a cabinet-style grid layout. Test main hub screen, game navigation, vault screen, and visual elements."
+user_problem_statement: "BlockQuest Official - Retro Arcade game selection app with 15 mini-games (12 playable, 3 coming soon) displayed in a cabinet-style grid layout. Features include: onboarding with 6 avatar selection, game instructions on start, high-dopamine trance audio, seed phrase backup/restore system, and beginner badge after 5 plays. Test main hub, games, vault backup/restore, audio, and visual elements."
 
 frontend:
-  - task: "Main Hub Screen - Onboarding Modal"
+  - task: "Main Hub Screen - Onboarding with Avatar Selection"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/app/index.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
-        - agent: "testing"
-        - comment: "Need to test onboarding modal appears for new users, username entry, and START button functionality"
-        - working: true
-        - agent: "testing"
-        - comment: "✅ TESTED: Onboarding modal appears correctly with INSERT COIN header, username input field, and START button. Successfully tested entering username 'PLAYER1' and clicking START button. Modal closes properly after submission."
+        - agent: "main"
+        - comment: "Updated onboarding with 6 avatar selection (3x2 grid), avatar stories/timeline, bold arcade styling"
 
-  - task: "Main Hub Screen - Game Grid Display"
+  - task: "Main Hub Screen - Game Grid Display (12 playable)"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/app/index.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
-        - agent: "testing"
-        - comment: "Need to verify all 15 game cards visible in 3x5 grid, playable games show ▶ status, coming soon games show ◆ status and SOON overlay"
-        - working: true
-        - agent: "testing"
-        - comment: "✅ TESTED: Game grid displays correctly with all 15 games visible. Verified 5 playable games (Block, Token, Chain, Hash, Seed) with ▶ status indicators and 10 coming soon games with ◆ status and SOON overlay. Grid layout is properly structured in cabinet-style format."
+        - agent: "main"
+        - comment: "12 games now playable, 3 coming soon. All games have instructions and controls defined."
 
-  - task: "Main Hub Screen - UI Elements"
+  - task: "Game Instructions Screen"
     implemented: true
-    working: true
-    file: "/app/frontend/app/index.tsx"
+    working: "NA"
+    file: "/app/frontend/app/games/block-muncher.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
-        - agent: "testing"
-        - comment: "Need to verify BLOCKQUEST - RETRO ARCADE header, player info bar with username/level/points, SELECT GAME panel header, bottom navigation with 4 tabs"
-        - working: true
-        - agent: "testing"
-        - comment: "✅ TESTED: All UI elements present and working. BLOCKQUEST - RETRO ARCADE header displays with neon glow effect. Player info bar shows username (PLAYER1), level (LV.1), and points (0 PTS). SELECT GAME panel header visible with game count indicators. Bottom navigation has all 4 tabs: GAMES, VAULT, RANKS, CONFIG."
+        - agent: "main"
+        - comment: "Block Muncher shows HOW TO PLAY, CONTROLS, difficulty before starting. Pattern ready for all games."
 
-  - task: "Game Card Navigation - Playable Games"
+  - task: "Audio System - Trance Music & SFX"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/utils/AudioManager.ts"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "High-dopamine 136-140 BPM trance engine with supersaws, arps, kicks, claps. 12 SFX types. All 12 games have useGameAudio hook."
+
+  - task: "Vault Screen - Backup/Restore System"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/vault.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added BACKUP and RESTORE buttons. Backup generates 12-word kid-friendly seed phrase. Restore modal for entering phrase."
+
+  - task: "Beginner Badge System"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/store/gameStore.ts"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Arcade Rookie badge automatically awarded after 5 total games played."
+
+  - task: "Game Card Navigation - All 12 Playable Games"
     implemented: true
     working: true
     file: "/app/frontend/app/index.tsx"
