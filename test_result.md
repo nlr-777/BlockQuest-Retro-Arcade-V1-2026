@@ -107,39 +107,48 @@ user_problem_statement: "BlockQuest Official - Retro Arcade game selection app w
 frontend:
   - task: "Main Hub Screen - Onboarding with Avatar Selection"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/index.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Updated onboarding with 6 avatar selection (3x2 grid), avatar stories/timeline, bold arcade styling"
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL ISSUE: Onboarding modal appears but avatar selection not working properly. Found 'SELECT HERO' section but no clickable avatar elements detected. Username input works but INSERT COIN button doesn't complete onboarding flow properly. Modal remains visible after clicking INSERT COIN."
 
   - task: "Main Hub Screen - Game Grid Display (12 playable)"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/index.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "12 games now playable, 3 coming soon. All games have instructions and controls defined."
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL ISSUE: Game grid not accessible due to onboarding modal blocking access. Found 13 playable game indicators (▶) and 3 coming soon indicators (SOON) but no clickable game cards detected. Cannot test game navigation until onboarding flow is fixed."
 
   - task: "Game Instructions Screen"
     implemented: true
     working: "NA"
     file: "/app/frontend/app/games/block-muncher.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Block Muncher shows HOW TO PLAY, CONTROLS, difficulty before starting. Pattern ready for all games."
+        - working: "NA"
+        - agent: "testing"
+        - comment: "⚠️ CANNOT TEST: Unable to access game instructions due to onboarding modal blocking main hub access. Need to fix onboarding flow first before testing individual games."
 
   - task: "Audio System - Trance Music & SFX"
     implemented: true
@@ -152,30 +161,39 @@ frontend:
         - working: "NA"
         - agent: "main"
         - comment: "High-dopamine 136-140 BPM trance engine with supersaws, arps, kicks, claps. 12 SFX types. All 12 games have useGameAudio hook."
+        - working: "NA"
+        - agent: "testing"
+        - comment: "⚠️ NOT TESTED: Audio system testing skipped due to system limitations (hardware audio components not accessible in testing environment)."
 
   - task: "Vault Screen - Backup/Restore System"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/vault.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Added BACKUP and RESTORE buttons. Backup generates 12-word kid-friendly seed phrase. Restore modal for entering phrase."
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL ISSUE: Vault navigation works (can access /vault page) but BACKUP and RESTORE buttons not found on the page. Treasure Vault screen loads but backup/restore functionality not accessible. May be hidden or require completed onboarding."
 
   - task: "Beginner Badge System"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/store/gameStore.ts"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
     needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Arcade Rookie badge automatically awarded after 5 total games played."
+        - working: "NA"
+        - agent: "testing"
+        - comment: "⚠️ CANNOT TEST: Badge system cannot be tested until onboarding flow is fixed and games are accessible."
 
   - task: "Game Card Navigation - All 12 Playable Games"
     implemented: true
@@ -244,15 +262,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Main Hub Screen - Onboarding Modal"
-    - "Main Hub Screen - Game Grid Display"
-    - "Main Hub Screen - UI Elements"
-    - "Game Card Navigation - Playable Games"
-    - "Game Card Navigation - Coming Soon Games"
-    - "Vault Screen Navigation"
-  stuck_tasks: []
+    - "Main Hub Screen - Onboarding with Avatar Selection"
+    - "Main Hub Screen - Game Grid Display (12 playable)"
+    - "Vault Screen - Backup/Restore System"
+  stuck_tasks:
+    - "Main Hub Screen - Onboarding with Avatar Selection"
+    - "Main Hub Screen - Game Grid Display (12 playable)"
+    - "Vault Screen - Backup/Restore System"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
   - task: "Block Muncher Game - Navigation & Loading"
     implemented: true
@@ -466,3 +484,5 @@ agent_communication:
     - message: "🎮 COMPREHENSIVE GAME TESTING: Starting detailed testing of all 6 playable games as requested. Will test navigation, loading, UI elements, gameplay functionality, and visual quality for Block Muncher, Token Tumble, Chain Invaders, Hash Hopper, Seed Sprint, and Crypto Climber games using mobile viewport (390x844)."
     - agent: "testing"
     - message: "🎉 ALL 6 GAMES TESTED SUCCESSFULLY: Block Muncher (Pac-Man), Token Tumble (Tetris), Chain Invaders (Space Invaders), Hash Hopper (Frogger), Seed Sprint (Endless Runner), and Crypto Climber (Donkey Kong) all working. Navigation ✅, UI elements ✅, START buttons ✅, visual quality ✅, game mechanics ✅. Crypto Climber has best control responsiveness. Minor: Back button selector needs adjustment across games. All games load properly and demonstrate excellent retro arcade implementation with blockchain education."
+    - agent: "testing"
+    - message: "❌ CRITICAL HEALTH CHECK FINDINGS: Onboarding modal appears but avatar selection is broken - no clickable avatar elements detected despite 'SELECT HERO' section being present. INSERT COIN button doesn't complete onboarding flow properly, modal remains visible. This blocks access to main hub features including game grid (13 playable games detected but not accessible) and vault backup/restore functionality. App loads correctly on mobile (390x844) with excellent neon/synthwave visual design, but core onboarding flow must be fixed for app to be functional."
