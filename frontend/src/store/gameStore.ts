@@ -137,10 +137,20 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const newGamesPlayed = profile.gamesPlayed + 1;
     
+    // Calculate XP earned: base 10 + score/10 (capped at 50)
+    const xpEarned = Math.min(50, 10 + Math.floor(score / 10));
+    const newXP = profile.xp + xpEarned;
+    
+    // Calculate new level (100 XP per level)
+    const xpPerLevel = 100;
+    const newLevel = Math.floor(newXP / xpPerLevel) + 1;
+    
     const updatedProfile = {
       ...profile,
       totalScore: profile.totalScore + score,
       gamesPlayed: newGamesPlayed,
+      xp: newXP,
+      level: newLevel,
     };
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
