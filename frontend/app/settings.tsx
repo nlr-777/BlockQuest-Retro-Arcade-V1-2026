@@ -34,7 +34,26 @@ export default function SettingsScreen() {
     setMusicVolume,
     sfxVolume,
     setSfxVolume,
+    logout,
   } = useGameStore();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'You will be logged out and returned to the start screen. Your progress will be saved locally.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/');
+          },
+        },
+      ]
+    );
+  };
 
   const handleResetData = () => {
     Alert.alert(
