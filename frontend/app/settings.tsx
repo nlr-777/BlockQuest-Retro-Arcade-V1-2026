@@ -224,6 +224,14 @@ export default function SettingsScreen() {
           </PixelText>
           <View style={styles.card}>
             <PixelButton
+              title="LOG OUT"
+              onPress={handleLogout}
+              color={COLORS.neonYellow}
+              textColor={COLORS.bgDark}
+              size="md"
+              style={{ marginBottom: 12 }}
+            />
+            <PixelButton
               title="RESET ALL DATA"
               onPress={handleResetData}
               color={COLORS.error}
