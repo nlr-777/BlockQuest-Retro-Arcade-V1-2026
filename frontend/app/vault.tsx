@@ -155,11 +155,57 @@ const TransactionItem: React.FC<{
 
 export default function TreasureVaultScreen() {
   const router = useRouter();
-  const { profile, highScores } = useGameStore();
-  const [activeSection, setActiveSection] = useState<'stats' | 'badges' | 'history'>('stats');
+  const { profile, highScores, initProfile } = useGameStore();
+  const [activeSection, setActiveSection] = useState<'stats' | 'badges' | 'history' | 'backup'>('stats');
+  const [showBackupModal, setShowBackupModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [seedPhrase, setSeedPhrase] = useState('');
+  const [restorePhrase, setRestorePhrase] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const playerId = profile ? generatePlayerId(profile.username) : 'PLAYER-000000';
+
+  // Generate backup seed phrase
+  const generateBackup = () => {
+    if (!profile) return;
+    
+    const backup = encodeBackup(
+      profile.username,
+      profile.avatarId || 'genesis-byte',
+      profile.totalScore,
+      profile.gamesPlayed,
+      highScores,
+      profile.badges,
+      profile.createdAt
+    );
+    setSeedPhrase(backup);
+    setShowBackupModal(true);
+  };
+
+  // Copy seed phrase to clipboard
+  const copyToClipboard = () => {
+    if (seedPhrase) {
+      Clipboard.setString(seedPhrase);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  // Restore from seed phrase
+  const handleRestore = async () => {
+    if (!restorePhrase.trim()) return;
+    
+    const data = decodeBackup(restorePhrase.trim());
+    if (data) {
+      await initProfile(data.username, data.avatarId);
+      setShowRestoreModal(false);
+      setRestorePhrase('');
+      Alert.alert('Success!', `Welcome back, ${data.username}! Your progress has been restored.`);
+    } else {
+      Alert.alert('Error', 'Invalid backup phrase. Please check and try again.');
+    }
+  };
 
   // Simulated activity history
   const activities = [
