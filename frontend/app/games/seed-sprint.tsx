@@ -28,6 +28,7 @@ import { PixelText } from '../../src/components/PixelText';
 import { PixelButton } from '../../src/components/PixelButton';
 import VFXLayer from '../../src/vfx/VFXManager';
 import { COLORS } from '../../src/constants/colors';
+import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 

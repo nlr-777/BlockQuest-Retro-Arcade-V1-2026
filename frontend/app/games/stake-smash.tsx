@@ -24,6 +24,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { COLORS } from '../../src/constants/colors';
+import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { Scanlines } from '../../src/components/RetroEffects';
