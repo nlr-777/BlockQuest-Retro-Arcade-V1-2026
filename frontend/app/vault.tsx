@@ -276,29 +276,23 @@ export default function TreasureVaultScreen() {
 
               {/* Quick Actions */}
               <View style={styles.quickActions}>
-                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/leaderboard')}>
-                  <View style={[styles.actionIcon, { backgroundColor: COLORS.success + '30' }]}>
-                    <Ionicons name="trophy" size={20} color={COLORS.success} />
-                  </View>
-                  <Text style={styles.actionText}>RANKS</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/badges')}>
-                  <View style={[styles.actionIcon, { backgroundColor: COLORS.neonPink + '30' }]}>
-                    <IconShield size={20} color={COLORS.neonPink} />
-                  </View>
-                  <Text style={styles.actionText}>BADGES</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/')}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.neonCyan + '30' }]}>
                     <Ionicons name="game-controller" size={20} color={COLORS.neonCyan} />
                   </View>
                   <Text style={styles.actionText}>PLAY</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity style={styles.actionButton} onPress={generateBackup}>
                   <View style={[styles.actionIcon, { backgroundColor: COLORS.neonYellow + '30' }]}>
                     <IconKey size={20} color={COLORS.neonYellow} />
                   </View>
                   <Text style={styles.actionText}>BACKUP</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={() => setShowRestoreModal(true)}>
+                  <View style={[styles.actionIcon, { backgroundColor: COLORS.neonPink + '30' }]}>
+                    <Ionicons name="cloud-download" size={20} color={COLORS.neonPink} />
+                  </View>
+                  <Text style={styles.actionText}>RESTORE</Text>
                 </TouchableOpacity>
               </View>
             </NeonGlowBorder>
