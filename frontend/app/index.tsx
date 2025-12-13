@@ -232,7 +232,7 @@ export default function ArcadeHub() {
             </View>
             <View style={styles.playerInfo}>
               <Text style={styles.playerName}>{profile.username}</Text>
-              <Text style={styles.playerStats}>LV.{profile.level} • {totalHighScore} PTS</Text>
+              <Text style={styles.playerStats}>LV.{profile.level} • {profile.xp} XP • {totalHighScore} PTS</Text>
             </View>
             <IconBlockChain size={24} color={COLORS.neonYellow} />
           </TouchableOpacity>
