@@ -65,6 +65,7 @@ interface GameState {
   addVotingPower: (amount: number) => void;
   submitScore: (gameId: string, score: number) => Promise<void>;
   addBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
+  logout: () => Promise<void>;
 }
 
 const STORAGE_KEY = '@blockquest_profile';
