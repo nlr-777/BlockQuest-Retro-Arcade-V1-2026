@@ -423,6 +423,79 @@ export default function TreasureVaultScreen() {
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Backup Modal */}
+      <Modal visible={showBackupModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>🔐 BACKUP PHRASE</Text>
+            <Text style={styles.modalSubtitle}>Save this phrase to restore your progress on any device</Text>
+            
+            <View style={styles.seedPhraseBox}>
+              <Text style={styles.seedPhraseText} selectable>
+                {seedPhrase.split('|')[0]}
+              </Text>
+            </View>
+            
+            <Text style={styles.warningText}>
+              ⚠️ Keep this phrase safe! Anyone with it can access your profile.
+            </Text>
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalBtn, { backgroundColor: COLORS.neonCyan }]} 
+                onPress={copyToClipboard}
+              >
+                <Ionicons name={copied ? "checkmark" : "copy"} size={18} color="#000" />
+                <Text style={styles.modalBtnText}>{copied ? 'COPIED!' : 'COPY'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalBtn, { backgroundColor: COLORS.neonPink }]} 
+                onPress={() => setShowBackupModal(false)}
+              >
+                <Text style={styles.modalBtnText}>CLOSE</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Restore Modal */}
+      <Modal visible={showRestoreModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>📥 RESTORE PROGRESS</Text>
+            <Text style={styles.modalSubtitle}>Enter your backup phrase to restore your progress</Text>
+            
+            <TextInput
+              style={styles.restoreInput}
+              placeholder="Enter your backup phrase..."
+              placeholderTextColor={COLORS.textMuted}
+              value={restorePhrase}
+              onChangeText={setRestorePhrase}
+              multiline
+              numberOfLines={4}
+              autoCapitalize="none"
+            />
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalBtn, { backgroundColor: COLORS.success }]} 
+                onPress={handleRestore}
+              >
+                <Ionicons name="cloud-download" size={18} color="#000" />
+                <Text style={styles.modalBtnText}>RESTORE</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalBtn, { backgroundColor: COLORS.textMuted }]} 
+                onPress={() => { setShowRestoreModal(false); setRestorePhrase(''); }}
+              >
+                <Text style={styles.modalBtnText}>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
