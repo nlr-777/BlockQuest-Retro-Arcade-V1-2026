@@ -9,6 +9,10 @@ import {
   Dimensions,
   Text,
   Platform,
+  TextInput,
+  Modal,
+  Alert,
+  Clipboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -26,6 +30,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../src/constants/colors';
 import { useGameStore, Badge } from '../src/store/gameStore';
 import { GAMES } from '../src/constants/games';
+import { encodeBackup, decodeBackup, validateSeedPhrase } from '../src/utils/SeedPhrase';
 import {
   IconWallet,
   IconToken,
