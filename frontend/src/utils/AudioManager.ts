@@ -1,5 +1,5 @@
 // BlockQuest Official - Audio Manager
-// Procedural Trance Music Generator (Tiësto-inspired, 136-140 BPM)
+// High-Dopamine Euphoric Trance Music Generator (136-140 BPM)
 // CC0 Licensed - Original AI-generated audio via Web Audio API
 // Kid-safe volume (<75dB), auto-sync ready
 
@@ -22,39 +22,58 @@ export type SoundEffect =
 
 // Music track types - different moods for games
 export type MusicTrack = 
-  | 'menu'      // Chill intro
+  | 'menu'      // Chill euphoric intro
   | 'action'    // High energy gameplay
-  | 'euphoria'  // Victory/celebration
-  | 'tension'   // Boss/difficult sections
-  | 'ambient';  // Low-key background
+  | 'euphoria'  // Peak dopamine rush
+  | 'tension'   // Intense boss vibes
+  | 'ambient';  // Dreamy background
 
-// Trance chord progressions (Tiësto style)
-const CHORD_PROGRESSIONS = {
-  euphoric: [
-    [261.63, 329.63, 392.00], // C major
-    [293.66, 369.99, 440.00], // D major  
-    [329.63, 415.30, 493.88], // E minor
-    [349.23, 440.00, 523.25], // F major
-  ],
-  melancholic: [
-    [220.00, 261.63, 329.63], // A minor
-    [246.94, 293.66, 369.99], // B dim
-    [261.63, 329.63, 392.00], // C major
-    [196.00, 246.94, 293.66], // G major
-  ],
+// Euphoric chord progressions (high-dopamine keys)
+const EUPHORIC_PROGRESSIONS = {
+  // Classic trance uplifting progression (Am-F-C-G)
   uplifting: [
-    [261.63, 329.63, 392.00], // C
-    [196.00, 246.94, 293.66], // G  
-    [220.00, 261.63, 329.63], // Am
-    [174.61, 220.00, 261.63], // F
+    [220.00, 277.18, 329.63, 440.00], // Am
+    [174.61, 220.00, 261.63, 349.23], // F
+    [261.63, 329.63, 392.00, 523.25], // C
+    [196.00, 246.94, 293.66, 392.00], // G
+  ],
+  // Euphoric major progression (C-G-Am-F) 
+  euphoric: [
+    [261.63, 329.63, 392.00, 523.25], // C
+    [196.00, 246.94, 293.66, 392.00], // G
+    [220.00, 277.18, 329.63, 440.00], // Am
+    [174.61, 220.00, 261.63, 349.23], // F
+  ],
+  // Driving trance (Em-C-G-D)
+  driving: [
+    [164.81, 196.00, 246.94, 329.63], // Em
+    [261.63, 329.63, 392.00, 523.25], // C
+    [196.00, 246.94, 293.66, 392.00], // G
+    [146.83, 185.00, 220.00, 293.66], // D
+  ],
+  // Epic cinematic (Am-Em-F-G)
+  epic: [
+    [220.00, 277.18, 329.63, 440.00], // Am
+    [164.81, 196.00, 246.94, 329.63], // Em
+    [174.61, 220.00, 261.63, 349.23], // F
+    [196.00, 246.94, 293.66, 392.00], // G
   ],
 };
 
-// Arpeggio patterns for the classic trance feel
+// High-energy arpeggio patterns
 const ARP_PATTERNS = {
-  classic: [0, 2, 4, 7, 4, 2], // Up-down arp
-  gate: [0, 0, 4, 4, 7, 7, 4, 4], // Gated trance
-  rising: [0, 2, 4, 7, 9, 12, 9, 7], // Rising euphoria
+  classic: [0, 4, 7, 12, 7, 4],           // Octave bounce
+  staccato: [0, 0, 4, 4, 7, 7, 12, 12],   // Gated trance
+  rising: [0, 2, 4, 7, 9, 12, 14, 16],    // Rising euphoria
+  plucky: [0, 7, 4, 12, 7, 4, 0, 7],      // Plucky bounce
+  anthem: [0, 4, 7, 4, 0, 4, 7, 12],      // Anthem style
+};
+
+// Lead melody patterns (semitone offsets)
+const LEAD_PATTERNS = {
+  soaring: [0, 2, 4, 7, 9, 7, 4, 2, 0, -2, 0, 2, 4, 7, 12, 7],
+  catchy: [0, 0, 4, 4, 7, 7, 4, 4, 0, 0, 4, 4, 7, 9, 7, 4],
+  euphoric: [0, 4, 7, 12, 11, 9, 7, 4, 0, 4, 7, 12, 14, 12, 9, 7],
 };
 
 // SFX frequencies for retro 8-bit sounds
@@ -73,13 +92,22 @@ const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type:
   pause: { freqs: [440, 330], duration: 200, type: 'square', envelope: 'pluck' },
 };
 
-// Track configurations (BPM, mood, intensity)
-const TRACK_CONFIG: Record<MusicTrack, { bpm: number; progression: keyof typeof CHORD_PROGRESSIONS; arpPattern: keyof typeof ARP_PATTERNS; intensity: number }> = {
-  menu: { bpm: 136, progression: 'uplifting', arpPattern: 'classic', intensity: 0.5 },
-  action: { bpm: 140, progression: 'euphoric', arpPattern: 'gate', intensity: 0.8 },
-  euphoria: { bpm: 138, progression: 'euphoric', arpPattern: 'rising', intensity: 1.0 },
-  tension: { bpm: 140, progression: 'melancholic', arpPattern: 'gate', intensity: 0.7 },
-  ambient: { bpm: 136, progression: 'melancholic', arpPattern: 'classic', intensity: 0.3 },
+// Track configurations
+const TRACK_CONFIG: Record<MusicTrack, { 
+  bpm: number; 
+  progression: keyof typeof EUPHORIC_PROGRESSIONS; 
+  arpPattern: keyof typeof ARP_PATTERNS;
+  leadPattern: keyof typeof LEAD_PATTERNS;
+  intensity: number;
+  hasKick: boolean;
+  hasBass: boolean;
+  hasLead: boolean;
+}> = {
+  menu: { bpm: 128, progression: 'uplifting', arpPattern: 'classic', leadPattern: 'soaring', intensity: 0.5, hasKick: true, hasBass: true, hasLead: false },
+  action: { bpm: 138, progression: 'driving', arpPattern: 'staccato', leadPattern: 'catchy', intensity: 0.85, hasKick: true, hasBass: true, hasLead: true },
+  euphoria: { bpm: 140, progression: 'euphoric', arpPattern: 'anthem', leadPattern: 'euphoric', intensity: 1.0, hasKick: true, hasBass: true, hasLead: true },
+  tension: { bpm: 140, progression: 'epic', arpPattern: 'rising', leadPattern: 'soaring', intensity: 0.9, hasKick: true, hasBass: true, hasLead: true },
+  ambient: { bpm: 120, progression: 'uplifting', arpPattern: 'plucky', leadPattern: 'soaring', intensity: 0.3, hasKick: false, hasBass: true, hasLead: false },
 };
 
 class AudioManager {
@@ -88,18 +116,21 @@ class AudioManager {
   private musicEnabled: boolean = true;
   private audioContext: AudioContext | null = null;
   private masterGain: GainNode | null = null;
+  private compressor: DynamicsCompressorNode | null = null;
   
   // Music state
-  private musicInterval: NodeJS.Timeout | null = null;
-  private arpInterval: NodeJS.Timeout | null = null;
+  private musicLoops: NodeJS.Timeout[] = [];
   private currentTrack: MusicTrack | null = null;
   private beatCount: number = 0;
+  private barCount: number = 0;
   private chordIndex: number = 0;
+  private arpIndex: number = 0;
+  private leadIndex: number = 0;
   
   // Volume controls (kid-safe <75dB)
-  private masterVolume: number = 0.15; // Low master for safety
-  private musicVolume: number = 0.12;
-  private sfxVolume: number = 0.18;
+  private masterVolume: number = 0.18;
+  private musicVolume: number = 0.14;
+  private sfxVolume: number = 0.20;
 
   private constructor() {
     this.initAudioContext();
@@ -116,8 +147,19 @@ class AudioManager {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       try {
         this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        
+        // Create compressor for punchier sound
+        this.compressor = this.audioContext.createDynamicsCompressor();
+        this.compressor.threshold.value = -24;
+        this.compressor.knee.value = 30;
+        this.compressor.ratio.value = 12;
+        this.compressor.attack.value = 0.003;
+        this.compressor.release.value = 0.25;
+        
         this.masterGain = this.audioContext.createGain();
         this.masterGain.gain.value = this.masterVolume;
+        
+        this.compressor.connect(this.masterGain);
         this.masterGain.connect(this.audioContext.destination);
       } catch (e) {
         console.log('Web Audio API not available');
@@ -125,7 +167,6 @@ class AudioManager {
     }
   }
 
-  // Resume audio context (required after user interaction)
   resumeAudioContext() {
     if (this.audioContext && this.audioContext.state === 'suspended') {
       this.audioContext.resume();
@@ -147,7 +188,6 @@ class AudioManager {
       osc.type = config.type;
       osc.frequency.setValueAtTime(freq, now);
       
-      // Apply envelope
       const startTime = now + (i * config.duration / config.freqs.length / 1000);
       const endTime = startTime + config.duration / 1000;
       
@@ -175,95 +215,183 @@ class AudioManager {
     });
   }
 
-  // === TRANCE MUSIC ENGINE ===
+  // === HIGH-DOPAMINE TRANCE MUSIC ENGINE ===
 
   startMusic(track: MusicTrack = 'menu') {
-    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext || !this.masterGain) return;
+    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext || !this.compressor) return;
     
     this.stopMusic();
     this.currentTrack = track;
     this.beatCount = 0;
+    this.barCount = 0;
     this.chordIndex = 0;
+    this.arpIndex = 0;
+    this.leadIndex = 0;
     
     const config = TRACK_CONFIG[track];
     const msPerBeat = (60 / config.bpm) * 1000;
-    const progression = CHORD_PROGRESSIONS[config.progression];
+    const progression = EUPHORIC_PROGRESSIONS[config.progression];
     const arpPattern = ARP_PATTERNS[config.arpPattern];
+    const leadPattern = LEAD_PATTERNS[config.leadPattern];
     
-    // Main beat loop - kick + bass
-    this.musicInterval = setInterval(() => {
-      if (!this.audioContext || !this.masterGain) return;
+    // Main beat loop (quarter notes)
+    const beatLoop = setInterval(() => {
+      if (!this.audioContext || !this.compressor) return;
       
       this.beatCount++;
       
-      // Change chord every 4 beats
-      if (this.beatCount % 4 === 0) {
-        this.chordIndex = (this.chordIndex + 1) % progression.length;
+      // Change chord every 4 beats (1 bar)
+      if (this.beatCount % 4 === 1) {
+        this.barCount++;
+        if (this.barCount % 2 === 1) {
+          this.chordIndex = (this.chordIndex + 1) % progression.length;
+        }
       }
       
       const chord = progression[this.chordIndex];
       
-      // Kick drum on every beat
-      this.playKick(config.intensity);
-      
-      // Hi-hat on every beat
-      if (this.beatCount % 2 === 0) {
-        this.playHiHat(config.intensity * 0.5);
+      // Kick on every beat
+      if (config.hasKick) {
+        this.playEuphoricKick(config.intensity);
       }
       
-      // Supersaw pad chord (on beat 1)
-      if (this.beatCount % 4 === 1) {
-        this.playSupersawChord(chord, config.intensity);
+      // Snare/clap on 2 and 4
+      if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
+        this.playClap(config.intensity * 0.7);
+      }
+      
+      // Hi-hat on every beat
+      this.playHiHat(config.intensity * 0.4);
+      
+      // Supersaw pad (sustain through bar)
+      if (this.beatCount % 8 === 1) {
+        this.playSupersawPad(chord, config.intensity);
+      }
+      
+      // Bass on beat 1 and 3
+      if (config.hasBass && (this.beatCount % 4 === 1 || this.beatCount % 4 === 3)) {
+        this.playSubBass(chord[0] / 2, config.intensity);
       }
       
     }, msPerBeat);
+    this.musicLoops.push(beatLoop);
     
-    // Arpeggiator loop (16th notes)
-    const msPerArp = msPerBeat / 4;
-    let arpIndex = 0;
-    
-    this.arpInterval = setInterval(() => {
-      if (!this.audioContext || !this.masterGain) return;
+    // Arpeggiator loop (16th notes - high dopamine!)
+    const arpLoop = setInterval(() => {
+      if (!this.audioContext || !this.compressor) return;
       
       const chord = progression[this.chordIndex];
       const baseNote = chord[0];
-      const arpNote = arpPattern[arpIndex % arpPattern.length];
-      const freq = baseNote * Math.pow(2, arpNote / 12);
+      const arpSemitone = arpPattern[this.arpIndex % arpPattern.length];
+      const freq = baseNote * Math.pow(2, arpSemitone / 12);
       
-      this.playArpNote(freq, config.intensity * 0.6);
-      
-      arpIndex++;
-    }, msPerArp);
+      this.playArpNote(freq, config.intensity * 0.55);
+      this.arpIndex++;
+    }, msPerBeat / 4);
+    this.musicLoops.push(arpLoop);
+    
+    // Lead melody (8th notes - for euphoria/action tracks)
+    if (config.hasLead) {
+      const leadLoop = setInterval(() => {
+        if (!this.audioContext || !this.compressor) return;
+        
+        const chord = progression[this.chordIndex];
+        const baseNote = chord[0] * 2; // One octave up
+        const leadSemitone = leadPattern[this.leadIndex % leadPattern.length];
+        const freq = baseNote * Math.pow(2, leadSemitone / 12);
+        
+        this.playLeadNote(freq, config.intensity * 0.4);
+        this.leadIndex++;
+      }, msPerBeat / 2);
+      this.musicLoops.push(leadLoop);
+    }
+    
+    // Crash cymbal every 16 bars for build-up feel
+    const crashLoop = setInterval(() => {
+      if (config.intensity > 0.7) {
+        this.playCrash(config.intensity * 0.3);
+      }
+    }, msPerBeat * 64);
+    this.musicLoops.push(crashLoop);
   }
 
-  private playKick(intensity: number) {
-    if (!this.audioContext || !this.masterGain) return;
+  private playEuphoricKick(intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
     
     const now = this.audioContext.currentTime;
+    
+    // Punchy kick with pitch envelope
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
     
-    gain.gain.setValueAtTime(this.musicVolume * intensity, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    // Punchy envelope
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 1.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
     
     osc.connect(gain);
-    gain.connect(this.masterGain);
+    gain.connect(this.compressor);
     
     osc.start(now);
-    osc.stop(now + 0.2);
+    osc.stop(now + 0.25);
+    
+    // Click transient for punch
+    const click = this.audioContext.createOscillator();
+    const clickGain = this.audioContext.createGain();
+    click.type = 'square';
+    click.frequency.setValueAtTime(1000, now);
+    clickGain.gain.setValueAtTime(this.musicVolume * intensity * 0.3, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
+    click.connect(clickGain);
+    clickGain.connect(this.compressor);
+    click.start(now);
+    click.stop(now + 0.02);
   }
 
-  private playHiHat(intensity: number) {
-    if (!this.audioContext || !this.masterGain) return;
+  private playClap(intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
     
     const now = this.audioContext.currentTime;
     
-    // White noise for hi-hat
-    const bufferSize = this.audioContext.sampleRate * 0.05;
+    // Layered noise for clap
+    for (let i = 0; i < 3; i++) {
+      const bufferSize = this.audioContext.sampleRate * 0.08;
+      const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let j = 0; j < bufferSize; j++) {
+        data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.15));
+      }
+      
+      const noise = this.audioContext.createBufferSource();
+      noise.buffer = buffer;
+      
+      const filter = this.audioContext.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1500 + i * 500;
+      filter.Q.value = 1;
+      
+      const gain = this.audioContext.createGain();
+      gain.gain.setValueAtTime(this.musicVolume * intensity * 0.25, now + i * 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.compressor);
+      
+      noise.start(now + i * 0.01);
+      noise.stop(now + 0.15);
+    }
+  }
+
+  private playHiHat(intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    const bufferSize = this.audioContext.sampleRate * 0.04;
     const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -275,28 +403,59 @@ class AudioManager {
     
     const filter = this.audioContext.createBiquadFilter();
     filter.type = 'highpass';
-    filter.frequency.value = 8000;
+    filter.frequency.value = 9000;
     
     const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
     
     noise.connect(filter);
     filter.connect(gain);
-    gain.connect(this.masterGain);
+    gain.connect(this.compressor);
     
     noise.start(now);
     noise.stop(now + 0.05);
   }
 
-  private playSupersawChord(frequencies: number[], intensity: number) {
-    if (!this.audioContext || !this.masterGain) return;
+  private playCrash(intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
     
     const now = this.audioContext.currentTime;
     
-    // Create supersaw (7 detuned oscillators per note)
+    const bufferSize = this.audioContext.sampleRate * 1.5;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 5000;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.compressor);
+    
+    noise.start(now);
+    noise.stop(now + 1.6);
+  }
+
+  private playSupersawPad(frequencies: number[], intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Rich supersaw with 7 detuned oscillators per note
     frequencies.forEach(freq => {
-      const detunes = [-12, -7, -3, 0, 3, 7, 12];
+      const detunes = [-15, -10, -5, 0, 5, 10, 15];
       
       detunes.forEach(detune => {
         const osc = this.audioContext!.createOscillator();
@@ -305,34 +464,56 @@ class AudioManager {
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, now);
-        osc.detune.setValueAtTime(detune, now);
+        osc.detune.setValueAtTime(detune + Math.random() * 5, now);
         
-        // Low-pass filter for warmth
+        // Warm lowpass filter
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(2000 + intensity * 2000, now);
-        filter.Q.value = 2;
+        filter.frequency.setValueAtTime(1500 + intensity * 2500, now);
+        filter.Q.value = 1.5;
         
-        // Pad envelope
-        const vol = (this.musicVolume * intensity * 0.08) / 7;
+        // Smooth pad envelope
+        const vol = (this.musicVolume * intensity * 0.06) / 7;
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(vol, now + 0.1);
-        gain.gain.setValueAtTime(vol, now + 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.15);
+        gain.gain.setValueAtTime(vol, now + 0.6);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
         
         osc.connect(filter);
         filter.connect(gain);
-        gain.connect(this.masterGain!);
+        gain.connect(this.compressor!);
         
         osc.start(now);
-        osc.stop(now + 1);
+        osc.stop(now + 1.5);
       });
     });
   }
 
-  private playArpNote(freq: number, intensity: number) {
-    if (!this.audioContext || !this.masterGain) return;
+  private playSubBass(freq: number, intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
     
     const now = this.audioContext.currentTime;
+    
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+    
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    
+    osc.connect(gain);
+    gain.connect(this.compressor);
+    
+    osc.start(now);
+    osc.stop(now + 0.35);
+  }
+
+  private playArpNote(freq: number, intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
+    
+    const now = this.audioContext.currentTime;
+    
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     const filter = this.audioContext.createBiquadFilter();
@@ -340,34 +521,65 @@ class AudioManager {
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(freq, now);
     
+    // Resonant filter sweep for that trance feel
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(3000, now);
-    filter.frequency.exponentialRampToValueAtTime(500, now + 0.15);
-    filter.Q.value = 5;
+    filter.frequency.setValueAtTime(4000, now);
+    filter.frequency.exponentialRampToValueAtTime(600, now + 0.12);
+    filter.Q.value = 8;
     
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
     
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(this.masterGain);
+    gain.connect(this.compressor);
     
     osc.start(now);
-    osc.stop(now + 0.2);
+    osc.stop(now + 0.15);
+  }
+
+  private playLeadNote(freq: number, intensity: number) {
+    if (!this.audioContext || !this.compressor) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Dual oscillator lead for richness
+    ['sawtooth', 'square'].forEach((type, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      const filter = this.audioContext!.createBiquadFilter();
+      
+      osc.type = type as OscillatorType;
+      osc.frequency.setValueAtTime(freq, now);
+      osc.detune.setValueAtTime(i * 7, now); // Slight detune
+      
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(3000, now);
+      filter.Q.value = 2;
+      
+      const vol = this.musicVolume * intensity * 0.08;
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.setValueAtTime(vol * 0.8, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.compressor!);
+      
+      osc.start(now);
+      osc.stop(now + 0.3);
+    });
   }
 
   stopMusic() {
-    if (this.musicInterval) {
-      clearInterval(this.musicInterval);
-      this.musicInterval = null;
-    }
-    if (this.arpInterval) {
-      clearInterval(this.arpInterval);
-      this.arpInterval = null;
-    }
+    this.musicLoops.forEach(loop => clearInterval(loop));
+    this.musicLoops = [];
     this.currentTrack = null;
     this.beatCount = 0;
+    this.barCount = 0;
     this.chordIndex = 0;
+    this.arpIndex = 0;
+    this.leadIndex = 0;
   }
 
   changeTrack(track: MusicTrack) {
@@ -376,32 +588,12 @@ class AudioManager {
     }
   }
 
-  // Get current beat for VFX sync
   getCurrentBeat(): number {
     return this.beatCount;
   }
 
-  // Check if on beat (for VFX sync)
   isOnBeat(): boolean {
     return this.beatCount % 4 === 0;
-  }
-
-  // === JINGLES ===
-
-  playVictoryJingle() {
-    this.playSound('victory');
-  }
-
-  playGameOverSound() {
-    this.playSound('gameover');
-  }
-
-  playCollectJingle() {
-    this.playSound('collect');
-  }
-
-  playStartSound() {
-    this.playSound('start');
   }
 
   // === SETTINGS ===
@@ -416,7 +608,6 @@ class AudioManager {
   }
 
   setMasterVolume(vol: number) {
-    // Clamp to safe levels (<75dB equivalent)
     this.masterVolume = Math.min(0.25, Math.max(0, vol));
     if (this.masterGain) {
       this.masterGain.gain.value = this.masterVolume;
