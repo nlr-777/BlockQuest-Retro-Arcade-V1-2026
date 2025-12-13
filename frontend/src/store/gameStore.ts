@@ -237,4 +237,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { mintBadge } = get();
     return mintBadge(badgeData);
   },
+
+  // Logout - clear all data and reset to initial state
+  logout: async () => {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    await AsyncStorage.removeItem(SCORES_KEY);
+    set({
+      profile: null,
+      isLoading: false,
+      highScores: {},
+      recentScores: [],
+    });
+  },
 }));
