@@ -786,6 +786,26 @@ const styles = StyleSheet.create({
   menuHint: {
     textAlign: 'center',
   },
+  instructionBox: {
+    backgroundColor: 'rgba(0,255,255,0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 8,
+    width: '100%',
+  },
+  instructionText: {
+    textAlign: 'center',
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  controlsInfo: {
+    backgroundColor: 'rgba(255,215,0,0.15)',
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 8,
+    width: '100%',
+    alignItems: 'center',
+  },
   badgeEarned: {
     backgroundColor: COLORS.success + '30',
     paddingHorizontal: 16,
