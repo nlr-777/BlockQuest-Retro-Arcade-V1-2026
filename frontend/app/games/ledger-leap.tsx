@@ -41,7 +41,7 @@ const RECORD_TYPES = [
   { type: 'golden', color: '#FFD700', points: 50, icon: '★' },
 ];
 
-interface Platform {
+interface GamePlatform {
   id: number;
   x: number;
   y: number;
