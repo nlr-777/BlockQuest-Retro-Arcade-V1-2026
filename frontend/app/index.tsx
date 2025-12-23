@@ -306,9 +306,13 @@ export default function ArcadeHub() {
                 </View>
               </View>
               
-              {/* Title Section */}
+              {/* Title Section with Logo */}
               <View style={styles.titleSection}>
-                <Text style={styles.modalTitle}>⬡ BLOCKQUEST ⬡</Text>
+                <Image 
+                  source={require('../assets/images/blockquest_logo.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalSubtitle}>RETRO ARCADE</Text>
                 <View style={styles.titleUnderline} />
               </View>
