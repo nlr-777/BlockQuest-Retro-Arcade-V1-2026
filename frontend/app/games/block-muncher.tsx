@@ -41,8 +41,10 @@ import {
   BlockchainProgress,
   TokenCollectEffect 
 } from '../../src/components/BlockchainGameElements';
+import { getGameMechanics, getRandomTip } from '../../src/constants/gameMechanics';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
+const GAME_MECHANICS = getGameMechanics('block-muncher')!;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
