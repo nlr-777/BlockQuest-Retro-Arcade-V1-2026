@@ -559,7 +559,7 @@ export default function BlockMuncherGame() {
         <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
           {/* Chain trail */}
           {chain.map((pos, i) => (
-            <ChainSegment key={`chain-${i}`} position={pos} index={i} />
+            <ChainLink key={`chain-${i}`} x={pos.x} y={pos.y} cellSize={CELL_SIZE} index={i} />
           ))}
           
           {/* Walls */}
@@ -579,6 +579,51 @@ export default function BlockMuncherGame() {
             <Block key={`block-${i}`} position={block} />
           ))}
           
+          {/* BQO Tokens */}
+          {bqoTokens.map((token, i) => (
+            <BQOToken 
+              key={`bqo-${i}`} 
+              x={token.x} 
+              y={token.y} 
+              cellSize={CELL_SIZE}
+              size={CELL_SIZE * 0.7}
+              variant={i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}
+            />
+          ))}
+          
+          {/* NFT Gems */}
+          {nftGems.map((gem, i) => (
+            <NFTGem 
+              key={`gem-${i}`} 
+              x={gem.pos.x} 
+              y={gem.pos.y} 
+              cellSize={CELL_SIZE}
+              size={CELL_SIZE * 0.6}
+              rarity={gem.rarity}
+            />
+          ))}
+          
+          {/* Powerups */}
+          {powerups.map((pup, i) => (
+            <WalletPowerup 
+              key={`pup-${i}`} 
+              x={pup.pos.x} 
+              y={pup.pos.y} 
+              cellSize={CELL_SIZE}
+              type={pup.type}
+            />
+          ))}
+          
+          {/* Token collect effect */}
+          {showTokenEffect && (
+            <TokenCollectEffect 
+              x={showTokenEffect.x} 
+              y={showTokenEffect.y} 
+              cellSize={CELL_SIZE}
+              amount={showTokenEffect.amount}
+            />
+          )}
+          
           {/* Ghosts */}
           {ghosts.map((ghost, i) => (
             <Ghost
@@ -591,6 +636,12 @@ export default function BlockMuncherGame() {
           
           {/* Player */}
           <Player position={playerPos} direction={playerDir} />
+        </View>
+        
+        {/* BQO Counter */}
+        <View style={styles.bqoCounter}>
+          <PixelText size="xs" color={COLORS.neonYellow}>BQO TOKENS</PixelText>
+          <PixelText size="lg" color={COLORS.neonPink} glow>{bqoCollected}</PixelText>
         </View>
 
         {/* Web3 Info */}
