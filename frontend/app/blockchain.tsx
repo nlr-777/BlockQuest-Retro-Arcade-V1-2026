@@ -103,6 +103,9 @@ const BadgePreviewCard: React.FC<{
     Legendary: COLORS.neonYellow,
   };
 
+  // Get the badge image
+  const badgeImage = getBadgeImage(badge.id);
+
   return (
     <View style={[
       styles.badgePreview,
@@ -111,7 +114,11 @@ const BadgePreviewCard: React.FC<{
         opacity: isUnlocked ? 1 : 0.5,
       }
     ]}>
-      <Text style={{ fontSize: 28 }}>{badge.image}</Text>
+      <Image 
+        source={badgeImage}
+        style={styles.badgeImage}
+        resizeMode="contain"
+      />
       <Text style={[styles.badgeName, { color: rarityColors[badge.rarity] }]}>
         {badge.name}
       </Text>
