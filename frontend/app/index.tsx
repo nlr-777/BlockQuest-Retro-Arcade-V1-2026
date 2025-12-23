@@ -237,22 +237,25 @@ export default function ArcadeHub() {
 
   return (
     <View style={styles.container}>
-      <Starfield count={25} />
-      <Scanlines opacity={0.05} />
+      <PixelRain count={15} speed={4000} />
+      <CRTScanlines opacity={0.06} />
       
       <SafeAreaView style={styles.safeArea}>
-        {/* Header Marquee */}
-        <View style={styles.marquee}>
+        {/* Header Marquee - CRT Terminal Style */}
+        <CRTGlowBorder color={CRT_COLORS.primary} hexStyle style={styles.marquee}>
           <Animated.Text style={[styles.marqueeTitle, glowStyle]}>
-            BLOCKQUEST
+            ⬡ BLOCKQUEST ⬡
           </Animated.Text>
           <Text style={styles.marqueeSubtitle}>RETRO ARCADE</Text>
-        </View>
+          <CRTFlickerText style={styles.punText} color={CRT_COLORS.accentCyan} glitch>
+            {currentPun}
+          </CRTFlickerText>
+        </CRTGlowBorder>
         
         {/* Player Bar */}
         {profile && (
           <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
-            <View style={[styles.avatar, { borderColor: playerAvatar?.color || COLORS.neonPink }]}>
+            <View style={[styles.avatar, { borderColor: CRT_COLORS.primary }]}>
               {playerAvatar?.imageUrl ? (
                 <Image 
                   source={{ uri: playerAvatar.imageUrl }} 
@@ -267,17 +270,17 @@ export default function ArcadeHub() {
               <Text style={styles.playerName}>{profile.username}</Text>
               <Text style={styles.playerStats}>LV.{profile.level} • {profile.xp} XP • {totalHighScore} PTS</Text>
             </View>
-            <IconBlockChain size={24} color={COLORS.neonYellow} />
+            <HexBadge size={32} rarity="common" icon="🔗" />
           </TouchableOpacity>
         )}
 
         {/* Game Selection Panel */}
-        <View style={styles.panel}>
+        <CRTGlowBorder color={CRT_COLORS.primary} style={styles.panel}>
           <View style={styles.panelHeader}>
             <View style={styles.lights}>
-              <View style={[styles.light, { backgroundColor: COLORS.success }]} />
-              <View style={[styles.light, { backgroundColor: COLORS.neonYellow }]} />
-              <View style={[styles.light, { backgroundColor: COLORS.neonPink }]} />
+              <View style={[styles.light, { backgroundColor: CRT_COLORS.primary }]} />
+              <View style={[styles.light, { backgroundColor: CRT_COLORS.accentCyan }]} />
+              <View style={[styles.light, { backgroundColor: CRT_COLORS.accentMagenta }]} />
             </View>
             <Text style={styles.panelTitle}>SELECT GAME</Text>
             <Text style={styles.gameCount}>{playableCount}↗ {comingSoonCount}◆</Text>
