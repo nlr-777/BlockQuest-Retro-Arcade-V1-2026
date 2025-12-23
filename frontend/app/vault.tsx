@@ -325,7 +325,8 @@ export default function TreasureVaultScreen() {
               {RESOURCE_TYPES.map((resource, index) => {
                 const ResourceIcon = resource.icon;
                 const balance = resource.id === 'SCORE' ? totalScore : 
-                               resource.id === 'XP' ? (profile?.xp || 0) : 
+                               resource.id === 'XP' ? (profile?.xp || 0) :
+                               resource.id === 'BQO' ? bqoBalance :
                                (profile?.daoVotingPower || 0);
                 return (
                   <Animated.View
@@ -348,6 +349,23 @@ export default function TreasureVaultScreen() {
                   </Animated.View>
                 );
               })}
+
+              {/* Blockchain Link */}
+              <TouchableOpacity 
+                style={styles.blockchainLink}
+                onPress={() => router.push('/blockchain')}
+              >
+                <View style={styles.blockchainLinkIcon}>
+                  <IconBlockChain size={20} color={COLORS.neonCyan} />
+                </View>
+                <View style={styles.blockchainLinkInfo}>
+                  <Text style={styles.blockchainLinkTitle}>BLOCKCHAIN FEATURES</Text>
+                  <Text style={styles.blockchainLinkText}>
+                    Convert XP to BQO • NFT Badges • Wallet
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={COLORS.neonCyan} />
+              </TouchableOpacity>
 
               {/* Recovery Code Reminder */}
               <View style={styles.seedReminder}>
