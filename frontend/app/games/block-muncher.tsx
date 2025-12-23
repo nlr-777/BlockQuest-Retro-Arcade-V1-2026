@@ -33,6 +33,14 @@ import { COLORS } from '../../src/constants/colors';
 import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
+import { 
+  BQOToken, 
+  NFTGem, 
+  ChainLink, 
+  WalletPowerup,
+  BlockchainProgress,
+  TokenCollectEffect 
+} from '../../src/components/BlockchainGameElements';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
 
