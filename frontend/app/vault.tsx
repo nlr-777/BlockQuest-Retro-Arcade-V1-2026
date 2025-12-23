@@ -114,6 +114,7 @@ const NeonGlowBorder: React.FC<{ color: string; children: React.ReactNode; style
 const BadgeCard: React.FC<{ badge: Badge; index: number }> = ({ badge, index }) => {
   const config = RARITY_CONFIG[badge.rarity as keyof typeof RARITY_CONFIG];
   const game = GAMES.find(g => g.id === badge.gameId);
+  const badgeImage = getBadgeImage(badge.id);
 
   return (
     <Animated.View
@@ -122,7 +123,11 @@ const BadgeCard: React.FC<{ badge: Badge; index: number }> = ({ badge, index }) 
     >
       <View style={[styles.badgeGlow, { backgroundColor: config.glow }]} />
       <View style={styles.badgeIconContainer}>
-        <IconCrown size={28} color={config.color} />
+        <Image 
+          source={badgeImage}
+          style={styles.badgeIconImage}
+          resizeMode="contain"
+        />
       </View>
       <Text style={[styles.badgeName, { color: config.color }]}>{badge.name}</Text>
       <Text style={styles.badgeRarity}>{badge.rarity.toUpperCase()}</Text>
