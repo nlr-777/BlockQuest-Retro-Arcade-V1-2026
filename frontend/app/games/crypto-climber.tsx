@@ -130,6 +130,9 @@ export default function CryptoClimberGame() {
   const router = useRouter();
   const { submitScore, addBadge } = useGameStore();
   
+  // Audio hook - must be called before any other hooks
+  const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
+  
   // Game state
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'paused' | 'gameover' | 'won'>('ready');
   const [score, setScore] = useState(0);
