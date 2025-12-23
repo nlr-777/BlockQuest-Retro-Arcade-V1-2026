@@ -367,6 +367,33 @@ export default function RockBlasterGame() {
   }, [gameState, shipVX, shipVY, shipX, shipY, shipRotation, isThrusting, level, score, createExplosion, splitRock, spawnRocks, submitScore]);
 
   // Rotation controls
+  // Rotation state for smooth controls
+  const [isRotatingLeft, setIsRotatingLeft] = useState(false);
+  const [isRotatingRight, setIsRotatingRight] = useState(false);
+  const rotationRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle continuous rotation
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+    
+    if (isRotatingLeft || isRotatingRight) {
+      rotationRef.current = setInterval(() => {
+        setShipRotation(prev => {
+          if (isRotatingLeft) return prev - ROTATION_SPEED;
+          if (isRotatingRight) return prev + ROTATION_SPEED;
+          return prev;
+        });
+      }, 16); // 60fps
+    }
+    
+    return () => {
+      if (rotationRef.current) {
+        clearInterval(rotationRef.current);
+        rotationRef.current = null;
+      }
+    };
+  }, [isRotatingLeft, isRotatingRight, gameState]);
+
   const rotateLeft = () => setShipRotation(prev => prev - ROTATION_SPEED);
   const rotateRight = () => setShipRotation(prev => prev + ROTATION_SPEED);
 
