@@ -231,7 +231,7 @@ export default function TreasureVaultScreen() {
             <IconVault size={28} color={COLORS.neonPink} />
             <Text style={styles.headerText}>TREASURE VAULT</Text>
           </View>
-          <TouchableOpacity style={styles.settingsButton}>
+          <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/settings')}>
             <Ionicons name="settings-outline" size={24} color={COLORS.textSecondary} />
           </TouchableOpacity>
         </View>
