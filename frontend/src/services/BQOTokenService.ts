@@ -1,13 +1,15 @@
 // BlockQuest Official - BQO Token Service
 // Handles BQO token operations and XP conversion
-import { ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { APERTUM_CONFIG, XP_TO_BQO_RATE } from './ApertumService';
+import { XP_TO_BQO_RATE } from './ApertumService';
 
 // Storage keys
 const BQO_PENDING_KEY = '@blockquest_bqo_pending';
 const BQO_CLAIMED_KEY = '@blockquest_bqo_claimed';
 const XP_CONVERTED_KEY = '@blockquest_xp_converted';
+
+// Check if we're running on client (mobile/browser) vs server
+const isClient = typeof window !== 'undefined';
 
 // BQO Token state
 export interface BQOState {
@@ -31,13 +33,27 @@ class BQOTokenService {
   private claimedBQO: number = 0;
   private totalXPConverted: number = 0;
   private conversionHistory: ConversionTx[] = [];
+  private initialized: boolean = false;
 
   constructor() {
-    this.loadState();
+    // Only load state on client-side (mobile/browser)
+    if (isClient) {
+      this.loadState();
+    }
+  }
+
+  // Ensure state is loaded
+  async ensureInitialized() {
+    if (!this.initialized && isClient) {
+      await this.loadState();
+      this.initialized = true;
+    }
   }
 
   // Load saved state
   private async loadState() {
+    if (!isClient) return; // Skip on server
+    
     try {
       const pending = await AsyncStorage.getItem(BQO_PENDING_KEY);
       const claimed = await AsyncStorage.getItem(BQO_CLAIMED_KEY);
@@ -46,13 +62,17 @@ class BQOTokenService {
       if (pending) this.pendingBQO = parseInt(pending);
       if (claimed) this.claimedBQO = parseInt(claimed);
       if (converted) this.totalXPConverted = parseInt(converted);
+      this.initialized = true;
     } catch (error) {
-      console.log('Failed to load BQO state:', error);
+      // Silent fail - expected on server/SSR
+      this.initialized = true;
     }
   }
 
   // Save state
   private async saveState() {
+    if (!isClient) return; // Skip on server
+    
     try {
       await AsyncStorage.setItem(BQO_PENDING_KEY, this.pendingBQO.toString());
       await AsyncStorage.setItem(BQO_CLAIMED_KEY, this.claimedBQO.toString());
