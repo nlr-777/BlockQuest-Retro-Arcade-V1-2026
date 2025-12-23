@@ -1,5 +1,5 @@
 // BlockQuest Official - Retro Arcade - Main Hub
-// Retro Cabinet Style - All 15 Games Display
+// CRT Terminal Style - All 15 Games Display with Ultimate Pixel Art
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -24,15 +24,20 @@ import Animated, {
   withSequence,
   withTiming,
   FadeIn,
+  ZoomIn,
 } from 'react-native-reanimated';
 
 import { COLORS } from '../src/constants/colors';
+import { CRT_COLORS, CRT_PUNS } from '../src/constants/crtTheme';
 import { GAMES, GameConfig } from '../src/constants/games';
 import { AVATARS, AvatarConfig, getAvatarById } from '../src/constants/avatars';
 import { useGameStore } from '../src/store/gameStore';
+import { useTutorialStore } from '../src/store/tutorialStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
+import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
 import { AvatarSelector } from '../src/components/AvatarSelector';
 import audioManager from '../src/utils/AudioManager';
+import ttsManager from '../src/utils/TTSManager';
 import {
   IconGhost,
   IconTetris,
