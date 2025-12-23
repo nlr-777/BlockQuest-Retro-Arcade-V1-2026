@@ -313,6 +313,9 @@ export default function LedgerLeapGame() {
         return { ...enemy, x: newX };
       }));
 
+      // Remove enemies that are too far behind
+      setEnemies(prev => prev.filter(e => e.x > worldOffset - 100));
+
       // Check enemy collision
       const worldPlayerX = playerX + worldOffset;
       enemies.forEach(enemy => {
