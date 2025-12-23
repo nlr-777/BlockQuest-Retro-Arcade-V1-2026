@@ -60,11 +60,12 @@ const RARITY_CONFIG = {
   Legendary: { color: COLORS.rarityLegendary, glow: '#FFD700' },
 };
 
-// Resource types (simulated)
+// Resource types (with BQO token)
 const RESOURCE_TYPES = [
   { id: 'SCORE', name: 'Total Score', icon: IconToken, color: COLORS.neonPink },
   { id: 'XP', name: 'Experience Points', icon: IconStar, color: COLORS.neonYellow },
-  { id: 'VOTES', name: 'Team Votes', icon: IconLightning, color: COLORS.neonCyan },
+  { id: 'BQO', name: 'BQO Credits', icon: IconBlockChain, color: COLORS.neonCyan },
+  { id: 'VOTES', name: 'Team Votes', icon: IconLightning, color: COLORS.textMuted },
 ];
 
 // Animated neon border
