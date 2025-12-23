@@ -336,7 +336,7 @@ export default function BlockchainScreen() {
                   <View style={styles.tokenHeader}>
                     <View>
                       <NeonText color={COLORS.neonPink} size={32}>
-                        {pendingBQO + claimedBQO}
+                        {String(pendingBQO + claimedBQO)}
                       </NeonText>
                       <Text style={styles.tokenSymbol}>Total BQO</Text>
                     </View>
