@@ -537,10 +537,38 @@ class NFTBadgeService {
   async clearAll(): Promise<void> {
     this.unlockedBadges = [];
     this.activeRewards = [];
+    if (!isClient) return;
     await AsyncStorage.removeItem(UNLOCKED_BADGES_KEY);
     await AsyncStorage.removeItem(ACTIVE_REWARDS_KEY);
   }
 }
 
-export const nftBadgeService = new NFTBadgeService();
+// Lazy singleton - only created when first accessed on client
+let _nftBadgeService: NFTBadgeService | null = null;
+
+export const getNFTBadgeService = (): NFTBadgeService => {
+  if (!_nftBadgeService) {
+    _nftBadgeService = new NFTBadgeService();
+  }
+  return _nftBadgeService;
+};
+
+// For backwards compatibility - proxy object that lazy loads
+export const nftBadgeService = {
+  isBadgeUnlocked: (id: string) => getNFTBadgeService().isBadgeUnlocked(id),
+  getUnlockedBadges: () => getNFTBadgeService().getUnlockedBadges(),
+  getAllBadges: () => getNFTBadgeService().getAllBadges(),
+  getBadgeById: (id: string) => getNFTBadgeService().getBadgeById(id),
+  checkForNewBadges: (stats: any) => getNFTBadgeService().checkForNewBadges(stats),
+  unlockBadge: (id: string) => getNFTBadgeService().unlockBadge(id),
+  getActiveRewards: () => getNFTBadgeService().getActiveRewards(),
+  getUnlockedSkins: () => getNFTBadgeService().getUnlockedSkins(),
+  getTotalTimeBonus: () => getNFTBadgeService().getTotalTimeBonus(),
+  useBooster: (id: string) => getNFTBadgeService().useBooster(id),
+  generateNFTMetadata: (id: string, name: string) => getNFTBadgeService().generateNFTMetadata(id, name),
+  markAsMinted: (id: string, hash: string, tokenId: string) => getNFTBadgeService().markAsMinted(id, hash, tokenId),
+  getUnmintedBadges: () => getNFTBadgeService().getUnmintedBadges(),
+  clearAll: () => getNFTBadgeService().clearAll(),
+};
+
 export default nftBadgeService;
