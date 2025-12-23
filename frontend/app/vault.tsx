@@ -881,13 +881,19 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   badgeIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 8,
     backgroundColor: 'rgba(255,255,255,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
+    overflow: 'hidden',
+  },
+  badgeIconImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 6,
   },
   badgeName: {
     fontSize: 10,
