@@ -83,9 +83,11 @@ const getGameIcon = (gameId: string): React.FC<any> => {
 export default function ArcadeHub() {
   const router = useRouter();
   const { profile, initProfile, highScores } = useGameStore();
+  const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [username, setUsername] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig | null>(AVATARS[0]);
+  const [currentPun, setCurrentPun] = useState('');
 
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
@@ -101,6 +103,19 @@ export default function ArcadeHub() {
     );
   }, []);
 
+  // Rotate puns every 5 seconds
+  useEffect(() => {
+    const allPuns = [...CRT_PUNS.welcome, ...CRT_PUNS.milestone];
+    setCurrentPun(allPuns[0]);
+    
+    const interval = setInterval(() => {
+      const randomPun = allPuns[Math.floor(Math.random() * allPuns.length)];
+      setCurrentPun(randomPun);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (!profile) {
       setShowOnboarding(true);
@@ -108,20 +123,33 @@ export default function ArcadeHub() {
       // Start menu music when hub loads
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
+      
+      // Auto-redirect to tutorial for first-time users who haven't completed it
+      if (!hasCompletedTutorial && hasCompletedOnboarding) {
+        router.push('/tutorial');
+      }
     }
     
     return () => {
       audioManager.stopMusic();
     };
-  }, [profile]);
+  }, [profile, hasCompletedTutorial, hasCompletedOnboarding]);
 
   const handleCreateProfile = async () => {
     if (username.trim().length >= 3 && selectedAvatar) {
       audioManager.playSound('powerup');
+      ttsManager.speakLine('welcome');
       await initProfile(username.trim(), selectedAvatar.id);
       setShowOnboarding(false);
-      // Start menu music after profile created
-      audioManager.startMusic('menu');
+      setOnboardingComplete();
+      
+      // Redirect to tutorial for first-time users
+      if (!hasCompletedTutorial) {
+        router.push('/tutorial');
+      } else {
+        // Start menu music after profile created
+        audioManager.startMusic('menu');
+      }
     }
   };
 
