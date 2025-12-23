@@ -166,6 +166,10 @@ export default function TreasureVaultScreen() {
 
   const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const playerId = profile ? generatePlayerId(profile.username) : 'PLAYER-000000';
+  
+  // Calculate BQO from XP (111 XP = 1 BQO)
+  const BQO_RATE = 111;
+  const bqoBalance = Math.floor((profile?.xp || 0) / BQO_RATE);
 
   // Generate backup seed phrase
   const generateBackup = () => {
