@@ -500,6 +500,119 @@ export const GAME_MECHANICS: GameBlockchainMechanics[] = [
     ],
     themeColors: { primary: COLORS.neonCyan, secondary: COLORS.neonPink, accent: '#00BFFF' },
   },
+  
+  {
+    gameId: 'ipfs-pinball',
+    concept: 'Decentralized Storage (IPFS)',
+    conceptDescription: 'Hit bumpers to store files across the network - each node keeps your data safe!',
+    collectibles: {
+      bqoTokens: {
+        count: 5,
+        spawnPattern: 'random',
+        pointsEach: 50,
+        specialVariant: 'CID Hash',
+      },
+      nftGems: {
+        count: 2,
+        rarityWeights: { common: 35, rare: 35, epic: 25, legendary: 5 },
+        bonusType: 'Pin Bonus',
+      },
+      powerups: {
+        types: ['shield', 'speed', 'multiplier'],
+        effects: {
+          shield: 'Ball Saver - Ball returns automatically',
+          speed: 'Fast Propagation - Ball speeds up',
+          multiplier: 'Network Effect - Double points',
+        },
+      },
+    },
+    hiddenLessons: [
+      'Each bumper = a storage node in the network',
+      'Hitting multiple nodes = redundant storage',
+      'Ball bouncing = data propagating across peers',
+    ],
+    achievements: [
+      { id: 'pin_master', name: 'Content Addressed', description: 'Hit all bumpers in one ball', trigger: 'all_bumpers', bqoReward: 25 },
+      { id: 'high_scorer', name: 'Network Pioneer', description: 'Score 5000 points', trigger: 'score_5000', bqoReward: 30 },
+      { id: 'survivor', name: 'Pinned Forever', description: 'Keep ball alive for 2 minutes', trigger: 'time_2min', bqoReward: 20 },
+    ],
+    themeColors: { primary: COLORS.neonPink, secondary: COLORS.neonCyan, accent: '#9932CC' },
+  },
+  
+  {
+    gameId: 'contract-crusher',
+    concept: 'Smart Contracts',
+    conceptDescription: 'Break blocks to execute contract code - IF condition THEN action!',
+    collectibles: {
+      bqoTokens: {
+        count: 6,
+        spawnPattern: 'path',
+        pointsEach: 35,
+        specialVariant: 'Gas Token',
+      },
+      nftGems: {
+        count: 3,
+        rarityWeights: { common: 30, rare: 40, epic: 25, legendary: 5 },
+        bonusType: 'Contract Upgrade',
+      },
+      powerups: {
+        types: ['speed', 'multiplier', 'magnet'],
+        effects: {
+          speed: 'Slow Gas - Ball moves slower',
+          multiplier: 'Contract Bonus - Double execution rewards',
+          magnet: 'Sticky Paddle - Ball sticks to paddle',
+        },
+      },
+    },
+    hiddenLessons: [
+      'IF-THEN-ELSE blocks = smart contract logic',
+      'Breaking blocks = executing contract functions',
+      'Power-ups = contract modifiers and upgrades',
+    ],
+    achievements: [
+      { id: 'deployer', name: 'Contract Deployer', description: 'Clear all bricks in a level', trigger: 'clear_level', bqoReward: 20 },
+      { id: 'combo', name: 'Gas Optimizer', description: 'Get a 10+ combo', trigger: 'combo_10', bqoReward: 25 },
+      { id: 'victory', name: 'Audit Complete', description: 'Beat all 5 levels', trigger: 'beat_game', bqoReward: 50 },
+    ],
+    themeColors: { primary: COLORS.chainGold, secondary: COLORS.neonCyan, accent: '#FF7F50' },
+  },
+  
+  {
+    gameId: 'quest-vault',
+    concept: 'Multi-Signature Wallets',
+    conceptDescription: 'Collect multiple signers to unlock the vault - shared custody for security!',
+    collectibles: {
+      bqoTokens: {
+        count: 5,
+        spawnPattern: 'hidden',
+        pointsEach: 40,
+        specialVariant: 'Key Shard',
+      },
+      nftGems: {
+        count: 3,
+        rarityWeights: { common: 25, rare: 40, epic: 30, legendary: 5 },
+        bonusType: 'Health Potion',
+      },
+      powerups: {
+        types: ['shield', 'speed'],
+        effects: {
+          shield: 'Guardian Mode - Immune to damage',
+          speed: 'Swift Feet - Move faster',
+        },
+      },
+    },
+    hiddenLessons: [
+      'Each signer = one key holder in a multi-sig',
+      '2-of-3 means any 2 signers can approve',
+      'Multi-sig = shared custody for security',
+    ],
+    achievements: [
+      { id: 'first_vault', name: 'First Unlock', description: 'Unlock your first vault', trigger: 'unlock_1', bqoReward: 15 },
+      { id: 'no_damage', name: 'Secure Transport', description: 'Complete level without damage', trigger: 'no_hits', bqoReward: 30 },
+      { id: 'all_gold', name: 'Treasury Master', description: 'Collect all gold in a level', trigger: 'all_gold', bqoReward: 25 },
+    ],
+    themeColors: { primary: COLORS.error, secondary: COLORS.chainGold, accent: '#B22222' },
+  },
 ];
 
 // Helper to get mechanics for a specific game
