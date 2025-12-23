@@ -625,6 +625,7 @@ const styles = StyleSheet.create({
   controls: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 },
   rotateControls: { flexDirection: 'row', gap: 8 },
   rotateBtn: { width: 50, height: 50, backgroundColor: COLORS.bgMedium, borderRadius: 25, borderWidth: 2, borderColor: '#FFD700', justifyContent: 'center', alignItems: 'center' },
+  rotateBtnActive: { backgroundColor: '#FFD700' + '40', borderColor: '#FFD700' },
   rotateBtnText: { fontSize: 24, color: '#FFD700', fontWeight: 'bold' },
   thrustBtn: { width: 70, height: 50, backgroundColor: COLORS.bgMedium, borderRadius: 8, borderWidth: 2, borderColor: COLORS.neonCyan, justifyContent: 'center', alignItems: 'center' },
   thrustBtnActive: { backgroundColor: COLORS.neonCyan + '40' },
