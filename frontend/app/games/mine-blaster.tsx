@@ -554,10 +554,18 @@ export default function RockBlasterGame() {
         {/* Controls */}
         <View style={styles.controls}>
           <View style={styles.rotateControls}>
-            <TouchableOpacity style={styles.rotateBtn} onPress={rotateLeft}>
+            <TouchableOpacity 
+              style={[styles.rotateBtn, isRotatingLeft && styles.rotateBtnActive]} 
+              onPressIn={() => setIsRotatingLeft(true)}
+              onPressOut={() => setIsRotatingLeft(false)}
+            >
               <Text style={styles.rotateBtnText}>↺</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rotateBtn} onPress={rotateRight}>
+            <TouchableOpacity 
+              style={[styles.rotateBtn, isRotatingRight && styles.rotateBtnActive]} 
+              onPressIn={() => setIsRotatingRight(true)}
+              onPressOut={() => setIsRotatingRight(false)}
+            >
               <Text style={styles.rotateBtnText}>↻</Text>
             </TouchableOpacity>
           </View>
