@@ -273,6 +273,83 @@ export default function LedgerLeapGame() {
         setPlatforms(prev => {
           const maxX = Math.max(...prev.map(p => p.x));
           if (maxX - worldOffset < GAME_WIDTH * 2) {
+            const newPlatforms = generatePlatforms(maxX + 50, 5);
+            // Add enemies to new platforms
+            newPlatforms.forEach(platform => {
+              if (Math.random() > 0.7 && platform.width > 80) {
+                setEnemies(prevEnemies => [...prevEnemies, {
+                  id: platform.id * 100 + Date.now(),
+                  x: platform.x + platform.width / 2,
+                  y: platform.y - ENEMY_SIZE,
+                  direction: Math.random() > 0.5 ? 1 : -1,
+                  platformId: platform.id,
+                }]);
+              }
+            });
+            return [...prev, ...newPlatforms];
+          }
+          return prev;
+        });
+      }
+
+      // Move enemies
+      setEnemies(prev => prev.map(enemy => {
+        const platform = platforms.find(p => p.id === enemy.platformId);
+        if (!platform) return enemy;
+        
+        let newX = enemy.x + enemy.direction * 1.5;
+        const platLeft = platform.x;
+        const platRight = platform.x + platform.width;
+        
+        // Bounce at platform edges
+        if (newX < platLeft + 5) {
+          newX = platLeft + 5;
+          enemy.direction = 1;
+        } else if (newX > platRight - ENEMY_SIZE - 5) {
+          newX = platRight - ENEMY_SIZE - 5;
+          enemy.direction = -1;
+        }
+        
+        return { ...enemy, x: newX };
+      }));
+
+      // Check enemy collision
+      const worldPlayerX = playerX + worldOffset;
+      enemies.forEach(enemy => {
+        const enemyScreenX = enemy.x - worldOffset;
+        if (
+          playerX < enemyScreenX + ENEMY_SIZE &&
+          playerX + PLAYER_SIZE > enemyScreenX &&
+          playerY < enemy.y + ENEMY_SIZE &&
+          playerY + PLAYER_SIZE > enemy.y
+        ) {
+          // Hit enemy from above = kill it
+          if (playerVY > 0 && playerY + PLAYER_SIZE < enemy.y + ENEMY_SIZE / 2) {
+            setEnemies(prev => prev.filter(e => e.id !== enemy.id));
+            setScore(s => s + 100);
+            setPlayerVY(-8); // Bounce
+            playCollect();
+          } else {
+            // Hit from side = take damage
+            playHit();
+            setLives(l => {
+              if (l <= 1) {
+                playGameOver();
+                setGameState('gameover');
+                submitScore('ledger-leap', score);
+                return 0;
+              }
+              setPlayerX(50);
+              setPlayerY(GAME_HEIGHT - 100);
+              setPlayerVY(0);
+              setWorldOffset(Math.max(0, worldOffset - 200));
+              if (Platform.OS !== 'web') Vibration.vibrate(200);
+              return l - 1;
+            });
+          }
+        }
+      });
+          if (maxX - worldOffset < GAME_WIDTH * 2) {
             return [...prev, ...generatePlatforms(maxX + 50, 5)];
           }
           // Remove platforms that are too far behind
