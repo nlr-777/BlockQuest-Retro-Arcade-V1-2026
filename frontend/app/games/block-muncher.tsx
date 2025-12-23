@@ -649,13 +649,13 @@ export default function BlockMuncherGame() {
         {/* Web3 Info */}
         <View style={styles.infoBox}>
           <PixelText size="xs" color={COLORS.blockCyan}>
-            BLOCKCHAIN LESSON:
+            🔗 {GAME_MECHANICS.concept.toUpperCase()}:
           </PixelText>
           <PixelText size="xs" color={COLORS.textMuted}>
-            Each block you collect adds to your chain - just like transactions in a blockchain!
+            {getRandomTip('block-muncher')}
           </PixelText>
           <PixelText size="xs" color={COLORS.chainGold}>
-            Chain Length: {chain.length} blocks
+            Chain Length: {chain.length} blocks 🔗
           </PixelText>
         </View>
       </View>
