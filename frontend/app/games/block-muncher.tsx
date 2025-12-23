@@ -279,6 +279,13 @@ export default function BlockMuncherGame() {
       { x: GRID_SIZE - 4, y: i > 2 && i < GRID_SIZE - 3 && i !== 7 ? i : -1 },
     ]).filter(w => w.y !== -1),
   ]);
+  
+  // Blockchain collectibles
+  const [bqoTokens, setBqoTokens] = useState<Position[]>([]);
+  const [nftGems, setNftGems] = useState<{pos: Position; rarity: 'common' | 'rare' | 'epic' | 'legendary'}[]>([]);
+  const [powerups, setPowerups] = useState<{pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[]>([]);
+  const [bqoCollected, setBqoCollected] = useState(0);
+  const [showTokenEffect, setShowTokenEffect] = useState<{x: number; y: number; amount: number} | null>(null);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
