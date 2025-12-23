@@ -471,7 +471,7 @@ export default function BlockchainScreen() {
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Powered by Apertum Network</Text>
-            <Text style={styles.footerVersion}>BQO Token • 9.4B Supply Cap</Text>
+            <Text style={styles.footerVersion}>BQO Token • 94B Supply Cap</Text>
           </View>
         </ScrollView>
       </SafeAreaView>
