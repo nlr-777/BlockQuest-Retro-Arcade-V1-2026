@@ -381,7 +381,7 @@ export default function BlockMuncherGame() {
       
       return { x: newX, y: newY };
     });
-  }, [gameState, walls]);
+  }, [gameState, walls, playMove]);
 
   // Game loop
   useEffect(() => {
@@ -397,6 +397,53 @@ export default function BlockMuncherGame() {
           playCollect();
           if (Platform.OS !== 'web') Vibration.vibrate(10);
           return prev.filter(b => !(b.x === playerPos.x && b.y === playerPos.y));
+        }
+        return prev;
+      });
+      
+      // Check BQO token collection
+      setBqoTokens(prev => {
+        const collected = prev.find(t => t.x === playerPos.x && t.y === playerPos.y);
+        if (collected) {
+          setScore(s => s + 50);
+          setBqoCollected(c => c + 1);
+          setShowTokenEffect({ x: playerPos.x, y: playerPos.y, amount: 1 });
+          playPowerup();
+          if (Platform.OS !== 'web') Vibration.vibrate(30);
+          setTimeout(() => setShowTokenEffect(null), 800);
+          return prev.filter(t => !(t.x === playerPos.x && t.y === playerPos.y));
+        }
+        return prev;
+      });
+      
+      // Check NFT gem collection
+      setNftGems(prev => {
+        const collected = prev.find(g => g.pos.x === playerPos.x && g.pos.y === playerPos.y);
+        if (collected) {
+          const points = collected.rarity === 'legendary' ? 500 : 
+                        collected.rarity === 'epic' ? 200 : 
+                        collected.rarity === 'rare' ? 100 : 25;
+          setScore(s => s + points);
+          playLevelUp();
+          if (Platform.OS !== 'web') Vibration.vibrate(50);
+          return prev.filter(g => !(g.pos.x === playerPos.x && g.pos.y === playerPos.y));
+        }
+        return prev;
+      });
+      
+      // Check powerup collection
+      setPowerups(prev => {
+        const collected = prev.find(p => p.pos.x === playerPos.x && p.pos.y === playerPos.y);
+        if (collected) {
+          playPowerup();
+          if (Platform.OS !== 'web') Vibration.vibrate(40);
+          // Apply powerup effect based on type
+          if (collected.type === 'multiplier') {
+            setScore(s => s + 100);
+          } else if (collected.type === 'shield') {
+            setLives(l => Math.min(l + 1, 5));
+          }
+          return prev.filter(p => !(p.pos.x === playerPos.x && p.pos.y === playerPos.y));
         }
         return prev;
       });
