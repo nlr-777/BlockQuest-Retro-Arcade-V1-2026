@@ -386,19 +386,32 @@ export default function SeedSprintGame() {
         <View style={styles.overlay}>
           <Animated.View entering={FadeInDown.delay(200)} style={styles.menuContent}>
             <PixelText size="xxl" color={COLORS.seedRed} glow>SEED SPRINT</PixelText>
-            <PixelText size="md" style={styles.menuIcon}>🏃</PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary} style={styles.menuSubtitle}>
-              Run, jump, and collect seed words!
-            </PixelText>
-            <PixelText size="xs" color={COLORS.blockCyan} style={styles.menuHint}>
-              Remember them at checkpoints to continue!
-            </PixelText>
+            <PixelText size="md" style={styles.menuIcon}>🏃🔑</PixelText>
+            
+            <View style={styles.instructionBox}>
+              <PixelText size="sm" color={COLORS.chainGold} style={styles.instructionTitle}>
+                HOW TO PLAY:
+              </PixelText>
+              <View style={styles.instructionRow}>
+                <PixelText size="xs" color={COLORS.textSecondary}>🔹 TAP screen to JUMP over obstacles</PixelText>
+              </View>
+              <View style={styles.instructionRow}>
+                <PixelText size="xs" color={COLORS.textSecondary}>🔹 Collect 12 SEED WORDS (shown as icons)</PixelText>
+              </View>
+              <View style={styles.instructionRow}>
+                <PixelText size="xs" color={COLORS.textSecondary}>🔹 At checkpoints, recall words IN ORDER</PixelText>
+              </View>
+              <View style={styles.instructionRow}>
+                <PixelText size="xs" color={COLORS.neonCyan}>💡 Just like protecting your real wallet!</PixelText>
+              </View>
+            </View>
+            
             <PixelButton
-              title="START GAME"
+              title="START RUNNING"
               onPress={startGame}
               color={COLORS.seedRed}
               size="lg"
-              style={{ marginTop: 32 }}
+              style={{ marginTop: 24 }}
             />
           </Animated.View>
         </View>
@@ -408,9 +421,9 @@ export default function SeedSprintGame() {
       {gameState === 'checkpoint' && (
         <View style={styles.overlay}>
           <View style={styles.checkpointContent}>
-            <PixelText size="lg" color={COLORS.chainGold} glow>CHECKPOINT!</PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary} style={{ marginVertical: 12 }}>
-              Select your first 3 collected words IN ORDER:
+            <PixelText size="lg" color={COLORS.chainGold} glow>🎯 CHECKPOINT!</PixelText>
+            <PixelText size="xs" color={COLORS.textPrimary} style={{ marginVertical: 8 }}>
+              Memory test! Tap your first 3 words IN ORDER:
             </PixelText>
             
             <View style={styles.checkpointWords}>
