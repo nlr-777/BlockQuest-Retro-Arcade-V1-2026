@@ -886,6 +886,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
   },
+  badgeImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+  },
   badgeName: {
     fontSize: 9,
     fontWeight: 'bold',
