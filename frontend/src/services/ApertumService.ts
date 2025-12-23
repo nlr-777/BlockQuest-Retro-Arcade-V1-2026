@@ -83,17 +83,10 @@ class ApertumService {
     // Initialize only on client-side
   }
 
-  // Initialize provider
-  private initProvider() {
-    try {
-      this.provider = new ethers.JsonRpcProvider(APERTUM_CONFIG.rpcUrl);
-    } catch (error) {
-      console.log('Failed to initialize Apertum provider:', error);
-    }
-  }
-
   // Check if Web3 features are enabled
   async isWeb3Enabled(): Promise<boolean> {
+    if (!isClient) return false;
+    
     try {
       const enabled = await AsyncStorage.getItem(WEB3_ENABLED_KEY);
       this.web3Enabled = enabled === 'true';
@@ -105,12 +98,16 @@ class ApertumService {
 
   // Toggle Web3 features
   async setWeb3Enabled(enabled: boolean): Promise<void> {
+    if (!isClient) return;
+    
     this.web3Enabled = enabled;
     await AsyncStorage.setItem(WEB3_ENABLED_KEY, enabled.toString());
   }
 
   // Get saved wallet address
   async getSavedWallet(): Promise<string | null> {
+    if (!isClient) return null;
+    
     try {
       const wallet = await AsyncStorage.getItem(WALLET_KEY);
       return wallet;
@@ -121,43 +118,30 @@ class ApertumService {
 
   // Save connected wallet address
   async saveWallet(address: string): Promise<void> {
+    if (!isClient) return;
+    
     this.walletAddress = address;
     await AsyncStorage.setItem(WALLET_KEY, address);
   }
 
   // Clear saved wallet
   async clearWallet(): Promise<void> {
+    if (!isClient) return;
+    
     this.walletAddress = null;
     await AsyncStorage.removeItem(WALLET_KEY);
   }
 
-  // Get native balance (APT)
+  // Get native balance (APT) - returns mock for now until ethers is needed
   async getBalance(address: string): Promise<string> {
-    if (!this.provider) return '0';
-    try {
-      const balance = await this.provider.getBalance(address);
-      return ethers.formatEther(balance);
-    } catch (error) {
-      console.log('Failed to get balance:', error);
-      return '0';
-    }
+    // For mobile, we'll implement actual balance fetching when WalletConnect is integrated
+    return '0';
   }
 
   // Get BQO token balance (when deployed)
   async getBQOBalance(address: string): Promise<string> {
-    if (!this.provider || !APERTUM_CONFIG.bqoToken.address) {
-      return '0';
-    }
-    try {
-      const tokenContract = new ethers.Contract(
-        APERTUM_CONFIG.bqoToken.address,
-        ['function balanceOf(address) view returns (uint256)'],
-        this.provider
-      );
-      const balance = await tokenContract.balanceOf(address);
-      return ethers.formatUnits(balance, APERTUM_CONFIG.bqoToken.decimals);
-    } catch (error) {
-      console.log('Failed to get BQO balance:', error);
+    // Will be implemented when BQO token is deployed
+    return '0';
       return '0';
     }
   }
