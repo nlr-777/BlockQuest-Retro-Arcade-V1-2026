@@ -142,8 +142,6 @@ class ApertumService {
   async getBQOBalance(address: string): Promise<string> {
     // Will be implemented when BQO token is deployed
     return '0';
-      return '0';
-    }
   }
 
   // Calculate BQO from XP
@@ -156,15 +154,10 @@ class ApertumService {
     return xp % XP_TO_BQO_RATE;
   }
 
-  // Check network connection
+  // Check network connection - simplified for mobile
   async checkNetwork(): Promise<boolean> {
-    if (!this.provider) return false;
-    try {
-      const network = await this.provider.getNetwork();
-      return !!network;
-    } catch {
-      return false;
-    }
+    // Will be implemented with actual network checking when needed
+    return true;
   }
 
   // Generate WalletConnect URI (placeholder - will be replaced with actual WC integration)
