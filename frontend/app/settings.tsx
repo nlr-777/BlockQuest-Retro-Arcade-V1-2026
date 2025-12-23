@@ -417,6 +417,41 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 2,
   },
+  blockchainCard: {
+    borderColor: COLORS.neonCyan + '40',
+  },
+  blockchainHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  blockchainIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.neonCyan + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  blockchainInfo: {
+    flex: 1,
+  },
+  blockchainBadge: {
+    backgroundColor: COLORS.neonCyan + '20',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: COLORS.neonCyan + '40',
+  },
+  blockchainBadgeText: {
+    fontSize: 9,
+    color: COLORS.neonCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
+  },
   confirmButtons: {
     flexDirection: 'row',
     gap: 12,
