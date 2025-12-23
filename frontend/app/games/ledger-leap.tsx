@@ -349,13 +349,6 @@ export default function LedgerLeapGame() {
           }
         }
       });
-          if (maxX - worldOffset < GAME_WIDTH * 2) {
-            return [...prev, ...generatePlatforms(maxX + 50, 5)];
-          }
-          // Remove platforms that are too far behind
-          return prev.filter(p => p.x > worldOffset - 200);
-        });
-      }
 
       // Check victory (distance goal)
       if (distance >= 1000) {
