@@ -290,6 +290,47 @@ export default function BlockMuncherGame() {
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
 
+  // Generate blockchain collectibles
+  const generateBlockchainItems = useCallback(() => {
+    // Spawn BQO tokens randomly
+    const tokens: Position[] = [];
+    for (let i = 0; i < 5; i++) {
+      tokens.push({
+        x: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+        y: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+      });
+    }
+    setBqoTokens(tokens);
+    
+    // Spawn NFT gems (rare items)
+    const gems: {pos: Position; rarity: 'common' | 'rare' | 'epic' | 'legendary'}[] = [];
+    const rarities: ('common' | 'rare' | 'epic' | 'legendary')[] = ['common', 'rare', 'epic', 'legendary'];
+    for (let i = 0; i < 3; i++) {
+      gems.push({
+        pos: {
+          x: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+          y: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+        },
+        rarity: rarities[Math.floor(Math.random() * rarities.length)],
+      });
+    }
+    setNftGems(gems);
+    
+    // Spawn powerups
+    const powerupTypes: ('shield' | 'speed' | 'magnet' | 'multiplier')[] = ['shield', 'speed', 'magnet', 'multiplier'];
+    const pups: {pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[] = [];
+    for (let i = 0; i < 2; i++) {
+      pups.push({
+        pos: {
+          x: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+          y: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2,
+        },
+        type: powerupTypes[Math.floor(Math.random() * powerupTypes.length)],
+      });
+    }
+    setPowerups(pups);
+  }, []);
+
   // Initialize game
   const initGame = useCallback(() => {
     setPlayerPos({ x: 7, y: 7 });
@@ -304,7 +345,9 @@ export default function BlockMuncherGame() {
     setScore(0);
     setLives(3);
     setLevel(1);
-  }, []);
+    setBqoCollected(0);
+    generateBlockchainItems();
+  }, [generateBlockchainItems]);
 
   // Start game
   const startGame = useCallback(() => {
