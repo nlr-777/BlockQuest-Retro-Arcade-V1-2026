@@ -692,6 +692,16 @@ const styles = StyleSheet.create({
   recordIcon: {
     fontSize: 12,
   },
+  enemy: {
+    position: 'absolute',
+    width: ENEMY_SIZE,
+    height: ENEMY_SIZE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  enemyIcon: {
+    fontSize: 18,
+  },
   player: {
     position: 'absolute',
     width: PLAYER_SIZE,
