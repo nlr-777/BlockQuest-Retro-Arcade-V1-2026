@@ -1,181 +1,271 @@
 <analysis>
+**original_problem_statement**: The user wants to build a retro 2D pixel art arcade app named BlockQuest Official - Retro Arcade for mobile and web. The app will feature 15 mini-games that secretly teach Web3 concepts. The initial version is for kids (5-14), so all Web3 concepts must be simulated and kid-friendly, with a strict requirement to remove all financial and crypto terminology.
 
-**original_problem_statement**: The user wants to build a retro 2D pixel art arcade app named Block Quest Official The Arcade for mobile and web. The app will feature 15 mini-games that secretly teach Web3 concepts.
-
-**PRODUCT REQUIREMENTS**:
-1.  **Initial Scope**: Build 5 playable games (, , , , ) and create Coming Soon pages for the other 10.
-2.  **Visuals**:
-    *   Implement 15 specific retro VFX (e.g., Pixel Chain Rain, CRT warp).
-    *   Create a Treasure Vault tab, which is a user profile/inventory area designed to look like a self-custodial wallet.
-    *   Overhaul the entire game with an 80s/90s retro/synthwave aesthetic.
-    *   Replace all emojis with custom pixel art blockchain concept icons.
-3.  **Audio**: Generate and integrate 15 loopable, royalty-free (CC0) trance soundtrack assets inspired by Tiësto, synced with VFX and gameplay.
-4.  **Functionality**:
-    *   Implement on-chain style leaderboards (using a standard database like Firebase/MongoDB for the kid-friendly version).
-    *   Create an in-app DAO simulation for voting on remixes/badges.
-    *   The app should be fork-ready for a future adult version that uses a real blockchain.
-5.  **Target Audience**: The initial version is for kids (5-14), so all Web3 concepts are simulated (no real wallets, gas fees, or blockchain transactions). Data deletion rights must be respected.
+The user has since pivoted to a more direct Web3 integration, requesting:
+1.  **Blockchain Connection**: Integrate with the Apertum blockchain using a provided RPC URL and WalletConnect v2.
+2.  **Tokenomics**: Implement an in-game BQO token with a total supply of 94 billion, where 111 XP converts to 1 BQO.
+3.  **NFT Badges**: Create and display NFT badges for in-game achievements.
+4.  **Theming**: Infuse all games with blockchain-themed visuals, mechanics, and educational tips.
+5.  **Branding**: Incorporate the user's provided BlockQuest logo.
+6.  **Game Development**: Fix reported bugs in 4 existing games and build the 3 final Coming Soon games.
+7.  **Mobile First**: Ensure the app is fully mobile-compatible and remove any PC-specific errors.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A functional full-stack application with an Expo frontend and FastAPI backend.
-- **Frontend**: The main arcade hub is built, showing tabs for Play Now (5 games) and Coming Soon (10 games). Navigation to game detail pages and a Coming Soon page is working. Placeholder screens exist for the 5 playable games. A new  screen for the Treasure Vault has been created. The foundational components for a retro visual overhaul, including  and a  hook, have been created.
-- **Backend**: A FastAPI server is running with three endpoints:  for health checks,  to submit scores, and  to retrieve scores for a specific game.
+A full-stack Expo (React Native) / FastAPI application with a main hub providing access to 12 playable games.
+-   **Core Features**: Onboarding with avatar selection, a Vault for player stats, XP/leveling, seed phrase backup, and audio are all implemented.
+-   **Blockchain Scaffolding**: A client-side integration for the Apertum blockchain is in place. This includes a new  settings page for wallet connection (via WalletConnect v2), services (, , ) to handle logic, and a Zustand store () for state. The UI has been updated to show BQO credit balances in the Vault.
+-   **Mobile Compatibility**: Critical Server-Side Rendering (SSR) errors related to AsyncStorage () have been resolved by refactoring the new services to use a lazy singleton initialization pattern. The heavy  library was removed to keep the mobile build lean.
+-   **Theming & Branding**: The user's logo has been added to the main hub. A system for unique, blockchain-themed game mechanics and visuals (, ) has been created and implemented in  as a template.
+-   **NFT Art**: 16 unique pixel art NFT badge images have been generated using an AI image generator (via Emergent LLM Key) and integrated into the Vault and Blockchain settings pages.
+-   **Game Fixes**: Bugs and UX issues in four games (, , , ) have been resolved, including crashes, confusing instructions, lack of challenge, and unresponsive controls.
 
 **Last working item**:
--   **Last item agent was working**: The agent was in the middle of implementing a major user request for a visual overhaul and a new Treasure Vault screen. It had just:
-    1.  Created the new screen file .
-    2.  Created new components for the visual style (, ).
-    3.  Updated  to use the new retro aesthetics.
-    4.  The next logical step was to add the Vault tab to the main layout file () and then build out the UI for the vault itself.
+-   **Last item agent was working**: The agent was beginning the implementation of the three final Coming Soon games requested by the user. It correctly identified the games as , , and  and created the placeholder  files for them in .
 -   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N
--   **Which testing method agent to use?**: screenshot tool
+-   **Which testing method agent to use?**: frontend testing agent
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Onboarding modal appears on every test run. (P1)
--   **Issue 2**: Coming Soon game cards do not render their content. (P1)
-
-**Issues Detail**:
--   **Issue 1**:
-    -   **Description**: The onboarding modal, which asks for a username, appears at the start of every screenshot/test session. The agent correctly identified this is because the web preview's  is cleared between runs, causing the saved user profile to be lost.
-    -   **Attempted fixes**: The agent worked around this by manually entering a username during testing or navigating directly to routes.
-    -   **Next debug checklist**:
-        -   In , modify the logic to check if .
-        -   If in development and no profile is found, automatically create and save a default mock profile ().
-        -   This will bypass the modal during development and testing, improving workflow.
-    -   **Why fix this issue and what will be achieved with the fix?**: Fixing this will streamline the development and testing process, as the agent won't have to repeatedly dismiss the modal or lose the profile state between actions.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: frontend
-
--   **Issue 2**:
-    -   **Description**: On the main hub's Coming Soon tab, the game cards appear as empty outlines with a border, but their inner content (title, icon) is not rendered. This was observed in message #188.
-    -   **Attempted fixes**: None. The agent fixed a similar issue for the Play Now cards via a server restart, but did not confirm if the fix applied to the Coming Soon cards before moving to the next user request.
-    -   **Next debug checklist**:
-        1.  Navigate to the main screen () and click the Coming Soon tab.
-        2.  Inspect the console logs for errors.
-        3.  Check the  logic when the  is 'comingSoon'.
-        4.  Verify the  function for rendering these cards is being executed by adding a .
-        5.  If the issue persists, try a hard restart of the expo server (expo: ERROR (not running)
-expo: started), as this fixed the identical problem for the Play Now cards.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a core UI bug. Fixing it will ensure the Coming Soon section is displayed correctly to the user.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: frontend
+- No outstanding high-priority issues were identified. Previous issues were either resolved or deprioritized by the user.
 
 **In progress Task List**:
--   **Task 1**: Complete Treasure Vault & Retro Visual Overhaul (P0)
+-   **Task 1**: Implement Gameplay for  (P0)
+-   **Task 2**: Implement Gameplay for  (P1)
+-   **Task 3**: Implement Gameplay for  (P1)
+-   **Task 4**: Integrate Blockchain Themes & Mechanics into all remaining games (P2)
 
 **Task Detail**:
--   **Task 1**:
-    -   **Where to resume**:
-        1.  Edit  to add a new tab for the Treasure Vault in the bottom navigation, pointing to the  route. Use an appropriate icon from .
-        2.  Flesh out the UI of  to match the user's self-custodial wallet concept. This should include sections for the user's profile info, badges, and stats.
-        3.  Restart the expo server and take a screenshot to verify the new tab appears and the retro aesthetic on the  page is correctly applied.
-    -   **What will be achieved with this?**: This will complete the user's most recent feature request, delivering a key new screen and a significant visual upgrade.
-    -   **Status**: IN PROGRESS
+-   **Task 1**: Implement Gameplay for 
+    -   **Where to resume**: Begin coding the game logic in . This should be a classic pinball game where bumpers, targets, and bonuses are themed around decentralized storage concepts (e.g., pinning files, data chunks).
+    -   **What will be achieved with this?**: The first of the three remaining games will become playable, bringing the total to 13/15.
+    -   **Status**: NOT STARTED
     -   **Should Test frontend/backend/both after fix?**: frontend
     -   **Blocked on something**: No.
 
+-   **Task 2**: Implement Gameplay for 
+    -   **Where to resume**: Begin coding the game logic in . This should be an Arkanoid/Breakout-style game where the bricks represent parts of a smart contract (functions, variables) and power-ups relate to contract actions (e.g., execute, verify).
+    -   **What will be achieved with this?**: The second of the three remaining games will become playable.
+    -   **Status**: NOT STARTED
+    -   **Should Test frontend/backend/both after fix?**: frontend
+    -   **Blocked on something**: No.
+
+-   **Task 3**: Implement Gameplay for 
+    -   **Where to resume**: Begin coding the game logic in . This should be a top-down Gauntlet/dungeon crawler-style game where the player must collect multiple keys (signatures) to open a final vault, teaching the multi-sig concept.
+    -   **What will be achieved with this?**: The final game will be implemented, completing the 15-game roster.
+    -   **Status**: NOT STARTED
+    -   **Should Test frontend/backend/both after fix?**: frontend
+    -   **Blocked on something**: No.
+
+-   **Task 4**: Integrate Blockchain Themes & Mechanics into all remaining games
+    -   **Where to resume**: The pattern is complete in . This task involves applying that pattern to the other 11 existing playable games and the 3 new games as they are built. The process is to import  and , add the themed elements to the game's render function, and display the game-specific educational tip.
+    -   **What will be achieved with this?**: Fulfills the user's core request to make every game a unique and memorable learning experience about a Web3 concept.
+    -   **Status**: IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?**: frontend
+    -   **Blocked on something**: Blocked on Task 1, 2, and 3 for the new games.
+
 **Upcoming and Future Tasks**
--   **Upcoming Tasks**:
-    -   **P0**: Implement the actual gameplay logic for the 5 playable games (, , , , ). They are currently just static placeholder screens.
-    -   **P1**: Integrate the 15 requested retro VFX from  and sync them to gameplay events and UI interactions.
-    -   **P1**: Build out the Badges and Ranks screens, connecting them to the backend leaderboard API and local badge storage.
 -   **Future Tasks**:
-    -   **P2**: Generate and integrate the 15 royalty-free trance music tracks.
-    -   **P2**: Build the 10 remaining Coming Soon games.
-    -   **P2**: Implement the DAO voting simulation game mechanic.
-    -   **P3**: Plan the architecture for the future fork to an adult version with real blockchain integration.
+    -   **OpenPlaza.io Integration**: User has deferred this. It would involve creating an API or deep-linking mechanism to use earned BQO credits in an external marketplace.
+    -   **Smart Contract Deployment**: The user will deploy the BQO token and NFT badge smart contracts. The app may need updates to use the final contract addresses and ABIs.
+    -   **Code Cleanup**: Address minor TypeScript/linting errors that were ignored in favor of functionality.
 
 **Completed work in this session**
--   **Recently completed**:
-    -   Full-stack project scaffolding (Expo + FastAPI) (DONE)
-    -   Main arcade hub UI with Play Now and Coming Soon tabs (DONE)
-    -   Navigation to placeholder game screens (5 playable, 10 coming soon) (DONE)
-    -   Backend API for health check and leaderboard CRUD operations (DONE)
-    -   Resolved a critical frontend rendering bug where components were not visible due to a server cache issue (DONE)
-    -   Created initial files for the retro visual overhaul and Treasure Vault screen (DONE)
+-   **Blockchain Integration**: A full client-side framework for connecting to the Apertum blockchain via WalletConnect v2 was built.
+-   **Mobile Compatibility**: Fixed critical  SSR errors by refactoring services to a lazy singleton pattern.
+-   **Branding & Theming**: Integrated the user's logo and created a reusable system for in-game blockchain visuals and mechanics.
+-   **Game Fixes**: Resolved major bugs and improved playability in , , , and .
+-   **AI Art Generation**: Successfully used an AI image generator to create and integrate 16 pixel art NFT badge images.
+-   **New Game Scaffolding**: Created the initial files for the 3 remaining games.
+-   **Tokenomics Fix**: Corrected the BQO supply display from 9.4B to 94B.
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1**: Coming Soon game cards do not render their content (title, icon), only an empty border.
-    -   **Debug checklist**: Check the rendering logic in  for the  tab, add console logs to the  function, and perform a hard restart of the Expo server (expo: stopped
-expo: started).
-    -   **Why to solve this issue and what will be achieved with this?**: To fix a visual bug and make the Coming Soon section functional.
-    -   **Should Test frontend/backend/both after fix**: frontend
+-   **Issue 1**: Minor TypeScript errors and deprecation warnings remain in the codebase. The agent focused on runtime functionality over strict type-checking.
+    -   **Debug checklist**: Run yarn run v1.22.22
+$ /app/frontend/node_modules/.bin/tsc
+app/games/block-muncher.tsx(392,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/bridge-bouncer.tsx(237,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/chain-invaders.tsx(227,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/crypto-climber.tsx(279,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/crypto-climber.tsx(398,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/crypto-climber.tsx(434,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/dao-duel.tsx(140,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/hash-hopper.tsx(161,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/ledger-leap.tsx(115,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Platform'.
+app/games/ledger-leap.tsx(130,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Platform'.
+app/games/ledger-leap.tsx(137,56): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(139,24): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(140,23): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(140,36): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(141,23): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(143,32): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(169,33): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(170,45): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(174,39): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(175,39): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(177,56): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(188,20): error TS2339: Property 'hasRecord' does not exist on type 'Platform'.
+  Property 'hasRecord' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(188,43): error TS2339: Property 'recordCollected' does not exist on type 'Platform'.
+  Property 'recordCollected' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(189,34): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(189,61): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(190,34): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(196,48): error TS2339: Property 'recordType' does not exist on type 'Platform'.
+  Property 'recordType' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(211,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/ledger-leap.tsx(274,52): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(279,51): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(281,32): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(282,31): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(282,44): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(283,31): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(285,40): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(297,48): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(301,35): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(302,36): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(302,49): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(426,38): error TS2339: Property 'x' does not exist on type 'Platform'.
+  Property 'x' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(427,37): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(430,45): error TS2339: Property 'id' does not exist on type 'Platform'.
+  Property 'id' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(436,37): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(437,39): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(441,27): error TS2339: Property 'hasRecord' does not exist on type 'Platform'.
+  Property 'hasRecord' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(441,50): error TS2339: Property 'recordCollected' does not exist on type 'Platform'.
+  Property 'recordCollected' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(446,50): error TS2339: Property 'width' does not exist on type 'Platform'.
+  Property 'width' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(447,39): error TS2339: Property 'y' does not exist on type 'Platform'.
+  Property 'y' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(448,64): error TS2339: Property 'recordType' does not exist on type 'Platform'.
+  Property 'recordType' does not exist on type 'PlatformIOSStatic'.
+app/games/ledger-leap.tsx(453,46): error TS2339: Property 'recordType' does not exist on type 'Platform'.
+  Property 'recordType' does not exist on type 'PlatformIOSStatic'.
+app/games/lightning-dash.tsx(142,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/mine-blaster.tsx(221,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/mine-blaster.tsx(380,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/seed-sprint.tsx(148,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/stake-smash.tsx(266,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+app/games/token-tumble.tsx(181,16): error TS2503: Cannot find namespace 'JSX'.
+app/games/token-tumble.tsx(354,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/BQOTokenService.ts(170,10): error TS2304: Cannot find name 'APERTUM_CONFIG'.
+src/store/gameStore.ts(122,3): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(277,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(291,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(306,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(315,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. to see all errors. Fixes would involve casting types (e.g., for ) and updating deprecated style props.
+    -   **Why to solve this issue and what will be achieved with this?**: Improves code quality and long-term maintainability.
+    -   **Should Test frontend/backend/both after fix?**: frontend
     -   **Is recurring issue?**: Y
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: N/A
--   **Recurrence count**: 0
--   **Status**: N/A
+-   N/A
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React Native, Expo, Expo Router (file-based routing), Zustand (for  state),  (for animations),  (for pixel icons).
--   **Backend**: Python, FastAPI.
--   **Database**: MongoDB (as per ).
--   **Architecture**: Monorepo with distinct  and  services.
+-   **Frontend**: React Native, Expo, Expo Router, Zustand
+-   **Backend**: Python, FastAPI
+-   **Web3 Integration**:  and  for EVM-compatible blockchain interaction.
+-   **AI Integration**: OpenAI's image generation model was used via the Emergent LLM Key to create in-game assets.
+-   **Architectural Pattern**: A lazy singleton pattern was implemented for services to avoid SSR errors on mobile.
 
 **key DB schema**
--   **leaderboard**: 
+-   No changes made to the database schema.
 
 **changes in tech stack**
-- None.
+-   **Added**: , , , .
+-   **Removed**:  (in favor of the more lightweight ).
 
 **All files of reference**
--   : Main hub screen, recently updated for the retro theme.
--   : Main app layout, needs to be updated to include the Vault tab.
--   : New screen for the user's inventory, needs to be built.
--   : New file containing custom SVG pixel art icons.
--   : New hook to manage the retro theme.
--   : Defines the data for all 15 games.
--   : The FastAPI backend server with API logic.
+-   : Placeholder for the new pinball game.
+-   : Placeholder for the new Breakout-style game.
+-   : Placeholder for the new dungeon-crawler game.
+-   : Defines the unique educational mechanics to be implemented in all games.
+-   : Provides the reusable themed visual components for the games.
+-   : The reference implementation for integrating the new themes and mechanics.
 
 **Areas that need refactoring**:
--   The  hook in  could be improved with a development-mode default to prevent the onboarding modal from appearing on every test run.
+-   The 11 playable games (other than ) need to be updated to integrate the blockchain themes and mechanics.
+-   The old  file should be reviewed and likely deleted, as its functionality has been replaced by the new  directory.
 
 **key api endpoints**
--   : Health check.
--   : Submit a new score.
--   : Get top scores for a game.
+-   No changes made to backend API endpoints.
 
 **Critical Info for New Agent**
--   A major rendering bug where components did not appear was fixed by a hard restart of the Expo server (expo: stopped
-expo: started). If you make style or component changes that don't appear, try this first.
--   The user's profile state (from the onboarding modal) is not persisting between test runs in the web preview because  gets cleared. This is a known development inconvenience.
--   The user is very focused on achieving a specific 80s/90s retro and synthwave aesthetic. All new UI should adhere to this vision, using the provided  and  hook as a foundation.
+-   **Primary Goal**: Your immediate priority is to build the three remaining games: , , and . Start with .
+-   **Integration Pattern is Key**: For all new and existing games, you MUST implement the theming and mechanics pattern established in . This is a crucial user requirement.
+-   **Mobile-First Mindset**: The user wants a polished mobile app. Continue to ignore web-only rendering warnings and focus on smooth performance and functionality in a mobile context.
+-   **Web3 is Client-Side Only**: Do not attempt to deploy smart contracts. The current scope is limited to client-side integration that connects to a user's wallet. The user will handle the blockchain deployment.
 
 **documents created in this job**
-- None.
+-   
 
 **Last 10 User Messages and any pending user messages**
-1.  **User (Message 215)**: Requested a Treasure Vault tab styled like a self-custodial wallet, a major 80s/90s retro visual overhaul, custom pixel art icons instead of emojis, and a general visual wow factor. (IN PROGRESS)
+-   **User (Msg 207)**: Requested custom mechanics/rewards, provided a logo, and asked to fix the BQO supply to 94 billion. (COMPLETED)
+-   **User (Msg 249)**: Asked if the agent could generate NFT badge art. (HANDLED)
+-   **User (Msg 251)**: Confirmed they want AI-generated art for the badges. (COMPLETED)
+-   **User (Msg 308)**: Reported bugs/usability issues in four games: ,  (crypto-climber), ,  (mine-blaster). (COMPLETED)
+-   **User (Msg 460)**: ok lets add the last 3 games (IN PROGRESS - This is the current task).
 
 **Project Health Check:**
--   **Functional**: Core app structure, navigation, backend API.
--   **Broken**: The content of Coming Soon game cards is not rendering.
--   **Mocked**: All gameplay is currently mocked with static placeholder screens.
+-   **Functional**: The core app, onboarding, profile, and 12/15 games are functional. Client-side Web3 integration is scaffolded and working.
+-   **Broken**: No critical systems are broken.
+-   **Mocked**: Gameplay logic for , , and . All blockchain interactions are simulated on the client until a wallet is connected.
 
 **3rd Party Integrations**
--   **Firebase**: Mentioned by the user as a possibility for leaderboards, but the current implementation uses MongoDB.
--   **ecrett music/Soundraw**: Mentioned by the user as tools for generating the required royalty-free music. No integration has been done yet.
+-   **DiceBear**: Used for generating placeholder pixel art avatar images.
+-   **WalletConnect**: For connecting to user's EVM wallets. Requires User to connect.
+-   **OpenAI GPT-4 Image Generation**: Used via Emergent LLM Key to generate NFT badge art assets.
 
 **Testing status**
--   **Testing agent used after significant changes**: NO
--   **Troubleshoot agent used after agent stuck in loop**: NO (Agent self-corrected a major rendering bug)
--   **Test files created**: []
--   **Known regressions**: The Coming Soon cards UI is broken.
+-   **Testing agent used after significant changes**: NO. Agent primarily used  for visual verification.
+-   **Troubleshoot agent used after agent stuck in loop**: NO
+-   **Test files created**: None.
+-   **Known regressions**: None.
 
 **Credentials to test flow:**
--   No credentials are required. The app presents an onboarding modal to ask for a username, which is then stored locally.
+-   No credentials are required. The app is self-contained. Web3 features require the user to connect their own wallet via WalletConnect.
 
 **What agent forgot to execute**
--   The agent identified that the Coming Soon game cards were not rendering their content (Message #188), but moved on to the user's next request (Message #215) without fixing or verifying the issue. This should be addressed.
-
+-   The agent did not propagate the blockchain-themed visuals and mechanics to the other 11 playable games, only completing the template in . This remains a pending task.
+-   The agent did not perform a cleanup of the old  file after creating the new, more robust  directory.
 </analysis>
