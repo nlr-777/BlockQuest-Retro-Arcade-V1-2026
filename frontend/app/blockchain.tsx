@@ -13,6 +13,7 @@ import {
   Modal,
   Linking,
   TextInput,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -25,6 +26,7 @@ import { useBlockchainStore } from '../src/store/blockchainStore';
 import { APERTUM_CONFIG, XP_TO_BQO_RATE } from '../src/services/ApertumService';
 import { BADGE_DEFINITIONS } from '../src/services/NFTBadgeService';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
+import { getBadgeImage } from '../src/constants/badgeImages';
 
 // Animated neon text
 const NeonText: React.FC<{ children: string; color: string; size?: number }> = ({ 
