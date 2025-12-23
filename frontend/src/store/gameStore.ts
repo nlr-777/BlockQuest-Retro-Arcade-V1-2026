@@ -248,8 +248,19 @@ export const useGameStore = create<GameState>((set, get) => ({
     return mintBadge(badgeData);
   },
 
-  // Logout - clear all data and reset to initial state
+  // Logout - save progress but clear session (user can restore later)
   logout: async () => {
+    // Progress is already saved in AsyncStorage - we just clear the active session
+    // User can restore using seed phrase or by logging back in
+    set({
+      profile: null,
+      isLoading: false,
+      // Keep highScores and recentScores in memory until app restarts
+    });
+  },
+
+  // Full data reset - clears everything permanently
+  resetAllData: async () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
     await AsyncStorage.removeItem(SCORES_KEY);
     set({
