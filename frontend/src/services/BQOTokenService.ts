@@ -237,5 +237,27 @@ class BQOTokenService {
   }
 }
 
-export const bqoTokenService = new BQOTokenService();
+// Lazy singleton - only created when first accessed on client
+let _bqoTokenService: BQOTokenService | null = null;
+
+export const getBQOTokenService = (): BQOTokenService => {
+  if (!_bqoTokenService) {
+    _bqoTokenService = new BQOTokenService();
+  }
+  return _bqoTokenService;
+};
+
+// For backwards compatibility
+export const bqoTokenService = {
+  getState: () => getBQOTokenService().getState(),
+  calculateConversion: (xp: number) => getBQOTokenService().calculateConversion(xp),
+  convertXPtoBQO: (xp: number) => getBQOTokenService().convertXPtoBQO(xp),
+  getPendingBQO: () => getBQOTokenService().getPendingBQO(),
+  getTotalBQO: () => getBQOTokenService().getTotalBQO(),
+  claimToWallet: (addr: string, amt: number) => getBQOTokenService().claimToWallet(addr, amt),
+  getConversionHistory: () => getBQOTokenService().getConversionHistory(),
+  getStats: () => getBQOTokenService().getStats(),
+  clearAll: () => getBQOTokenService().clearAll(),
+};
+
 export default bqoTokenService;
