@@ -1,7 +1,11 @@
 // BlockQuest Official - Apertum Blockchain Service
 // Handles connection to Apertum network (Avalanche subnet)
-import { ethers } from 'ethers';
+// Mobile-first design - works on iOS, Android, and Web
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+
+// Check if we're running on client (mobile/browser) vs server
+const isClient = typeof window !== 'undefined' || Platform.OS !== 'web';
 
 // Apertum Network Configuration
 export const APERTUM_CONFIG = {
@@ -72,12 +76,11 @@ export interface BadgeReward {
 }
 
 class ApertumService {
-  private provider: ethers.JsonRpcProvider | null = null;
   private walletAddress: string | null = null;
   private web3Enabled: boolean = false;
 
   constructor() {
-    this.initProvider();
+    // Initialize only on client-side
   }
 
   // Initialize provider
