@@ -462,6 +462,28 @@ export default function LedgerLeapGame() {
             );
           })}
 
+          {/* Enemies */}
+          {enemies.map(enemy => {
+            const screenX = enemy.x - worldOffset;
+            if (screenX < -ENEMY_SIZE || screenX > GAME_WIDTH + 50) return null;
+            
+            return (
+              <View
+                key={enemy.id}
+                style={[
+                  styles.enemy,
+                  {
+                    left: screenX,
+                    top: enemy.y,
+                    transform: [{ scaleX: enemy.direction }],
+                  },
+                ]}
+              >
+                <Text style={styles.enemyIcon}>👾</Text>
+              </View>
+            );
+          })}
+
           {/* Player */}
           <View
             style={[
