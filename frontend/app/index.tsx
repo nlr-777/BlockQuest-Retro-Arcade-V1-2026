@@ -682,6 +682,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: 'rgba(255, 0, 255, 0.08)',
   },
+  logoImage: {
+    width: 200,
+    height: 80,
+    marginBottom: 8,
+  },
   modalTitle: {
     fontSize: 22,
     fontWeight: 'bold',
