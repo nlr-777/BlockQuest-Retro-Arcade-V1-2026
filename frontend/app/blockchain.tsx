@@ -527,13 +527,13 @@ export default function BlockchainScreen() {
             <View style={styles.convertPreview}>
               <View style={styles.convertItem}>
                 <Text style={styles.convertLabel}>You Have</Text>
-                <NeonText color={COLORS.neonCyan} size={28}>{currentXP}</NeonText>
+                <NeonText color={COLORS.neonCyan} size={28}>{String(currentXP)}</NeonText>
                 <Text style={styles.convertSymbol}>XP</Text>
               </View>
               <Ionicons name="arrow-forward" size={24} color={COLORS.textMuted} />
               <View style={styles.convertItem}>
                 <Text style={styles.convertLabel}>You'll Get</Text>
-                <NeonText color={COLORS.neonPink} size={28}>{convertibleBQO}</NeonText>
+                <NeonText color={COLORS.neonPink} size={28}>{String(convertibleBQO)}</NeonText>
                 <Text style={styles.convertSymbol}>BQO</Text>
               </View>
             </View>
