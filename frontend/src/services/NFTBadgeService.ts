@@ -281,29 +281,50 @@ export interface ActiveReward {
   usesRemaining?: number;
 }
 
+// Check if we're running on client (mobile/browser) vs server
+const isClient = typeof window !== 'undefined';
+
 class NFTBadgeService {
   private unlockedBadges: UnlockedBadge[] = [];
   private activeRewards: ActiveReward[] = [];
+  private initialized: boolean = false;
 
   constructor() {
-    this.loadState();
+    // Only load state on client-side (mobile/browser)
+    if (isClient) {
+      this.loadState();
+    }
+  }
+
+  // Ensure state is loaded before operations
+  async ensureInitialized() {
+    if (!this.initialized && isClient) {
+      await this.loadState();
+      this.initialized = true;
+    }
   }
 
   // Load saved state
   private async loadState() {
+    if (!isClient) return; // Skip on server
+    
     try {
       const badges = await AsyncStorage.getItem(UNLOCKED_BADGES_KEY);
       const rewards = await AsyncStorage.getItem(ACTIVE_REWARDS_KEY);
       
       if (badges) this.unlockedBadges = JSON.parse(badges);
       if (rewards) this.activeRewards = JSON.parse(rewards);
+      this.initialized = true;
     } catch (error) {
-      console.log('Failed to load badge state:', error);
+      // Silent fail - expected on server/SSR
+      this.initialized = true;
     }
   }
 
   // Save state
   private async saveState() {
+    if (!isClient) return; // Skip on server
+    
     try {
       await AsyncStorage.setItem(UNLOCKED_BADGES_KEY, JSON.stringify(this.unlockedBadges));
       await AsyncStorage.setItem(ACTIVE_REWARDS_KEY, JSON.stringify(this.activeRewards));
