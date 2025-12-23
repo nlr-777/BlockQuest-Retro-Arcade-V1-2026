@@ -131,8 +131,22 @@ export default function LedgerLeapGame() {
       ...generatePlatforms(100, 15),
     ];
     
+    // Spawn enemies on some platforms
+    const initialEnemies: Enemy[] = [];
+    initialPlatforms.forEach((platform, index) => {
+      if (index > 2 && Math.random() > 0.7 && platform.width > 80) {
+        initialEnemies.push({
+          id: platform.id * 100,
+          x: platform.x + platform.width / 2,
+          y: platform.y - ENEMY_SIZE,
+          direction: Math.random() > 0.5 ? 1 : -1,
+          platformId: platform.id,
+        });
+      }
+    });
+    
     setPlatforms(initialPlatforms);
-    setEnemies([]);
+    setEnemies(initialEnemies);
     setPlayerX(50);
     setPlayerY(GAME_HEIGHT - 100);
     setPlayerVY(0);
@@ -145,7 +159,7 @@ export default function LedgerLeapGame() {
     setDistance(0);
     setGameState('playing');
     playGameStart();
-  }, [generatePlatforms]);
+  }, [generatePlatforms, playGameStart]);
 
   // Check platform collision
   const checkPlatformCollision = useCallback((x: number, y: number, vy: number) => {
