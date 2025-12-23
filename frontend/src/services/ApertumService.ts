@@ -20,7 +20,7 @@ export const APERTUM_CONFIG = {
     symbol: 'BQO',
     name: 'BlockQuest Official Token',
     decimals: 18,
-    totalSupply: '9400000000', // 9.4 billion cap
+    totalSupply: '94000000000', // 94 billion cap
   },
   // NFT Badge Collection - To be deployed
   nftBadge: {
