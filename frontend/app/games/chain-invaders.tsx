@@ -397,6 +397,17 @@ export default function ChainInvadersGame() {
     <SafeAreaView style={styles.container}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
       
+      {/* Roast HUD - Shows during gameplay */}
+      {gameState === 'playing' && (
+        <RoastHUD
+          score={score}
+          lives={lives}
+          goal={`Defend wave ${wave}!`}
+          gameId="chain-invaders"
+          showPuns={true}
+        />
+      )}
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
