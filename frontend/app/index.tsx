@@ -361,17 +361,17 @@ export default function ArcadeHub() {
             <IconBlockChain size={18} color={CRT_COLORS.primary} />
             <Text style={[styles.navText, styles.navTextActive]}>GAMES</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/daily')}>
-            <Text style={styles.navIcon}>📅</Text>
-            <Text style={styles.navText}>DAILY</Text>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/leaderboard')}>
+            <Text style={styles.navIcon}>🏆</Text>
+            <Text style={styles.navText}>LEADERS</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/vault')}>
             <IconVault size={18} color={CRT_COLORS.textDim} />
             <Text style={styles.navText}>VAULT</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/ranks')}>
-            <IconCrown size={18} color={CRT_COLORS.textDim} />
-            <Text style={styles.navText}>RANKS</Text>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/daily')}>
+            <Text style={styles.navIcon}>📅</Text>
+            <Text style={styles.navText}>DAILY</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/config')}>
             <Text style={styles.navIcon}>⚙️</Text>
