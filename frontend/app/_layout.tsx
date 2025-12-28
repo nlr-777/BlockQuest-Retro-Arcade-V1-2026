@@ -9,18 +9,30 @@ import { COLORS } from '../src/constants/colors';
 import VFXLayer from '../src/vfx/VFXManager';
 import PixelText from '../src/components/PixelText';
 
+// Check if running on client
+const isClient = typeof window !== 'undefined';
+
 export default function RootLayout() {
   const { loadProfile, isLoading } = useGameStore();
   const [showGenesis, setShowGenesis] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    loadProfile();
+    // Mark as mounted (client-side)
+    setMounted(true);
+    
+    // Only load profile on client
+    if (isClient) {
+      loadProfile();
+    }
+    
     // Hide genesis effect after animation
     const timer = setTimeout(() => setShowGenesis(false), 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
+  // During SSR or before hydration, show loading
+  if (!mounted || (isClient && isLoading)) {
     return (
       <View style={styles.loadingContainer}>
         <VFXLayer type="crt-breathe" />
