@@ -96,6 +96,7 @@ export const TUTORIAL_STEPS = {
 };
 
 export const useTutorialStore = create<TutorialState>()(
+  persist(
     (set, get) => ({
       // Initial state
       hasCompletedOnboarding: false,
@@ -115,6 +116,10 @@ export const useTutorialStore = create<TutorialState>()(
       totalGamesPlayed: 0,
       totalTimePlayedSeconds: 0,
       longestStreak: 0,
+      
+      // Hydration tracking
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
       
       // Actions
       setOnboardingComplete: () => set({ hasCompletedOnboarding: true }),
@@ -222,7 +227,28 @@ export const useTutorialStore = create<TutorialState>()(
           set({ consecutiveDays: 0 });
         }
       },
-    })
+    }),
+    {
+      name: 'blockquest-tutorial-storage',
+      storage: createJSONStorage(() => createSSRSafeStorage()),
+      // Only persist the essential fields
+      partialize: (state) => ({
+        hasCompletedOnboarding: state.hasCompletedOnboarding,
+        hasCompletedTutorial: state.hasCompletedTutorial,
+        hasPlayedFirstGame: state.hasPlayedFirstGame,
+        hasEarnedFirstBadge: state.hasEarnedFirstBadge,
+        lastPlayDate: state.lastPlayDate,
+        consecutiveDays: state.consecutiveDays,
+        totalGamesPlayed: state.totalGamesPlayed,
+        totalTimePlayedSeconds: state.totalTimePlayedSeconds,
+        longestStreak: state.longestStreak,
+        dailyQuestsCompleted: state.dailyQuestsCompleted,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
+  )
 );
 
 export default useTutorialStore;
