@@ -492,6 +492,16 @@ export default function ContractCrusherGame() {
           </PixelText>
         </View>
 
+        {/* Launch Button for Web */}
+        {gameState === 'playing' && !ballActive && lives > 0 && (
+          <TouchableOpacity 
+            style={styles.launchButton}
+            onPress={launchBall}
+          >
+            <PixelText size="lg" color={COLORS.chainGold}>🚀 TAP TO LAUNCH</PixelText>
+          </TouchableOpacity>
+        )}
+
         {/* Ready Overlay */}
         {gameState === 'ready' && (
           <View style={styles.overlay}>
