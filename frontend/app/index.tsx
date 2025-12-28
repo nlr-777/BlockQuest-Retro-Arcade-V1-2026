@@ -90,6 +90,10 @@ export default function ArcadeHub() {
   const [username, setUsername] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig | null>(AVATARS[0]);
   const [currentPun, setCurrentPun] = useState('');
+  
+  // Loyalty rewards state
+  const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
+  const [loyaltyRewards, setLoyaltyRewards] = useState<LoginReward[]>([]);
 
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
