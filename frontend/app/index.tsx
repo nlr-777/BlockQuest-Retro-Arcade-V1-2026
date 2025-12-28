@@ -97,6 +97,10 @@ export default function ArcadeHub() {
   // Loyalty rewards state
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [loyaltyRewards, setLoyaltyRewards] = useState<LoginReward[]>([]);
+  
+  // Mint Carnival state
+  const [showMintCarnival, setShowMintCarnival] = useState(false);
+  const [earnedBadge, setEarnedBadge] = useState<Badge | null>(null);
 
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
