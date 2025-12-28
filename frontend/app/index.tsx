@@ -428,6 +428,13 @@ export default function ArcadeHub() {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Loyalty Rewards Popup */}
+      <LoyaltyRewardsPopup
+        visible={showLoyaltyRewards}
+        rewards={loyaltyRewards}
+        onClose={() => setShowLoyaltyRewards(false)}
+      />
     </View>
   );
 }
