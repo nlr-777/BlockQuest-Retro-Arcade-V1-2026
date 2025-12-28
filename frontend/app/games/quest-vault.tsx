@@ -512,20 +512,14 @@ export default function QuestVaultGame() {
           </View>
         )}
 
-        {/* Game Over */}
-        {gameState === 'gameover' && (
-          <View style={styles.overlay}>
-            <View style={styles.menuContent}>
-              <PixelText size="xl" color={COLORS.error} glow>QUEST FAILED</PixelText>
-              <PixelText size="lg" color={COLORS.chainGold}>Score: {score}</PixelText>
-              <PixelText size="sm" color={COLORS.neonCyan}>Gold: {gold}</PixelText>
-              <View style={styles.gameOverButtons}>
-                <PixelButton title="TRY AGAIN" onPress={startGame} color={COLORS.error} />
-                <PixelButton title="EXIT" onPress={() => router.back()} color={COLORS.textMuted} />
-              </View>
-            </View>
-          </View>
-        )}
+        {/* Game Over - Using RektScreen */}
+        <RektScreen
+          visible={gameState === 'gameover'}
+          score={score}
+          reason={`Gold: ${gold}`}
+          onRetry={startGame}
+          onQuit={() => router.back()}
+        />
 
         {/* Victory */}
         {gameState === 'victory' && (
