@@ -547,29 +547,14 @@ export default function ChainInvadersGame() {
         </View>
       )}
 
-      {/* Game Over */}
-      {gameState === 'gameover' && (
-        <View style={styles.overlay}>
-          <Animated.View entering={FadeInDown} style={styles.menuContent}>
-            <PixelText size="xl" color={COLORS.error} glow>CHAIN COMPROMISED!</PixelText>
-            <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
-              {score}
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>Wave Reached: {wave}</PixelText>
-            
-            {score >= 500 && (
-              <View style={styles.badgeEarned}>
-                <PixelText size="sm" color={COLORS.success}>🏅 Badge Earned!</PixelText>
-              </View>
-            )}
-            
-            <View style={styles.gameOverButtons}>
-              <PixelButton title="PLAY AGAIN" onPress={startGame} color={COLORS.tokenPurple} size="md" />
-              <PixelButton title="BACK TO ARCADE" onPress={() => router.push('/')} color={COLORS.cardBorder} textColor={COLORS.textPrimary} size="md" />
-            </View>
-          </Animated.View>
-        </View>
-      )}
+      {/* Game Over - Using RektScreen */}
+      <RektScreen
+        visible={gameState === 'gameover'}
+        score={score}
+        reason={`Wave: ${wave} | Consensus: ${consensusVotes}`}
+        onRetry={startGame}
+        onQuit={() => router.push('/')}
+      />
     </SafeAreaView>
   );
 }
