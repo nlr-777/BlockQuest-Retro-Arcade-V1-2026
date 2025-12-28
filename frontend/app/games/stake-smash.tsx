@@ -569,20 +569,14 @@ export default function PowerSmashGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>POWER DOWN!</Text>
-              <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Energy Collected: {energyStored}</Text>
-              <Text style={styles.overlayText}>Max Power: ⚡{powerLevel}</Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.backToArcade} onPress={() => router.push('/')}>
-                <Text style={styles.backToArcadeText}>BACK TO ARCADE</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={score}
+            reason={`Energy: ${energyStored} | Power: ⚡${powerLevel}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
 
           {gameState === 'victory' && (
             <View style={styles.overlay}>
