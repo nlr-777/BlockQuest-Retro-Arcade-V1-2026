@@ -403,20 +403,14 @@ export default function BridgeBouncerGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>GAME OVER</Text>
-              <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Level: {level}</Text>
-              <Text style={styles.overlayText}>Tiles Bridged: {bridgesCompleted}</Text>
-              <Text style={styles.lessonText}>
-                Bridges connect different chains - like translators between languages!
-              </Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={score}
+            reason={`Level: ${level} | Bridges: ${bridgesCompleted}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
         </View>
 
         {/* Controls - Q*Bert style diagonal */}
