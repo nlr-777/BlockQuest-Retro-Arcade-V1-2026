@@ -11,6 +11,9 @@ config.cacheStores = [
   new FileStore({ root: path.join(root, 'cache') }),
 ];
 
+// Disable package exports to fix "Cannot use import.meta outside a module" error
+// This resolves to CommonJS entries, avoiding ESM features unsupported in Metro's server bundling
+config.resolver.unstable_enablePackageExports = false;
 
 // // Exclude unnecessary directories from file watching
 // config.watchFolders = [__dirname];
