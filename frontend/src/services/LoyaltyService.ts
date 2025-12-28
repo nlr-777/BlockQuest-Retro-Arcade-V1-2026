@@ -62,6 +62,8 @@ class LoyaltyService {
   }
 
   private async loadState() {
+    // Skip on server side
+    if (!isClient()) return;
     try {
       const saved = await AsyncStorage.getItem(LOYALTY_KEY);
       if (saved) {
@@ -73,6 +75,8 @@ class LoyaltyService {
   }
 
   private async saveState() {
+    // Skip on server side
+    if (!isClient()) return;
     try {
       await AsyncStorage.setItem(LOYALTY_KEY, JSON.stringify(this.state));
     } catch (e) {
