@@ -324,7 +324,9 @@ export default function ArcadeHub() {
               <Text style={styles.playerName}>{profile.username}</Text>
               <Text style={styles.playerStats}>LV.{profile.level} • {profile.xp} XP • {totalHighScore} PTS</Text>
             </View>
-            <HexBadge size={32} rarity="common" icon="🔗" />
+            <TouchableOpacity onPress={(e) => { e.stopPropagation(); testMintCarnival(); }}>
+              <HexBadge size={32} rarity="common" icon="🎰" />
+            </TouchableOpacity>
           </TouchableOpacity>
         )}
 
