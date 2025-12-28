@@ -449,20 +449,14 @@ export default function IPFSPinballGame() {
           </View>
         )}
 
-        {/* Game Over */}
-        {gameState === 'gameover' && (
-          <View style={styles.overlay}>
-            <View style={styles.menuContent}>
-              <PixelText size="xl" color={COLORS.error} glow>GAME OVER</PixelText>
-              <PixelText size="lg" color={COLORS.chainGold}>Score: {score}</PixelText>
-              <PixelText size="sm" color={COLORS.neonCyan}>Files Stored: {filesStored}</PixelText>
-              <View style={styles.gameOverButtons}>
-                <PixelButton title="PLAY AGAIN" onPress={startGame} color={COLORS.neonPink} />
-                <PixelButton title="EXIT" onPress={() => router.back()} color={COLORS.textMuted} />
-              </View>
-            </View>
-          </View>
-        )}
+        {/* Game Over - Using RektScreen */}
+        <RektScreen
+          visible={gameState === 'gameover'}
+          score={score}
+          reason={`Files Stored: ${filesStored}`}
+          onRetry={startGame}
+          onQuit={() => router.back()}
+        />
       </SafeAreaView>
     </View>
   );
