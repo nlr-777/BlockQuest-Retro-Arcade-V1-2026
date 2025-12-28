@@ -1,5 +1,6 @@
 // Block Quest Official - Game State Store
 import { create } from 'zustand';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Badge {
@@ -51,6 +52,10 @@ interface GameState {
   highScores: Record<string, number>;
   recentScores: GameScore[];
   
+  // Hydration tracking
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+  
   // Actions
   initProfile: (username: string, avatarId?: string) => Promise<void>;
   loadProfile: () => Promise<void>;
@@ -69,11 +74,39 @@ interface GameState {
   resetAllData: () => Promise<void>;
 }
 
-const STORAGE_KEY = '@blockquest_profile';
-const SCORES_KEY = '@blockquest_scores';
-
 // Helper to check if we're on the client side
 const isClient = () => typeof window !== 'undefined';
+
+// SSR-safe storage wrapper
+const createSSRSafeStorage = (): StateStorage => {
+  return {
+    getItem: async (name: string): Promise<string | null> => {
+      if (!isClient()) return null;
+      try {
+        return await AsyncStorage.getItem(name);
+      } catch (e) {
+        console.warn('Storage getItem error:', e);
+        return null;
+      }
+    },
+    setItem: async (name: string, value: string): Promise<void> => {
+      if (!isClient()) return;
+      try {
+        await AsyncStorage.setItem(name, value);
+      } catch (e) {
+        console.warn('Storage setItem error:', e);
+      }
+    },
+    removeItem: async (name: string): Promise<void> => {
+      if (!isClient()) return;
+      try {
+        await AsyncStorage.removeItem(name);
+      } catch (e) {
+        console.warn('Storage removeItem error:', e);
+      }
+    },
+  };
+};
 
 export const useGameStore = create<GameState>((set, get) => ({
   profile: null,
