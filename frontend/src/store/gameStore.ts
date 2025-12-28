@@ -304,8 +304,6 @@ export const useGameStore = create<GameState>()(
 
   // Full data reset - clears everything permanently
   resetAllData: async () => {
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    await AsyncStorage.removeItem(SCORES_KEY);
     set({
       profile: null,
       isLoading: false,
@@ -313,4 +311,31 @@ export const useGameStore = create<GameState>()(
       recentScores: [],
     });
   },
-}));
+}),
+    {
+      name: 'blockquest-game-storage',
+      storage: createJSONStorage(() => createSSRSafeStorage()),
+      // Persist essential game data
+      partialize: (state) => ({
+        profile: state.profile,
+        highScores: state.highScores,
+        recentScores: state.recentScores,
+        isMuted: state.isMuted,
+        musicVolume: state.musicVolume,
+        sfxVolume: state.sfxVolume,
+        vfxEnabled: state.vfxEnabled,
+        vfxIntensity: state.vfxIntensity,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+        // Mark loading as complete after hydration
+        if (state) {
+          state.isLoading = false;
+        }
+      },
+    }
+  )
+);
+
+// Helper hook to check if store has hydrated
+export const useGameStoreHydrated = () => useGameStore(state => state._hasHydrated);
