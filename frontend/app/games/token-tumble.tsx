@@ -410,6 +410,16 @@ export default function BlockTumbleGame() {
     <SafeAreaView style={styles.container}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
       
+      {/* Roast HUD - Shows during gameplay */}
+      {gameState === 'playing' && (
+        <RoastHUD
+          score={score}
+          goal={`Level ${level} | Clear lines!`}
+          gameId="token-tumble"
+          showPuns={true}
+        />
+      )}
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
