@@ -554,16 +554,14 @@ export default function CryptoClimberGame() {
               </View>
             )}
 
-            {gameState === 'gameover' && (
-              <View style={styles.overlay}>
-                <Text style={styles.overlayTitle}>GAME OVER</Text>
-                <Text style={styles.overlayScore}>Score: {score}</Text>
-                <Text style={styles.overlayText}>Eggs Collected: {collectedEggs.length}</Text>
-                <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                  <Text style={styles.startBtnText}>▶ RETRY</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            {/* Game Over - Using RektScreen */}
+            <RektScreen
+              visible={gameState === 'gameover'}
+              score={score}
+              reason={`Eggs: ${collectedEggs.length}`}
+              onRetry={startGame}
+              onQuit={() => router.push('/')}
+            />
 
             {gameState === 'won' && (
               <View style={styles.overlay}>
