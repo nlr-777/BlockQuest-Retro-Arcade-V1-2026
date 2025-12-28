@@ -86,6 +86,7 @@ export default function ArcadeHub() {
   const router = useRouter();
   const { profile, initProfile, highScores } = useGameStore();
   const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
+  const hasHydrated = useTutorialHydrated();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [username, setUsername] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig | null>(AVATARS[0]);
