@@ -369,6 +369,10 @@ export default function ArcadeHub() {
             <IconVault size={18} color={CRT_COLORS.textDim} />
             <Text style={styles.navText}>VAULT</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/ranks')}>
+            <IconCrown size={18} color={CRT_COLORS.textDim} />
+            <Text style={styles.navText}>RANKS</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/daily')}>
             <Text style={styles.navIcon}>📅</Text>
             <Text style={styles.navText}>DAILY</Text>
