@@ -147,57 +147,55 @@ export const useGameStore = create<GameState>()(
         set({ isLoading: false });
       },
 
-  updateScore: async (gameId: string, score: number, duration: number) => {
-    const { profile, highScores, recentScores, mintBadge } = get();
-    if (!profile) return;
+      updateScore: async (gameId: string, score: number, duration: number) => {
+        const { profile, highScores, recentScores, mintBadge } = get();
+        if (!profile) return;
 
-    const newHighScores = { ...highScores };
-    const isNewHighScore = !newHighScores[gameId] || score > newHighScores[gameId];
-    if (isNewHighScore) {
-      newHighScores[gameId] = score;
-    }
+        const newHighScores = { ...highScores };
+        const isNewHighScore = !newHighScores[gameId] || score > newHighScores[gameId];
+        if (isNewHighScore) {
+          newHighScores[gameId] = score;
+        }
 
-    const newScore: GameScore = {
-      gameId,
-      score,
-      playedAt: Date.now(),
-      duration,
-    };
+        const newScore: GameScore = {
+          gameId,
+          score,
+          playedAt: Date.now(),
+          duration,
+        };
 
-    const newGamesPlayed = profile.gamesPlayed + 1;
-    
-    // Calculate XP earned: base 10 + score/10 (capped at 50)
-    const xpEarned = Math.min(50, 10 + Math.floor(score / 10));
-    const newXP = profile.xp + xpEarned;
-    
-    // Calculate new level (100 XP per level)
-    const xpPerLevel = 100;
-    const newLevel = Math.floor(newXP / xpPerLevel) + 1;
-    
-    const updatedProfile = {
-      ...profile,
-      totalScore: profile.totalScore + score,
-      gamesPlayed: newGamesPlayed,
-      xp: newXP,
-      level: newLevel,
-    };
+        const newGamesPlayed = profile.gamesPlayed + 1;
+        
+        // Calculate XP earned: base 10 + score/10 (capped at 50)
+        const xpEarned = Math.min(50, 10 + Math.floor(score / 10));
+        const newXP = profile.xp + xpEarned;
+        
+        // Calculate new level (100 XP per level)
+        const xpPerLevel = 100;
+        const newLevel = Math.floor(newXP / xpPerLevel) + 1;
+        
+        const updatedProfile = {
+          ...profile,
+          totalScore: profile.totalScore + score,
+          gamesPlayed: newGamesPlayed,
+          xp: newXP,
+          level: newLevel,
+        };
 
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
-    await AsyncStorage.setItem(SCORES_KEY, JSON.stringify(newHighScores));
+        // Update state - persist middleware will auto-save
+        set({
+          profile: updatedProfile,
+          highScores: newHighScores,
+          recentScores: [newScore, ...recentScores.slice(0, 19)],
+        });
 
-    set({
-      profile: updatedProfile,
-      highScores: newHighScores,
-      recentScores: [newScore, ...recentScores.slice(0, 19)],
-    });
-
-    // Award "Beginner" badge after 5 total plays
-    const hasBeginnerBadge = profile.badges.some(b => b.id.includes('beginner_badge'));
-    if (newGamesPlayed >= 5 && !hasBeginnerBadge) {
-      await mintBadge({
-        name: 'Arcade Rookie',
-        description: 'Played 5 games in the BlockQuest Arcade!',
-        rarity: 'Common',
+        // Award "Beginner" badge after 5 total plays
+        const hasBeginnerBadge = profile.badges.some(b => b.id.includes('beginner_badge'));
+        if (newGamesPlayed >= 5 && !hasBeginnerBadge) {
+          await mintBadge({
+            name: 'Arcade Rookie',
+            description: 'Played 5 games in the BlockQuest Arcade!',
+            rarity: 'Common',
         gameId: 'arcade',
         traits: { gamesPlayed: 5 },
         icon: '🎮',
