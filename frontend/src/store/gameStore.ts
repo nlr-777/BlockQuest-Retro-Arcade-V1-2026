@@ -72,6 +72,9 @@ interface GameState {
 const STORAGE_KEY = '@blockquest_profile';
 const SCORES_KEY = '@blockquest_scores';
 
+// Helper to check if we're on the client side
+const isClient = () => typeof window !== 'undefined';
+
 export const useGameStore = create<GameState>((set, get) => ({
   profile: null,
   isLoading: true,
@@ -84,6 +87,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   recentScores: [],
 
   initProfile: async (username: string, avatarId: string = 'cyber-punk') => {
+    if (!isClient()) {
+      set({ isLoading: false });
+      return;
+    }
     const newProfile: PlayerProfile = {
       id: `player_${Date.now()}`,
       username,
@@ -101,6 +108,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   loadProfile: async () => {
+    // Skip loading on server side
+    if (!isClient()) {
+      set({ isLoading: false });
+      return;
+    }
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       const scores = await AsyncStorage.getItem(SCORES_KEY);
