@@ -134,12 +134,28 @@ export default function ArcadeHub() {
       if (!hasCompletedTutorial && hasCompletedOnboarding) {
         router.push('/tutorial');
       }
+      
+      // Check for loyalty rewards (returning player bonus)
+      checkLoyaltyRewards();
     }
     
     return () => {
       audioManager.stopMusic();
     };
   }, [profile, hasCompletedTutorial, hasCompletedOnboarding]);
+
+  // Check and display loyalty rewards
+  const checkLoyaltyRewards = async () => {
+    try {
+      const rewards = await loyaltyService.recordLogin();
+      if (rewards.length > 0) {
+        setLoyaltyRewards(rewards);
+        setShowLoyaltyRewards(true);
+      }
+    } catch (e) {
+      // Silent fail
+    }
+  };
 
   const handleCreateProfile = async () => {
     if (username.trim().length >= 3 && selectedAvatar) {
@@ -148,6 +164,9 @@ export default function ArcadeHub() {
       await initProfile(username.trim(), selectedAvatar.id);
       setShowOnboarding(false);
       setOnboardingComplete();
+      
+      // Record first login for loyalty
+      checkLoyaltyRewards();
       
       // Redirect to tutorial for first-time users
       if (!hasCompletedTutorial) {
