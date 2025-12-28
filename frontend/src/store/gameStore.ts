@@ -108,61 +108,44 @@ const createSSRSafeStorage = (): StateStorage => {
   };
 };
 
-export const useGameStore = create<GameState>((set, get) => ({
-  profile: null,
-  isLoading: true,
-  isMuted: false,
-  musicVolume: 0.7,
-  sfxVolume: 0.8,
-  vfxEnabled: true,
-  vfxIntensity: 1,
-  highScores: {},
-  recentScores: [],
+export const useGameStore = create<GameState>()(
+  persist(
+    (set, get) => ({
+      profile: null,
+      isLoading: true,
+      isMuted: false,
+      musicVolume: 0.7,
+      sfxVolume: 0.8,
+      vfxEnabled: true,
+      vfxIntensity: 1,
+      highScores: {},
+      recentScores: [],
+      
+      // Hydration tracking
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-  initProfile: async (username: string, avatarId: string = 'cyber-punk') => {
-    if (!isClient()) {
-      set({ isLoading: false });
-      return;
-    }
-    const newProfile: PlayerProfile = {
-      id: `player_${Date.now()}`,
-      username,
-      avatarId,
-      createdAt: Date.now(),
-      totalScore: 0,
-      gamesPlayed: 0,
-      badges: [],
-      daoVotingPower: 0,
-      level: 1,
-      xp: 0,
-    };
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
-    set({ profile: newProfile, isLoading: false });
-  },
+      initProfile: async (username: string, avatarId: string = 'cyber-punk') => {
+        const newProfile: PlayerProfile = {
+          id: `player_${Date.now()}`,
+          username,
+          avatarId,
+          createdAt: Date.now(),
+          totalScore: 0,
+          gamesPlayed: 0,
+          badges: [],
+          daoVotingPower: 0,
+          level: 1,
+          xp: 0,
+        };
+        set({ profile: newProfile, isLoading: false });
+      },
 
-  loadProfile: async () => {
-    // Skip loading on server side
-    if (!isClient()) {
-      set({ isLoading: false });
-      return;
-    }
-    try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
-      const scores = await AsyncStorage.getItem(SCORES_KEY);
-      if (stored) {
-        set({ 
-          profile: JSON.parse(stored), 
-          isLoading: false,
-          highScores: scores ? JSON.parse(scores) : {},
-        });
-      } else {
+      loadProfile: async () => {
+        // With persist middleware, profile is auto-loaded on hydration
+        // This function now just marks loading as complete
         set({ isLoading: false });
-      }
-    } catch (e) {
-      console.error('Failed to load profile:', e);
-      set({ isLoading: false });
-    }
-  },
+      },
 
   updateScore: async (gameId: string, score: number, duration: number) => {
     const { profile, highScores, recentScores, mintBadge } = get();
