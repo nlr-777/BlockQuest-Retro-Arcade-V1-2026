@@ -415,6 +415,17 @@ export default function ContractCrusherGame() {
             if (!ballActive && gameState === 'playing') launchBall();
           }}
           onTouchMove={(e) => movePaddle(e.nativeEvent.pageX)}
+          {...(Platform.OS === 'web' ? {
+            onMouseDown: (e: any) => {
+              touchStartRef.current = e.nativeEvent.pageX;
+              if (!ballActive && gameState === 'playing') launchBall();
+            },
+            onMouseMove: (e: any) => {
+              if (e.buttons === 1) { // Left mouse button pressed
+                movePaddle(e.nativeEvent.pageX);
+              }
+            },
+          } : {})}
         >
           {/* Bricks */}
           {bricks.map(brick => (
