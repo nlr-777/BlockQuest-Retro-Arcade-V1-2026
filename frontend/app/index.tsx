@@ -36,6 +36,8 @@ import { useTutorialStore } from '../src/store/tutorialStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
 import { AvatarSelector } from '../src/components/AvatarSelector';
+import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
+import { loyaltyService, LoginReward } from '../src/services/LoyaltyService';
 import audioManager from '../src/utils/AudioManager';
 import ttsManager from '../src/utils/TTSManager';
 import {
