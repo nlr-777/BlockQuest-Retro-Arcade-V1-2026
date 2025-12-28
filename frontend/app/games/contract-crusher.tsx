@@ -376,6 +376,18 @@ export default function ContractCrusherGame() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        {/* Roast HUD - Shows during gameplay */}
+        {gameState === 'playing' && (
+          <RoastHUD
+            score={score}
+            lives={lives}
+            combo={combo}
+            goal={`Level ${level} - Break all blocks!`}
+            gameId="contract-crusher"
+            showPuns={true}
+          />
+        )}
+
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
