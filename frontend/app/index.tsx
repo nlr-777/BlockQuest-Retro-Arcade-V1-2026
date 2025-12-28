@@ -406,7 +406,7 @@ export default function ArcadeHub() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgDark,
+    backgroundColor: CRT_COLORS.bgDark,
   },
   safeArea: {
     flex: 1,
@@ -414,49 +414,51 @@ const styles = StyleSheet.create({
   
   // Marquee
   marquee: {
-    backgroundColor: COLORS.bgMedium,
     marginHorizontal: 12,
     marginTop: 8,
-    borderRadius: 8,
-    borderWidth: 3,
-    borderColor: COLORS.neonPink,
     paddingVertical: 10,
     alignItems: 'center',
   },
   marqueeTitle: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.neonPink,
+    color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: COLORS.neonPink,
+    textShadowColor: CRT_COLORS.primaryGlow,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
-    letterSpacing: 4,
+    letterSpacing: 3,
   },
   marqueeSubtitle: {
     fontSize: 11,
-    color: COLORS.neonCyan,
+    color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 6,
+    marginTop: 2,
+  },
+  punText: {
+    fontSize: 10,
+    marginTop: 6,
+    fontWeight: 'bold',
   },
   
   // Player Bar
   playerBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+    backgroundColor: CRT_COLORS.bgMedium,
     marginHorizontal: 12,
     marginTop: 8,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: COLORS.neonCyan + '50',
+    borderColor: CRT_COLORS.primary + '40',
     padding: 8,
   },
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 4,
-    backgroundColor: COLORS.neonPink,
+    backgroundColor: CRT_COLORS.bgLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -469,7 +471,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   playerInfo: {
@@ -479,12 +481,12 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   playerStats: {
     fontSize: 10,
-    color: COLORS.neonYellow,
+    color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   
@@ -493,10 +495,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: COLORS.bgMedium,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: COLORS.neonPink + '60',
     overflow: 'hidden',
   },
   panelHeader: {
