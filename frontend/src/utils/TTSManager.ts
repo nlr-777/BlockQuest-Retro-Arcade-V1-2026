@@ -44,16 +44,17 @@ export const VOICE_LINES = {
 };
 
 class TTSManager {
-  private static instance: TTSManager;
+  private static instance: TTSManager | null = null;
   private enabled: boolean = true;
   private voice: SpeechSynthesisVoice | null = null;
   private rate: number = 1.1;
   private pitch: number = 1.0;
   private lastSpoken: number = 0;
-  private cooldown: number = 2000; // Min time between speeches
+  private cooldown: number = 2000;
+  private initialized: boolean = false;
 
   private constructor() {
-    this.initVoice();
+    // Defer initialization
   }
 
   static getInstance(): TTSManager {
@@ -64,13 +65,16 @@ class TTSManager {
   }
 
   private initVoice() {
-    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+    if (this.initialized) return;
+    if (Platform.OS !== 'web') return;
+    if (typeof window === 'undefined') return;
     if (!('speechSynthesis' in window)) return;
 
+    this.initialized = true;
+    
     // Wait for voices to load
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
-      // Prefer male English voices for "crypto bro" vibe
       const preferredVoices = [
         'Google US English',
         'Microsoft David',
@@ -89,40 +93,49 @@ class TTSManager {
         }
       }
       
-      // Fallback to any English voice
       if (!this.voice) {
-        this.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        this.voice = voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
       }
     };
 
-    if (window.speechSynthesis.getVoices().length > 0) {
-      loadVoices();
-    } else {
-      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    try {
+      if (window.speechSynthesis.getVoices().length > 0) {
+        loadVoices();
+      } else {
+        window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+      }
+    } catch (e) {
+      // Silently fail
     }
   }
 
   speak(text: string, priority: boolean = false) {
     if (!this.enabled) return;
-    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+    if (Platform.OS !== 'web') return;
+    if (typeof window === 'undefined') return;
     if (!('speechSynthesis' in window)) return;
+
+    this.initVoice();
 
     const now = Date.now();
     if (!priority && now - this.lastSpoken < this.cooldown) return;
 
-    // Cancel current speech if priority
-    if (priority) {
-      window.speechSynthesis.cancel();
+    try {
+      if (priority) {
+        window.speechSynthesis.cancel();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (this.voice) utterance.voice = this.voice;
+      utterance.rate = this.rate;
+      utterance.pitch = this.pitch;
+      utterance.volume = 0.8;
+
+      window.speechSynthesis.speak(utterance);
+      this.lastSpoken = now;
+    } catch (e) {
+      // Silently fail
     }
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = this.voice;
-    utterance.rate = this.rate;
-    utterance.pitch = this.pitch;
-    utterance.volume = 0.8;
-
-    window.speechSynthesis.speak(utterance);
-    this.lastSpoken = now;
   }
 
   speakLine(key: keyof typeof VOICE_LINES, priority: boolean = false) {
@@ -154,9 +167,7 @@ class TTSManager {
 
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
-    if (!enabled && Platform.OS === 'web' && typeof window !== 'undefined') {
-      window.speechSynthesis?.cancel();
-    }
+    if (!enabled) this.stop();
   }
 
   setRate(rate: number) {
@@ -173,7 +184,11 @@ class TTSManager {
 
   stop() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      window.speechSynthesis?.cancel();
+      try {
+        window.speechSynthesis?.cancel();
+      } catch (e) {
+        // Silently fail
+      }
     }
   }
 }
