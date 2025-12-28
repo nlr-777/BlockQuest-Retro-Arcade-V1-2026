@@ -73,6 +73,9 @@ export const useBlockchainStore = create<BlockchainState>((set, get) => ({
 
   // Initialize - load saved state
   initialize: async () => {
+    // Skip on server side
+    if (!isClient()) return;
+    
     try {
       const web3Enabled = await apertumService.isWeb3Enabled();
       const savedWallet = await apertumService.getSavedWallet();
