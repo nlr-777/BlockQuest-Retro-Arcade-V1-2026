@@ -30,8 +30,8 @@ export const APERTUM_CONFIG = {
   },
 };
 
-// XP to BQO conversion rate
-export const XP_TO_BQO_RATE = 111; // 111 XP = 1 BQO
+// XP is used for leveling up, NOT for BQO conversion
+// BQO is earned through badge airdrops only
 
 // Storage keys
 const WALLET_KEY = '@blockquest_wallet';
