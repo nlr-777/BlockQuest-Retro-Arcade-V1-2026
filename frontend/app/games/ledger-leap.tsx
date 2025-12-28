@@ -518,17 +518,14 @@ export default function LedgerLeapGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>GAME OVER</Text>
-              <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Distance: {distance}m</Text>
-              <Text style={styles.overlayText}>Records: {recordsCollected}</Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={score}
+            reason={`Distance: ${distance}m | Records: ${recordsCollected}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
 
           {gameState === 'victory' && (
             <View style={styles.overlay}>
