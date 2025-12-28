@@ -297,24 +297,24 @@ export default function ArcadeHub() {
               <Text style={styles.footerText}>⬡ LEARN WEB3 WHILE YOU PLAY ⬡</Text>
             </View>
           </ScrollView>
-        </View>
+        </CRTGlowBorder>
 
         {/* Bottom Nav */}
         <View style={styles.bottomNav}>
           <TouchableOpacity style={[styles.navBtn, styles.navActive]}>
-            <IconBlockChain size={20} color={COLORS.neonPink} />
+            <IconBlockChain size={20} color={CRT_COLORS.primary} />
             <Text style={[styles.navText, styles.navTextActive]}>GAMES</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/vault')}>
-            <IconVault size={20} color={COLORS.textSecondary} />
+            <IconVault size={20} color={CRT_COLORS.textDim} />
             <Text style={styles.navText}>VAULT</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/leaderboard')}>
-            <IconCrown size={20} color={COLORS.textSecondary} />
+            <IconCrown size={20} color={CRT_COLORS.textDim} />
             <Text style={styles.navText}>RANKS</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-sharp" size={20} color={COLORS.textSecondary} />
+            <Ionicons name="settings-sharp" size={20} color={CRT_COLORS.textDim} />
             <Text style={styles.navText}>CONFIG</Text>
           </TouchableOpacity>
         </View>
