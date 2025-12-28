@@ -554,20 +554,14 @@ export default function ContractCrusherGame() {
           </View>
         )}
 
-        {/* Game Over */}
-        {gameState === 'gameover' && (
-          <View style={styles.overlay}>
-            <View style={styles.menuContent}>
-              <PixelText size="xl" color={COLORS.error} glow>CONTRACT FAILED</PixelText>
-              <PixelText size="lg" color={COLORS.chainGold}>Score: {score}</PixelText>
-              <PixelText size="sm" color={COLORS.neonCyan}>Contracts: {contractsExecuted}</PixelText>
-              <View style={styles.gameOverButtons}>
-                <PixelButton title="REDEPLOY" onPress={startGame} color={COLORS.chainGold} />
-                <PixelButton title="EXIT" onPress={() => router.back()} color={COLORS.textMuted} />
-              </View>
-            </View>
-          </View>
-        )}
+        {/* Game Over - Using RektScreen */}
+        <RektScreen
+          visible={gameState === 'gameover'}
+          score={score}
+          reason={`Contracts: ${contractsExecuted} | Level: ${level}`}
+          onRetry={startGame}
+          onQuit={() => router.back()}
+        />
 
         {/* Victory */}
         {gameState === 'victory' && (
