@@ -181,13 +181,22 @@ export default function SeedSprintGame() {
       setObstacles(prev => {
         const newObs = prev.map(o => ({ ...o, x: o.x - speed })).filter(o => o.x > -OBSTACLE_WIDTH);
         
-        // Check collision
+        // Check collision - player needs to be high enough to clear obstacles
+        // Player position is at GROUND_HEIGHT (60), obstacles are 40px tall
+        // Player must be at least 50px above ground to clear hurdles
         for (const obs of newObs) {
-          if (obs.x < 60 && obs.x > 20 && playerY.value > -50) {
-            // Hit obstacle!
-            setGameState('gameover');
-            if (Platform.OS !== 'web') Vibration.vibrate(100);
-            return newObs;
+          if (obs.x < 70 && obs.x > 10) {
+            // Only collide if player hasn't jumped high enough
+            // hurdle is 40px tall, player needs to be above it
+            const clearanceNeeded = obs.type === 'hurdle' ? -60 : -30;
+            if (playerY.value > clearanceNeeded) {
+              // Hit obstacle!
+              playHit();
+              setGameState('gameover');
+              playGameOver();
+              if (Platform.OS !== 'web') Vibration.vibrate(100);
+              return newObs;
+            }
           }
         }
         
