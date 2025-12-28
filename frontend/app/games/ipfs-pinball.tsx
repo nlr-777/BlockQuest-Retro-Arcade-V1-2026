@@ -26,6 +26,8 @@ import { PixelText } from '../../src/components/PixelText';
 import { PixelButton } from '../../src/components/PixelButton';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
+import { RektScreen } from '../../src/components/RektScreen';
+import { RoastHUD } from '../../src/components/RoastHUD';
 import { GAMES } from '../../src/constants/games';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'ipfs-pinball')!;

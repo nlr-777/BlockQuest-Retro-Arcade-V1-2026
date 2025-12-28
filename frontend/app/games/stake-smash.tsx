@@ -27,6 +27,8 @@ import { COLORS } from '../../src/constants/colors';
 import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
+import { RektScreen } from '../../src/components/RektScreen';
+import { RoastHUD } from '../../src/components/RoastHUD';
 import { Scanlines } from '../../src/components/RetroEffects';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
