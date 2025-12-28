@@ -1,8 +1,6 @@
 // BlockQuest Official - Tutorial Store
 // Manages first-time user experience and auto-hook tutorial
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface TutorialState {
   // First time flags
