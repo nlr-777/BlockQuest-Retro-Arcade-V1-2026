@@ -300,6 +300,16 @@ export default function SeedSprintGame() {
     <SafeAreaView style={styles.container}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
       
+      {/* Roast HUD - Shows during gameplay */}
+      {gameState === 'playing' && (
+        <RoastHUD
+          score={score}
+          goal={`Collect ${12 - collectedWords.length} more seeds`}
+          gameId="seed-sprint"
+          showPuns={true}
+        />
+      )}
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
