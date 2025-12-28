@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   footerText: {
-    color: COLORS.neonCyan,
+    color: CRT_COLORS.primary,
     fontSize: 10,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
@@ -644,28 +644,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 8,
-    backgroundColor: COLORS.bgDark,
-    borderTopWidth: 3,
-    borderTopColor: COLORS.neonPink + '60',
+    backgroundColor: CRT_COLORS.bgDark,
+    borderTopWidth: 2,
+    borderTopColor: CRT_COLORS.primary + '40',
   },
   navBtn: {
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
   },
   navActive: {
-    backgroundColor: COLORS.neonPink + '20',
+    backgroundColor: CRT_COLORS.primary + '20',
+  },
+  navIcon: {
+    fontSize: 18,
   },
   navText: {
-    color: COLORS.textSecondary,
+    color: CRT_COLORS.textDim,
     fontSize: 8,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     marginTop: 2,
   },
   navTextActive: {
-    color: COLORS.neonPink,
+    color: CRT_COLORS.primary,
   },
   
   // Modal - Bold Arcade Style
