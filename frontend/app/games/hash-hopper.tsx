@@ -397,29 +397,14 @@ export default function HashHopperGame() {
         </View>
       )}
 
-      {/* Game Over */}
-      {gameState === 'gameover' && (
-        <View style={styles.overlay}>
-          <Animated.View entering={FadeInDown} style={styles.menuContent}>
-            <PixelText size="xl" color={COLORS.error} glow>HASH SCRAMBLED!</PixelText>
-            <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
-              {score}
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>Final Hash: 0x{currentHash}</PixelText>
-            
-            {score >= 200 && (
-              <View style={styles.badgeEarned}>
-                <PixelText size="sm" color={COLORS.success}>🏅 Badge Earned!</PixelText>
-              </View>
-            )}
-            
-            <View style={styles.gameOverButtons}>
-              <PixelButton title="PLAY AGAIN" onPress={startGame} color={COLORS.hashGreen} size="md" />
-              <PixelButton title="BACK TO ARCADE" onPress={() => router.push('/')} color={COLORS.cardBorder} textColor={COLORS.textPrimary} size="md" />
-            </View>
-          </Animated.View>
-        </View>
-      )}
+      {/* Game Over - Using RektScreen */}
+      <RektScreen
+        visible={gameState === 'gameover'}
+        score={score}
+        reason={`Hash: 0x${currentHash} | Path: ${pathTaken.length}`}
+        onRetry={startGame}
+        onQuit={() => router.push('/')}
+      />
     </SafeAreaView>
   );
 }
