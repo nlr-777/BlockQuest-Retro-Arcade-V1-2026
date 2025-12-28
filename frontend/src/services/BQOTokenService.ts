@@ -1,27 +1,37 @@
 // BlockQuest Official - BQO Token Service
-// Handles BQO token operations and XP conversion
+// Handles BQO token airdrops for NFT badge achievements
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { XP_TO_BQO_RATE } from './ApertumService';
 
 // Storage keys
 const BQO_PENDING_KEY = '@blockquest_bqo_pending';
 const BQO_CLAIMED_KEY = '@blockquest_bqo_claimed';
-const XP_CONVERTED_KEY = '@blockquest_xp_converted';
+const BQO_AIRDROPS_KEY = '@blockquest_bqo_airdrops';
 
 // Check if we're running on client (mobile/browser) vs server
 const isClient = typeof window !== 'undefined';
+
+// BQO Airdrop amounts based on badge rarity
+export const BQO_AIRDROP_AMOUNTS: Record<string, number> = {
+  common: 1,      // Common badges = 1 BQO
+  uncommon: 3,    // Uncommon badges = 3 BQO
+  rare: 10,       // Rare badges = 10 BQO
+  epic: 25,       // Epic badges = 25 BQO
+  legendary: 100, // Legendary badges = 100 BQO
+};
 
 // BQO Token state
 export interface BQOState {
   pendingBQO: number; // BQO earned but not claimed to wallet
   claimedBQO: number; // BQO claimed to wallet
-  totalXPConverted: number; // Total XP that has been converted
+  totalAirdrops: number; // Total airdrops received
   walletBalance: string; // Actual on-chain balance
 }
 
-// Conversion transaction
-export interface ConversionTx {
-  xpAmount: number;
+// Airdrop transaction
+export interface AirdropTx {
+  badgeId: string;
+  badgeName: string;
+  rarity: string;
   bqoAmount: number;
   timestamp: number;
   status: 'pending' | 'completed' | 'failed';
@@ -31,8 +41,8 @@ export interface ConversionTx {
 class BQOTokenService {
   private pendingBQO: number = 0;
   private claimedBQO: number = 0;
-  private totalXPConverted: number = 0;
-  private conversionHistory: ConversionTx[] = [];
+  private totalAirdrops: number = 0;
+  private airdropHistory: AirdropTx[] = [];
   private initialized: boolean = false;
 
   constructor() {
@@ -57,11 +67,15 @@ class BQOTokenService {
     try {
       const pending = await AsyncStorage.getItem(BQO_PENDING_KEY);
       const claimed = await AsyncStorage.getItem(BQO_CLAIMED_KEY);
-      const converted = await AsyncStorage.getItem(XP_CONVERTED_KEY);
+      const airdrops = await AsyncStorage.getItem(BQO_AIRDROPS_KEY);
 
       if (pending) this.pendingBQO = parseInt(pending);
       if (claimed) this.claimedBQO = parseInt(claimed);
-      if (converted) this.totalXPConverted = parseInt(converted);
+      if (airdrops) {
+        const parsed = JSON.parse(airdrops);
+        this.airdropHistory = parsed.history || [];
+        this.totalAirdrops = parsed.total || 0;
+      }
       this.initialized = true;
     } catch (error) {
       // Silent fail - expected on server/SSR
@@ -76,7 +90,10 @@ class BQOTokenService {
     try {
       await AsyncStorage.setItem(BQO_PENDING_KEY, this.pendingBQO.toString());
       await AsyncStorage.setItem(BQO_CLAIMED_KEY, this.claimedBQO.toString());
-      await AsyncStorage.setItem(XP_CONVERTED_KEY, this.totalXPConverted.toString());
+      await AsyncStorage.setItem(BQO_AIRDROPS_KEY, JSON.stringify({
+        history: this.airdropHistory,
+        total: this.totalAirdrops,
+      }));
     } catch (error) {
       console.log('Failed to save BQO state:', error);
     }
@@ -87,59 +104,57 @@ class BQOTokenService {
     return {
       pendingBQO: this.pendingBQO,
       claimedBQO: this.claimedBQO,
-      totalXPConverted: this.totalXPConverted,
+      totalAirdrops: this.totalAirdrops,
     };
   }
 
-  // Calculate how much BQO can be earned from XP
-  calculateConversion(xp: number): {
-    bqoAmount: number;
-    remainingXP: number;
-    conversionRate: number;
-  } {
-    const bqoAmount = Math.floor(xp / XP_TO_BQO_RATE);
-    const remainingXP = xp % XP_TO_BQO_RATE;
-    
-    return {
-      bqoAmount,
-      remainingXP,
-      conversionRate: XP_TO_BQO_RATE,
-    };
+  // Get airdrop amount for a badge rarity
+  getAirdropAmount(rarity: string): number {
+    const normalizedRarity = rarity.toLowerCase();
+    return BQO_AIRDROP_AMOUNTS[normalizedRarity] || 0;
   }
 
-  // Convert XP to BQO (add to pending)
-  async convertXPtoBQO(xp: number): Promise<{
+  // Process airdrop for earning a badge
+  async processBadgeAirdrop(badge: {
+    id: string;
+    name: string;
+    rarity: string;
+  }): Promise<{
     success: boolean;
-    bqoEarned: number;
-    remainingXP: number;
+    bqoAmount: number;
+    message: string;
   }> {
-    const { bqoAmount, remainingXP } = this.calculateConversion(xp);
+    const bqoAmount = this.getAirdropAmount(badge.rarity);
     
     if (bqoAmount <= 0) {
       return {
         success: false,
-        bqoEarned: 0,
-        remainingXP: xp,
+        bqoAmount: 0,
+        message: 'No airdrop for this badge rarity',
       };
     }
 
+    // Add to pending BQO
     this.pendingBQO += bqoAmount;
-    this.totalXPConverted += xp - remainingXP;
+    this.totalAirdrops += bqoAmount;
 
-    const tx: ConversionTx = {
-      xpAmount: xp - remainingXP,
+    // Record the airdrop
+    const tx: AirdropTx = {
+      badgeId: badge.id,
+      badgeName: badge.name,
+      rarity: badge.rarity,
       bqoAmount,
       timestamp: Date.now(),
       status: 'completed',
     };
-    this.conversionHistory.push(tx);
+    this.airdropHistory.push(tx);
 
     await this.saveState();
 
     return {
       success: true,
-      bqoEarned: bqoAmount,
-      remainingXP,
+      bqoAmount,
+      message: `🎉 You earned ${bqoAmount} BQO for unlocking "${badge.name}"!`,
     };
   }
 
@@ -153,7 +168,7 @@ class BQOTokenService {
     return this.pendingBQO + this.claimedBQO;
   }
 
-  // Claim BQO to wallet (placeholder - will integrate with smart contract)
+  // Claim BQO to wallet (when wallet is connected)
   async claimToWallet(walletAddress: string, amount: number): Promise<{
     success: boolean;
     txHash?: string;
@@ -167,33 +182,22 @@ class BQOTokenService {
       };
     }
 
-    if (!APERTUM_CONFIG.bqoToken.address) {
-      // Token not yet deployed - store locally
-      this.pendingBQO -= amount;
-      this.claimedBQO += amount;
-      await this.saveState();
-      
+    if (!walletAddress) {
       return {
-        success: true,
-        txHash: 'pending-deployment', // Placeholder
+        success: false,
+        error: 'Please connect your wallet first',
       };
     }
 
-    // When token is deployed, this will make the actual blockchain call
+    // For now, just move from pending to claimed (actual blockchain tx later)
     try {
-      // Placeholder for actual contract interaction
-      // const provider = new ethers.JsonRpcProvider(APERTUM_CONFIG.rpcUrl);
-      // const contract = new ethers.Contract(APERTUM_CONFIG.bqoToken.address, BQO_ABI, signer);
-      // const tx = await contract.claim(walletAddress, ethers.parseUnits(amount.toString(), 18));
-      // await tx.wait();
-      
       this.pendingBQO -= amount;
       this.claimedBQO += amount;
       await this.saveState();
 
       return {
         success: true,
-        txHash: 'tx-hash-placeholder',
+        txHash: 'pending-deployment', // Will be real tx hash when contract deployed
       };
     } catch (error: any) {
       return {
@@ -203,25 +207,31 @@ class BQOTokenService {
     }
   }
 
-  // Get conversion history
-  getConversionHistory(): ConversionTx[] {
-    return [...this.conversionHistory];
+  // Get airdrop history
+  getAirdropHistory(): AirdropTx[] {
+    return [...this.airdropHistory];
   }
 
   // Get statistics
   getStats(): {
-    totalXPConverted: number;
     totalBQOEarned: number;
     totalBQOClaimed: number;
     pendingBQO: number;
-    conversionRate: number;
+    totalAirdrops: number;
+    airdropsByRarity: Record<string, number>;
   } {
+    const airdropsByRarity: Record<string, number> = {};
+    this.airdropHistory.forEach(tx => {
+      const rarity = tx.rarity.toLowerCase();
+      airdropsByRarity[rarity] = (airdropsByRarity[rarity] || 0) + tx.bqoAmount;
+    });
+
     return {
-      totalXPConverted: this.totalXPConverted,
       totalBQOEarned: this.pendingBQO + this.claimedBQO,
       totalBQOClaimed: this.claimedBQO,
       pendingBQO: this.pendingBQO,
-      conversionRate: XP_TO_BQO_RATE,
+      totalAirdrops: this.totalAirdrops,
+      airdropsByRarity,
     };
   }
 
@@ -229,11 +239,11 @@ class BQOTokenService {
   async clearAll(): Promise<void> {
     this.pendingBQO = 0;
     this.claimedBQO = 0;
-    this.totalXPConverted = 0;
-    this.conversionHistory = [];
+    this.totalAirdrops = 0;
+    this.airdropHistory = [];
     await AsyncStorage.removeItem(BQO_PENDING_KEY);
     await AsyncStorage.removeItem(BQO_CLAIMED_KEY);
-    await AsyncStorage.removeItem(XP_CONVERTED_KEY);
+    await AsyncStorage.removeItem(BQO_AIRDROPS_KEY);
   }
 }
 
@@ -250,12 +260,12 @@ export const getBQOTokenService = (): BQOTokenService => {
 // For backwards compatibility
 export const bqoTokenService = {
   getState: () => getBQOTokenService().getState(),
-  calculateConversion: (xp: number) => getBQOTokenService().calculateConversion(xp),
-  convertXPtoBQO: (xp: number) => getBQOTokenService().convertXPtoBQO(xp),
+  getAirdropAmount: (rarity: string) => getBQOTokenService().getAirdropAmount(rarity),
+  processBadgeAirdrop: (badge: any) => getBQOTokenService().processBadgeAirdrop(badge),
   getPendingBQO: () => getBQOTokenService().getPendingBQO(),
   getTotalBQO: () => getBQOTokenService().getTotalBQO(),
   claimToWallet: (addr: string, amt: number) => getBQOTokenService().claimToWallet(addr, amt),
-  getConversionHistory: () => getBQOTokenService().getConversionHistory(),
+  getAirdropHistory: () => getBQOTokenService().getAirdropHistory(),
   getStats: () => getBQOTokenService().getStats(),
   clearAll: () => getBQOTokenService().clearAll(),
 };
