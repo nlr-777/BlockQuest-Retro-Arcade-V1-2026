@@ -1,6 +1,43 @@
 // BlockQuest Official - Tutorial Store
 // Manages first-time user experience and auto-hook tutorial
+// Uses SSR-safe persistence with AsyncStorage
 import { create } from 'zustand';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// SSR-safe storage wrapper - only uses AsyncStorage on client
+const createSSRSafeStorage = (): StateStorage => {
+  // Check if we're on the client side
+  const isClient = typeof window !== 'undefined';
+  
+  return {
+    getItem: async (name: string): Promise<string | null> => {
+      if (!isClient) return null;
+      try {
+        return await AsyncStorage.getItem(name);
+      } catch (e) {
+        console.warn('AsyncStorage getItem error:', e);
+        return null;
+      }
+    },
+    setItem: async (name: string, value: string): Promise<void> => {
+      if (!isClient) return;
+      try {
+        await AsyncStorage.setItem(name, value);
+      } catch (e) {
+        console.warn('AsyncStorage setItem error:', e);
+      }
+    },
+    removeItem: async (name: string): Promise<void> => {
+      if (!isClient) return;
+      try {
+        await AsyncStorage.removeItem(name);
+      } catch (e) {
+        console.warn('AsyncStorage removeItem error:', e);
+      }
+    },
+  };
+};
 
 interface TutorialState {
   // First time flags
@@ -24,6 +61,10 @@ interface TutorialState {
   totalGamesPlayed: number;
   totalTimePlayedSeconds: number;
   longestStreak: number;
+  
+  // Hydration state
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
   
   // Actions
   setOnboardingComplete: () => void;
