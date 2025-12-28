@@ -376,16 +376,14 @@ export default function DAODuelGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>DEFEATED!</Text>
-              <Text style={styles.overlayScore}>Score: {playerScore * 100}</Text>
-              <Text style={styles.overlayText}>CPU wins {aiScore} - {playerScore}</Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={playerScore * 100}
+            reason={`CPU wins ${aiScore} - ${playerScore}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
 
           {gameState === 'victory' && (
             <View style={styles.overlay}>
