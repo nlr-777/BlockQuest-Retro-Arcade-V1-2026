@@ -528,16 +528,14 @@ export default function RockBlasterGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>SHIP LOST!</Text>
-              <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Resources: {resourcesCollected}</Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={score}
+            reason={`Resources: ${resourcesCollected}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
 
           {gameState === 'victory' && (
             <View style={styles.overlay}>
