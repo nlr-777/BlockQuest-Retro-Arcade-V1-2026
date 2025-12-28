@@ -32,7 +32,7 @@ import { CRT_COLORS, CRT_PUNS } from '../src/constants/crtTheme';
 import { GAMES, GameConfig } from '../src/constants/games';
 import { AVATARS, AvatarConfig, getAvatarById } from '../src/constants/avatars';
 import { useGameStore } from '../src/store/gameStore';
-import { useTutorialStore } from '../src/store/tutorialStore';
+import { useTutorialStore, useTutorialHydrated } from '../src/store/tutorialStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
 import { AvatarSelector } from '../src/components/AvatarSelector';
