@@ -132,12 +132,16 @@ export default function SeedSprintGame() {
     
     playJump();
     setIsJumping(true);
+    
+    // Higher and longer jump to clear obstacles
+    // Obstacles are 40px tall at GROUND_HEIGHT (60px from bottom)
+    // Player is at GROUND_HEIGHT, so needs to jump at least 50px above obstacles
     playerY.value = withSequence(
-      withTiming(-100, { duration: 300 }),
-      withTiming(0, { duration: 300 })
+      withTiming(-150, { duration: 350 }),  // Jump up higher
+      withTiming(0, { duration: 450 })       // Fall down slower
     );
     
-    setTimeout(() => setIsJumping(false), 600);
+    setTimeout(() => setIsJumping(false), 800);  // Longer jump duration
     if (Platform.OS !== 'web') Vibration.vibrate(10);
   }, [gameState, isJumping]);
 
