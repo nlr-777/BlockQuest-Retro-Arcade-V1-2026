@@ -535,6 +535,17 @@ export default function BlockMuncherGame() {
     <SafeAreaView style={styles.container}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
       
+      {/* Roast HUD - Shows during gameplay */}
+      {gameState === 'playing' && (
+        <RoastHUD
+          score={score}
+          lives={lives}
+          goal={`Build a ${10 + level * 5} block chain!`}
+          gameId="block-muncher"
+          showPuns={true}
+        />
+      )}
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
