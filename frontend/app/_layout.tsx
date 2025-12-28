@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useGameStore } from '../src/store/gameStore';
+import { useGameStore, useGameStoreHydrated } from '../src/store/gameStore';
 import { COLORS } from '../src/constants/colors';
 import VFXLayer from '../src/vfx/VFXManager';
 import PixelText from '../src/components/PixelText';
@@ -14,6 +14,7 @@ const isClient = typeof window !== 'undefined';
 
 export default function RootLayout() {
   const { loadProfile, isLoading } = useGameStore();
+  const hasHydrated = useGameStoreHydrated();
   const [showGenesis, setShowGenesis] = useState(true);
   const [mounted, setMounted] = useState(false);
 
@@ -21,7 +22,7 @@ export default function RootLayout() {
     // Mark as mounted (client-side)
     setMounted(true);
     
-    // Only load profile on client
+    // loadProfile is now just a marker since persist handles loading
     if (isClient) {
       loadProfile();
     }
@@ -32,7 +33,8 @@ export default function RootLayout() {
   }, []);
 
   // During SSR or before hydration, show loading
-  if (!mounted || (isClient && isLoading)) {
+  // Wait for both mounting AND store hydration
+  if (!mounted || !hasHydrated) {
     return (
       <View style={styles.loadingContainer}>
         <VFXLayer type="crt-breathe" />
