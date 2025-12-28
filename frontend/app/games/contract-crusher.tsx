@@ -579,6 +579,7 @@ const styles = StyleSheet.create({
   powerUp: { position: 'absolute', width: 24, height: 24, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   powerUpIcon: { fontSize: 12 },
   launchHint: { position: 'absolute', bottom: 100, left: 0, right: 0, alignItems: 'center' },
+  launchButton: { backgroundColor: COLORS.chainGold + '30', padding: 16, borderRadius: 12, marginHorizontal: 16, marginTop: 12, alignItems: 'center', borderWidth: 2, borderColor: COLORS.chainGold },
   infoBox: { backgroundColor: COLORS.cardBg, padding: 12, borderRadius: 8, marginHorizontal: 16, marginTop: 16 },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(10, 10, 15, 0.95)', justifyContent: 'center', alignItems: 'center', zIndex: 100 },
   menuContent: { alignItems: 'center', padding: 24, backgroundColor: COLORS.bgMedium, borderRadius: 16, borderWidth: 2, borderColor: COLORS.chainGold, maxWidth: 320 },
