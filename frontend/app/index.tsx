@@ -131,8 +131,9 @@ export default function ArcadeHub() {
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
       
-      // Auto-redirect to tutorial for first-time users who haven't completed it
-      if (!hasCompletedTutorial && hasCompletedOnboarding) {
+      // Wait for hydration before making routing decisions
+      // This ensures persisted state is loaded before checking tutorial status
+      if (hasHydrated && !hasCompletedTutorial && hasCompletedOnboarding) {
         router.push('/tutorial');
       }
       
@@ -143,7 +144,7 @@ export default function ArcadeHub() {
     return () => {
       audioManager.stopMusic();
     };
-  }, [profile, hasCompletedTutorial, hasCompletedOnboarding]);
+  }, [profile, hasCompletedTutorial, hasCompletedOnboarding, hasHydrated]);
 
   // Check and display loyalty rewards
   const checkLoyaltyRewards = async () => {
