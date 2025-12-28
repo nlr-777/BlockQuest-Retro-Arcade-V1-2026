@@ -221,7 +221,7 @@ export const useGameStore = create<GameState>()(
       daoVotingPower: profile.daoVotingPower + (badge.rarity === 'Legendary' ? 10 : badge.rarity === 'Epic' ? 5 : badge.rarity === 'Rare' ? 2 : 1),
     };
 
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
+    // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
     
     // Process BQO airdrop for badge
@@ -260,7 +260,7 @@ export const useGameStore = create<GameState>()(
       level: newLevel,
     };
     
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
+    // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
   },
   
@@ -273,7 +273,7 @@ export const useGameStore = create<GameState>()(
       daoVotingPower: profile.daoVotingPower + amount,
     };
     
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
+    // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
   },
 
