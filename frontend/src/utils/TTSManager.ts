@@ -3,44 +3,44 @@
 import { Platform } from 'react-native';
 import { CRT_PUNS } from '../constants/crtTheme';
 
-// Voice lines for different events
+// Voice lines for different events - KID-FRIENDLY
 export const VOICE_LINES = {
   // Tutorial
-  welcome: "Yo! Ready to get REKT... I mean, ready to learn Web3?",
-  tutorial_start: "Stack those blocks like you're stacking sats!",
-  tutorial_hint: "Pro tip: Don't be a paper hands!",
-  first_block: "Nice! One block down, blockchain to go!",
+  welcome: "Hey there, future block builder! Ready to stack some blocks?",
+  tutorial_start: "Stack those blocks like a pro!",
+  tutorial_hint: "Pro tip: Keep your eyes on the prize!",
+  first_block: "Nice! One block down, more to go!",
   
   // Wins
-  win_basic: "WAGMI! You actually did it!",
-  win_streak: "On fire! Touch grass later, stack blocks now!",
-  win_epic: "Ledger Legend status achieved!",
-  win_perfect: "Flawless! Even Satoshi is impressed!",
-  badge_earned: "NFT Badge unlocked! Flex it on the timeline!",
+  win_basic: "Awesome job! You did it!",
+  win_streak: "On fire! You're unstoppable!",
+  win_epic: "Block Legend status achieved!",
+  win_perfect: "Flawless! That was amazing!",
+  badge_earned: "Badge unlocked! You're a superstar!",
   
   // Fails  
-  fail_basic: "REKT! That's what paper hands gets you!",
-  fail_close: "Oof! So close, yet so rugged!",
-  fail_fast: "Speedrun to REKT! New record!",
-  fail_repeat: "Again? Definition of insanity, fren.",
+  fail_basic: "Oops! Let's try that again!",
+  fail_close: "So close! One more try!",
+  fail_fast: "Whoopsie! Speed bump!",
+  fail_repeat: "Practice makes perfect! Go again!",
   
   // Milestones
-  combo_5: "Five combo! Your hash rate is rising!",
-  combo_10: "Ten combo! Diamond hands energy!",
-  score_100: "Century! You're mining gains!",
-  score_500: "Half K! Whale alert!",
-  time_warning: "Tick tock! Gas fees are eating your time!",
+  combo_5: "Five in a row! Nice streak!",
+  combo_10: "Ten combo! You're on fire!",
+  score_100: "Century score! Way to go!",
+  score_500: "Five hundred! Super star!",
+  time_warning: "Tick tock! Time's running out!",
   
-  // Roasts
-  idle: "Hello? Did you FUD yourself?",
-  slow: "My grandma hashes faster than this!",
-  miss: "Your aim is like a rug pull - unexpected and tragic!",
+  // Fun comments
+  idle: "Ready when you are!",
+  slow: "Take your time, no rush!",
+  miss: "Almost got it! Try again!",
   
   // Game specific
-  block_chain: "Block connected! That's literally blockchain!",
-  hash_match: "Hash matched! Cryptography unlocked!",
-  seed_collect: "Seed word collected! Never share these!",
-  bridge_cross: "Bridge successful! Unlike most crypto bridges!",
+  block_chain: "Block connected! You're building a chain!",
+  hash_match: "Hash matched! Great pattern finding!",
+  seed_collect: "Seed collected! Keep them safe!",
+  bridge_cross: "Bridge crossed! Great navigation!",
 };
 
 class TTSManager {
