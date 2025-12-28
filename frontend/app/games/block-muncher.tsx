@@ -723,50 +723,14 @@ export default function BlockMuncherGame() {
         </View>
       )}
 
-      {/* Game Over Overlay */}
-      {gameState === 'gameover' && (
-        <View style={styles.overlay}>
-          <VFXLayer type="glitch-lock" intensity={0.8} />
-          <Animated.View entering={FadeInDown} style={styles.menuContent}>
-            <PixelText size="xl" color={COLORS.error} glow>
-              GAME OVER
-            </PixelText>
-            <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
-              {score}
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>
-              Chain Length: {chain.length} blocks
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>
-              Level Reached: {level}
-            </PixelText>
-            
-            {score >= 500 && (
-              <View style={styles.badgeEarned}>
-                <PixelText size="sm" color={COLORS.success}>
-                  🏅 Badge Earned!
-                </PixelText>
-              </View>
-            )}
-            
-            <View style={styles.gameOverButtons}>
-              <PixelButton
-                title="PLAY AGAIN"
-                onPress={startGame}
-                color={COLORS.chainGold}
-                size="md"
-              />
-              <PixelButton
-                title="BACK TO ARCADE"
-                onPress={() => router.push('/')}
-                color={COLORS.cardBorder}
-                textColor={COLORS.textPrimary}
-                size="md"
-              />
-            </View>
-          </Animated.View>
-        </View>
-      )}
+      {/* Game Over - Using RektScreen */}
+      <RektScreen
+        visible={gameState === 'gameover'}
+        score={score}
+        reason={`Chain: ${chain.length} blocks | Level: ${level}`}
+        onRetry={startGame}
+        onQuit={() => router.push('/')}
+      />
     </SafeAreaView>
   );
 }
