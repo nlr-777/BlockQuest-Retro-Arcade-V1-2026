@@ -520,50 +520,14 @@ export default function BlockTumbleGame() {
         </View>
       )}
 
-      {/* Game Over */}
-      {gameState === 'gameover' && (
-        <View style={styles.overlay}>
-          <VFXLayer type="glitch-lock" intensity={0.6} />
-          <Animated.View entering={FadeInDown} style={styles.menuContent}>
-            <PixelText size="xl" color={COLORS.error} glow>
-              COLLECTION FULL!
-            </PixelText>
-            <PixelText size="xxl" color={COLORS.chainGold} style={{ marginVertical: 16 }}>
-              ${collectionValue}
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>
-              Score: {score} | Level: {level}
-            </PixelText>
-            <PixelText size="sm" color={COLORS.textSecondary}>
-              Lines Cleared: {linesTotal}
-            </PixelText>
-            
-            {score >= 1000 && (
-              <View style={styles.badgeEarned}>
-                <PixelText size="sm" color={COLORS.success}>
-                  🏅 Badge Earned!
-                </PixelText>
-              </View>
-            )}
-            
-            <View style={styles.gameOverButtons}>
-              <PixelButton
-                title="PLAY AGAIN"
-                onPress={startGame}
-                color={COLORS.blockCyan}
-                size="md"
-              />
-              <PixelButton
-                title="BACK TO ARCADE"
-                onPress={() => router.push('/')}
-                color={COLORS.cardBorder}
-                textColor={COLORS.textPrimary}
-                size="md"
-              />
-            </View>
-          </Animated.View>
-        </View>
-      )}
+      {/* Game Over - Using RektScreen */}
+      <RektScreen
+        visible={gameState === 'gameover'}
+        score={score}
+        reason={`Level: ${level} | Lines: ${linesTotal} | Value: $${collectionValue}`}
+        onRetry={startGame}
+        onQuit={() => router.push('/')}
+      />
     </SafeAreaView>
   );
 }
