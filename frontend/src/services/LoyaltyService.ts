@@ -225,7 +225,9 @@ class LoyaltyService {
       totalBonusXPEarned: 0,
       lastBonusDate: null,
     };
-    await AsyncStorage.removeItem(LOYALTY_KEY);
+    if (isClient()) {
+      await AsyncStorage.removeItem(LOYALTY_KEY);
+    }
   }
 }
 
