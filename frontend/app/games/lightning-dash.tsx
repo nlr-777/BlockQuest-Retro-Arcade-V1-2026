@@ -381,20 +381,14 @@ export default function LightningDashGame() {
             </View>
           )}
 
-          {gameState === 'gameover' && (
-            <View style={styles.overlay}>
-              <Text style={styles.overlayTitle}>CRASH!</Text>
-              <Text style={styles.overlayScore}>Score: {score}</Text>
-              <Text style={styles.overlayText}>Distance: {Math.floor(distance)}m</Text>
-              <Text style={styles.overlayText}>Bolts: {boltsCollected}</Text>
-              <Text style={styles.lessonText}>
-                Fast lanes help process things quicker - just like lightning networks!
-              </Text>
-              <TouchableOpacity style={styles.startBtn} onPress={startGame}>
-                <Text style={styles.startBtnText}>▶ RETRY</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Game Over - Using RektScreen */}
+          <RektScreen
+            visible={gameState === 'gameover'}
+            score={score}
+            reason={`Distance: ${Math.floor(distance)}m | Bolts: ${boltsCollected}`}
+            onRetry={startGame}
+            onQuit={() => router.push('/')}
+          />
         </View>
 
         {/* Controls */}
