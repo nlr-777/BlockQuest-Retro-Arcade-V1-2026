@@ -252,3 +252,6 @@ export const useTutorialStore = create<TutorialState>()(
 );
 
 export default useTutorialStore;
+
+// Helper hook to check if the store has hydrated
+export const useTutorialHydrated = () => useTutorialStore(state => state._hasHydrated);
