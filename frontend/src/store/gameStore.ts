@@ -324,12 +324,12 @@ export const useGameStore = create<GameState>()(
         vfxEnabled: state.vfxEnabled,
         vfxIntensity: state.vfxIntensity,
       }),
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-        // Mark loading as complete after hydration
-        if (state) {
-          state.isLoading = false;
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.warn('Failed to rehydrate game store:', error);
         }
+        // Use the store's set method to properly update state
+        useGameStore.setState({ _hasHydrated: true, isLoading: false });
       },
     }
   )
