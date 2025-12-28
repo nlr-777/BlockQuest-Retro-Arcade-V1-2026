@@ -182,12 +182,7 @@ export const useTutorialStore = create<TutorialState>()(
           set({ consecutiveDays: 0 });
         }
       },
-    }),
-    {
-      name: 'blockquest-tutorial',
-      storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    })
 );
 
 export default useTutorialStore;
