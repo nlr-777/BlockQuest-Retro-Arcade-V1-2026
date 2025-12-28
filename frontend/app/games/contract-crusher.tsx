@@ -502,6 +502,30 @@ export default function ContractCrusherGame() {
           </TouchableOpacity>
         )}
 
+        {/* Paddle Control Buttons */}
+        {gameState === 'playing' && (
+          <View style={styles.paddleControls}>
+            <TouchableOpacity 
+              style={styles.paddleControlBtn}
+              onPressIn={() => setPaddleX(x => Math.max(0, x - 30))}
+            >
+              <PixelText size="xl" color={COLORS.neonCyan}>◀</PixelText>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.paddleControlBtn, styles.paddleControlBtnCenter]}
+              onPress={launchBall}
+            >
+              <PixelText size="md" color={COLORS.chainGold}>{ballActive ? '🎮' : '🚀'}</PixelText>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.paddleControlBtn}
+              onPressIn={() => setPaddleX(x => Math.min(GAME_WIDTH - paddleWidth, x + 30))}
+            >
+              <PixelText size="xl" color={COLORS.neonCyan}>▶</PixelText>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Ready Overlay */}
         {gameState === 'ready' && (
           <View style={styles.overlay}>
