@@ -4,6 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LOYALTY_KEY = '@blockquest_loyalty';
 
+// Helper to check if we're on the client side
+const isClient = () => typeof window !== 'undefined';
+
 // Login milestones and their XP rewards
 export const LOGIN_MILESTONES: Record<number, { xp: number; message: string; badge?: string }> = {
   5: { xp: 100, message: '🎉 5 Logins! Welcome back bonus!', badge: 'loyal_starter' },
