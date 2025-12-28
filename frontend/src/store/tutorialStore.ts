@@ -55,7 +55,6 @@ export const TUTORIAL_STEPS = {
 };
 
 export const useTutorialStore = create<TutorialState>()(
-  persist(
     (set, get) => ({
       // Initial state
       hasCompletedOnboarding: false,
