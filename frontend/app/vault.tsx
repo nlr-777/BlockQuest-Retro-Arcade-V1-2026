@@ -1,5 +1,5 @@
-// BlockQuest Official - Retro Arcade - Treasure Vault (Player Profile & Collection)
-// 80s/90s Retro Arcade Aesthetic
+// BlockQuest Official - VAULT FLEX GALLERY
+// Ultimate badge showcase with 3D effects and sharing
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -9,11 +9,9 @@ import {
   Dimensions,
   Text,
   Platform,
-  TextInput,
   Modal,
-  Alert,
-  Clipboard,
-  Image,
+  Share,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -23,509 +21,548 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
+  withSpring,
   FadeInDown,
   FadeIn,
+  ZoomIn,
+  interpolate,
+  Extrapolation,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-import { COLORS } from '../src/constants/colors';
+import { CRT_COLORS } from '../src/constants/crtTheme';
 import { useGameStore, Badge } from '../src/store/gameStore';
 import { GAMES } from '../src/constants/games';
-import { encodeBackup, decodeBackup, validateSeedPhrase } from '../src/utils/SeedPhrase';
 import { getBadgeImage } from '../src/constants/badgeImages';
+import { RARITY_COLORS, BQO_AIRDROP_AMOUNTS } from '../src/constants/badges';
+import { bqoTokenService } from '../src/services/BQOTokenService';
+import { loyaltyService } from '../src/services/LoyaltyService';
+import { getRankByXP, getRankProgress } from '../src/constants/ranks';
 import {
-  IconWallet,
-  IconToken,
-  IconKey,
-  IconVault,
-  IconCrown,
-  IconShield,
-  IconBlockChain,
-  IconStar,
-  IconLightning,
-} from '../src/components/PixelIcons';
-import { Scanlines, NeonBox, Starfield } from '../src/components/RetroEffects';
+  CRTScanlines,
+  CRTGlowBorder,
+  PixelRain,
+  CRTFlickerText,
+  HexBadge,
+  ConfettiBurst,
+} from '../src/components/CRTEffects';
+import audioManager from '../src/utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Generate player ID
-const generatePlayerId = (username: string) => {
-  const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return `PLAYER-${hash.toString(16).padStart(6, '0').toUpperCase()}`;
+// Rarity config with CRT colors
+const RARITY_CONFIG: Record<string, { color: string; label: string; bqo: number }> = {
+  Common: { color: CRT_COLORS.rarityCommon, label: 'COMMON', bqo: 1 },
+  Uncommon: { color: CRT_COLORS.rarityUncommon, label: 'UNCOMMON', bqo: 3 },
+  Rare: { color: CRT_COLORS.rarityRare, label: 'RARE', bqo: 10 },
+  Epic: { color: CRT_COLORS.rarityEpic, label: 'EPIC', bqo: 25 },
+  Legendary: { color: CRT_COLORS.rarityLegendary, label: 'LEGENDARY', bqo: 100 },
 };
 
-// Rarity badge colors
-const RARITY_CONFIG = {
-  Common: { color: COLORS.rarityCommon, glow: '#A0A0A0' },
-  Rare: { color: COLORS.rarityRare, glow: '#00BFFF' },
-  Epic: { color: COLORS.rarityEpic, glow: '#BF00FF' },
-  Legendary: { color: COLORS.rarityLegendary, glow: '#FFD700' },
-};
-
-// Resource types (with BQO token)
-const RESOURCE_TYPES = [
-  { id: 'SCORE', name: 'Total Score', icon: IconToken, color: COLORS.neonPink },
-  { id: 'XP', name: 'Experience Points', icon: IconStar, color: COLORS.neonYellow },
-  { id: 'BQO', name: 'BQO Credits', icon: IconBlockChain, color: COLORS.neonCyan },
-  { id: 'VOTES', name: 'Team Votes', icon: IconLightning, color: COLORS.textMuted },
-];
-
-// Animated neon border
-const NeonGlowBorder: React.FC<{ color: string; children: React.ReactNode; style?: any }> = ({
-  color,
-  children,
-  style,
-}) => {
-  const glowOpacity = useSharedValue(0.5);
+// 3D Spinning Badge Card
+const FlexBadgeCard: React.FC<{
+  badge: Badge;
+  index: number;
+  onPress: () => void;
+  isSelected: boolean;
+}> = ({ badge, index, onPress, isSelected }) => {
+  const rotateY = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const rarityConfig = RARITY_CONFIG[badge.rarity] || RARITY_CONFIG.Common;
 
   useEffect(() => {
-    glowOpacity.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1500 }),
-        withTiming(0.5, { duration: 1500 })
-      ),
-      -1,
-      true
-    );
-  }, []);
+    // Auto-spin animation for legendary badges
+    if (badge.rarity === 'Legendary') {
+      rotateY.value = withRepeat(
+        withTiming(360, { duration: 8000 }),
+        -1,
+        false
+      );
+    }
+  }, [badge.rarity]);
+
+  useEffect(() => {
+    scale.value = withSpring(isSelected ? 1.1 : 1);
+  }, [isSelected]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glowOpacity.value,
+    transform: [
+      { perspective: 1000 },
+      { rotateY: `${rotateY.value}deg` },
+      { scale: scale.value },
+    ],
   }));
 
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(isSelected ? 1.1 : 1);
+  };
+
   return (
     <Animated.View
-      style={[
-        styles.neonBorder,
-        {
-          borderColor: color,
-          shadowColor: color,
-        },
-        animatedStyle,
-        style,
-      ]}
+      entering={ZoomIn.delay(index * 100).springify()}
+      style={[styles.badgeCard, animatedStyle]}
     >
-      {children}
+      <TouchableOpacity
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.9}
+        style={[
+          styles.badgeInner,
+          { borderColor: rarityConfig.color },
+          isSelected && styles.badgeSelected,
+        ]}
+      >
+        {/* Glow effect */}
+        <View style={[styles.badgeGlow, { backgroundColor: rarityConfig.color + '20' }]} />
+        
+        {/* Badge icon */}
+        <View style={[styles.badgeIcon, { borderColor: rarityConfig.color }]}>
+          <Text style={styles.badgeEmoji}>{badge.icon || '🏆'}</Text>
+        </View>
+        
+        {/* Badge name */}
+        <Text style={[styles.badgeName, { color: rarityConfig.color }]} numberOfLines={1}>
+          {badge.name}
+        </Text>
+        
+        {/* Rarity label */}
+        <View style={[styles.rarityBadge, { backgroundColor: rarityConfig.color + '30' }]}>
+          <Text style={[styles.rarityText, { color: rarityConfig.color }]}>
+            {rarityConfig.label}
+          </Text>
+        </View>
+        
+        {/* BQO earned indicator */}
+        <View style={styles.bqoIndicator}>
+          <Text style={styles.bqoText}>+{rarityConfig.bqo} BQO</Text>
+        </View>
+      </TouchableOpacity>
     </Animated.View>
   );
 };
 
-// Badge Card Component
-const BadgeCard: React.FC<{ badge: Badge; index: number }> = ({ badge, index }) => {
-  const config = RARITY_CONFIG[badge.rarity as keyof typeof RARITY_CONFIG];
-  const game = GAMES.find(g => g.id === badge.gameId);
-  const badgeImage = getBadgeImage(badge.id);
-
-  return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 100)}
-      style={[styles.badgeCard, { borderColor: config.color }]}
-    >
-      <View style={[styles.badgeGlow, { backgroundColor: config.glow }]} />
-      <View style={styles.badgeIconContainer}>
-        <Image 
-          source={badgeImage}
-          style={styles.badgeIconImage}
-          resizeMode="contain"
-        />
-      </View>
-      <Text style={[styles.badgeName, { color: config.color }]}>{badge.name}</Text>
-      <Text style={styles.badgeRarity}>{badge.rarity.toUpperCase()}</Text>
-      <Text style={styles.badgeGame}>{game?.title || 'Unknown'}</Text>
-    </Animated.View>
-  );
-};
-
-// Transaction item
-const TransactionItem: React.FC<{
-  type: 'earned' | 'spent';
-  amount: number;
-  description: string;
-  time: string;
-}> = ({ type, amount, description, time }) => (
-  <View style={styles.txItem}>
-    <View style={[styles.txIcon, { backgroundColor: type === 'earned' ? COLORS.success + '30' : COLORS.error + '30' }]}>
-      <Ionicons
-        name={type === 'earned' ? 'arrow-down' : 'arrow-up'}
-        size={16}
-        color={type === 'earned' ? COLORS.success : COLORS.error}
-      />
-    </View>
-    <View style={styles.txDetails}>
-      <Text style={styles.txDescription}>{description}</Text>
-      <Text style={styles.txTime}>{time}</Text>
-    </View>
-    <Text style={[styles.txAmount, { color: type === 'earned' ? COLORS.success : COLORS.error }]}>
-      {type === 'earned' ? '+' : '-'}{amount}
-    </Text>
-  </View>
-);
-
-export default function TreasureVaultScreen() {
-  const router = useRouter();
-  const { profile, highScores, initProfile } = useGameStore();
-  const [activeSection, setActiveSection] = useState<'stats' | 'badges' | 'history' | 'backup'>('stats');
-  const [showBackupModal, setShowBackupModal] = useState(false);
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
-  const [seedPhrase, setSeedPhrase] = useState('');
-  const [restorePhrase, setRestorePhrase] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
-  const playerId = profile ? generatePlayerId(profile.username) : 'PLAYER-000000';
+// Badge Detail Modal
+const BadgeDetailModal: React.FC<{
+  badge: Badge | null;
+  visible: boolean;
+  onClose: () => void;
+  onShare: (badge: Badge) => void;
+}> = ({ badge, visible, onClose, onShare }) => {
+  const spinY = useSharedValue(0);
   
-  // Calculate BQO from XP (111 XP = 1 BQO)
-  const BQO_RATE = 111;
-  const bqoBalance = Math.floor((profile?.xp || 0) / BQO_RATE);
-
-  // Generate backup seed phrase
-  const generateBackup = () => {
-    if (!profile) return;
-    
-    const backup = encodeBackup(
-      profile.username,
-      profile.avatarId || 'genesis-byte',
-      profile.totalScore,
-      profile.gamesPlayed,
-      highScores,
-      profile.badges,
-      profile.createdAt
-    );
-    setSeedPhrase(backup);
-    setShowBackupModal(true);
-  };
-
-  // Copy seed phrase to clipboard
-  const copyToClipboard = () => {
-    if (seedPhrase) {
-      Clipboard.setString(seedPhrase);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  useEffect(() => {
+    if (visible && badge) {
+      spinY.value = 0;
+      spinY.value = withRepeat(
+        withTiming(360, { duration: 4000 }),
+        -1,
+        false
+      );
     }
-  };
+  }, [visible, badge]);
 
-  // Restore from seed phrase
-  const handleRestore = async () => {
-    if (!restorePhrase.trim()) return;
-    
-    const data = decodeBackup(restorePhrase.trim());
-    if (data) {
-      await initProfile(data.username, data.avatarId);
-      setShowRestoreModal(false);
-      setRestorePhrase('');
-      Alert.alert('Success!', `Welcome back, ${data.username}! Your progress has been restored.`);
+  const spinStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateY: `${spinY.value}deg` }],
+  }));
+
+  if (!badge) return null;
+  const rarityConfig = RARITY_CONFIG[badge.rarity] || RARITY_CONFIG.Common;
+
+  return (
+    <Modal visible={visible} transparent animationType="fade">
+      <View style={styles.modalOverlay}>
+        <Animated.View entering={ZoomIn} style={styles.modalContent}>
+          <TouchableOpacity style={styles.modalClose} onPress={onClose}>
+            <Text style={styles.modalCloseText}>✕</Text>
+          </TouchableOpacity>
+
+          {/* Spinning Badge */}
+          <Animated.View style={[styles.modalBadgeContainer, spinStyle]}>
+            <View style={[styles.modalBadge, { borderColor: rarityConfig.color }]}>
+              <Text style={styles.modalBadgeEmoji}>{badge.icon || '🏆'}</Text>
+            </View>
+          </Animated.View>
+
+          {/* Badge Info */}
+          <CRTFlickerText style={styles.modalTitle} color={rarityConfig.color}>
+            {badge.name}
+          </CRTFlickerText>
+          
+          <View style={[styles.modalRarity, { backgroundColor: rarityConfig.color + '30' }]}>
+            <Text style={[styles.modalRarityText, { color: rarityConfig.color }]}>
+              ✨ {rarityConfig.label} ✨
+            </Text>
+          </View>
+
+          <Text style={styles.modalDescription}>{badge.description}</Text>
+
+          {/* Stats */}
+          <View style={styles.modalStats}>
+            <View style={styles.modalStat}>
+              <Text style={styles.modalStatLabel}>EARNED</Text>
+              <Text style={styles.modalStatValue}>
+                {new Date(badge.mintedAt).toLocaleDateString()}
+              </Text>
+            </View>
+            <View style={styles.modalStat}>
+              <Text style={styles.modalStatLabel}>BQO AIRDROP</Text>
+              <Text style={[styles.modalStatValue, { color: CRT_COLORS.accentGold }]}>
+                +{rarityConfig.bqo} BQO
+              </Text>
+            </View>
+            <View style={styles.modalStat}>
+              <Text style={styles.modalStatLabel}>GAME</Text>
+              <Text style={styles.modalStatValue}>{badge.gameId || 'N/A'}</Text>
+            </View>
+          </View>
+
+          {/* Share Button */}
+          <TouchableOpacity
+            style={styles.shareBtn}
+            onPress={() => onShare(badge)}
+          >
+            <Text style={styles.shareBtnText}>
+              📱 FLEX ON X #BlockQuest
+            </Text>
+          </TouchableOpacity>
+
+          {/* Fun message */}
+          <Text style={styles.modalFun}>
+            🎮 This badge is RARER than finding a bug-free code! 😂
+          </Text>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+};
+
+export default function VaultFlexGallery() {
+  const router = useRouter();
+  const { profile, highScores } = useGameStore();
+  const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+  const [showBadgeModal, setShowBadgeModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'badges' | 'stats' | 'bqo'>('badges');
+  const [sortBy, setSortBy] = useState<'date' | 'rarity'>('date');
+  
+  // Calculate stats
+  const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
+  const currentRank = getRankByXP(profile?.xp || 0);
+  const rankProgress = getRankProgress(profile?.xp || 0);
+  const bqoStats = bqoTokenService.getStats();
+  const loyaltyStats = loyaltyService.getStats();
+
+  // Sort badges
+  const sortedBadges = [...(profile?.badges || [])].sort((a, b) => {
+    if (sortBy === 'date') {
+      return b.mintedAt - a.mintedAt;
     } else {
-      Alert.alert('Error', 'Invalid backup phrase. Please check and try again.');
+      const rarityOrder = ['Legendary', 'Epic', 'Rare', 'Uncommon', 'Common'];
+      return rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+    }
+  });
+
+  // Group badges by rarity for stats
+  const badgesByRarity = (profile?.badges || []).reduce((acc, badge) => {
+    acc[badge.rarity] = (acc[badge.rarity] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const handleShare = async (badge: Badge) => {
+    const rarityConfig = RARITY_CONFIG[badge.rarity] || RARITY_CONFIG.Common;
+    const message = `🎮 Just earned "${badge.name}" badge in BlockQuest! ${badge.icon}\n\n✨ Rarity: ${rarityConfig.label}\n💎 +${rarityConfig.bqo} BQO earned!\n\n🔗 Play & earn: blockquest.io\n\n#BlockQuest #Web3Gaming #NFTBadges`;
+    
+    try {
+      await Share.share({
+        message,
+        title: `BlockQuest Badge: ${badge.name}`,
+      });
+      audioManager.playSound('powerup');
+    } catch (e) {
+      // Open Twitter directly
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+      Linking.openURL(tweetUrl);
     }
   };
-
-  // Simulated activity history
-  const activities = [
-    { type: 'earned' as const, amount: 100, description: 'Block Muncher High Score', time: '2 min ago' },
-    { type: 'earned' as const, amount: 50, description: 'Badge Earned: Chain Master', time: '5 min ago' },
-    { type: 'spent' as const, amount: 25, description: 'Power-Up Used', time: '10 min ago' },
-    { type: 'earned' as const, amount: 200, description: 'Level Up Bonus', time: '15 min ago' },
-  ];
 
   return (
     <View style={styles.container}>
-      {/* Background Effects */}
-      <Starfield count={30} />
-      <Scanlines opacity={0.08} />
+      <PixelRain count={12} speed={5000} />
+      <CRTScanlines opacity={0.06} />
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
-          <View style={styles.headerTitle}>
-            <IconVault size={28} color={COLORS.neonPink} />
-            <Text style={styles.headerText}>TREASURE VAULT</Text>
+          <CRTFlickerText style={styles.headerTitle} color={CRT_COLORS.primary} glitch>
+            💎 FLEX VAULT 💎
+          </CRTFlickerText>
+          <View style={styles.placeholder} />
+        </View>
+
+        {/* Player Card */}
+        <CRTGlowBorder color={currentRank.color} style={styles.playerCard}>
+          <View style={styles.playerInfo}>
+            <View style={styles.playerAvatar}>
+              <Text style={styles.avatarText}>{currentRank.icon}</Text>
+            </View>
+            <View style={styles.playerDetails}>
+              <Text style={styles.playerName}>{profile?.username || 'Player'}</Text>
+              <Text style={[styles.playerRank, { color: currentRank.color }]}>
+                {currentRank.name} • {currentRank.title}
+              </Text>
+            </View>
           </View>
-          <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-outline" size={24} color={COLORS.textSecondary} />
+          
+          {/* XP Progress */}
+          <View style={styles.xpSection}>
+            <View style={styles.xpBar}>
+              <View style={[styles.xpFill, { width: `${rankProgress}%`, backgroundColor: currentRank.color }]} />
+            </View>
+            <Text style={styles.xpText}>{profile?.xp || 0} XP • Level {profile?.level || 1}</Text>
+          </View>
+
+          {/* Quick Stats */}
+          <View style={styles.quickStats}>
+            <View style={styles.quickStat}>
+              <Text style={styles.quickStatValue}>{profile?.badges?.length || 0}</Text>
+              <Text style={styles.quickStatLabel}>BADGES</Text>
+            </View>
+            <View style={styles.quickStat}>
+              <Text style={[styles.quickStatValue, { color: CRT_COLORS.accentGold }]}>
+                {bqoStats.totalBQOEarned}
+              </Text>
+              <Text style={styles.quickStatLabel}>BQO</Text>
+            </View>
+            <View style={styles.quickStat}>
+              <Text style={styles.quickStatValue}>{totalScore.toLocaleString()}</Text>
+              <Text style={styles.quickStatLabel}>SCORE</Text>
+            </View>
+            <View style={styles.quickStat}>
+              <Text style={styles.quickStatValue}>{loyaltyStats.currentStreak}</Text>
+              <Text style={styles.quickStatLabel}>STREAK</Text>
+            </View>
+          </View>
+        </CRTGlowBorder>
+
+        {/* Tab Navigation */}
+        <View style={styles.tabs}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'badges' && styles.tabActive]}
+            onPress={() => setActiveTab('badges')}
+          >
+            <Text style={[styles.tabText, activeTab === 'badges' && styles.tabTextActive]}>
+              🏆 BADGES
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'bqo' && styles.tabActive]}
+            onPress={() => setActiveTab('bqo')}
+          >
+            <Text style={[styles.tabText, activeTab === 'bqo' && styles.tabTextActive]}>
+              💎 BQO
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'stats' && styles.tabActive]}
+            onPress={() => setActiveTab('stats')}
+          >
+            <Text style={[styles.tabText, activeTab === 'stats' && styles.tabTextActive]}>
+              📊 STATS
+            </Text>
           </TouchableOpacity>
         </View>
 
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Player Card */}
-          <Animated.View entering={FadeIn.delay(100)}>
-            <NeonGlowBorder color={COLORS.neonPink} style={styles.walletCard}>
-              {/* Player Header */}
-              <View style={styles.walletHeader}>
-                <View style={styles.walletIcon}>
-                  <IconVault size={40} color={COLORS.neonCyan} />
-                </View>
-                <View style={styles.walletInfo}>
-                  <Text style={styles.walletLabel}>PLAYER PROFILE</Text>
-                  <Text style={styles.walletName}>{profile?.username || 'Guest'}</Text>
-                  <View style={styles.addressRow}>
-                    <Text style={styles.walletAddress}>{playerId}</Text>
-                    <TouchableOpacity style={styles.copyButton}>
-                      <Ionicons name="copy-outline" size={14} color={COLORS.neonCyan} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-
-              {/* Total Score */}
-              <View style={styles.portfolioSection}>
-                <Text style={styles.portfolioLabel}>TOTAL SCORE</Text>
-                <View style={styles.portfolioValue}>
-                  <Text style={styles.portfolioAmount}>{totalScore.toLocaleString()}</Text>
-                  <Text style={styles.portfolioCurrency}>PTS</Text>
-                </View>
-                <View style={styles.portfolioChange}>
-                  <Ionicons name="trending-up" size={14} color={COLORS.success} />
-                  <Text style={styles.changeText}>Level {profile?.level || 1}</Text>
-                </View>
-              </View>
-
-              {/* Quick Actions */}
-              <View style={styles.quickActions}>
-                <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/')}>
-                  <View style={[styles.actionIcon, { backgroundColor: COLORS.neonCyan + '30' }]}>
-                    <Ionicons name="game-controller" size={20} color={COLORS.neonCyan} />
-                  </View>
-                  <Text style={styles.actionText}>PLAY</Text>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {/* Badges Tab */}
+          {activeTab === 'badges' && (
+            <View>
+              {/* Sort Options */}
+              <View style={styles.sortRow}>
+                <Text style={styles.sortLabel}>SORT BY:</Text>
+                <TouchableOpacity
+                  style={[styles.sortBtn, sortBy === 'date' && styles.sortBtnActive]}
+                  onPress={() => setSortBy('date')}
+                >
+                  <Text style={styles.sortBtnText}>📅 DATE</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={generateBackup}>
-                  <View style={[styles.actionIcon, { backgroundColor: COLORS.neonYellow + '30' }]}>
-                    <IconKey size={20} color={COLORS.neonYellow} />
-                  </View>
-                  <Text style={styles.actionText}>BACKUP</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => setShowRestoreModal(true)}>
-                  <View style={[styles.actionIcon, { backgroundColor: COLORS.neonPink + '30' }]}>
-                    <Ionicons name="cloud-download" size={20} color={COLORS.neonPink} />
-                  </View>
-                  <Text style={styles.actionText}>RESTORE</Text>
+                <TouchableOpacity
+                  style={[styles.sortBtn, sortBy === 'rarity' && styles.sortBtnActive]}
+                  onPress={() => setSortBy('rarity')}
+                >
+                  <Text style={styles.sortBtnText}>✨ RARITY</Text>
                 </TouchableOpacity>
               </View>
-            </NeonGlowBorder>
-          </Animated.View>
 
-          {/* Section Tabs */}
-          <View style={styles.sectionTabs}>
-            {(['stats', 'badges', 'history'] as const).map((section) => (
-              <TouchableOpacity
-                key={section}
-                style={[styles.sectionTab, activeSection === section && styles.activeTab]}
-                onPress={() => setActiveSection(section)}
-              >
-                <Text style={[styles.tabText, activeSection === section && styles.activeTabText]}>
-                  {section.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Stats Section */}
-          {activeSection === 'stats' && (
-            <Animated.View entering={FadeIn} style={styles.section}>
-              <Text style={styles.sectionTitle}>YOUR RESOURCES</Text>
-              {RESOURCE_TYPES.map((resource, index) => {
-                const ResourceIcon = resource.icon;
-                const balance = resource.id === 'SCORE' ? totalScore : 
-                               resource.id === 'XP' ? (profile?.xp || 0) :
-                               resource.id === 'BQO' ? bqoBalance :
-                               (profile?.daoVotingPower || 0);
-                return (
-                  <Animated.View
-                    key={resource.id}
-                    entering={FadeInDown.delay(index * 100)}
-                    style={styles.tokenRow}
-                  >
-                    <View style={[styles.tokenIcon, { backgroundColor: resource.color + '20' }]}>
-                      <ResourceIcon size={28} color={resource.color} />
-                    </View>
-                    <View style={styles.tokenInfo}>
-                      <Text style={styles.tokenName}>{resource.name}</Text>
-                      <Text style={styles.tokenSymbol}>{resource.id}</Text>
-                    </View>
-                    <View style={styles.tokenBalance}>
-                      <Text style={[styles.tokenAmount, { color: resource.color }]}>
-                        {balance.toLocaleString()}
-                      </Text>
-                    </View>
-                  </Animated.View>
-                );
-              })}
-
-              {/* Blockchain Link */}
-              <TouchableOpacity 
-                style={styles.blockchainLink}
-                onPress={() => router.push('/blockchain')}
-              >
-                <View style={styles.blockchainLinkIcon}>
-                  <IconBlockChain size={20} color={COLORS.neonCyan} />
-                </View>
-                <View style={styles.blockchainLinkInfo}>
-                  <Text style={styles.blockchainLinkTitle}>BLOCKCHAIN FEATURES</Text>
-                  <Text style={styles.blockchainLinkText}>
-                    Convert XP to BQO • NFT Badges • Wallet
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={18} color={COLORS.neonCyan} />
-              </TouchableOpacity>
-
-              {/* Recovery Code Reminder */}
-              <View style={styles.seedReminder}>
-                <View style={styles.seedIcon}>
-                  <IconKey size={24} color={COLORS.neonYellow} />
-                </View>
-                <View style={styles.seedInfo}>
-                  <Text style={styles.seedTitle}>SAVE YOUR RECOVERY CODE</Text>
-                  <Text style={styles.seedText}>
-                    Your 12-word recovery phrase helps you restore your progress.
-                  </Text>
-                </View>
-                <TouchableOpacity style={styles.seedButton}>
-                  <Text style={styles.seedButtonText}>VIEW</Text>
-                </TouchableOpacity>
-              </View>
-            </Animated.View>
-          )}
-
-          {/* Badges Section */}
-          {activeSection === 'badges' && (
-            <Animated.View entering={FadeIn} style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                ACHIEVEMENT BADGES ({profile?.badges.length || 0})
-              </Text>
-              {profile?.badges && profile.badges.length > 0 ? (
+              {/* Badges Grid */}
+              {sortedBadges.length > 0 ? (
                 <View style={styles.badgesGrid}>
-                  {profile.badges.map((badge, index) => (
-                    <BadgeCard key={badge.id} badge={badge} index={index} />
+                  {sortedBadges.map((badge, index) => (
+                    <FlexBadgeCard
+                      key={badge.id}
+                      badge={badge}
+                      index={index}
+                      isSelected={selectedBadge?.id === badge.id}
+                      onPress={() => {
+                        setSelectedBadge(badge);
+                        setShowBadgeModal(true);
+                        audioManager.playSound('click');
+                      }}
+                    />
                   ))}
                 </View>
               ) : (
-                <View style={styles.emptyBadges}>
-                  <IconShield size={60} color={COLORS.textMuted} />
-                  <Text style={styles.emptyText}>No badges yet!</Text>
-                  <Text style={styles.emptySubtext}>Play games to earn badges</Text>
-                  <TouchableOpacity
-                    style={styles.playButton}
-                    onPress={() => router.push('/')}
-                  >
-                    <Text style={styles.playButtonText}>PLAY NOW</Text>
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyEmoji}>🏆</Text>
+                  <Text style={styles.emptyTitle}>No Badges Yet!</Text>
+                  <Text style={styles.emptyText}>Play games to earn badges and BQO tokens!</Text>
+                  <TouchableOpacity style={styles.playBtn} onPress={() => router.push('/')}>
+                    <Text style={styles.playBtnText}>🎮 PLAY NOW</Text>
                   </TouchableOpacity>
                 </View>
               )}
-            </Animated.View>
+
+              {/* Rarity Breakdown */}
+              {sortedBadges.length > 0 && (
+                <View style={styles.rarityBreakdown}>
+                  <Text style={styles.breakdownTitle}>COLLECTION BREAKDOWN</Text>
+                  {Object.entries(RARITY_CONFIG).map(([rarity, config]) => (
+                    <View key={rarity} style={styles.breakdownRow}>
+                      <View style={[styles.breakdownDot, { backgroundColor: config.color }]} />
+                      <Text style={styles.breakdownLabel}>{config.label}</Text>
+                      <Text style={[styles.breakdownCount, { color: config.color }]}>
+                        {badgesByRarity[rarity] || 0}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
           )}
 
-          {/* History Section */}
-          {activeSection === 'history' && (
-            <Animated.View entering={FadeIn} style={styles.section}>
-              <Text style={styles.sectionTitle}>ACTIVITY HISTORY</Text>
-              {activities.map((tx, index) => (
-                <Animated.View key={index} entering={FadeInDown.delay(index * 50)}>
-                  <TransactionItem {...tx} />
-                </Animated.View>
-              ))}
-            </Animated.View>
+          {/* BQO Tab */}
+          {activeTab === 'bqo' && (
+            <View style={styles.bqoSection}>
+              <CRTGlowBorder color={CRT_COLORS.accentGold} style={styles.bqoCard}>
+                <Text style={styles.bqoTitle}>💎 BQO TOKENS</Text>
+                <Text style={styles.bqoAmount}>{bqoStats.totalBQOEarned}</Text>
+                <Text style={styles.bqoLabel}>TOTAL EARNED</Text>
+                
+                <View style={styles.bqoStats}>
+                  <View style={styles.bqoStatItem}>
+                    <Text style={styles.bqoStatValue}>{bqoStats.pendingBQO}</Text>
+                    <Text style={styles.bqoStatLabel}>PENDING</Text>
+                  </View>
+                  <View style={styles.bqoStatItem}>
+                    <Text style={styles.bqoStatValue}>{bqoStats.totalBQOClaimed}</Text>
+                    <Text style={styles.bqoStatLabel}>CLAIMED</Text>
+                  </View>
+                </View>
+              </CRTGlowBorder>
+
+              <View style={styles.bqoInfo}>
+                <Text style={styles.bqoInfoTitle}>HOW TO EARN BQO</Text>
+                <View style={styles.bqoInfoItem}>
+                  <Text style={styles.bqoInfoIcon}>🏆</Text>
+                  <Text style={styles.bqoInfoText}>Earn badges from games</Text>
+                </View>
+                <View style={styles.bqoInfoItem}>
+                  <Text style={styles.bqoInfoIcon}>✨</Text>
+                  <Text style={styles.bqoInfoText}>Higher rarity = More BQO</Text>
+                </View>
+                <View style={styles.bqoInfoItem}>
+                  <Text style={styles.bqoInfoIcon}>👛</Text>
+                  <Text style={styles.bqoInfoText}>Connect wallet to claim</Text>
+                </View>
+              </View>
+
+              <View style={styles.bqoRates}>
+                <Text style={styles.bqoRatesTitle}>AIRDROP RATES</Text>
+                {Object.entries(RARITY_CONFIG).map(([rarity, config]) => (
+                  <View key={rarity} style={styles.bqoRateRow}>
+                    <Text style={[styles.bqoRateLabel, { color: config.color }]}>
+                      {config.label}
+                    </Text>
+                    <Text style={styles.bqoRateValue}>+{config.bqo} BQO</Text>
+                  </View>
+                ))}
+              </View>
+
+              <TouchableOpacity
+                style={styles.walletBtn}
+                onPress={() => router.push('/blockchain')}
+              >
+                <Text style={styles.walletBtnText}>🔗 CONNECT WALLET</Text>
+              </TouchableOpacity>
+            </View>
           )}
 
-          {/* Stats Grid */}
-          <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>{profile?.gamesPlayed || 0}</Text>
-              <Text style={styles.statLabel}>GAMES PLAYED</Text>
+          {/* Stats Tab */}
+          {activeTab === 'stats' && (
+            <View style={styles.statsSection}>
+              <View style={styles.statsGrid}>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>🎮</Text>
+                  <Text style={styles.statValue}>{profile?.gamesPlayed || 0}</Text>
+                  <Text style={styles.statLabel}>GAMES PLAYED</Text>
+                </View>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>🏆</Text>
+                  <Text style={styles.statValue}>{Object.keys(highScores).length}</Text>
+                  <Text style={styles.statLabel}>HIGH SCORES</Text>
+                </View>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>📅</Text>
+                  <Text style={styles.statValue}>{loyaltyStats.totalLogins}</Text>
+                  <Text style={styles.statLabel}>TOTAL LOGINS</Text>
+                </View>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>🔥</Text>
+                  <Text style={styles.statValue}>{loyaltyStats.longestStreak}</Text>
+                  <Text style={styles.statLabel}>BEST STREAK</Text>
+                </View>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>⭐</Text>
+                  <Text style={styles.statValue}>{loyaltyStats.totalBonusXP}</Text>
+                  <Text style={styles.statLabel}>BONUS XP</Text>
+                </View>
+                <View style={styles.statCard}>
+                  <Text style={styles.statEmoji}>🗳️</Text>
+                  <Text style={styles.statValue}>{profile?.daoVotingPower || 0}</Text>
+                  <Text style={styles.statLabel}>VOTING POWER</Text>
+                </View>
+              </View>
+
+              {/* Dad joke */}
+              <View style={styles.jokeBox}>
+                <Text style={styles.jokeTitle}>😂 STAT JOKE</Text>
+                <Text style={styles.jokeText}>
+                  Why did the gamer bring a ladder?{"\n"}
+                  To reach the next LEVEL! 🎮
+                </Text>
+              </View>
             </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>{profile?.level || 1}</Text>
-              <Text style={styles.statLabel}>LEVEL</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>{Object.keys(highScores).length}</Text>
-              <Text style={styles.statLabel}>HIGH SCORES</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statValue}>{profile?.badges.length || 0}</Text>
-              <Text style={styles.statLabel}>BADGES</Text>
-            </View>
-          </View>
+          )}
         </ScrollView>
       </SafeAreaView>
 
-      {/* Backup Modal */}
-      <Modal visible={showBackupModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>🔐 BACKUP PHRASE</Text>
-            <Text style={styles.modalSubtitle}>Save this phrase to restore your progress on any device</Text>
-            
-            <View style={styles.seedPhraseBox}>
-              <Text style={styles.seedPhraseText} selectable>
-                {seedPhrase.split('|')[0]}
-              </Text>
-            </View>
-            
-            <Text style={styles.warningText}>
-              ⚠️ Keep this phrase safe! Anyone with it can access your profile.
-            </Text>
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: COLORS.neonCyan }]} 
-                onPress={copyToClipboard}
-              >
-                <Ionicons name={copied ? "checkmark" : "copy"} size={18} color="#000" />
-                <Text style={styles.modalBtnText}>{copied ? 'COPIED!' : 'COPY'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: COLORS.neonPink }]} 
-                onPress={() => setShowBackupModal(false)}
-              >
-                <Text style={styles.modalBtnText}>CLOSE</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Restore Modal */}
-      <Modal visible={showRestoreModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>📥 RESTORE PROGRESS</Text>
-            <Text style={styles.modalSubtitle}>Enter your backup phrase to restore your progress</Text>
-            
-            <TextInput
-              style={styles.restoreInput}
-              placeholder="Enter your backup phrase..."
-              placeholderTextColor={COLORS.textMuted}
-              value={restorePhrase}
-              onChangeText={setRestorePhrase}
-              multiline
-              numberOfLines={4}
-              autoCapitalize="none"
-            />
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: COLORS.success }]} 
-                onPress={handleRestore}
-              >
-                <Ionicons name="cloud-download" size={18} color="#000" />
-                <Text style={styles.modalBtnText}>RESTORE</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: COLORS.textMuted }]} 
-                onPress={() => { setShowRestoreModal(false); setRestorePhrase(''); }}
-              >
-                <Text style={styles.modalBtnText}>CANCEL</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Badge Detail Modal */}
+      <BadgeDetailModal
+        badge={selectedBadge}
+        visible={showBadgeModal}
+        onClose={() => {
+          setShowBadgeModal(false);
+          setSelectedBadge(null);
+        }}
+        onShare={handleShare}
+      />
     </View>
   );
 }
@@ -533,328 +570,181 @@ export default function TreasureVaultScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgDark,
+    backgroundColor: CRT_COLORS.bgDark,
   },
   safeArea: {
     flex: 1,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  backButton: {
+  backBtn: {
     width: 40,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backText: {
+    fontSize: 24,
+    color: CRT_COLORS.primary,
   },
   headerTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLORS.neonPink,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: COLORS.neonPink,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
   },
-  settingsButton: {
+  placeholder: {
     width: 40,
-    height: 40,
-    justifyContent: 'center',
+  },
+
+  // Player Card
+  playerCard: {
+    marginHorizontal: 16,
+    padding: 16,
+  },
+  playerInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-  },
-  neonBorder: {
+  playerAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: CRT_COLORS.bgDark,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
-    borderRadius: 16,
-    backgroundColor: 'rgba(13, 2, 33, 0.9)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 20,
-    elevation: 10,
+    borderColor: CRT_COLORS.primary,
   },
-  walletCard: {
-    padding: 20,
-    marginBottom: 16,
+  avatarText: {
+    fontSize: 24,
   },
-  walletHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  walletIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: COLORS.neonCyan + '20',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  walletInfo: {
+  playerDetails: {
+    marginLeft: 12,
     flex: 1,
   },
-  walletLabel: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 1,
-  },
-  walletName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  addressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  walletAddress: {
-    fontSize: 12,
-    color: COLORS.neonCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  copyButton: {
-    marginLeft: 8,
-    padding: 4,
-  },
-  portfolioSection: {
-    alignItems: 'center',
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.neonPink + '30',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.neonPink + '30',
-  },
-  portfolioLabel: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 1,
-  },
-  portfolioValue: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginTop: 8,
-  },
-  portfolioAmount: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: COLORS.neonPink,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: COLORS.neonPink,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
-  },
-  portfolioCurrency: {
+  playerName: {
     fontSize: 16,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginLeft: 8,
-  },
-  portfolioChange: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  changeText: {
-    fontSize: 12,
-    color: COLORS.success,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginLeft: 4,
-  },
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  actionButton: {
-    alignItems: 'center',
-  },
-  actionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  actionText: {
-    fontSize: 10,
-    color: COLORS.textSecondary,
+    color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
-  sectionTabs: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.cardBg,
-    borderRadius: 8,
-    padding: 4,
-    marginBottom: 16,
-  },
-  sectionTab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderRadius: 6,
-  },
-  activeTab: {
-    backgroundColor: COLORS.neonPink + '30',
-  },
-  tabText: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-  },
-  activeTabText: {
-    color: COLORS.neonPink,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 1,
-    marginBottom: 12,
-  },
-  tokenRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.cardBg,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: COLORS.cardBorder + '30',
-  },
-  tokenIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  tokenInfo: {
-    flex: 1,
-  },
-  tokenName: {
-    fontSize: 14,
-    color: COLORS.textPrimary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-  },
-  tokenSymbol: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  tokenBalance: {
-    alignItems: 'flex-end',
-  },
-  tokenAmount: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  seedReminder: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.neonYellow + '15',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: COLORS.neonYellow + '40',
-  },
-  seedIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.neonYellow + '20',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  seedInfo: {
-    flex: 1,
-  },
-  seedTitle: {
+  playerRank: {
     fontSize: 11,
-    color: COLORS.neonYellow,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
   },
-  seedText: {
-    fontSize: 10,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 2,
+  xpSection: {
+    marginTop: 12,
   },
-  seedButton: {
-    backgroundColor: COLORS.neonYellow,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  xpBar: {
+    height: 8,
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  xpFill: {
+    height: '100%',
     borderRadius: 4,
   },
-  seedButtonText: {
+  xpText: {
     fontSize: 10,
-    color: COLORS.bgDark,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  quickStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: CRT_COLORS.primary + '30',
+  },
+  quickStat: {
+    alignItems: 'center',
+  },
+  quickStatValue: {
+    fontSize: 18,
+    color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
-  blockchainLink: {
+  quickStatLabel: {
+    fontSize: 8,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+
+  // Tabs
+  tabs: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginTop: 12,
+    gap: 8,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  tabActive: {
+    backgroundColor: CRT_COLORS.primary + '30',
+    borderWidth: 1,
+    borderColor: CRT_COLORS.primary,
+  },
+  tabText: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  tabTextActive: {
+    color: CRT_COLORS.primary,
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: 16,
+    marginTop: 12,
+  },
+
+  // Sort
+  sortRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.neonCyan + '15',
-    padding: 14,
-    borderRadius: 12,
-    marginTop: 12,
+    marginBottom: 12,
+    gap: 8,
+  },
+  sortLabel: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  sortBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 4,
+  },
+  sortBtnActive: {
+    backgroundColor: CRT_COLORS.primary + '30',
     borderWidth: 1,
-    borderColor: COLORS.neonCyan + '40',
+    borderColor: CRT_COLORS.primary,
   },
-  blockchainLinkIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLORS.neonCyan + '25',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  blockchainLinkInfo: {
-    flex: 1,
-  },
-  blockchainLinkTitle: {
-    fontSize: 11,
-    color: COLORS.neonCyan,
+  sortBtnText: {
+    fontSize: 10,
+    color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
   },
-  blockchainLinkText: {
-    fontSize: 9,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 2,
-  },
+
+  // Badges Grid
   badgesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -862,233 +752,414 @@ const styles = StyleSheet.create({
   },
   badgeCard: {
     width: (SCREEN_WIDTH - 56) / 3,
-    backgroundColor: COLORS.cardBg,
+  },
+  badgeInner: {
+    backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 12,
     borderWidth: 2,
-    padding: 12,
+    padding: 10,
     alignItems: 'center',
-    position: 'relative',
-    overflow: 'hidden',
+  },
+  badgeSelected: {
+    backgroundColor: CRT_COLORS.bgLight,
   },
   badgeGlow: {
     position: 'absolute',
-    top: -20,
-    left: '50%',
-    marginLeft: -30,
-    width: 60,
-    height: 40,
-    borderRadius: 30,
-    opacity: 0.4,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 10,
   },
-  badgeIconContainer: {
+  badgeIcon: {
     width: 50,
     height: 50,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 25,
+    backgroundColor: CRT_COLORS.bgDark,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    overflow: 'hidden',
+    borderWidth: 2,
+    marginBottom: 6,
   },
-  badgeIconImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 6,
+  badgeEmoji: {
+    fontSize: 24,
   },
   badgeName: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 4,
   },
-  badgeRarity: {
-    fontSize: 8,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  badgeGame: {
-    fontSize: 8,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  rarityBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
     marginTop: 4,
   },
-  emptyBadges: {
+  rarityText: {
+    fontSize: 7,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  bqoIndicator: {
+    marginTop: 4,
+  },
+  bqoText: {
+    fontSize: 8,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+
+  // Empty State
+  emptyState: {
     alignItems: 'center',
     paddingVertical: 40,
   },
-  emptyText: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 16,
+  emptyEmoji: {
+    fontSize: 60,
+    marginBottom: 16,
   },
-  emptySubtext: {
+  emptyTitle: {
+    fontSize: 18,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  emptyText: {
     fontSize: 12,
-    color: COLORS.textMuted,
+    color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 8,
   },
-  playButton: {
-    backgroundColor: COLORS.neonPink,
+  playBtn: {
+    backgroundColor: CRT_COLORS.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
     marginTop: 20,
   },
-  playButtonText: {
+  playBtnText: {
     fontSize: 14,
-    color: COLORS.textPrimary,
+    color: '#000',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
-  txItem: {
+
+  // Rarity Breakdown
+  rarityBreakdown: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  breakdownTitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  breakdownRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.cardBg,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 8,
+    marginVertical: 4,
   },
-  txIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  breakdownDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  breakdownLabel: {
+    flex: 1,
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  breakdownCount: {
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 17, 0, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
   },
-  txDetails: {
-    flex: 1,
+  modalContent: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: CRT_COLORS.primary,
+    padding: 24,
+    width: '85%',
+    maxWidth: 340,
+    alignItems: 'center',
   },
-  txDescription: {
-    fontSize: 13,
-    color: COLORS.textPrimary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  modalClose: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  txTime: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 2,
+  modalCloseText: {
+    fontSize: 20,
+    color: CRT_COLORS.textDim,
   },
-  txAmount: {
-    fontSize: 14,
+  modalBadgeContainer: {
+    marginBottom: 16,
+  },
+  modalBadge: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: CRT_COLORS.bgDark,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+  },
+  modalBadgeEmoji: {
+    fontSize: 48,
+  },
+  modalTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+  },
+  modalRarity: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginTop: 8,
+  },
+  modalRarityText: {
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  modalDescription: {
+    fontSize: 12,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginTop: 12,
+  },
+  modalStats: {
+    flexDirection: 'row',
+    marginTop: 16,
+    gap: 16,
+  },
+  modalStat: {
+    alignItems: 'center',
+  },
+  modalStatLabel: {
+    fontSize: 8,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  modalStatValue: {
+    fontSize: 12,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  shareBtn: {
+    backgroundColor: '#1DA1F2',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  shareBtnText: {
+    fontSize: 12,
+    color: '#FFF',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  modalFun: {
+    fontSize: 10,
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+
+  // BQO Section
+  bqoSection: {
+    paddingBottom: 20,
+  },
+  bqoCard: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  bqoTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  bqoAmount: {
+    fontSize: 48,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginVertical: 8,
+  },
+  bqoLabel: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  bqoStats: {
+    flexDirection: 'row',
+    marginTop: 16,
+    gap: 40,
+  },
+  bqoStatItem: {
+    alignItems: 'center',
+  },
+  bqoStatValue: {
+    fontSize: 20,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  bqoStatLabel: {
+    fontSize: 9,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  bqoInfo: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+  },
+  bqoInfoTitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  bqoInfoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 4,
+  },
+  bqoInfoIcon: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  bqoInfoText: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  bqoRates: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+  },
+  bqoRatesTitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  bqoRateRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 4,
+  },
+  bqoRateLabel: {
+    fontSize: 11,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  bqoRateValue: {
+    fontSize: 11,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  walletBtn: {
+    backgroundColor: CRT_COLORS.primary,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  walletBtnText: {
+    fontSize: 14,
+    color: '#000',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+
+  // Stats Section
+  statsSection: {
+    paddingBottom: 20,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginTop: 8,
   },
   statCard: {
-    width: (SCREEN_WIDTH - 44) / 2,
-    backgroundColor: COLORS.cardBg,
-    padding: 16,
+    width: (SCREEN_WIDTH - 56) / 3,
+    backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.neonCyan + '30',
   },
-  statValue: {
+  statEmoji: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.neonCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  statLabel: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 4,
-    letterSpacing: 1,
-  },
-  // Modal styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalBox: {
-    width: '100%',
-    backgroundColor: COLORS.bgMedium,
-    borderRadius: 16,
-    borderWidth: 3,
-    borderColor: COLORS.neonPink,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.neonPink,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 8,
   },
-  modalSubtitle: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
+  statValue: {
+    fontSize: 20,
+    color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  seedPhraseBox: {
-    width: '100%',
-    backgroundColor: COLORS.bgDark,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: COLORS.neonCyan,
-    padding: 16,
-    marginBottom: 12,
-  },
-  seedPhraseText: {
-    fontSize: 14,
-    color: COLORS.neonCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  warningText: {
-    fontSize: 10,
-    color: COLORS.neonYellow,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  modalBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  modalBtnText: {
-    fontSize: 14,
     fontWeight: 'bold',
-    color: '#000',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
-  restoreInput: {
-    width: '100%',
-    backgroundColor: COLORS.bgDark,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: COLORS.neonCyan,
-    padding: 12,
-    color: COLORS.textPrimary,
+  statLabel: {
+    fontSize: 8,
+    color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  jokeBox: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: CRT_COLORS.accentCyan + '30',
+  },
+  jokeTitle: {
     fontSize: 12,
-    marginBottom: 16,
-    minHeight: 80,
-    textAlignVertical: 'top',
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  jokeText: {
+    fontSize: 12,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    lineHeight: 18,
   },
 });
