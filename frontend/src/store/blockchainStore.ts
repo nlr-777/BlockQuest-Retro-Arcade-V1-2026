@@ -9,6 +9,9 @@ import { bqoTokenService, BQOState } from '../services/BQOTokenService';
 // Storage key
 const WEB3_STATE_KEY = '@blockquest_web3_state';
 
+// Helper to check if we're on the client side
+const isClient = () => typeof window !== 'undefined';
+
 // Blockchain store interface
 interface BlockchainState {
   // Web3 Settings
