@@ -501,6 +501,48 @@ export default function VaultFlexGallery() {
               >
                 <Text style={styles.walletBtnText}>🔗 CONNECT WALLET</Text>
               </TouchableOpacity>
+
+              {/* Coming Soon Teasers */}
+              <CRTGlowBorder color={CRT_COLORS.textDim} style={styles.comingSoonCard}>
+                <Text style={styles.comingSoonTitle}>🚀 COMING SOON</Text>
+                
+                {/* BLQ Token Teaser */}
+                <View style={styles.teaserItem}>
+                  <View style={styles.teaserIcon}>
+                    <Text style={styles.teaserEmoji}>💰</Text>
+                  </View>
+                  <View style={styles.teaserInfo}>
+                    <Text style={styles.teaserName}>BLQ Token</Text>
+                    <Text style={styles.teaserDesc}>BlockQuest Token • Cap: 94 Million</Text>
+                  </View>
+                  <View style={styles.teaserBadge}>
+                    <Text style={styles.teaserBadgeText}>SOON</Text>
+                  </View>
+                </View>
+
+                {/* Adventure Points Teaser */}
+                <View style={styles.teaserItem}>
+                  <View style={styles.teaserIcon}>
+                    <Text style={styles.teaserEmoji}>⭐</Text>
+                  </View>
+                  <View style={styles.teaserInfo}>
+                    <Text style={styles.teaserName}>Adventure Points</Text>
+                    <Text style={styles.teaserDesc}>Earn points from daily quests!</Text>
+                  </View>
+                  <View style={styles.teaserBadge}>
+                    <Text style={styles.teaserBadgeText}>SOON</Text>
+                  </View>
+                </View>
+
+                {/* Mint on Apertum - Disabled */}
+                <TouchableOpacity style={styles.mintBtnDisabled} disabled>
+                  <Text style={styles.mintBtnText}>🔒 Mint on Apertum – Coming Soon!</Text>
+                </TouchableOpacity>
+
+                <Text style={styles.teaserNote}>
+                  Coming Soon: Optional wallet connect to mint badges on Apertum and explore OpenPlaza marketplace.
+                </Text>
+              </CRTGlowBorder>
             </View>
           )}
 
