@@ -1148,6 +1148,94 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  // Coming Soon Section
+  comingSoonCard: {
+    marginTop: 20,
+    padding: 16,
+  },
+  comingSoonTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  teaserItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.textDim + '30',
+  },
+  teaserIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: CRT_COLORS.bgMedium,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  teaserEmoji: {
+    fontSize: 20,
+  },
+  teaserInfo: {
+    flex: 1,
+  },
+  teaserName: {
+    fontSize: 14,
+    color: CRT_COLORS.textPrimary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  teaserDesc: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  teaserBadge: {
+    backgroundColor: CRT_COLORS.accentGold + '30',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  teaserBadgeText: {
+    fontSize: 8,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  mintBtnDisabled: {
+    backgroundColor: CRT_COLORS.textDim + '30',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.textDim + '50',
+    borderStyle: 'dashed',
+  },
+  mintBtnText: {
+    fontSize: 12,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  teaserNote: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginTop: 16,
+    fontStyle: 'italic',
+    lineHeight: 14,
+  },
+
   // Stats Section
   statsSection: {
     paddingBottom: 20,
