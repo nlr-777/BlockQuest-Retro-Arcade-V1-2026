@@ -331,6 +331,16 @@ export default function ArcadeHub() {
           </TouchableOpacity>
         )}
 
+        {/* XP Progress Bar - Prominent CRT-styled tracker */}
+        {profile && (
+          <XPProgressBar
+            currentXP={profile.xp}
+            level={profile.level}
+            xpPerLevel={100}
+            showFlicker={true}
+          />
+        )}
+
         {/* Game Selection Panel */}
         <CRTGlowBorder color={CRT_COLORS.primary} style={styles.panel}>
           <View style={styles.panelHeader}>
