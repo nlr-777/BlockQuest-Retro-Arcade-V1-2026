@@ -21,6 +21,7 @@ import { PixelButton } from '../../src/components/PixelButton';
 import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
+import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { GAMES } from '../../src/constants/games';
 
