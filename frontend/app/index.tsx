@@ -195,69 +195,46 @@ const factionBadgeStyles = StyleSheet.create({
   },
 });
 
-// Welcome Tips - Rotating tips about game features
-const WELCOME_TIPS = [
-  { icon: '🎮', title: 'PLAY & LEARN', tip: 'Each game teaches a Web3 concept - no crypto needed!' },
-  { icon: '⬡', title: 'JOIN A FACTION', tip: 'Team up with others, vote on decisions, earn bonus XP!' },
-  { icon: '🏆', title: 'EARN BADGES', tip: 'Unlock unique badges that boost your powers in games!' },
-  { icon: '📅', title: 'DAILY QUESTS', tip: 'Check back daily for special challenges and rewards!' },
-  { icon: '💎', title: 'VAULT REWARDS', tip: 'Visit the Vault to see your badge collection & power-ups!' },
-  { icon: '🗳️', title: 'YOUR VOICE MATTERS', tip: 'In your faction, vote on proposals - just like a real DAO!' },
+// Blocky's short hints (no blockchain jargon!)
+const BLOCKY_GAME_HINTS = [
+  "Pick a game! 🎮",
+  "High scores = more rewards!",
+  "Try 'em all!",
+  "Ready to play?",
+  "Let's GO! ⚡",
 ];
 
-// Welcome Tip Card Component
-const WelcomeTipCard = () => {
-  const [tipIndex, setTipIndex] = useState(0);
+// Blocky Guide Component - Visual mascot instead of text walls
+const BlockyGuide = () => {
+  const [hintIndex, setHintIndex] = useState(0);
   
   useEffect(() => {
     const interval = setInterval(() => {
-      setTipIndex(prev => (prev + 1) % WELCOME_TIPS.length);
-    }, 6000);
+      setHintIndex(prev => (prev + 1) % BLOCKY_GAME_HINTS.length);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
   
-  const tip = WELCOME_TIPS[tipIndex];
-  
   return (
-    <View style={tipCardStyles.container}>
-      <View style={tipCardStyles.iconContainer}>
-        <Text style={tipCardStyles.icon}>{tip.icon}</Text>
-      </View>
-      <View style={tipCardStyles.textContainer}>
-        <Text style={tipCardStyles.title}>{tip.title}</Text>
-        <Text style={tipCardStyles.tip}>{tip.tip}</Text>
-      </View>
-      <View style={tipCardStyles.dots}>
-        {WELCOME_TIPS.map((_, i) => (
-          <View 
-            key={i} 
-            style={[
-              tipCardStyles.dot, 
-              i === tipIndex && tipCardStyles.dotActive
-            ]} 
-          />
-        ))}
-      </View>
+    <View style={blockyGuideStyles.container}>
+      <Mascot 
+        type="blocky" 
+        size="sm" 
+        message={BLOCKY_GAME_HINTS[hintIndex]}
+        mood="excited"
+      />
     </View>
   );
 };
 
-// Tip Card Styles
-const tipCardStyles = StyleSheet.create({
+// Blocky Guide Styles
+const blockyGuideStyles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 255, 255, 0.08)',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: CRT_COLORS.accentCyan + '40',
-    padding: 10,
-    marginBottom: 10,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+});
     backgroundColor: CRT_COLORS.bgDark,
     justifyContent: 'center',
     alignItems: 'center',
