@@ -85,6 +85,7 @@ export default function LightningDashGame() {
 
   // Road animation
   const [roadOffset, setRoadOffset] = useState(0);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
@@ -109,8 +110,15 @@ export default function LightningDashGame() {
     setBoltsCollected(0);
     setBoostMeter(0);
     setIsBoosting(false);
+    setHighScoreBeaten(false);
     setGameState('playing');
     playGameStart();
+  }, []);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
   }, []);
 
   // Move player
