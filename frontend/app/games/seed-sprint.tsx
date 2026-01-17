@@ -306,7 +306,12 @@ export default function SeedSprintGame() {
       setGameState('playing');
       if (Platform.OS !== 'web') Vibration.vibrate(50);
     } else {
-      setGameState('gameover');
+      const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
+      if (score > currentHighScore) {
+        setHighScoreBeaten(true);
+      }
+      playGameOver();
+      setGameState('rewards');
     }
   };
 
