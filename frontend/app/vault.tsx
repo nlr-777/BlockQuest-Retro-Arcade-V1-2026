@@ -448,55 +448,19 @@ export default function VaultFlexGallery() {
                 </View>
               )}
 
-              {/* NFT Learning Section */}
-              <View style={styles.nftLearnSection}>
-                <Text style={styles.nftLearnTitle}>💡 WHAT ARE NFT BADGES?</Text>
-                
-                <View style={styles.nftLearnCard}>
-                  <Text style={styles.nftLearnIcon}>🎨</Text>
-                  <View style={styles.nftLearnContent}>
-                    <Text style={styles.nftLearnHeading}>Unique & Yours</Text>
-                    <Text style={styles.nftLearnText}>
-                      Each badge is unique to YOU! Just like real NFTs, no one else has your exact collection.
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.nftLearnCard}>
-                  <Text style={styles.nftLearnIcon}>✨</Text>
-                  <View style={styles.nftLearnContent}>
-                    <Text style={styles.nftLearnHeading}>Rarity Matters</Text>
-                    <Text style={styles.nftLearnText}>
-                      Legendary badges are super rare! Just like rare NFTs are more valuable.
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.nftLearnCard}>
-                  <Text style={styles.nftLearnIcon}>📜</Text>
-                  <View style={styles.nftLearnContent}>
-                    <Text style={styles.nftLearnHeading}>Traits & Metadata</Text>
-                    <Text style={styles.nftLearnText}>
-                      Each badge has traits (game, score, date). NFTs have metadata too!
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.nftLearnCard}>
-                  <Text style={styles.nftLearnIcon}>🔐</Text>
-                  <View style={styles.nftLearnContent}>
-                    <Text style={styles.nftLearnHeading}>Proof of Achievement</Text>
-                    <Text style={styles.nftLearnText}>
-                      Your badges prove you earned them. Blockchain NFTs work the same way!
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.nftLearnTip}>
-                  <Text style={styles.nftLearnTipText}>
-                    🎓 Fun Fact: NFT stands for "Non-Fungible Token" - it means something unique that can't be copied!
-                  </Text>
-                </View>
+              {/* Vaultie Guide - Visual mascot instead of text walls */}
+              <View style={styles.vaultieGuideSection}>
+                <Mascot 
+                  type="vaultie" 
+                  size="md" 
+                  message={badges.length === 0 
+                    ? "Your collection starts here! Go play!" 
+                    : badges.length < 5 
+                      ? "Nice start! Keep collecting!" 
+                      : "Wow! Great collection! 💎"
+                  }
+                  mood="excited"
+                />
               </View>
 
               {/* Power-ups Section */}
