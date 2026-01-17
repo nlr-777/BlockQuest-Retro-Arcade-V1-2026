@@ -133,7 +133,7 @@ export const PowerUpBar: React.FC<PowerUpBarProps> = ({
   
   // Update unlocked power-ups when badges change
   useEffect(() => {
-    if (badges.length > 0) {
+    if (badges && badges.length > 0) {
       updateUnlockedPowerUps(badges);
     }
   }, [badges]);
