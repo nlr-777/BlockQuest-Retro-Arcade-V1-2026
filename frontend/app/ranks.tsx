@@ -408,4 +408,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 18,
   },
+  
+  // Factions CTA
+  factionsSection: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  factionsCTA: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: CRT_COLORS.bgMedium,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentMagenta + '60',
+  },
+  factionsIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  factionsInfo: {
+    flex: 1,
+  },
+  factionsTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.accentMagenta,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  factionsDesc: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  factionsArrow: {
+    fontSize: 24,
+    color: CRT_COLORS.accentMagenta,
+    fontWeight: 'bold',
+  },
 });
