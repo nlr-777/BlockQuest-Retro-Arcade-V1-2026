@@ -1,7 +1,8 @@
 // BlockQuest Official - REKT/Fail Screen
 // Kid-friendly fail animations with dad jokes
+// FIXED: Scrollable content so buttons are always accessible
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Platform, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,6 +16,8 @@ import Animated, {
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
 import { ScreenShake, CRTFlickerText, CRTScanlines, PixelRain } from './CRTEffects';
 import ttsManager from '../utils/TTSManager';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface RektScreenProps {
   visible: boolean;
@@ -58,13 +61,13 @@ export const RektScreen: React.FC<RektScreenProps> = ({
       
       // Trigger shake
       setShowShake(true);
-      setTimeout(() => setShowShake(false), 300);
+      setTimeout(() => setShowShake(false), 500);
       
       // Animate character
       bounceY.value = withRepeat(
         withSequence(
-          withSpring(-20, { damping: 5 }),
-          withSpring(0, { damping: 5 })
+          withTiming(-10, { duration: 400 }),
+          withTiming(0, { duration: 400 })
         ),
         -1,
         true
@@ -72,15 +75,15 @@ export const RektScreen: React.FC<RektScreenProps> = ({
       
       rotate.value = withRepeat(
         withSequence(
-          withTiming(-10, { duration: 200 }),
-          withTiming(10, { duration: 200 })
+          withTiming(-5, { duration: 300 }),
+          withTiming(5, { duration: 300 })
         ),
-        3,
+        -1,
         true
       );
-      
-      // TTS
-      ttsManager.speakRandom('fail');
+
+      // Speak the fail message (kid-friendly)
+      ttsManager.speak(`Oops! Your score is ${score}. ${randomJoke}`);
     }
   }, [visible]);
 
@@ -94,60 +97,69 @@ export const RektScreen: React.FC<RektScreenProps> = ({
   if (!visible) return null;
 
   return (
-    <ScreenShake active={showShake} intensity={15}>
+    <ScreenShake active={showShake} intensity={5}>
       <View style={styles.container}>
-        <PixelRain count={10} speed={5000} />
+        <PixelRain count={15} speed={3000} />
         <CRTScanlines opacity={0.08} />
         
         <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
-          {/* Fail Header */}
-          <View style={styles.header}>
-            <CRTFlickerText style={styles.oopsText} color={CRT_COLORS.accentGold} glitch>
-              OOPS!
-            </CRTFlickerText>
-          </View>
-          
-          {/* Character */}
-          <Animated.View style={[styles.characterBox, characterStyle]}>
-            <Text style={styles.characterEmoji}>{character.emoji}</Text>
-          </Animated.View>
-          
-          {/* Fail Message */}
-          <Animated.View entering={FadeIn.delay(200)} style={styles.messageBox}>
-            <Text style={styles.failMessage}>
-              {CRT_PUNS.fail[Math.floor(Math.random() * CRT_PUNS.fail.length)]}
-            </Text>
-          </Animated.View>
-          
-          {/* Score */}
-          <View style={styles.scoreBox}>
-            <Text style={styles.scoreLabel}>YOUR SCORE</Text>
-            <CRTFlickerText style={styles.scoreValue} color={CRT_COLORS.primary}>
-              {score}
-            </CRTFlickerText>
-          </View>
-          
-          {/* Dad Joke */}
-          <Animated.View entering={FadeIn.delay(400)} style={styles.jokeBox}>
-            <Text style={styles.jokeLabel}>🎭 DAD JOKE TIME 🎭</Text>
-            <Text style={styles.jokeText}>{dadJoke}</Text>
-          </Animated.View>
-          
-          {/* Buttons */}
-          <View style={styles.buttons}>
-            <TouchableOpacity style={styles.retryBtn} onPress={onRetry}>
-              <Text style={styles.retryBtnText}>🔄 TRY AGAIN!</Text>
-            </TouchableOpacity>
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            {/* Fail Header */}
+            <View style={styles.header}>
+              <CRTFlickerText style={styles.oopsText} color={CRT_COLORS.accentGold} glitch>
+                OOPS!
+              </CRTFlickerText>
+            </View>
             
-            <TouchableOpacity style={styles.quitBtn} onPress={onQuit}>
-              <Text style={styles.quitBtnText}>🏠 HOME</Text>
-            </TouchableOpacity>
-          </View>
+            {/* Character */}
+            <Animated.View style={[styles.characterBox, characterStyle]}>
+              <Text style={styles.characterEmoji}>{character.emoji}</Text>
+            </Animated.View>
+            
+            {/* Fail Message */}
+            <Animated.View entering={FadeIn.delay(200)} style={styles.messageBox}>
+              <Text style={styles.failMessage}>
+                {CRT_PUNS.fail[Math.floor(Math.random() * CRT_PUNS.fail.length)]}
+              </Text>
+            </Animated.View>
+            
+            {/* Score */}
+            <View style={styles.scoreBox}>
+              <Text style={styles.scoreLabel}>YOUR SCORE</Text>
+              <CRTFlickerText style={styles.scoreValue} color={CRT_COLORS.primary}>
+                {score}
+              </CRTFlickerText>
+            </View>
+            
+            {/* Dad Joke */}
+            <Animated.View entering={FadeIn.delay(400)} style={styles.jokeBox}>
+              <Text style={styles.jokeLabel}>🎭 DAD JOKE 🎭</Text>
+              <Text style={styles.jokeText}>{dadJoke}</Text>
+            </Animated.View>
+          </ScrollView>
           
-          {/* Encouragement */}
-          <Text style={styles.encouragement}>
-            Don't give up! Every pro was once a beginner! 💪
-          </Text>
+          {/* Buttons - Always visible at bottom */}
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttons}>
+              <TouchableOpacity style={styles.retryBtn} onPress={onRetry}>
+                <Text style={styles.retryBtnText}>🔄 TRY AGAIN!</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.quitBtn} onPress={onQuit}>
+                <Text style={styles.quitBtnText}>🏠 HOME</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Encouragement */}
+            <Text style={styles.encouragement}>
+              Every pro was once a beginner! 💪
+            </Text>
+          </View>
         </Animated.View>
       </View>
     </ScreenShake>
@@ -167,101 +179,119 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 3,
     borderColor: CRT_COLORS.accentGold,
-    padding: 20,
     maxWidth: 340,
-    alignItems: 'center',
+    width: '90%',
+    maxHeight: SCREEN_HEIGHT * 0.85,
     shadowColor: CRT_COLORS.accentGold,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
+    overflow: 'hidden',
+  },
+  scrollView: {
+    flex: 1,
+    maxHeight: SCREEN_HEIGHT * 0.5,
+  },
+  scrollContent: {
+    padding: 16,
+    alignItems: 'center',
   },
   header: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
   oopsText: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 4,
   },
   characterBox: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     backgroundColor: CRT_COLORS.bgDark,
-    borderRadius: 40,
+    borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
     borderColor: CRT_COLORS.primary,
-    marginVertical: 10,
+    marginVertical: 8,
   },
   characterEmoji: {
-    fontSize: 40,
+    fontSize: 36,
   },
   messageBox: {
-    marginVertical: 10,
+    marginVertical: 6,
   },
   failMessage: {
-    fontSize: 16,
+    fontSize: 14,
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
   },
   scoreBox: {
     backgroundColor: CRT_COLORS.bgDark,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.primary + '40',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 8,
   },
   scoreLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
   scoreValue: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   jokeBox: {
     backgroundColor: CRT_COLORS.bgLight,
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: CRT_COLORS.accentCyan + '40',
-    marginVertical: 10,
+    marginVertical: 6,
     width: '100%',
   },
   jokeLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   jokeText: {
-    fontSize: 12,
+    fontSize: 11,
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 16,
+  },
+  buttonsContainer: {
+    padding: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: CRT_COLORS.textDim + '30',
+    backgroundColor: CRT_COLORS.bgMedium,
   },
   buttons: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 15,
+    justifyContent: 'center',
   },
   retryBtn: {
     backgroundColor: CRT_COLORS.primary,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
   },
   retryBtnText: {
     fontSize: 14,
@@ -272,10 +302,12 @@ const styles = StyleSheet.create({
   quitBtn: {
     backgroundColor: CRT_COLORS.bgDark,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.textDim,
+    flex: 1,
+    alignItems: 'center',
   },
   quitBtnText: {
     fontSize: 14,
@@ -288,7 +320,7 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    marginTop: 15,
+    marginTop: 10,
   },
 });
 
