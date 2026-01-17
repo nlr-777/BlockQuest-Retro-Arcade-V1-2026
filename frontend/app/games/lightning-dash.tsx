@@ -242,7 +242,7 @@ export default function LightningDashGame() {
           // Collected!
           setBoltsCollected(b => b + 1);
           setBoostMeter(m => Math.min(100, m + 20));
-          setScore(s => s + 50);
+          setScore(s => s + powerUps.calculateScore(50));
           if (Platform.OS !== 'web') Vibration.vibrate(20);
           return { ...bolt, collected: true };
         }

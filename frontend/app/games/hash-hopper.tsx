@@ -156,7 +156,7 @@ export default function HashHopperGame() {
       
       // Check goal
       if (newY === 0) {
-        setScore(s => s + 100);
+        setScore(s => s + powerUps.calculateScore(100));
         // Reset position but keep score
         setTimeout(() => {
           setPlayerPos({ x: 4, y: 10 });
