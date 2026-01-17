@@ -275,9 +275,9 @@ export default function IPFSPinballGame() {
             const newBalls = b - 1;
             if (newBalls <= 0) {
               playGameOver();
-              setGameState('gameover');
+              setHighScoreBeaten(score > 0);
+              setGameState('rewards');
               submitScore('ipfs-pinball', score);
-              addXP(Math.floor(score / 10));
             }
             return newBalls;
           });
