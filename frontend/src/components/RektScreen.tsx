@@ -1,6 +1,6 @@
 // BlockQuest Official - REKT/Fail Screen
 // Kid-friendly fail animations with dad jokes
-// FIXED: Scrollable content so buttons are always accessible
+// FIXED: Removed ScreenShake wrapper, ensured buttons are always touchable
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Animated, {
@@ -14,8 +14,7 @@ import Animated, {
   FadeIn,
 } from 'react-native-reanimated';
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
-import { ScreenShake, CRTFlickerText, CRTScanlines, PixelRain } from './CRTEffects';
-import ttsManager from '../utils/TTSManager';
+import { CRTFlickerText, CRTScanlines } from './CRTEffects';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -46,7 +45,6 @@ export const RektScreen: React.FC<RektScreenProps> = ({
 }) => {
   const [dadJoke, setDadJoke] = useState('');
   const [character, setCharacter] = useState(FAIL_CHARACTERS[0]);
-  const [showShake, setShowShake] = useState(false);
   
   const bounceY = useSharedValue(0);
   const rotate = useSharedValue(0);
@@ -59,14 +57,10 @@ export const RektScreen: React.FC<RektScreenProps> = ({
       setDadJoke(randomJoke);
       setCharacter(randomChar);
       
-      // Trigger shake
-      setShowShake(true);
-      setTimeout(() => setShowShake(false), 500);
-      
       // Animate character
       bounceY.value = withRepeat(
         withSequence(
-          withTiming(-10, { duration: 400 }),
+          withTiming(-8, { duration: 400 }),
           withTiming(0, { duration: 400 })
         ),
         -1,
@@ -81,9 +75,6 @@ export const RektScreen: React.FC<RektScreenProps> = ({
         -1,
         true
       );
-
-      // Speak the fail message (kid-friendly)
-      ttsManager.speak(`Oops! Your score is ${score}. ${randomJoke}`);
     }
   }, [visible]);
 
@@ -97,12 +88,12 @@ export const RektScreen: React.FC<RektScreenProps> = ({
   if (!visible) return null;
 
   return (
-    <ScreenShake active={showShake} intensity={5}>
-      <View style={styles.container}>
-        <PixelRain count={15} speed={3000} />
-        <CRTScanlines opacity={0.08} />
-        
+    <View style={styles.overlay}>
+      <CRTScanlines opacity={0.08} />
+      
+      <View style={styles.modalContainer}>
         <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
+          {/* Scrollable Content */}
           <ScrollView 
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -143,36 +134,51 @@ export const RektScreen: React.FC<RektScreenProps> = ({
             </Animated.View>
           </ScrollView>
           
-          {/* Buttons - Always visible at bottom */}
+          {/* Buttons - Fixed at bottom, always touchable */}
           <View style={styles.buttonsContainer}>
-            <View style={styles.buttons}>
-              <TouchableOpacity style={styles.retryBtn} onPress={onRetry}>
-                <Text style={styles.retryBtnText}>🔄 TRY AGAIN!</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.quitBtn} onPress={onQuit}>
-                <Text style={styles.quitBtnText}>🏠 HOME</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              style={styles.retryBtn} 
+              onPress={onRetry}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.retryBtnText}>🔄 TRY AGAIN!</Text>
+            </TouchableOpacity>
             
-            {/* Encouragement */}
-            <Text style={styles.encouragement}>
-              Every pro was once a beginner! 💪
-            </Text>
+            <TouchableOpacity 
+              style={styles.quitBtn} 
+              onPress={onQuit}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.quitBtnText}>🏠 HOME</Text>
+            </TouchableOpacity>
           </View>
+          
+          {/* Encouragement */}
+          <Text style={styles.encouragement}>
+            Every pro was once a beginner! 💪
+          </Text>
         </Animated.View>
       </View>
-    </ScreenShake>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 17, 0, 0.95)',
+    zIndex: 9999,
+    elevation: 9999,
+  },
+  modalContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+    padding: 20,
   },
   modal: {
     backgroundColor: CRT_COLORS.bgMedium,
@@ -180,8 +186,8 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: CRT_COLORS.accentGold,
     maxWidth: 340,
-    width: '90%',
-    maxHeight: SCREEN_HEIGHT * 0.85,
+    width: '100%',
+    maxHeight: SCREEN_HEIGHT * 0.8,
     shadowColor: CRT_COLORS.accentGold,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -189,8 +195,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   scrollView: {
-    flex: 1,
-    maxHeight: SCREEN_HEIGHT * 0.5,
+    maxHeight: SCREEN_HEIGHT * 0.4,
   },
   scrollContent: {
     padding: 16,
@@ -200,16 +205,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   oopsText: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 4,
   },
   characterBox: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     backgroundColor: CRT_COLORS.bgDark,
-    borderRadius: 35,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
@@ -217,13 +222,13 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   characterEmoji: {
-    fontSize: 36,
+    fontSize: 30,
   },
   messageBox: {
-    marginVertical: 6,
+    marginVertical: 4,
   },
   failMessage: {
-    fontSize: 14,
+    fontSize: 13,
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
@@ -231,7 +236,7 @@ const styles = StyleSheet.create({
   scoreBox: {
     backgroundColor: CRT_COLORS.bgDark,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.primary + '40',
@@ -245,7 +250,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scoreValue: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
@@ -255,7 +260,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: CRT_COLORS.accentCyan + '40',
-    marginVertical: 6,
     width: '100%',
   },
   jokeLabel: {
@@ -271,27 +275,24 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 15,
   },
   buttonsContainer: {
+    flexDirection: 'row',
     padding: 16,
     paddingTop: 12,
+    gap: 12,
     borderTopWidth: 1,
     borderTopColor: CRT_COLORS.textDim + '30',
     backgroundColor: CRT_COLORS.bgMedium,
   },
-  buttons: {
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'center',
-  },
   retryBtn: {
-    backgroundColor: CRT_COLORS.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: CRT_COLORS.primary,
+    paddingVertical: 16,
+    borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   retryBtnText: {
     fontSize: 14,
@@ -300,14 +301,14 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   quitBtn: {
+    flex: 1,
     backgroundColor: CRT_COLORS.bgDark,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.textDim,
-    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   quitBtnText: {
     fontSize: 14,
@@ -320,7 +321,8 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    marginTop: 10,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
   },
 });
 
