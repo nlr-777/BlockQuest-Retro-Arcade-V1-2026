@@ -64,6 +64,136 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const GRID_PADDING = 8;
 
+// Faction Status Badge Component - Shows player's faction on main hub
+const FactionStatusBadge = () => {
+  const router = useRouter();
+  const { playerFaction, memberRank, xpContributed } = useFactionStore();
+  
+  if (!playerFaction) {
+    // Not in a faction - show "Join a Faction" prompt
+    return (
+      <TouchableOpacity 
+        style={factionBadgeStyles.container}
+        onPress={() => router.push('/factions')}
+        activeOpacity={0.7}
+      >
+        <View style={factionBadgeStyles.joinPrompt}>
+          <Text style={factionBadgeStyles.joinIcon}>⬡</Text>
+          <View style={factionBadgeStyles.joinTextContainer}>
+            <Text style={factionBadgeStyles.joinTitle}>JOIN A FACTION</Text>
+            <Text style={factionBadgeStyles.joinSubtitle}>Team up • Vote • Earn bonus XP!</Text>
+          </View>
+          <Text style={factionBadgeStyles.joinArrow}>▶</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  
+  const faction = FACTIONS[playerFaction];
+  
+  return (
+    <TouchableOpacity 
+      style={[factionBadgeStyles.container, { borderColor: faction.color + '60' }]}
+      onPress={() => router.push('/factions')}
+      activeOpacity={0.7}
+    >
+      <View style={factionBadgeStyles.factionInfo}>
+        <Text style={factionBadgeStyles.factionIcon}>{faction.icon}</Text>
+        <View style={factionBadgeStyles.factionTextContainer}>
+          <Text style={[factionBadgeStyles.factionName, { color: faction.color }]}>
+            {faction.name.toUpperCase()}
+          </Text>
+          <Text style={factionBadgeStyles.factionRank}>
+            {memberRank} • {xpContributed} XP contributed
+          </Text>
+        </View>
+        <View style={[factionBadgeStyles.bonusBadge, { backgroundColor: faction.color }]}>
+          <Text style={factionBadgeStyles.bonusText}>+{faction.xpBonus}% XP</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+// Faction Badge Styles
+const factionBadgeStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 12,
+    marginTop: 6,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.primary + '30',
+    overflow: 'hidden',
+  },
+  joinPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+  },
+  joinIcon: {
+    fontSize: 24,
+    color: CRT_COLORS.accentMagenta,
+    marginRight: 10,
+  },
+  joinTextContainer: {
+    flex: 1,
+  },
+  joinTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: CRT_COLORS.accentMagenta,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
+  },
+  joinSubtitle: {
+    fontSize: 9,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  joinArrow: {
+    fontSize: 14,
+    color: CRT_COLORS.accentMagenta,
+  },
+  factionInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  factionIcon: {
+    fontSize: 22,
+    marginRight: 10,
+  },
+  factionTextContainer: {
+    flex: 1,
+  },
+  factionName: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
+  },
+  factionRank: {
+    fontSize: 9,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  bonusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  bonusText: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#FFF',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+});
+
 // Game icon mapping
 const getGameIcon = (gameId: string): React.FC<any> => {
   const iconMap: Record<string, React.FC<any>> = {
