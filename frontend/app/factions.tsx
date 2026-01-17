@@ -20,16 +20,17 @@ import { PixelText } from '../src/components/PixelText';
 import { useFactionStore, FACTIONS, FactionId, FactionProposal } from '../src/store/factionStore';
 import { useGameStore } from '../src/store/gameStore';
 import { FactionQuestBoard } from '../src/components/FactionQuestBoard';
+import { Mascot } from '../src/components/Mascots';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// DAO Learning Tip Component
-const DAOLearningTip: React.FC<{ lesson: string; color: string }> = ({ lesson, color }) => (
-  <View style={[styles.daoTip, { borderLeftColor: color }]}>
-    <Text style={styles.daoTipIcon}>💡</Text>
-    <Text style={styles.daoTipText}>{lesson}</Text>
-  </View>
-);
+// Unity Mascot Hints (no blockchain jargon!)
+const UNITY_HINTS = {
+  noFaction: "Join a team! Together we're stronger! 💪",
+  hasFaction: "Your team is counting on you!",
+  voting: "Your vote matters! Choose wisely!",
+  treasury: "Team treasure grows when you play!",
+};
 
 // Proposal Card Component - Teaching voting!
 const ProposalCard: React.FC<{
