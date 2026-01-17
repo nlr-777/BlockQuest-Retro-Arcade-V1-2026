@@ -184,7 +184,7 @@ export default function HashHopperGame() {
               // Hit by car!
               setLives(l => {
                 if (l <= 1) {
-                  setGameState('gameover' | 'rewards');
+                  setGameState('gameover');
                   return 0;
                 }
                 setPlayerPos({ x: 4, y: 10 });
@@ -213,7 +213,7 @@ export default function HashHopperGame() {
             // Fell in water!
             setLives(l => {
               if (l <= 1) {
-                setGameState('gameover' | 'rewards');
+                setGameState('gameover');
                 return 0;
               }
               setPlayerPos({ x: 4, y: 10 });
@@ -233,7 +233,7 @@ export default function HashHopperGame() {
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' | 'rewards' && profile) {
+    if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('hash-hopper', score, duration);
@@ -411,7 +411,7 @@ export default function HashHopperGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover' | 'rewards'}
+        visible={gameState === 'gameover'}
         score={score}
         reason={`Hash: 0x${currentHash} | Path: ${pathTaken.length}`}
         onRetry={startGame}

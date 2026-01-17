@@ -227,7 +227,7 @@ export default function SeedSprintGame() {
             if (!isJumping) {
               // Hit obstacle!
               playHit();
-              setGameState('gameover' | 'rewards');
+              setGameState('gameover');
               playGameOver();
               if (Platform.OS !== 'web') Vibration.vibrate(100);
               return newObs;
@@ -294,13 +294,13 @@ export default function SeedSprintGame() {
       setGameState('playing');
       if (Platform.OS !== 'web') Vibration.vibrate(50);
     } else {
-      setGameState('gameover' | 'rewards');
+      setGameState('gameover');
     }
   };
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' | 'rewards' && profile) {
+    if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('seed-sprint', score, duration);
@@ -527,7 +527,7 @@ export default function SeedSprintGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover' | 'rewards'}
+        visible={gameState === 'gameover'}
         score={score}
         reason={`Distance: ${distance}m | Words: ${collectedWords.length}/12`}
         onRetry={startGame}

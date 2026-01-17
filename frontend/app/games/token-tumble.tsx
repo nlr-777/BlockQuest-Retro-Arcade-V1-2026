@@ -310,7 +310,7 @@ export default function BlockTumbleGame() {
       if (nextPiece) {
         if (checkCollision(clearedBoard, nextPiece)) {
           playGameOver();
-          setGameState('gameover' | 'rewards');
+          setGameState('gameover');
         } else {
           setCurrentPiece(nextPiece);
           setNextPiece(randomPiece());
@@ -365,7 +365,7 @@ export default function BlockTumbleGame() {
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' | 'rewards' && profile) {
+    if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('token-tumble', score, duration);
@@ -533,7 +533,7 @@ export default function BlockTumbleGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover' | 'rewards'}
+        visible={gameState === 'gameover'}
         score={score}
         reason={`Level: ${level} | Lines: ${linesTotal} | Value: $${collectionValue}`}
         onRetry={startGame}
