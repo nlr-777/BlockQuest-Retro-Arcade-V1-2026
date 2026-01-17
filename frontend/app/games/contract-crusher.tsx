@@ -24,6 +24,8 @@ import { GAMES } from '../../src/constants/games';
 import { RektScreen } from '../../src/components/RektScreen';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { RoastHUD } from '../../src/components/RoastHUD';
+import { PowerUpHUD } from '../../src/components/PowerUpBar';
+import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'contract-crusher')!;
 

@@ -31,6 +31,8 @@ import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { RoastHUD } from '../../src/components/RoastHUD';
+import { PowerUpHUD } from '../../src/components/PowerUpBar';
+import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
