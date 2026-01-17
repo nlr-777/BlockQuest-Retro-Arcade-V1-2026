@@ -340,7 +340,8 @@ export default function CryptoClimberGame() {
           setLives(l => {
             if (l <= 1) {
               playGameOver();
-          setGameState('gameover');
+              setHighScoreBeaten(score > 0);
+              setGameState('rewards');
               return 0;
             }
             // Reset player position
