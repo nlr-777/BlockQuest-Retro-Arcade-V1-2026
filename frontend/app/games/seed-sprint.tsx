@@ -131,9 +131,16 @@ export default function SeedSprintGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();
   }, [initGame, playGameStart]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Jump with Double Jump ability!
   const jump = useCallback(() => {
