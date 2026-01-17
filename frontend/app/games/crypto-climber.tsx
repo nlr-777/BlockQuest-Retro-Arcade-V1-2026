@@ -199,8 +199,15 @@ export default function CryptoClimberGame() {
     setIsJumping(false);
     setIsClimbing(false);
     setBarrels([]);
+    setHighScoreBeaten(false);
     initializeEggs();
   };
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Check platform collision
   const checkPlatformCollision = (x: number, y: number, vy: number): { onPlatform: boolean; platformY: number } => {
