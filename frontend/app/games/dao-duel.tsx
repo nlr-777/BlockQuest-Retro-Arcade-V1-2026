@@ -195,7 +195,8 @@ export default function DAODuelGame() {
             const newScore = s + 1;
             if (newScore >= 5) {
               playGameOver();
-          setGameState('gameover');
+              setHighScoreBeaten(playerScore > 0);
+              setGameState('rewards');
               submitScore('dao-duel', playerScore * 100);
             } else {
               setRound(r => r + 1);
