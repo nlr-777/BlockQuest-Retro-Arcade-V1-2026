@@ -340,7 +340,7 @@ export default function BlockMuncherGame() {
         type: powerupTypes[Math.floor(Math.random() * powerupTypes.length)],
       });
     }
-    setPowerups(pups);
+    setGamePowerups(pups);
   }, []);
 
   // Initialize game
@@ -444,7 +444,7 @@ export default function BlockMuncherGame() {
       });
       
       // Check powerup collection
-      setPowerups(prev => {
+      setGamePowerups(prev => {
         const collected = prev.find(p => p.pos.x === playerPos.x && p.pos.y === playerPos.y);
         if (collected) {
           playPowerup();
@@ -638,7 +638,7 @@ export default function BlockMuncherGame() {
           ))}
           
           {/* Powerups */}
-          {powerups.map((pup, i) => (
+          {gamePowerups.map((pup, i) => (
             <WalletPowerup 
               key={`pup-${i}`} 
               x={pup.pos.x} 
