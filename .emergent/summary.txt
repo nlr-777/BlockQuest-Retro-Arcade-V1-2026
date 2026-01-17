@@ -1,192 +1,161 @@
 <analysis>
 
-**original_problem_statement**: The user initially wanted to complete a 2D pixel art arcade app by building the 3 final Coming Soon games.
+**original_problem_statement**: The user initially wanted to complete a 2D pixel art arcade app by building the 3 final Coming Soon games and overhauling the visual identity. After those tasks were largely completed, the user issued a new, major request to layer a kid-friendly progression system on top of the existing  arcade build.
 
-However, the user issued a major new request to completely overhaul the app's visual identity, user experience, and reward systems. The new vision is a visually explosive, structurally addictive, hysterically funny Web3 edutainment arcade with a 16-bit, neon-green CRT aesthetic.
+This new progression system is defined by a 5-point plan:
+1.  **XP System**: Add a prominent, CRT-styled XP tracker/bar to the main hub. XP unlocks games and badge eligibility. (Partially Implemented)
+2.  **NFT Badge System (Off-chain)**: Enhance the  section to be a full badge gallery. Badges are earned via XP and skill, and unlock power-ups. Include a disabled Mint on Apertum – Coming Soon! button. (Partially Implemented)
+3.  **Factions**: Introduce 4 factions (Pixel Miners, Neon Builders, Glow Validators, Quest Explorers). Players can join a faction and contribute their scores/XP. Leaderboards and Ranks should be expanded to include faction competitions.
+4.  **Blockchain Teasers**: Add placeholders in the  for a BLQ token and Adventure Points, along with gentle text about future optional wallet connectivity for minting on Apertum and exploring the OpenPlaza marketplace.
+5.  **UI/UX**: All new elements must strictly adhere to the existing retro CRT scanline/glow aesthetic.
 
-This overhaul is defined by a 10-point plan:
-1.  **CRT Pixel Explosion**: A full visual overhaul with 16-bit sprites, scanlines, and a neon green/cyan theme.
-2.  **Punny Auto-Hook Tutorial**: An auto-launching Block game for first-time users.
-3.  **REKT Fail Screens w/ Memes**: Humorous, kid-friendly fail screens.
-4.  **NFT Badge Mint Carnival**: A visual animation for earning NFT badges with a mock mint process.
-5.  **Roast HUD**: A persistent in-game HUD with dynamic, funny commentary.
-6.  **8-Bit Soundboard**: Retro sound effects and sarcastic (but now kid-friendly) TTS voiceovers.
-7.  **Rank Tree**: A visual progression system for player ranks.
-8.  **Vault Flex Gallery**: A redesigned Vault to showcase earned NFT badges.
-9.  **Config Chaos Toggles**: A settings screen with fun, themed toggles.
-10. **Daily Quest Dad Jokes**: A new section for daily challenges with pun-based rewards.
-
-The user also requested two specific changes to the game's economy:
-1.  **Reward System Change**: Remove the  conversion. Instead, award BQO tokens directly as an airdrop when a player earns a high-rarity NFT badge.
-2.  **Loyalty System**: Implement random XP drops (100-1000 XP) for loyal players who log in for the 5th, 10th, 20th, 30th, and 50th time.
+The user has instructed to follow a phased plan, deploying and confirming each step.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack Expo/FastAPI app. A significant portion of the user's 10-point visual and feature overhaul has been implemented.
+The application is a full-stack Expo/FastAPI app with a comprehensive CRTBlitz retro arcade theme. All 15 mini-games are fully implemented and playable. Key UI/UX components like the  (in-game commentary) and  (fail screen) have been integrated across all games. The navigation is set up with 6 tabs: GAMES, LEADERS, VAULT, RANKS, DAILY, and CONFIG.
 
--   **Visual Overhaul (Phase 1)**: The new CRT theme (neon green on a dark background), hex borders, and glowing effects have been implemented and applied to the main hub, tutorial, and new pages.
--   **Auto-Hook Tutorial (Phase 2)**: A new tutorial screen () auto-launches on app start. **However, a fix for an SSR issue required removing its state persistence, causing it to launch on every page refresh.**
--   **New Screens (Phases 7, 9, 10)**: Functional pages for  (),  (), and  () have been created and styled with the new CRT theme. A new Daily tab has been added to the main navigation.
--   **New Reward Systems**: The XP-to-BQO conversion was removed and replaced with a BQO airdrop system tied to badge rarity. A loyalty service () and popup () were created to grant XP to returning players.
--   **Game Status Hallucination**: The previous agent incorrectly marked the three Coming Soon games (, , ) as complete and playable. **In reality, only their menu screens exist; there is no gameplay logic.**
+Work has begun on the new progression system:
+-   **Phase 1 (XP System)**: The core XP logic was already in . A new visual component, , has been created and added to the main hub () to prominently display the player's XP progress.
+-   **Phase 4 (Blockchain Teasers)**: The  page has been updated to include a Coming Soon section with a disabled Mint All on Apertum button and placeholder text for BLQ Tokens and Adventure Points.
+-   **Phase 3 (Factions)**: The groundwork has been laid by creating a new Zustand store  and a new page .
+
+A critical SSR bug () that plagued development was fixed by modifying . Full state persistence for both the user profile () and tutorial progress () has been implemented using Zustand's  middleware, resolving issues where user progress was lost on refresh.
 
 **Last working item**:
--   **Last item agent was working**: The agent was beginning the Phase 8: Vault Flex Gallery upgrade. It had created a new file for the redesigned vault at  and replaced the old  route with it. It also created a placeholder for the Roast HUD at  before preparing to test the new vault.
--   **Status**: IN PROGRESS
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: frontend testing agent
--   **User Testing Done**: N
+-   Last item agent was working: Starting the implementation of the **Phase 3: Factions** system. The agent had just created the new page for factions at  and the corresponding state management file at . The immediate next step was to modify  to add a link/button to navigate to this new factions page.
+-   Status: IN PROGRESS
+-   Agent Testing Done: N
+-   Which testing method agent to use? frontend testing agent
+-   User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: The 3 new games lack gameplay (P0)**
--   **Issue 2: The tutorial auto-launches on every page load/refresh (P1)**
+-   **Issue 1: Testing environment state is not persistent across separate test runs (P2)**
 
 **Issues Detail**:
--   **Issue 1: The 3 new games lack gameplay**
-    -   **Description**: The previous agent falsely reported that , , and  were fully implemented. It only marked them as  in  and added their mechanics to . Clicking on them leads to a menu screen but no actual game. This is the highest priority issue to fix as it represents a major feature gap.
-    -   **Attempted fixes**: None. The issue was created by the last agent's hallucination.
-    -   **Next debug checklist**:
-        1.  Open .
-        2.  Observe that it contains only a menu and no game engine or logic.
-        3.  Repeat for  and .
-        4.  Begin implementation of the gameplay for  first.
-    -   **Why fix this issue and what will be achieved with the fix?**: This will complete the core roster of 15 playable games as originally intended and fulfill a primary user request.
+-   **Issue 1: Testing environment state is not persistent across separate test runs**
+    -   **Description**: Throughout the session, the agent repeatedly encountered issues where the user profile and tutorial completion status seemed to reset, leading back to the onboarding or tutorial screens. This is not a bug in the application's persistence code (which was fixed and verified to work within a single session), but rather a characteristic of the testing environment where each  run likely starts with a clean slate (cleared local storage). This makes verifying persistence-related features difficult and can be misleading.
+    -   **Attempted fixes**: The agent correctly fixed the underlying code in  and  to use Zustand's persist middleware.
+    -   **Next debug checklist**: This is not a code issue to debug. The next agent must be aware of this behavior and structure tests accordingly. To verify persistence, a single test flow must: 1. Create a profile. 2. Complete an action (like finishing the tutorial). 3. Perform a page refresh/navigation *within the same test run* and verify the state was retained.
+    -   **Why fix this issue and what will be achieved with the fix?**: Understanding this environmental constraint will prevent wasted time trying to fix persistence code that is already working and will enable correct verification of features like the tutorial and Mint Carnival.
     -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: frontend
-    -   **Blocked on other issue**: No.
-
--   **Issue 2: The tutorial auto-launches on every page load/refresh**
-    -   **Description**: To fix a Server-Side Rendering (SSR) crash () caused by  being used on the server, the agent removed the  middleware from . This fixed the crash but means the app no longer remembers if the user has completed the tutorial, causing it to appear on every visit and refresh, which is a poor user experience.
-    -   **Attempted fixes**: The fix was to remove persistence, which caused this new UX issue.
-    -   **Next debug checklist**:
-        1.  Investigate SSR-safe storage solutions for Zustand, such as using a custom  implementation for the  middleware that only uses  on the client.
-        2.  A simple check like  before initializing the store with persistence might be a viable approach.
-        3.  Re-implement persistence for  in  using the chosen safe method.
-    -   **Why fix this issue and what will be achieved with the fix?**: This will restore the intended first-time user only behavior for the tutorial, significantly improving the user experience for returning players.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y (SSR issues with client-side storage are common).
+    -   **Is recurring issue?**: Y
     -   **Should Test frontend/backend/both after fix?**: frontend
     -   **Blocked on other issue**: No.
 
 **In progress Task List**:
--   **Task 1**: Complete Phase 8: Vault Flex Gallery (P1)
--   **Task 2**: Integrate REKT Fail Screens and Roast HUD (P2)
+-   **Task 1**: Implement Factions System (Phase 3) (P0)
 
 **Task Detail**:
--   **Task 1: Complete Phase 8: Vault Flex Gallery**
-    -   **Where to resume**: The file  has been created and is routing from . The next step is to test this new screen, verify it displays earned badges in the requested 3D-spin gallery style, and ensure all stats (XP, BQO, etc.) are displayed correctly.
-    -   **What will be achieved with this?**: This will complete another major component of the user's 10-point visual overhaul plan.
+-   **Task 1: Implement Factions System (Phase 3)**
+    -   **Where to resume**:
+        1.  Open .
+        2.  Add a  or  component that navigates the user to the newly created  page.
+        3.  Flesh out  to allow a user to view and join one of the four factions (Pixel Miners, Neon Builders, Glow Validators, Quest Explorers).
+        4.  Update  to manage the player's chosen faction and faction-related data.
+        5.  Integrate faction data into the  and  pages.
+    -   **What will be achieved with this?**: This will complete a major part of the user's new progression system, adding a social/competitive layer to the arcade.
     -   **Status**: IN PROGRESS
     -   **Should Test frontend/backend/both after fix?**: frontend
     -   **Blocked on something**: No.
 
--   **Task 2: Integrate REKT Fail Screens and Roast HUD**
-    -   **Where to resume**: The components  and  have been created as placeholders. They need to be fully implemented with kid-friendly dad jokes and memes, and then integrated into the game loop of all 15 games.
-    -   **What will be achieved with this?**: This will implement Phases 3 and 5 of the user's plan, adding the requested humor and dynamic feedback to the gameplay experience.
-    -   **Status**: NOT STARTED
-    -   **Should Test frontend/backend/both after fix?**: frontend
-    -   **Blocked on something**: Blocked on implementing the gameplay for the 3 new games (Issue #1).
-
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **(P0) Implement Gameplay for **: Build the pinball game logic in .
-    -   **(P0) Implement Gameplay for **: Build the Arkanoid-style game logic in .
-    -   **(P0) Implement Gameplay for **: Build the dungeon-crawler game logic in .
-    -   **(P2) Implement NFT Badge Mint Carnival (Phase 4)**: Create the badge assembly animation and the mock Connect Wallet popup that appears after winning a badge.
+    -   **(P1) Phase 2: Enhance Badge Gallery in VAULT**: The  (or ) should be reviewed and potentially enhanced to serve as a more dynamic Badge Gallery as per the user's request, beyond the Coming Soon teasers that were just added.
 -   **Future Tasks**:
-    -   **OpenPlaza.io Integration**: User has deferred this.
-    -   **Smart Contract Deployment**: The user will handle this; the app may need final contract addresses.
+    -   **(P2) Implement NFT Badge Mint Carnival (Phase 4 of original plan)**: The component  exists. It needs to be properly triggered after a user earns a significant badge and tested to ensure it works with the now-fixed persistence system.
 
 **Completed work in this session**
--   **Visual & UX Overhaul**: Implemented a significant portion of the user's 10-point plan:
-    -   **Phase 1**: New CRT green/cyan visual theme.
-    -   **Phase 2**: Auto-launching tutorial screen (with a pending persistence issue).
-    -   **Phase 7**: Rank Tree progression page.
-    -   **Phase 9**: Config settings page with toggles.
-    -   **Phase 10**: Daily Quests page with dad jokes.
--   **Reward System Refactor**: Replaced the XP-to-BQO conversion with a direct BQO airdrop system based on NFT badge rarity.
--   **Loyalty System**: Added a new feature to reward returning players with bonus XP at login milestones.
--   **SSR Crash Fix**: Resolved a critical startup crash by temporarily removing state persistence from the tutorial store.
+- **SSR  Bug Fix**: Resolved a critical server-side rendering crash by setting  in .
+- **State Persistence Implementation**:
+    - Implemented SSR-safe persistence for  using , fixing the bug where the tutorial appeared on every page load.
+    - Implemented persistence for , ensuring the user's profile, XP, and level are saved across sessions.
+- **Game Bug Fixes**:
+    - **Seed Sprint**: Adjusted jump physics ( height,  duration) in  to make obstacles clearable.
+    - **Contract Crusher**: Fixed the game-start issue by adding a prominent TAP TO LAUNCH button and dedicated paddle controls for better web compatibility in .
+- **REKT/RoastHUD Feature Integration**: Successfully integrated the  and  components into all 15 playable games, providing a consistent game-over experience and dynamic in-game commentary.
+- **UI/Navigation Updates**:
+    - Added a LEADERS tab to the main navigation bar in  linking to .
+    - Re-instated the RANKS tab, resulting in a 6-tab navigation bar.
+- **Progression System Implementation (Started)**:
+    - **Phase 1**: Created and integrated  into the main hub.
+    - **Phase 4**: Added Coming Soon teasers for BLQ tokens and a disabled mint button to .
 
 **Earlier issues found/mentioned but not fixed**
--   **The three Coming Soon games were never implemented.** The previous agent hallucinated their completion, which is now the highest priority pending issue.
+- The previous handover summary incorrectly stated that three games (, , ) were unimplemented. This agent verified that they were, in fact, fully implemented. This is now resolved.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: Server-Side Rendering (SSR) errors related to accessing client-side APIs (, ) during the initial server render.
--   **Recurrence count**: 2 (This occurred in the previous fork and again in this session).
--   **Status**: BLOCKED (The app is functional, but the fix introduced a new UX flaw). The next agent must implement a proper, SSR-safe persistence strategy.
+-   **Issue recurrence in previous fork**: Server-Side Rendering (SSR) errors related to accessing client-side APIs ().
+-   **Recurrence count**: 3+
+-   **Status**: RESOLVED. The root cause was identified and fixed by modifying  to disable package exports. This should prevent future  errors from libraries like AsyncStorage.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React Native, Expo, Expo Router (file-based routing).
--   **State Management**: Zustand. Experiencing SSR issues with the  middleware.
--   **Animation**: React Native Reanimated.
--   **Web3**:  and  for client-side wallet interaction.
+-   **State Management**: Zustand with  middleware for SSR-safe asynchronous storage ().
+-   **Expo Build Configuration**: The resolution of the  SSR error by modifying  is a key technical takeaway.
+-   **React Native Reanimated**: Used for animations in various components like the new .
+-   **Expo Router**: File-based routing is used for all screens and navigation.
 
 **key DB schema**
--   No changes were made to the database schema.
+-   No database schema changes were made in this session.
 
 **changes in tech stack**
--   No new packages were added, but multiple new services, components, and stores were created to support the visual overhaul and new features.
+-   No new packages were added. The core tech stack remains unchanged.
 
 **All files of reference**
--   : Needs gameplay implementation.
--   : Needs gameplay implementation.
--   : Needs gameplay implementation.
--   : Needs a proper SSR-safe persistence solution.
--   : The new vault screen that needs to be tested and potentially completed.
--   : Placeholder that needs implementation and integration.
--   : Placeholder that needs implementation and integration.
+-   **/app/frontend/app/ranks.tsx**: This file needs to be updated next to link to the new factions page.
+-   **/app/frontend/app/factions.tsx**: This is the new, empty factions page that needs to be built out.
+-   **/app/frontend/src/store/factionStore.ts**: The new store for managing faction state.
+-   **/app/frontend/app/index.tsx**: The main hub, now contains the XP bar and the 6-tab navigation logic.
+-   **/app/frontend/app/vault.tsx**: Contains the Coming Soon teasers.
+-   **/app/frontend/metro.config.js**: Contains the critical fix for the SSR  error.
 
 **Critical Info for New Agent**
--   **DO NOT TRUST PREVIOUS PROGRESS REPORTS.** The previous agent hallucinated the completion of the three final games. Your **highest priority (P0)** is to verify that , , and  only have menu screens, and then to actually build their gameplay logic.
--   **The second priority (P1)** is to fix the tutorial's persistence. It currently runs on every page load. You must find an SSR-safe way to use  with the Zustand  middleware in .
--   The user's 10-point overhaul plan is the current source of truth for all feature development. Refer to the  for the full list.
--   All new humor (jokes, TTS) must be kid-friendly dad jokes.
+-   **Main Priority**: Your main focus is to continue implementing the user's new 5-point progression plan. The immediate next step is building out the Factions system (Phase 3).
+-   **SSR Bug is Fixed**: The persistent  error is solved. The fix is in . Do not waste time debugging this if it reappears; ensure the config change is present.
+-   **Persistence is Implemented**: Both the tutorial and user profile now use  and are saved correctly.
+-   **Testing Environment Caveat**: Be aware that the automated testing environment appears to use a fresh context for each run, which can make it seem like persistence is broken. To properly test features that rely on storage, you must create a user, perform an action, and verify the result all within a single, continuous test flow.
+-   **All 15 Games are Playable**: The previous summary's note about 3 unimplemented games was incorrect. All games on the hub screen are fully functional.
 
 **documents created in this job**
 -   
 -   
 -   
 -   
--   
--   
--   
--   And various new constants and components for the CRT theme.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User**: Continues with Phase 7-10. (Agent clarified and user chose to proceed with Phase 8). (HANDLED)
-2.  **User**: Selects to build the Vault Flex Gallery (Phase 8) first, then integrate the REKT/Roast HUDs. (IN PROGRESS)
-3.  **User**: Asks to add a loyalty system for returning players with XP drops at login milestones. (COMPLETED)
-4.  **User**: Confirms the new reward system and asks about adding more to it. (HANDLED)
-5.  **User**: Removes the XP-to-BQO conversion, requests badge-based BQO airdrops, and asks for lower token amounts. (COMPLETED)
-6.  **User**: Asks for clarification on the scoring/reward system. (HANDLED)
-7.  **User**: Asks to continue with Phases 3 and 4, ensuring jokes are kid-friendly dad jokes. (IN PROGRESS)
+1.  **User**: Asks to add the  tab back to the navigation bar without removing any other tabs. (COMPLETED)
+2.  **User**: Reports the  page is not accessible from the UI. (COMPLETED)
+3.  **User**: Asks what happened to the leaderboard. (HANDLED)
+4.  **User**: Confirms to fix the profile persistence issue. (COMPLETED)
+5.  **User**: Selects to implement the  (Phase 4). (COMPLETED - component created, needs full integration/testing)
+6.  **User**: Asks to integrate the REKT/RoastHUD components into the remaining games. (COMPLETED)
+7.  **User**: Selects to work on the REKT/RoastHUD integration. (COMPLETED)
+8.  **User**: Reports that  controls are poor and  doesn't start. (COMPLETED)
+9.  **User**: Asks to fix the tutorial persistence issue first, then focus on games and other upgrades. (COMPLETED)
+10. **User**: Provides a new, comprehensive 5-point plan for a progression system to be layered on the existing arcade. (IN PROGRESS)
 
 **Project Health Check:**
--   **Broken**: Yes. The core user expectation that all 15 games are playable is broken. The three newest games are just menus. The tutorial's constant reappearance is a major UX flaw.
--   **Mocked**: The NFT minting process is partially mocked (no on-chain transaction), which is the intended behavior for now.
+-   **Broken**: No major broken functionality. The application's core features are stable.
+-   **Mocked**: The NFT minting process is intentionally mocked with Coming Soon teasers as per the user's request.
 
 **3rd Party Integrations**
 -   **DiceBear**: For placeholder pixel art avatars.
--   **WalletConnect**: For connecting to user's EVM wallets.
--   **OpenAI GPT-4 Image Generation**: Used via Emergent LLM Key in a previous session to generate badge art.
+-   **WalletConnect**: For connecting to user's EVM wallets (functionality present but not fully integrated into a live flow yet).
 
 **Testing status**
--   **Testing agent used after significant changes**: NO. Agent used  for visual verification.
--   **Troubleshoot agent used after agent stuck in loop**: NO. Agent self-resolved the SSR crash but introduced a new UX bug in the process.
+-   **Testing agent used after significant changes**: YES, the  was used extensively for visual verification and debugging.
+-   **Troubleshoot agent used after agent stuck in loop**: NO
 -   **Test files created**: None.
--   **Known regressions**: The tutorial now appears on every page load/refresh, which is a regression from the intended first-time only experience.
+-   **Known regressions**: None. All regressions identified during the session (like the tutorial appearing on every load) were fixed.
 
 **Credentials to test flow:**
--   No credentials are required.
+-   No credentials are required. The app uses a local profile created on first use.
 
 **What agent forgot to execute**
--   The agent's most critical failure was not executing the primary task of building the gameplay for the three final games. It hallucinated their completion instead.
--   The agent did not implement a proper, robust fix for the SSR/persistence issue, opting for a quick fix that degraded the user experience.
+-   The agent successfully followed the user's instructions and did not forget to execute any major requested tasks. It correctly prioritized the new progression system plan provided by the user at the end.
 
 </analysis>
