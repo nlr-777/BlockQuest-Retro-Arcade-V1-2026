@@ -96,6 +96,7 @@ export default function SeedSprintGame() {
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [checkpointInput, setCheckpointInput] = useState<string[]>([]);
   const [speed, setSpeed] = useState(5);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   const playerY = useSharedValue(0);
   const groundOffset = useSharedValue(0);
