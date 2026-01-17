@@ -367,6 +367,13 @@ export default function FactionsPage() {
             </Animated.View>
           )}
           
+          {/* Faction Quest Board - Weekly Challenges with Voting! */}
+          {playerFaction && (
+            <Animated.View entering={FadeIn.delay(200)}>
+              <FactionQuestBoard factionId={playerFaction} />
+            </Animated.View>
+          )}
+          
           {/* Active Proposals - DAO Voting! */}
           {playerFaction && currentFactionProposals.length > 0 && (
             <View style={styles.proposalsSection}>
