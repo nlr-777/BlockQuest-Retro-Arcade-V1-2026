@@ -335,7 +335,8 @@ export default function RockBlasterGame() {
             setLives(l => {
               if (l <= 1) {
                 playGameOver();
-          setGameState('gameover');
+                setHighScoreBeaten(score > 0);
+                setGameState('rewards');
                 submitScore('mine-blaster', score);
                 return 0;
               }
