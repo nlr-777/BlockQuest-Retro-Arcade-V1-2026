@@ -150,9 +150,14 @@ export default function SeedSprintGame() {
     setHighScoreBeaten(false);
   }, []);
 
-  // Jump with Double Jump ability!
+  // Jump with Double Jump ability! + Power-up effects
   const jump = useCallback(() => {
     if (gameState !== 'playing') return;
+    
+    // Apply mega_jump power-up modifier (triple jump height!)
+    const jumpMultiplier = powerUps.jumpModifier;
+    const baseJumpHeight = -200 * jumpMultiplier;
+    const doubleJumpHeight = -280 * jumpMultiplier;
     
     // First jump
     if (!isJumping && jumpCount === 0) {
@@ -160,9 +165,9 @@ export default function SeedSprintGame() {
       setIsJumping(true);
       setJumpCount(1);
       
-      // First jump - go up high
+      // First jump - go up high (boosted by mega_jump!)
       playerY.value = withSequence(
-        withTiming(-200, { duration: 350 }),  // Jump up
+        withTiming(baseJumpHeight, { duration: 350 }),  // Jump up
         withTiming(0, { duration: 500 })       // Fall down
       );
       
@@ -180,9 +185,9 @@ export default function SeedSprintGame() {
       setJumpCount(2);
       setCanDoubleJump(false);
       
-      // Double jump - boost even higher from current position!
+      // Double jump - boost even higher from current position! (boosted by mega_jump!)
       playerY.value = withSequence(
-        withTiming(-280, { duration: 300 }),  // Boost up even more!
+        withTiming(doubleJumpHeight, { duration: 300 }),  // Boost up even more!
         withTiming(0, { duration: 600 })       // Fall down slower
       );
       
@@ -195,7 +200,7 @@ export default function SeedSprintGame() {
       
       if (Platform.OS !== 'web') Vibration.vibrate([0, 10, 50, 10]);
     }
-  }, [gameState, isJumping, jumpCount, canDoubleJump, playJump]);
+  }, [gameState, isJumping, jumpCount, canDoubleJump, playJump, powerUps.jumpModifier]);
 
   // Game loop
   useEffect(() => {
