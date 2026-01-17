@@ -289,9 +289,9 @@ export default function ContractCrusherGame() {
             const newLives = l - 1;
             if (newLives <= 0) {
               playGameOver();
-              setGameState('gameover');
+              setHighScoreBeaten(score > 0);
+              setGameState('rewards');
               submitScore('contract-crusher', score);
-              addXP(Math.floor(score / 5));
             }
             return newLives;
           });
