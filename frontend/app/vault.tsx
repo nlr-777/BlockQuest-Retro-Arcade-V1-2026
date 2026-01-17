@@ -1343,4 +1343,64 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 18,
   },
+
+  // NFT Learning Section
+  nftLearnSection: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  nftLearnTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  nftLearnCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: CRT_COLORS.accentMagenta,
+  },
+  nftLearnIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  nftLearnContent: {
+    flex: 1,
+  },
+  nftLearnHeading: {
+    fontSize: 13,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  nftLearnText: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    lineHeight: 15,
+  },
+  nftLearnTip: {
+    backgroundColor: CRT_COLORS.accentCyan + '15',
+    borderRadius: 10,
+    padding: 14,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.accentCyan + '30',
+  },
+  nftLearnTipText: {
+    fontSize: 11,
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    lineHeight: 16,
+    fontStyle: 'italic',
+  },
 });
