@@ -87,6 +87,8 @@ export default function SeedSprintGame() {
   const [distance, setDistance] = useState(0);
   const [checkpoints, setCheckpoints] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
+  const [canDoubleJump, setCanDoubleJump] = useState(true);
+  const [jumpCount, setJumpCount] = useState(0);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [wordCollectables, setWordCollectables] = useState<WordCollectable[]>([]);
   const [collectedWords, setCollectedWords] = useState<string[]>([]);
@@ -117,6 +119,9 @@ export default function SeedSprintGame() {
     setCollectedWords([]);
     setCheckpointInput([]);
     setSpeed(5);
+    setJumpCount(0);
+    setCanDoubleJump(true);
+    setIsJumping(false);
     playerY.value = 0;
   }, [generateSeedPhrase]);
 
@@ -128,23 +133,52 @@ export default function SeedSprintGame() {
     playGameStart();
   }, [initGame, playGameStart]);
 
-  // Jump
+  // Jump with Double Jump ability!
   const jump = useCallback(() => {
-    if (gameState !== 'playing' || isJumping) return;
+    if (gameState !== 'playing') return;
     
-    playJump();
-    setIsJumping(true);
-    
-    // Jump animation - use spring for better feel
-    // Player needs to clear 40px tall hurdles
-    playerY.value = withSequence(
-      withTiming(-180, { duration: 300 }),  // Jump up high and fast
-      withTiming(0, { duration: 500 })       // Fall down slower
-    );
-    
-    setTimeout(() => setIsJumping(false), 800);
-    if (Platform.OS !== 'web') Vibration.vibrate(10);
-  }, [gameState, isJumping, playJump]);
+    // First jump
+    if (!isJumping && jumpCount === 0) {
+      playJump();
+      setIsJumping(true);
+      setJumpCount(1);
+      
+      // First jump - go up high
+      playerY.value = withSequence(
+        withTiming(-200, { duration: 350 }),  // Jump up
+        withTiming(0, { duration: 500 })       // Fall down
+      );
+      
+      // Reset after landing
+      setTimeout(() => {
+        setIsJumping(false);
+        setJumpCount(0);
+      }, 850);
+      
+      if (Platform.OS !== 'web') Vibration.vibrate(10);
+    }
+    // Double jump! (while in air)
+    else if (isJumping && jumpCount === 1 && canDoubleJump) {
+      playJump();
+      setJumpCount(2);
+      setCanDoubleJump(false);
+      
+      // Double jump - boost even higher from current position!
+      playerY.value = withSequence(
+        withTiming(-280, { duration: 300 }),  // Boost up even more!
+        withTiming(0, { duration: 600 })       // Fall down slower
+      );
+      
+      // Reset after landing
+      setTimeout(() => {
+        setIsJumping(false);
+        setJumpCount(0);
+        setCanDoubleJump(true);
+      }, 900);
+      
+      if (Platform.OS !== 'web') Vibration.vibrate([0, 10, 50, 10]);
+    }
+  }, [gameState, isJumping, jumpCount, canDoubleJump, playJump]);
 
   // Game loop
   useEffect(() => {
