@@ -284,17 +284,22 @@ export default function SeedSprintGame() {
         return newObs;
       });
 
-      // Move word collectables
+      // Move word collectables - with magnet power-up!
       setWordCollectables(prev => {
         return prev.map(w => {
-          if (!w.collected && w.x < 70 && w.x > 20) {
+          // Magnet power-up: auto-collect from further away!
+          const collectRange = powerUps.hasMagnet ? 150 : 50;
+          
+          if (!w.collected && w.x < (20 + collectRange) && w.x > 20) {
             // Collect word!
             setCollectedWords(cw => [...cw, w.word]);
-            setScore(s => s + 50);
+            // Apply score multiplier to collection bonus
+            setScore(s => s + powerUps.calculateScore(50));
+            playCollect();
             if (Platform.OS !== 'web') Vibration.vibrate(30);
             return { ...w, collected: true };
           }
-          return { ...w, x: w.x - speed };
+          return { ...w, x: w.x - effectiveSpeed };
         }).filter(w => w.x > -WORD_COLLECT_SIZE && !w.collected);
       });
 
@@ -313,7 +318,7 @@ export default function SeedSprintGame() {
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [gameState, speed, distance, collectedWords, seedPhrase]);
+  }, [gameState, speed, distance, collectedWords, seedPhrase, powerUps]);
 
   // Animated styles
   const playerStyle = useAnimatedStyle(() => ({
