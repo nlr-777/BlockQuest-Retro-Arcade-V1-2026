@@ -538,6 +538,17 @@ export default function RockBlasterGame() {
             </View>
           )}
 
+          {/* Game Rewards Modal */}
+          <GameRewardsModal
+            visible={gameState === 'rewards'}
+            gameId="mine-blaster"
+            gameName="Mine Blaster"
+            score={score}
+            baseXP={Math.floor(score / 10)}
+            isNewHighScore={highScoreBeaten}
+            onContinue={handleRewardsContinue}
+          />
+
           {/* Game Over - Using RektScreen */}
           <RektScreen
             visible={gameState === 'gameover'}
