@@ -202,16 +202,21 @@ export default function SeedSprintGame() {
     }
   }, [gameState, isJumping, jumpCount, canDoubleJump, playJump, powerUps.jumpModifier]);
 
-  // Game loop
+  // Game loop with power-up effects
   useEffect(() => {
     if (gameState !== 'playing') return;
 
+    // Apply slow_time power-up to game speed
+    const effectiveSpeed = speed * powerUps.speedModifier;
+    const intervalMs = 50 / powerUps.speedModifier; // Slower updates when slow-motion active
+
     gameLoopRef.current = setInterval(() => {
       setDistance(d => d + 1);
-      setScore(s => s + 1);
+      // Apply score multiplier from power-ups (double_score, golden_touch)
+      setScore(s => s + powerUps.calculateScore(1));
 
       // Animate ground
-      groundOffset.value = withTiming((groundOffset.value - speed) % 100, { duration: 50 });
+      groundOffset.value = withTiming((groundOffset.value - effectiveSpeed) % 100, { duration: 50 });
 
       // Spawn obstacles
       if (Math.random() < 0.02) {
@@ -236,7 +241,7 @@ export default function SeedSprintGame() {
 
       // Move obstacles
       setObstacles(prev => {
-        const newObs = prev.map(o => ({ ...o, x: o.x - speed })).filter(o => o.x > -OBSTACLE_WIDTH);
+        const newObs = prev.map(o => ({ ...o, x: o.x - effectiveSpeed })).filter(o => o.x > -OBSTACLE_WIDTH);
         
         // Check collision - use isJumping state instead of animated value
         // This is more reliable since animated values don't sync well with React state
@@ -246,7 +251,23 @@ export default function SeedSprintGame() {
             // If player is jumping (isJumping=true), they clear the obstacle
             // If not jumping, they hit it!
             if (!isJumping) {
-              // Hit obstacle!
+              // Check for shield power-up first!
+              if (powerUps.hasShield) {
+                // Shield absorbs the hit - don't die!
+                playCollect(); // Play a "saved" sound
+                if (Platform.OS !== 'web') Vibration.vibrate(50);
+                return newObs.filter(o => o !== obs); // Remove the obstacle
+              }
+              
+              // Check for extra life power-up!
+              if (powerUps.hasExtraLife && powerUps.useExtraLife()) {
+                // Extra life saved us!
+                playLevelUp(); // Play a revival sound
+                if (Platform.OS !== 'web') Vibration.vibrate([0, 100, 100, 100]);
+                return newObs.filter(o => o !== obs); // Remove the obstacle
+              }
+              
+              // Hit obstacle - game over!
               playHit();
               const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
               if (score > currentHighScore) {
