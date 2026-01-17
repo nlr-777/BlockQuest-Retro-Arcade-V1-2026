@@ -84,6 +84,9 @@ export default function SeedSprintGame() {
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);
@@ -99,6 +102,7 @@ export default function SeedSprintGame() {
   const [checkpointInput, setCheckpointInput] = useState<string[]>([]);
   const [speed, setSpeed] = useState(5);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
+  const [shieldUsedThisHit, setShieldUsedThisHit] = useState(false);
 
   const playerY = useSharedValue(0);
   const groundOffset = useSharedValue(0);
