@@ -41,6 +41,7 @@ import { loyaltyService } from '../src/services/LoyaltyService';
 import { getRankByXP, getRankProgress } from '../src/constants/ranks';
 import { PowerUpBar } from '../src/components/PowerUpBar';
 import { POWER_UPS } from '../src/store/powerUpStore';
+import { Mascot } from '../src/components/Mascots';
 import {
   CRTScanlines,
   CRTGlowBorder,
