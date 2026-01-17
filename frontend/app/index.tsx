@@ -494,6 +494,9 @@ export default function ArcadeHub() {
             contentContainerStyle={styles.gamesContent}
             showsVerticalScrollIndicator={false}
           >
+            {/* Welcome Tip - Rotating tips for new players */}
+            <WelcomeTipCard />
+            
             {renderAllGames()}
             
             <View style={styles.footer}>
