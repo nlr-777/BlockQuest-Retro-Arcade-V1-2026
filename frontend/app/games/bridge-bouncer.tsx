@@ -55,7 +55,7 @@ interface Enemy {
   type: 'snake' | 'ball';
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'levelcomplete';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'levelcomplete' | 'rewards';
 
 export default function BridgeBouncerGame() {
   const router = useRouter();
