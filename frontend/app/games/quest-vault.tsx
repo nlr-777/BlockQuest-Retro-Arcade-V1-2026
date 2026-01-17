@@ -132,6 +132,7 @@ export default function QuestVaultGame() {
   const [collectibles, setCollectibles] = useState<Collectible[]>([]);
   const [vault, setVault] = useState<Vault>({ x: GRID_SIZE - 2, y: GRID_SIZE - 2, requiredSigners: 2, unlocked: false });
   const [collectedSigners, setCollectedSigners] = useState<number[]>([]);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
   
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
