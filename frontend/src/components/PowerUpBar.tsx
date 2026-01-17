@@ -229,7 +229,7 @@ export const PowerUpHUD: React.FC<{
   } = usePowerUpStore();
   
   useEffect(() => {
-    if (badges.length > 0) {
+    if (badges && badges.length > 0) {
       updateUnlockedPowerUps(badges);
     }
   }, [badges]);
