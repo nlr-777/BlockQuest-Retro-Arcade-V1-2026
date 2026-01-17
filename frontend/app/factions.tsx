@@ -387,11 +387,6 @@ export default function FactionsPage() {
                   onVote={(vote) => voteOnProposal(proposal.id, vote)}
                 />
               ))}
-              
-              <DAOLearningTip 
-                lesson="In DAOs, members vote on proposals to make decisions together. No single person is in charge - everyone gets a say!" 
-                color={FACTIONS[playerFaction].color}
-              />
             </View>
           )}
           
