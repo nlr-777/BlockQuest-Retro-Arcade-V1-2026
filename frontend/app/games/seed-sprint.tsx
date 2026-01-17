@@ -352,8 +352,12 @@ export default function SeedSprintGame() {
         </View>
       </View>
 
-      {/* Game Area */}
-      <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
+      {/* Game Area - Tappable for jump */}
+      <TouchableOpacity 
+        activeOpacity={1} 
+        onPress={jump}
+        style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}
+      >
         {/* Ground */}
         <View style={styles.ground} />
         
