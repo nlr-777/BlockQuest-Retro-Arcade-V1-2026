@@ -1447,4 +1447,100 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontStyle: 'italic',
   },
+
+  // Power-ups Section
+  powerUpsSection: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  powerUpsTitle: {
+    fontSize: 16,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  powerUpsSubtitle: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  powerUpsList: {
+    marginTop: 20,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+  },
+  powerUpsListTitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textPrimary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  powerUpItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: CRT_COLORS.textDim + '20',
+  },
+  powerUpItemIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  powerUpItemInfo: {
+    flex: 1,
+  },
+  powerUpItemName: {
+    fontSize: 13,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  powerUpItemDesc: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  powerUpItemUnlock: {
+    fontSize: 9,
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  utilityLesson: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: CRT_COLORS.accentGold + '15',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.accentGold + '30',
+  },
+  utilityLessonIcon: {
+    fontSize: 28,
+    marginRight: 12,
+  },
+  utilityLessonContent: {
+    flex: 1,
+  },
+  utilityLessonTitle: {
+    fontSize: 12,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  utilityLessonText: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    lineHeight: 16,
+  },
 });
