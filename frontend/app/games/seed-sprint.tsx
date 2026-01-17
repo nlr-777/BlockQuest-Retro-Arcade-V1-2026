@@ -441,7 +441,9 @@ export default function SeedSprintGame() {
       {/* Jump Button */}
       <TouchableOpacity style={styles.jumpButton} onPress={jump} activeOpacity={0.7}>
         <Ionicons name="arrow-up" size={48} color={COLORS.seedRed} />
-        <PixelText size="md" color={COLORS.seedRed}>JUMP</PixelText>
+        <PixelText size="sm" color={COLORS.seedRed}>
+          {jumpCount === 0 ? 'JUMP' : jumpCount === 1 ? 'DOUBLE!' : '⬆️'}
+        </PixelText>
       </TouchableOpacity>
 
       {/* Menu Overlay */}
