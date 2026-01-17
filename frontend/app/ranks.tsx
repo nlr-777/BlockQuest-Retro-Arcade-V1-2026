@@ -160,6 +160,23 @@ export default function RanksScreen() {
               Because it wanted to BRANCH out! 🌳
             </Text>
           </View>
+
+          {/* Factions CTA */}
+          <TouchableOpacity 
+            style={styles.factionsSection}
+            onPress={() => router.push('/factions')}
+          >
+            <View style={styles.factionsCTA}>
+              <Text style={styles.factionsIcon}>⚔️</Text>
+              <View style={styles.factionsInfo}>
+                <Text style={styles.factionsTitle}>JOIN A FACTION</Text>
+                <Text style={styles.factionsDesc}>
+                  Team up, compete together & earn bonus XP!
+                </Text>
+              </View>
+              <Text style={styles.factionsArrow}>→</Text>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </View>
