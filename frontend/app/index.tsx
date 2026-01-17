@@ -194,6 +194,111 @@ const factionBadgeStyles = StyleSheet.create({
   },
 });
 
+// Welcome Tips - Rotating tips about game features
+const WELCOME_TIPS = [
+  { icon: '🎮', title: 'PLAY & LEARN', tip: 'Each game teaches a Web3 concept - no crypto needed!' },
+  { icon: '⬡', title: 'JOIN A FACTION', tip: 'Team up with others, vote on decisions, earn bonus XP!' },
+  { icon: '🏆', title: 'EARN BADGES', tip: 'Unlock unique badges that boost your powers in games!' },
+  { icon: '📅', title: 'DAILY QUESTS', tip: 'Check back daily for special challenges and rewards!' },
+  { icon: '💎', title: 'VAULT REWARDS', tip: 'Visit the Vault to see your badge collection & power-ups!' },
+  { icon: '🗳️', title: 'YOUR VOICE MATTERS', tip: 'In your faction, vote on proposals - just like a real DAO!' },
+];
+
+// Welcome Tip Card Component
+const WelcomeTipCard = () => {
+  const [tipIndex, setTipIndex] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex(prev => (prev + 1) % WELCOME_TIPS.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  const tip = WELCOME_TIPS[tipIndex];
+  
+  return (
+    <View style={tipCardStyles.container}>
+      <View style={tipCardStyles.iconContainer}>
+        <Text style={tipCardStyles.icon}>{tip.icon}</Text>
+      </View>
+      <View style={tipCardStyles.textContainer}>
+        <Text style={tipCardStyles.title}>{tip.title}</Text>
+        <Text style={tipCardStyles.tip}>{tip.tip}</Text>
+      </View>
+      <View style={tipCardStyles.dots}>
+        {WELCOME_TIPS.map((_, i) => (
+          <View 
+            key={i} 
+            style={[
+              tipCardStyles.dot, 
+              i === tipIndex && tipCardStyles.dotActive
+            ]} 
+          />
+        ))}
+      </View>
+    </View>
+  );
+};
+
+// Tip Card Styles
+const tipCardStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 255, 255, 0.08)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.accentCyan + '40',
+    padding: 10,
+    marginBottom: 10,
+  },
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: CRT_COLORS.bgDark,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  icon: {
+    fontSize: 18,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    letterSpacing: 1,
+  },
+  tip: {
+    fontSize: 9,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+    opacity: 0.9,
+  },
+  dots: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: CRT_COLORS.textDim,
+    marginVertical: 1,
+  },
+  dotActive: {
+    backgroundColor: CRT_COLORS.accentCyan,
+  },
+});
+
 // Game icon mapping
 const getGameIcon = (gameId: string): React.FC<any> => {
   const iconMap: Record<string, React.FC<any>> = {
