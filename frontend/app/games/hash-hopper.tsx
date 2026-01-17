@@ -78,6 +78,7 @@ export default function HashHopperGame() {
   const [pathTaken, setPathTaken] = useState<string>('');
   const [currentHash, setCurrentHash] = useState('00000000');
   const [highestRow, setHighestRow] = useState(10);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
