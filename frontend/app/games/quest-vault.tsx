@@ -212,9 +212,16 @@ export default function QuestVaultGame() {
   // Start game
   const startGame = useCallback(() => {
     initGame();
+    setHighScoreBeaten(false);
     setGameState('playing');
     playGameStart();
   }, [initGame, playGameStart]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Move player
   const movePlayer = useCallback((dx: number, dy: number) => {
