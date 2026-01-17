@@ -81,7 +81,7 @@ interface Vault {
   unlocked: boolean;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 // Generate dungeon map
 const generateDungeon = (level: number): number[][] => {
