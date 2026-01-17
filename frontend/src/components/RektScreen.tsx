@@ -6,7 +6,6 @@ import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensi
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withSequence,
   withTiming,
   withRepeat,
@@ -26,7 +25,6 @@ interface RektScreenProps {
   onQuit: () => void;
 }
 
-// Fun pixel art characters for fail screen
 const FAIL_CHARACTERS = [
   { emoji: '😅', name: 'Oopsie Block' },
   { emoji: '🙈', name: 'Shy Monkey' },
@@ -51,13 +49,11 @@ export const RektScreen: React.FC<RektScreenProps> = ({
 
   useEffect(() => {
     if (visible) {
-      // Pick random dad joke and character
       const randomJoke = CRT_PUNS.dadJokes[Math.floor(Math.random() * CRT_PUNS.dadJokes.length)];
       const randomChar = FAIL_CHARACTERS[Math.floor(Math.random() * FAIL_CHARACTERS.length)];
       setDadJoke(randomJoke);
       setCharacter(randomChar);
       
-      // Animate character
       bounceY.value = withRepeat(
         withSequence(
           withTiming(-8, { duration: 400 }),
@@ -93,33 +89,28 @@ export const RektScreen: React.FC<RektScreenProps> = ({
       
       <View style={styles.modalContainer}>
         <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
-          {/* Scrollable Content */}
           <ScrollView 
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             bounces={false}
           >
-            {/* Fail Header */}
             <View style={styles.header}>
               <CRTFlickerText style={styles.oopsText} color={CRT_COLORS.accentGold} glitch>
                 OOPS!
               </CRTFlickerText>
             </View>
             
-            {/* Character */}
             <Animated.View style={[styles.characterBox, characterStyle]}>
               <Text style={styles.characterEmoji}>{character.emoji}</Text>
             </Animated.View>
             
-            {/* Fail Message */}
             <Animated.View entering={FadeIn.delay(200)} style={styles.messageBox}>
               <Text style={styles.failMessage}>
                 {CRT_PUNS.fail[Math.floor(Math.random() * CRT_PUNS.fail.length)]}
               </Text>
             </Animated.View>
             
-            {/* Score */}
             <View style={styles.scoreBox}>
               <Text style={styles.scoreLabel}>YOUR SCORE</Text>
               <CRTFlickerText style={styles.scoreValue} color={CRT_COLORS.primary}>
@@ -127,14 +118,12 @@ export const RektScreen: React.FC<RektScreenProps> = ({
               </CRTFlickerText>
             </View>
             
-            {/* Dad Joke */}
             <Animated.View entering={FadeIn.delay(400)} style={styles.jokeBox}>
               <Text style={styles.jokeLabel}>🎭 DAD JOKE 🎭</Text>
               <Text style={styles.jokeText}>{dadJoke}</Text>
             </Animated.View>
           </ScrollView>
           
-          {/* Buttons - Fixed at bottom, always touchable */}
           <View style={styles.buttonsContainer}>
             <TouchableOpacity 
               style={styles.retryBtn} 
@@ -153,7 +142,6 @@ export const RektScreen: React.FC<RektScreenProps> = ({
             </TouchableOpacity>
           </View>
           
-          {/* Encouragement */}
           <Text style={styles.encouragement}>
             Every pro was once a beginner! 💪
           </Text>
