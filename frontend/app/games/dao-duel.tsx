@@ -386,6 +386,17 @@ export default function DAODuelGame() {
             </View>
           )}
 
+          {/* Game Rewards Modal */}
+          <GameRewardsModal
+            visible={gameState === 'rewards'}
+            gameId="dao-duel"
+            gameName="DAO Duel"
+            score={playerScore * 100}
+            baseXP={Math.floor((playerScore * 100) / 10)}
+            isNewHighScore={highScoreBeaten}
+            onContinue={handleRewardsContinue}
+          />
+
           {/* Game Over - Using RektScreen */}
           <RektScreen
             visible={gameState === 'gameover'}
