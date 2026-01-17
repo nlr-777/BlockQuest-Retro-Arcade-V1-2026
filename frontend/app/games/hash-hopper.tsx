@@ -422,6 +422,17 @@ export default function HashHopperGame() {
         </View>
       )}
 
+      {/* Game Rewards Modal - Shows XP with faction bonus! */}
+      <GameRewardsModal
+        visible={gameState === 'rewards'}
+        gameId="hash-hopper"
+        gameName="Hash Hopper"
+        score={score}
+        baseXP={Math.floor(score / 10)}
+        isNewHighScore={highScoreBeaten}
+        onContinue={handleRewardsContinue}
+      />
+
       {/* Game Over - Using RektScreen */}
       <RektScreen
         visible={gameState === 'gameover'}
