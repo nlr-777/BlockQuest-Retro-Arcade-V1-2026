@@ -453,9 +453,9 @@ export default function VaultFlexGallery() {
                 <Mascot 
                   type="vaultie" 
                   size="md" 
-                  message={badges.length === 0 
+                  message={(profile?.badges?.length || 0) === 0 
                     ? "Your collection starts here! Go play!" 
-                    : badges.length < 5 
+                    : (profile?.badges?.length || 0) < 5 
                       ? "Nice start! Keep collecting!" 
                       : "Wow! Great collection! 💎"
                   }
