@@ -529,6 +529,17 @@ export default function LedgerLeapGame() {
             </View>
           )}
 
+          {/* Game Rewards Modal */}
+          <GameRewardsModal
+            visible={gameState === 'rewards'}
+            gameId="ledger-leap"
+            gameName="Ledger Leap"
+            score={score}
+            baseXP={Math.floor(score / 10)}
+            isNewHighScore={highScoreBeaten}
+            onContinue={handleRewardsContinue}
+          />
+
           {/* Game Over - Using RektScreen */}
           <RektScreen
             visible={gameState === 'gameover'}
