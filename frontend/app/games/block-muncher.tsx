@@ -495,14 +495,13 @@ export default function BlockMuncherGame() {
     };
   }, [gameState, playerPos, ghosts, blocks.length, level, walls]);
 
-  // Handle game over
+  // Handle rewards -> gameover transition
   useEffect(() => {
     if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
-      // Update score
+      // Update score (XP is already awarded by GameRewardsModal)
       updateScore('block-muncher', score, duration);
-      addXP(Math.floor(score / 10));
 
       // Submit to leaderboard
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
@@ -528,6 +527,12 @@ export default function BlockMuncherGame() {
       }
     }
   }, [gameState]);
+  
+  // Handle continue from rewards modal
+  const handleRewardsContinue = () => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  };
 
   // Control buttons
   const ControlButton: React.FC<{ direction: Direction; icon: string }> = ({ direction, icon }) => (
