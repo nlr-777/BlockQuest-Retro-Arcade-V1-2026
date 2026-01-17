@@ -1413,6 +1413,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
+  // Vaultie Guide Section
+  vaultieGuideSection: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginTop: 12,
+  },
+
   // Power-ups Section
   powerUpsSection: {
     marginTop: 20,
