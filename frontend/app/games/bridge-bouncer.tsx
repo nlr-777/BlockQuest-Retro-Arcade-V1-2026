@@ -413,6 +413,17 @@ export default function BridgeBouncerGame() {
             </View>
           )}
 
+          {/* Game Rewards Modal */}
+          <GameRewardsModal
+            visible={gameState === 'rewards'}
+            gameId="bridge-bouncer"
+            gameName="Bridge Bouncer"
+            score={score}
+            baseXP={Math.floor(score / 10)}
+            isNewHighScore={highScoreBeaten}
+            onContinue={handleRewardsContinue}
+          />
+
           {/* Game Over - Using RektScreen */}
           <RektScreen
             visible={gameState === 'gameover'}
