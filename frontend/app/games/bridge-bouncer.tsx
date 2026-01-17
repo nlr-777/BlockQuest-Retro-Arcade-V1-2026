@@ -78,6 +78,7 @@ export default function BridgeBouncerGame() {
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
   const [targetChain, setTargetChain] = useState(1);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const enemyTimerRef = useRef<NodeJS.Timeout | null>(null);
