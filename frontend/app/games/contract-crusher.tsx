@@ -75,7 +75,7 @@ interface PowerUp {
   vy: number;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function ContractCrusherGame() {
   const router = useRouter();
@@ -97,6 +97,7 @@ export default function ContractCrusherGame() {
   const [bricks, setBricks] = useState<Brick[]>([]);
   const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
   const [paddleWidth, setPaddleWidth] = useState(PADDLE_WIDTH);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
   
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const touchStartRef = useRef<number>(0);
