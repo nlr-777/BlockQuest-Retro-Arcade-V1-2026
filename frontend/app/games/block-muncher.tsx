@@ -68,7 +68,7 @@ const DIRECTIONS = {
 
 type Direction = keyof typeof DIRECTIONS;
 type Position = { x: number; y: number };
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 // Generate maze/blocks
 const generateBlocks = () => {
