@@ -367,7 +367,12 @@ export default function ChainInvadersGame() {
 
       // Check if invaders reached bottom
       if (invaders.some(i => i.alive && i.y > GAME_HEIGHT - 60)) {
-        setGameState('gameover');
+        const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
+        if (score > currentHighScore) {
+          setHighScoreBeaten(true);
+        }
+        playGameOver();
+        setGameState('rewards');
       }
     }, 50);
 
