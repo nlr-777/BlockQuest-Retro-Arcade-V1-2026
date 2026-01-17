@@ -101,6 +101,7 @@ export default function RockBlasterGame() {
   const [rocks, setRocks] = useState<Rock[]>([]);
   const [bullets, setBullets] = useState<Bullet[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
