@@ -41,7 +41,7 @@ const VOTE_TYPES = [
   { type: 'slow', name: 'Slow Enemy', color: '#FFE66D', effect: 'Slow AI' },
 ];
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function DAODuelGame() {
   const router = useRouter();
@@ -73,6 +73,7 @@ export default function DAODuelGame() {
 
   // AI settings
   const [aiSpeed, setAiSpeed] = useState(4);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
