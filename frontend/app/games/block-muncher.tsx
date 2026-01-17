@@ -291,9 +291,11 @@ export default function BlockMuncherGame() {
   const [powerups, setPowerups] = useState<{pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[]>([]);
   const [bqoCollected, setBqoCollected] = useState(0);
   const [showTokenEffect, setShowTokenEffect] = useState<{x: number; y: number; amount: number} | null>(null);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
+  const previousHighScore = useRef<number>(0);
 
   // Generate blockchain collectibles
   const generateBlockchainItems = useCallback(() => {
