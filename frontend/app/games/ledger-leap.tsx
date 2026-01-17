@@ -90,6 +90,7 @@ export default function LedgerLeapGame() {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
   const [worldOffset, setWorldOffset] = useState(0);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
