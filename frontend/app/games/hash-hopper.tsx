@@ -244,13 +244,13 @@ export default function HashHopperGame() {
     };
   }, [gameState, lanes, playerPos]);
 
-  // Handle game over
+  // Handle game over (after rewards modal)
   useEffect(() => {
     if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
+      // Update score (XP is already awarded by GameRewardsModal)
       updateScore('hash-hopper', score, duration);
-      addXP(Math.floor(score / 10));
 
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,
