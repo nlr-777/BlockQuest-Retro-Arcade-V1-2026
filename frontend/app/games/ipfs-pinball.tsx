@@ -91,6 +91,7 @@ export default function IPFSPinballGame() {
   // Ball state
   const [ball, setBall] = useState<Ball>({ x: GAME_WIDTH / 2, y: 100, vx: 2, vy: 3 });
   const [ballActive, setBallActive] = useState(false);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
   
   // Flipper state
   const [leftFlipperUp, setLeftFlipperUp] = useState(false);
