@@ -142,7 +142,7 @@ export default function ContractCrusherGame() {
     setLevel(1);
     setContractsExecuted(0);
     setCombo(0);
-    setPowerUps([]);
+    setGamePowerUps([]);
     setPaddleWidth(PADDLE_WIDTH);
   }, [generateBricks]);
 
@@ -251,7 +251,7 @@ export default function ContractCrusherGame() {
                 // Maybe drop power-up
                 if (Math.random() < 0.15) {
                   const powerTypes: ('wide' | 'multi' | 'slow' | 'laser')[] = ['wide', 'multi', 'slow', 'laser'];
-                  setPowerUps(prev => [...prev, {
+                  setGamePowerUps(prev => [...prev, {
                     id: `pu-${Date.now()}`,
                     x: brick.x + BRICK_WIDTH / 2,
                     y: brick.y,
@@ -308,7 +308,7 @@ export default function ContractCrusherGame() {
       });
 
       // Update power-ups
-      setPowerUps(prev => {
+      setGamePowerUps(prev => {
         const newPowerUps: PowerUp[] = [];
         
         prev.forEach(pu => {
@@ -477,7 +477,7 @@ export default function ContractCrusherGame() {
           ))}
 
           {/* Power-ups */}
-          {powerUps.map(pu => (
+          {gamePowerUps.map(pu => (
             <View
               key={pu.id}
               style={[
