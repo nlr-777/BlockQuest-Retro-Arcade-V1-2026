@@ -107,6 +107,7 @@ export default function DAODuelGame() {
     setHighScoreBeaten(false);
     resetBall(1);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [resetBall]);
 

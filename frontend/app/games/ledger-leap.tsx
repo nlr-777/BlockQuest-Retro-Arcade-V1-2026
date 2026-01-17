@@ -168,6 +168,7 @@ export default function LedgerLeapGame() {
     setDistance(0);
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [generatePlatforms, playGameStart]);
 

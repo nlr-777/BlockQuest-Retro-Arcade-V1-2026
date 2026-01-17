@@ -166,6 +166,7 @@ export default function ContractCrusherGame() {
     initGame();
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
   }, [initGame]);
 
   // Handle rewards -> gameover transition

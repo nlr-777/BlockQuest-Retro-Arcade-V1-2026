@@ -365,6 +365,7 @@ export default function BlockMuncherGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    powerUps.resetSession();
     startTimeRef.current = Date.now();
     playGameStart();
   }, [initGame, playGameStart]);

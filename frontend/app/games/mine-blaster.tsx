@@ -156,6 +156,7 @@ export default function RockBlasterGame() {
     setRocks(spawnRocks(4));
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [spawnRocks]);
 

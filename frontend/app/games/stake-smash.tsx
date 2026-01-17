@@ -181,6 +181,7 @@ export default function PowerSmashGame() {
     setHighScoreBeaten(false);
     ballSpeedRef.current = 5;
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [initBricks, initBall]);
 

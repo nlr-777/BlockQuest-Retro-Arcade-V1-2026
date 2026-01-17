@@ -121,6 +121,7 @@ export default function HashHopperGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    powerUps.resetSession();
     setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();

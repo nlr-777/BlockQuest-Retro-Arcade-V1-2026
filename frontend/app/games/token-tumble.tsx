@@ -283,6 +283,7 @@ export default function BlockTumbleGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
     startTimeRef.current = Date.now();
   }, [initGame]);

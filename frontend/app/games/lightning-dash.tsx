@@ -117,6 +117,7 @@ export default function LightningDashGame() {
     setIsBoosting(false);
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, []);
 

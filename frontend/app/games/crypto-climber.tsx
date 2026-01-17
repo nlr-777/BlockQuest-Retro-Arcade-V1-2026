@@ -193,6 +193,7 @@ export default function CryptoClimberGame() {
   // Start game
   const startGame = () => {
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
     setScore(0);
     setLives(3);

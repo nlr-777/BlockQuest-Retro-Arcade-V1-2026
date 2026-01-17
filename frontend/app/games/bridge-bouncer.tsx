@@ -123,6 +123,7 @@ export default function BridgeBouncerGame() {
     setTargetChain(1);
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [initializeTiles]);
 
@@ -141,6 +142,7 @@ export default function BridgeBouncerGame() {
     setLevel(prev => prev + 1);
     setTargetChain(prev => (prev % 3) + 1); // Cycle through chains
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [initializeTiles]);
 

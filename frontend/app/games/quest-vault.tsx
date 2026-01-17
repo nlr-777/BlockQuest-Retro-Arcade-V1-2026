@@ -219,6 +219,7 @@ export default function QuestVaultGame() {
     initGame();
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
     playGameStart();
   }, [initGame, playGameStart]);
 

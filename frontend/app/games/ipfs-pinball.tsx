@@ -161,6 +161,7 @@ export default function IPFSPinballGame() {
     initGame();
     setHighScoreBeaten(false);
     setGameState('playing');
+    powerUps.resetSession();
   }, [initGame]);
 
   // Handle rewards -> gameover transition
