@@ -115,6 +115,7 @@ export default function PowerSmashGame() {
   const [balls, setBalls] = useState<Ball[]>([]);
   const [bricks, setBricks] = useState<Brick[]>([]);
   const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
