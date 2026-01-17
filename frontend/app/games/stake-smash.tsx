@@ -411,7 +411,8 @@ export default function PowerSmashGame() {
           setLives(l => {
             if (l <= 1) {
               playGameOver();
-          setGameState('gameover');
+              setHighScoreBeaten(score > 0);
+              setGameState('rewards');
               submitScore('stake-smash', score);
               return 0;
             }
