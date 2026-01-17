@@ -201,9 +201,6 @@ const FactionCard: React.FC<{
             <Text style={styles.joinBtnText}>JOIN {faction.name.toUpperCase()}</Text>
           </TouchableOpacity>
         )}
-        
-        {/* DAO Learning Tip */}
-        <DAOLearningTip lesson={faction.daoLesson} color={faction.color} />
       </CRTGlowBorder>
     </Animated.View>
   );
