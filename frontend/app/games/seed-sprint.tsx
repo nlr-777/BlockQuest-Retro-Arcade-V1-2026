@@ -235,8 +235,12 @@ export default function SeedSprintGame() {
             if (!isJumping) {
               // Hit obstacle!
               playHit();
-              setGameState('gameover');
+              const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
+              if (score > currentHighScore) {
+                setHighScoreBeaten(true);
+              }
               playGameOver();
+              setGameState('rewards');
               if (Platform.OS !== 'web') Vibration.vibrate(100);
               return newObs;
             }
