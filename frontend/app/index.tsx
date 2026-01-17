@@ -33,6 +33,7 @@ import { GAMES, GameConfig } from '../src/constants/games';
 import { AVATARS, AvatarConfig, getAvatarById } from '../src/constants/avatars';
 import { useGameStore } from '../src/store/gameStore';
 import { useTutorialStore, useTutorialHydrated } from '../src/store/tutorialStore';
+import { useFactionStore, FACTIONS } from '../src/store/factionStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
 import { AvatarSelector } from '../src/components/AvatarSelector';
