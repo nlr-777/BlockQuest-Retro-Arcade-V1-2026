@@ -34,6 +34,8 @@ import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { RoastHUD } from '../../src/components/RoastHUD';
+import { PowerUpHUD } from '../../src/components/PowerUpBar';
+import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
