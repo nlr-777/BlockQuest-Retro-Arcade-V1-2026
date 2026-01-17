@@ -216,16 +216,14 @@ export default function SeedSprintGame() {
       setObstacles(prev => {
         const newObs = prev.map(o => ({ ...o, x: o.x - speed })).filter(o => o.x > -OBSTACLE_WIDTH);
         
-        // Check collision - more forgiving collision detection
-        // Player jumps with playerY going negative (up)
-        // Only collide if player is in the danger zone AND not high enough
+        // Check collision - use isJumping state instead of animated value
+        // This is more reliable since animated values don't sync well with React state
         for (const obs of newObs) {
-          // Collision zone is when obstacle is between x=20 and x=60 (narrower window)
-          if (obs.x < 60 && obs.x > 20) {
-            // Hurdles need jump of -80 or higher (more negative = higher)
-            // Pits need jump of -40 or higher
-            const clearanceNeeded = obs.type === 'hurdle' ? -80 : -40;
-            if (playerY.value > clearanceNeeded) {
+          // Collision zone is when obstacle is near the player (x between 30-55)
+          if (obs.x < 55 && obs.x > 30) {
+            // If player is jumping (isJumping=true), they clear the obstacle
+            // If not jumping, they hit it!
+            if (!isJumping) {
               // Hit obstacle!
               playHit();
               setGameState('gameover');
