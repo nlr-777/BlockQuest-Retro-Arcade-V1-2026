@@ -1,14 +1,14 @@
 // BlockQuest Official - Game Rewards Modal
 // Shows XP earned with faction bonus breakdown
 // Teaches: Community benefits, shared rewards, contribution
+// FIXED: Scrollable content so button is always accessible
 
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Platform, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withSequence,
   withTiming,
   withDelay,
   ZoomIn,
@@ -20,6 +20,8 @@ import { CRT_COLORS } from '../constants/crtTheme';
 import { CRTFlickerText, CRTScanlines, ConfettiBurst } from './CRTEffects';
 import { useFactionStore, FACTIONS } from '../store/factionStore';
 import { useGameStore } from '../store/gameStore';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface GameRewardsModalProps {
   visible: boolean;
@@ -105,102 +107,96 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
       <ConfettiBurst active={showConfetti} />
       
       <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
-        {/* Header */}
-        <View style={styles.header}>
-          <CRTFlickerText 
-            style={styles.headerText} 
-            color={isNewHighScore ? CRT_COLORS.accentGold : CRT_COLORS.primary}
-          >
-            {isNewHighScore ? '🏆 NEW HIGH SCORE! 🏆' : '✨ GAME COMPLETE! ✨'}
-          </CRTFlickerText>
-        </View>
-        
-        {/* Game & Score */}
-        <Animated.View entering={FadeIn.delay(200)} style={styles.gameInfo}>
-          <Text style={styles.gameName}>{gameName}</Text>
-          <View style={styles.scoreRow}>
-            <Text style={styles.scoreLabel}>SCORE:</Text>
-            <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
-          </View>
-        </Animated.View>
-        
-        {/* XP Breakdown */}
-        <View style={styles.xpSection}>
-          <Text style={styles.xpTitle}>⚡ XP EARNED ⚡</Text>
-          
-          {/* Base XP */}
-          <Animated.View entering={SlideInRight.delay(400)} style={styles.xpRow}>
-            <Text style={styles.xpRowLabel}>Base XP</Text>
-            <Text style={styles.xpRowValue}>+{baseXP}</Text>
-          </Animated.View>
-          
-          {/* Faction Bonus */}
-          {faction && bonusXP > 0 && (
-            <Animated.View 
-              entering={SlideInRight.delay(600)} 
-              style={[styles.xpRow, styles.bonusRow]}
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <CRTFlickerText 
+              style={styles.headerText} 
+              color={isNewHighScore ? CRT_COLORS.accentGold : CRT_COLORS.primary}
             >
-              <View style={styles.bonusLabelRow}>
-                <Text style={styles.factionIcon}>{faction.icon}</Text>
-                <Text style={[styles.xpRowLabel, { color: faction.color }]}>
-                  {faction.name} Bonus ({factionBonusPercent}%)
-                </Text>
-              </View>
-              <Animated.View style={bonusStyle}>
-                <Text style={[styles.xpRowValue, styles.bonusValue, { color: faction.color }]}>
-                  +{bonusXP}
-                </Text>
-              </Animated.View>
-            </Animated.View>
-          )}
-          
-          {/* No faction message */}
-          {!playerFaction && (
-            <Animated.View entering={FadeIn.delay(600)} style={styles.noFactionHint}>
-              <Text style={styles.hintText}>
-                💡 Join a faction for bonus XP!
-              </Text>
-            </Animated.View>
-          )}
-          
-          {/* Total */}
-          <Animated.View entering={FadeInUp.delay(800)} style={styles.totalRow}>
-            <Text style={styles.totalLabel}>TOTAL XP</Text>
-            <CRTFlickerText style={styles.totalValue} color={CRT_COLORS.primary}>
-              +{totalXP}
+              {isNewHighScore ? '🏆 HIGH SCORE! 🏆' : '✨ COMPLETE! ✨'}
             </CRTFlickerText>
-          </Animated.View>
-        </View>
-        
-        {/* Faction Contribution */}
-        {faction && (
-          <Animated.View entering={FadeIn.delay(1000)} style={styles.contributionBox}>
-            <Text style={styles.contributionIcon}>{faction.icon}</Text>
-            <View style={styles.contributionInfo}>
-              <Text style={[styles.contributionTitle, { color: faction.color }]}>
-                Contributed to {faction.name}!
-              </Text>
-              <Text style={styles.contributionDesc}>
-                Your XP helps your faction win! 🏆
-              </Text>
+          </View>
+          
+          {/* Game & Score */}
+          <Animated.View entering={FadeIn.delay(200)} style={styles.gameInfo}>
+            <Text style={styles.gameName}>{gameName}</Text>
+            <View style={styles.scoreRow}>
+              <Text style={styles.scoreLabel}>SCORE:</Text>
+              <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
             </View>
           </Animated.View>
-        )}
+          
+          {/* XP Breakdown */}
+          <View style={styles.xpSection}>
+            <Text style={styles.xpTitle}>⚡ XP EARNED ⚡</Text>
+            
+            {/* Base XP */}
+            <Animated.View entering={SlideInRight.delay(400)} style={styles.xpRow}>
+              <Text style={styles.xpRowLabel}>Base XP</Text>
+              <Text style={styles.xpRowValue}>+{baseXP}</Text>
+            </Animated.View>
+            
+            {/* Faction Bonus */}
+            {faction && bonusXP > 0 && (
+              <Animated.View 
+                entering={SlideInRight.delay(600)} 
+                style={[styles.xpRow, styles.bonusRow]}
+              >
+                <View style={styles.bonusLabelRow}>
+                  <Text style={styles.factionIcon}>{faction.icon}</Text>
+                  <Text style={[styles.xpRowLabel, { color: faction.color }]}>
+                    {faction.name} (+{factionBonusPercent}%)
+                  </Text>
+                </View>
+                <Animated.View style={bonusStyle}>
+                  <Text style={[styles.xpRowValue, styles.bonusValue, { color: faction.color }]}>
+                    +{bonusXP}
+                  </Text>
+                </Animated.View>
+              </Animated.View>
+            )}
+            
+            {/* No faction message */}
+            {!playerFaction && (
+              <Animated.View entering={FadeIn.delay(600)} style={styles.noFactionHint}>
+                <Text style={styles.hintText}>
+                  💡 Join a faction for bonus XP!
+                </Text>
+              </Animated.View>
+            )}
+            
+            {/* Total */}
+            <Animated.View entering={FadeInUp.delay(800)} style={styles.totalRow}>
+              <Text style={styles.totalLabel}>TOTAL</Text>
+              <CRTFlickerText style={styles.totalValue} color={CRT_COLORS.primary}>
+                +{totalXP}
+              </CRTFlickerText>
+            </Animated.View>
+          </View>
+          
+          {/* Faction Contribution - shortened */}
+          {faction && (
+            <Animated.View entering={FadeIn.delay(1000)} style={styles.contributionBox}>
+              <Text style={styles.contributionIcon}>{faction.icon}</Text>
+              <Text style={[styles.contributionTitle, { color: faction.color }]}>
+                +{totalXP} to {faction.name}!
+              </Text>
+            </Animated.View>
+          )}
+        </ScrollView>
         
-        {/* Learning Tip */}
-        <Animated.View entering={FadeIn.delay(1200)} style={styles.tipBox}>
-          <Text style={styles.tipIcon}>💡</Text>
-          <Text style={styles.tipText}>
-            {faction 
-              ? "In blockchain communities, members who contribute more earn better rewards!"
-              : "Teams that work together earn more! Join a faction to get bonus XP."}
-          </Text>
-        </Animated.View>
-        
-        {/* Continue Button */}
-        <TouchableOpacity style={styles.continueBtn} onPress={onContinue}>
-          <Text style={styles.continueBtnText}>AWESOME! →</Text>
-        </TouchableOpacity>
+        {/* Button - Always visible at bottom */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.continueBtn} onPress={onContinue}>
+            <Text style={styles.continueBtnText}>AWESOME! →</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     </View>
   );
@@ -219,30 +215,38 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 3,
     borderColor: CRT_COLORS.primary,
-    padding: 20,
     maxWidth: 340,
     width: '90%',
-    alignItems: 'center',
+    maxHeight: SCREEN_HEIGHT * 0.75,
     shadowColor: CRT_COLORS.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
+    overflow: 'hidden',
+  },
+  scrollView: {
+    flex: 1,
+    maxHeight: SCREEN_HEIGHT * 0.5,
+  },
+  scrollContent: {
+    padding: 16,
+    alignItems: 'center',
   },
   header: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
   },
   gameInfo: {
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   gameName: {
-    fontSize: 14,
+    fontSize: 12,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 4,
@@ -253,12 +257,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   scoreLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   scoreValue: {
-    fontSize: 24,
+    fontSize: 22,
     color: CRT_COLORS.accentGold,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
@@ -266,30 +270,30 @@ const styles = StyleSheet.create({
   xpSection: {
     width: '100%',
     backgroundColor: CRT_COLORS.bgDark,
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
   },
   xpTitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   xpRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderBottomWidth: 1,
     borderBottomColor: CRT_COLORS.textDim + '20',
   },
   bonusRow: {
     backgroundColor: CRT_COLORS.bgLight,
-    marginHorizontal: -8,
-    paddingHorizontal: 8,
+    marginHorizontal: -6,
+    paddingHorizontal: 6,
     borderRadius: 6,
     marginVertical: 4,
   },
@@ -299,28 +303,28 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   factionIcon: {
-    fontSize: 16,
+    fontSize: 14,
   },
   xpRowLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   xpRowValue: {
-    fontSize: 14,
+    fontSize: 13,
     color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
   bonusValue: {
-    fontSize: 16,
+    fontSize: 14,
   },
   noFactionHint: {
-    paddingVertical: 8,
+    paddingVertical: 6,
     alignItems: 'center',
   },
   hintText: {
-    fontSize: 11,
+    fontSize: 10,
     color: CRT_COLORS.accentGold,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontStyle: 'italic',
@@ -329,79 +333,53 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 12,
-    marginTop: 8,
+    paddingTop: 10,
+    marginTop: 6,
     borderTopWidth: 2,
     borderTopColor: CRT_COLORS.primary + '40',
   },
   totalLabel: {
-    fontSize: 14,
+    fontSize: 13,
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
   totalValue: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   contributionBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: CRT_COLORS.bgLight,
-    borderRadius: 10,
-    padding: 12,
+    borderRadius: 8,
+    padding: 10,
     width: '100%',
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: CRT_COLORS.primary + '30',
+    gap: 8,
   },
   contributionIcon: {
-    fontSize: 28,
-    marginRight: 12,
-  },
-  contributionInfo: {
-    flex: 1,
+    fontSize: 20,
   },
   contributionTitle: {
     fontSize: 12,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
-  contributionDesc: {
-    fontSize: 10,
-    color: CRT_COLORS.textDim,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 2,
-  },
-  tipBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: CRT_COLORS.bgDark,
-    borderRadius: 8,
-    padding: 10,
-    width: '100%',
-    marginBottom: 15,
-    borderLeftWidth: 3,
-    borderLeftColor: CRT_COLORS.accentCyan,
-  },
-  tipIcon: {
-    fontSize: 14,
-    marginRight: 8,
-  },
-  tipText: {
-    flex: 1,
-    fontSize: 10,
-    color: CRT_COLORS.textDim,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    lineHeight: 14,
-    fontStyle: 'italic',
+  buttonContainer: {
+    padding: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: CRT_COLORS.textDim + '30',
+    backgroundColor: CRT_COLORS.bgMedium,
   },
   continueBtn: {
     backgroundColor: CRT_COLORS.primary,
     paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 8,
+    alignItems: 'center',
   },
   continueBtnText: {
     fontSize: 16,
