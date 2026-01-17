@@ -284,9 +284,9 @@ export default function QuestVaultGame() {
           const newHealth = h - 20;
           if (newHealth <= 0) {
             playGameOver();
-            setGameState('gameover');
+            setHighScoreBeaten(score > 0);
+            setGameState('rewards');
             submitScore('quest-vault', score);
-            addXP(Math.floor(score / 10));
             return 0;
           }
           if (Platform.OS !== 'web') Vibration.vibrate(100);
