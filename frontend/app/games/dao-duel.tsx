@@ -99,10 +99,17 @@ export default function DAODuelGame() {
     setPlayerPaddleHeight(PADDLE_HEIGHT);
     setBallSpeed(INITIAL_BALL_SPEED);
     setAiSpeed(4);
+    setHighScoreBeaten(false);
     resetBall(1);
     setGameState('playing');
     playGameStart();
   }, [resetBall]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Cast vote (use power-up)
   const castVote = (voteType: string) => {
