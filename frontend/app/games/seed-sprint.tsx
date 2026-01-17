@@ -617,6 +617,7 @@ const styles = StyleSheet.create({
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   scoreContainer: { alignItems: 'center' },
   distanceContainer: { alignItems: 'center' },
+  powerUpContainer: { position: 'absolute', top: 100, right: 8, zIndex: 50 },
   wordsBar: { paddingHorizontal: 16, paddingVertical: 8, backgroundColor: COLORS.cardBg, marginHorizontal: 16, borderRadius: 8, marginBottom: 8 },
   wordsRow: { flexDirection: 'row', justifyContent: 'center', gap: 4, marginTop: 4 },
   wordBadge: { width: 32, height: 32, backgroundColor: COLORS.seedRed + '40', borderRadius: 4, justifyContent: 'center', alignItems: 'center' },
