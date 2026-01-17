@@ -262,7 +262,8 @@ export default function LedgerLeapGame() {
           setLives(l => {
             if (l <= 1) {
               playGameOver();
-          setGameState('gameover');
+              setHighScoreBeaten(score > 0);
+              setGameState('rewards');
               submitScore('ledger-leap', score);
               return 0;
             }
