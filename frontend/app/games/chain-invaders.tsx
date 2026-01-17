@@ -173,9 +173,16 @@ export default function ChainInvadersGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();
   }, [initGame, playGameStart]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Move player
   const movePlayer = useCallback((direction: -1 | 1) => {
