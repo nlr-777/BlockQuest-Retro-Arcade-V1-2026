@@ -394,7 +394,7 @@ export default function SeedSprintGame() {
         <Animated.View style={[styles.player, playerStyle]}>
           <PixelText size="xl">🏃</PixelText>
         </Animated.View>
-      </View>
+      </TouchableOpacity>
 
       {/* Info Box */}
       <View style={styles.infoBox}>
