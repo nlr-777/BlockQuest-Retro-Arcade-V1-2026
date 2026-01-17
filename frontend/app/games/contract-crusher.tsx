@@ -100,7 +100,7 @@ export default function ContractCrusherGame() {
   const [ball, setBall] = useState<Ball>({ x: GAME_WIDTH / 2, y: GAME_HEIGHT - 80, vx: 3, vy: -4 });
   const [ballActive, setBallActive] = useState(false);
   const [bricks, setBricks] = useState<Brick[]>([]);
-  const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
+  const [gamePowerUps, setGamePowerUps] = useState<PowerUp[]>([]);
   const [paddleWidth, setPaddleWidth] = useState(PADDLE_WIDTH);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
   

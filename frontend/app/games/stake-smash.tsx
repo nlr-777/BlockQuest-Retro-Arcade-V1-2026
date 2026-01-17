@@ -119,7 +119,7 @@ export default function PowerSmashGame() {
   const [paddleWidth, setPaddleWidth] = useState(PADDLE_WIDTH);
   const [balls, setBalls] = useState<Ball[]>([]);
   const [bricks, setBricks] = useState<Brick[]>([]);
-  const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
+  const [gamePowerUps, setGamePowerUps] = useState<PowerUp[]>([]);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
