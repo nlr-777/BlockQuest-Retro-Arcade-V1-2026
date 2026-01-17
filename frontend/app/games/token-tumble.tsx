@@ -544,6 +544,17 @@ export default function BlockTumbleGame() {
         </View>
       )}
 
+      {/* Game Rewards Modal - Shows XP with faction bonus! */}
+      <GameRewardsModal
+        visible={gameState === 'rewards'}
+        gameId="token-tumble"
+        gameName="Token Tumble"
+        score={score}
+        baseXP={Math.floor(score / 10)}
+        isNewHighScore={highScoreBeaten}
+        onContinue={handleRewardsContinue}
+      />
+
       {/* Game Over - Using RektScreen */}
       <RektScreen
         visible={gameState === 'gameover'}
