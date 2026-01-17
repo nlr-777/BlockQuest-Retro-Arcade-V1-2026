@@ -370,13 +370,19 @@ export default function BlockTumbleGame() {
     };
   }, [gameState, level, movePiece]);
 
-  // Handle game over
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
+
+  // Handle game over (after rewards modal)
   useEffect(() => {
     if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
+      // Update score (XP is already awarded by GameRewardsModal)
       updateScore('token-tumble', score, duration);
-      addXP(Math.floor(score / 10));
 
       // Submit to leaderboard
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
