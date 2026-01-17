@@ -328,7 +328,8 @@ export default function QuestVaultGame() {
                 const newHealth = h - 15;
                 if (newHealth <= 0) {
                   playGameOver();
-                  setGameState('gameover');
+                  setHighScoreBeaten(score > 0);
+                  setGameState('rewards');
                   submitScore('quest-vault', score);
                   return 0;
                 }
