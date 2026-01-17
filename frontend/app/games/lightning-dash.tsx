@@ -58,7 +58,7 @@ interface Bolt {
   collected: boolean;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'rewards';
 
 export default function LightningDashGame() {
   const router = useRouter();

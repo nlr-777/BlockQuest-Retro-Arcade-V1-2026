@@ -74,7 +74,7 @@ interface Pin {
   active: boolean;
 }
 
-type GameState = 'ready' | 'playing' | 'gameover';
+type GameState = 'ready' | 'playing' | 'gameover' | 'rewards';
 
 export default function IPFSPinballGame() {
   const router = useRouter();
