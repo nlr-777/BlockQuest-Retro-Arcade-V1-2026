@@ -149,9 +149,16 @@ export default function RockBlasterGame() {
     setBullets([]);
     setParticles([]);
     setRocks(spawnRocks(4));
+    setHighScoreBeaten(false);
     setGameState('playing');
     playGameStart();
   }, [spawnRocks]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Shoot bullet
   const shoot = useCallback(() => {
