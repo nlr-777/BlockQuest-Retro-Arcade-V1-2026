@@ -173,10 +173,17 @@ export default function PowerSmashGame() {
     setEnergyStored(0);
     setPowerLevel(0);
     setCombo(0);
+    setHighScoreBeaten(false);
     ballSpeedRef.current = 5;
     setGameState('playing');
     playGameStart();
   }, [initBricks, initBall]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Next level
   const nextLevel = useCallback(() => {
