@@ -36,6 +36,8 @@ import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
+import { PowerUpHUD } from '../../src/components/PowerUpBar';
+import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 import { 
   BQOToken, 
   NFTGem, 
