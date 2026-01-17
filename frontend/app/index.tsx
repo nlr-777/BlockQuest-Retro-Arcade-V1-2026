@@ -342,6 +342,11 @@ export default function ArcadeHub() {
           />
         )}
 
+        {/* Faction Status Badge - Quick access to faction info */}
+        {profile && (
+          <FactionStatusBadge />
+        )}
+
         {/* Game Selection Panel */}
         <CRTGlowBorder color={CRT_COLORS.primary} style={styles.panel}>
           <View style={styles.panelHeader}>
