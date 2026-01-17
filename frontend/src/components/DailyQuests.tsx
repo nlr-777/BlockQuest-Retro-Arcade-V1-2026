@@ -1,9 +1,10 @@
 // BlockQuest Official - Daily Quests Component
-// Dad jokes + daily challenges - CLICKABLE to complete!
+// Dad jokes + daily challenges - Links to actual games!
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Animated, { FadeInDown, ZoomIn, BounceIn } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
 import { CRTGlowBorder, CRTFlickerText, ConfettiBurst } from './CRTEffects';
 import { useGameStore } from '../store/gameStore';
@@ -18,6 +19,8 @@ interface Quest {
   target: number;
   completed: boolean;
   icon: string;
+  gameId: string; // Links to actual game!
+  gameName: string;
 }
 
 interface DailyQuestsProps {
@@ -26,21 +29,141 @@ interface DailyQuestsProps {
 
 const QUEST_STORAGE_KEY = 'blockquest_daily_quests';
 
-// Generate daily quests based on day of year
+// Quests that link to actual games!
 const generateDailyQuests = (): Quest[] => {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   
   const allQuests: Quest[] = [
-    { id: 'q1', title: 'Block Builder', joke: 'Why did the block go to school? To get a little CHAIN-ge! 🎓', task: 'Tap to build blocks!', reward: 30, progress: 0, target: 20, completed: false, icon: '🧱' },
-    { id: 'q2', title: 'Chain Reaction', joke: 'What do you call a sleeping blockchain? A block-NAP! 😴', task: 'Tap to build chains!', reward: 25, progress: 0, target: 5, completed: false, icon: '🔗' },
-    { id: 'q3', title: 'Hash Hunter', joke: 'What do blocks eat for breakfast? HASH browns! 🥔', task: 'Tap to find hashes!', reward: 25, progress: 0, target: 15, completed: false, icon: '#️⃣' },
-    { id: 'q4', title: 'Mining Time', joke: 'What did the miner say? This ROCKS! 🪨', task: 'Tap to mine blocks!', reward: 20, progress: 0, target: 10, completed: false, icon: '⛏️' },
-    { id: 'q5', title: 'Seed Collector', joke: 'Why do seeds make good secrets? They\'re planted DEEP! 🌱', task: 'Tap to collect seeds!', reward: 20, progress: 0, target: 12, completed: false, icon: '🌱' },
-    { id: 'q6', title: 'Speed Runner', joke: 'Why was the transaction so fast? It took a SHORT-cut! ⚡', task: 'Tap to run fast!', reward: 40, progress: 0, target: 5, completed: false, icon: '⚡' },
-    { id: 'q7', title: 'Bridge Builder', joke: 'Why did the data cross the bridge? To get to the other CHAIN! 🌉', task: 'Tap to build bridges!', reward: 25, progress: 0, target: 8, completed: false, icon: '🌉' },
-    { id: 'q8', title: 'Puzzle Master', joke: 'What\'s a blockchain\'s favorite music? HASH metal! 🎸', task: 'Tap to solve puzzles!', reward: 30, progress: 0, target: 5, completed: false, icon: '🧩' },
-    { id: 'q9', title: 'Combo King', joke: 'What\'s a chain\'s favorite game? LINK-o! 🎯', task: 'Tap to make combos!', reward: 35, progress: 0, target: 10, completed: false, icon: '🔥' },
-    { id: 'q10', title: 'Token Collector', joke: 'Why do blocks make great friends? They\'re always LINKED! 🔗', task: 'Tap to collect tokens!', reward: 20, progress: 0, target: 15, completed: false, icon: '🪙' },
+    { 
+      id: 'q1', 
+      title: 'Block Stacker', 
+      joke: 'Why did the block go to school? To get a little CHAIN-ge! 🎓', 
+      task: 'Score 100+ in Token Tumble!', 
+      reward: 30, 
+      progress: 0, 
+      target: 100, 
+      completed: false, 
+      icon: '🧱',
+      gameId: 'token-tumble',
+      gameName: 'Token Tumble'
+    },
+    { 
+      id: 'q2', 
+      title: 'Chain Master', 
+      joke: 'What do you call a sleeping blockchain? A block-NAP! 😴', 
+      task: 'Build a 10+ chain in Block Muncher!', 
+      reward: 35, 
+      progress: 0, 
+      target: 10, 
+      completed: false, 
+      icon: '🔗',
+      gameId: 'block-muncher',
+      gameName: 'Block Muncher'
+    },
+    { 
+      id: 'q3', 
+      title: 'Hash Hunter', 
+      joke: 'What do blocks eat for breakfast? HASH browns! 🥔', 
+      task: 'Match 5 hashes in Hash Hopper!', 
+      reward: 25, 
+      progress: 0, 
+      target: 5, 
+      completed: false, 
+      icon: '#️⃣',
+      gameId: 'hash-hopper',
+      gameName: 'Hash Hopper'
+    },
+    { 
+      id: 'q4', 
+      title: 'Mining Pro', 
+      joke: 'What did the miner say? This ROCKS! 🪨', 
+      task: 'Score 150+ in Mine Blaster!', 
+      reward: 30, 
+      progress: 0, 
+      target: 150, 
+      completed: false, 
+      icon: '⛏️',
+      gameId: 'mine-blaster',
+      gameName: 'Mine Blaster'
+    },
+    { 
+      id: 'q5', 
+      title: 'Seed Sprinter', 
+      joke: 'Why do seeds make good secrets? They\'re planted DEEP! 🌱', 
+      task: 'Collect 8 seeds in Seed Sprint!', 
+      reward: 25, 
+      progress: 0, 
+      target: 8, 
+      completed: false, 
+      icon: '🌱',
+      gameId: 'seed-sprint',
+      gameName: 'Seed Sprint'
+    },
+    { 
+      id: 'q6', 
+      title: 'Speed Climber', 
+      joke: 'Why was the transaction so fast? It took a SHORT-cut! ⚡', 
+      task: 'Reach height 500 in Crypto Climber!', 
+      reward: 40, 
+      progress: 0, 
+      target: 500, 
+      completed: false, 
+      icon: '⚡',
+      gameId: 'crypto-climber',
+      gameName: 'Crypto Climber'
+    },
+    { 
+      id: 'q7', 
+      title: 'Bridge Bouncer', 
+      joke: 'Why did the data cross the bridge? To get to the other CHAIN! 🌉', 
+      task: 'Cross 5 bridges in Bridge Bouncer!', 
+      reward: 25, 
+      progress: 0, 
+      target: 5, 
+      completed: false, 
+      icon: '🌉',
+      gameId: 'bridge-bouncer',
+      gameName: 'Bridge Bouncer'
+    },
+    { 
+      id: 'q8', 
+      title: 'Invader Destroyer', 
+      joke: 'What\'s a blockchain\'s favorite music? HASH metal! 🎸', 
+      task: 'Defeat 20 invaders in Chain Invaders!', 
+      reward: 30, 
+      progress: 0, 
+      target: 20, 
+      completed: false, 
+      icon: '👾',
+      gameId: 'chain-invaders',
+      gameName: 'Chain Invaders'
+    },
+    { 
+      id: 'q9', 
+      title: 'Duel Champion', 
+      joke: 'What\'s a chain\'s favorite game? LINK-o! 🎯', 
+      task: 'Win a round in DAO Duel!', 
+      reward: 35, 
+      progress: 0, 
+      target: 1, 
+      completed: false, 
+      icon: '⚔️',
+      gameId: 'dao-duel',
+      gameName: 'DAO Duel'
+    },
+    { 
+      id: 'q10', 
+      title: 'Pinball Wizard', 
+      joke: 'Why do blocks make great friends? They\'re always LINKED! 🔗', 
+      task: 'Score 200+ in IPFS Pinball!', 
+      reward: 30, 
+      progress: 0, 
+      target: 200, 
+      completed: false, 
+      icon: '🎱',
+      gameId: 'ipfs-pinball',
+      gameName: 'IPFS Pinball'
+    },
   ];
   
   // Pick 3 quests based on day
@@ -54,16 +177,23 @@ const generateDailyQuests = (): Quest[] => {
 };
 
 export const DailyQuests: React.FC<DailyQuestsProps> = ({ onClose }) => {
+  const router = useRouter();
   const [quests, setQuests] = useState<Quest[]>([]);
   const [selectedJoke, setSelectedJoke] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [lastCompletedId, setLastCompletedId] = useState<string | null>(null);
-  const { addXP } = useGameStore();
+  const { addXP, highScores } = useGameStore();
 
   // Load quests from storage or generate new ones
   useEffect(() => {
     loadQuests();
   }, []);
+
+  // Check if quests are completed based on high scores
+  useEffect(() => {
+    if (quests.length > 0) {
+      checkQuestCompletion();
+    }
+  }, [highScores, quests.length]);
 
   const loadQuests = async () => {
     try {
@@ -99,34 +229,39 @@ export const DailyQuests: React.FC<DailyQuestsProps> = ({ onClose }) => {
     }
   };
 
-  // Handle tapping on a quest to progress it
-  const handleQuestTap = (questId: string) => {
-    setQuests(prev => {
-      const updated = prev.map(q => {
-        if (q.id === questId && !q.completed) {
-          const newProgress = q.progress + 1;
-          const isComplete = newProgress >= q.target;
-          
-          // Award XP when completed
-          if (isComplete && !q.completed) {
-            addXP(q.reward);
-            setShowConfetti(true);
-            setLastCompletedId(questId);
-            setTimeout(() => setShowConfetti(false), 2000);
-          }
-          
-          return {
-            ...q,
-            progress: newProgress,
-            completed: isComplete,
-          };
-        }
-        return q;
-      });
+  // Check if quests are completed based on game high scores
+  const checkQuestCompletion = () => {
+    let anyCompleted = false;
+    
+    const updatedQuests = quests.map(quest => {
+      if (quest.completed) return quest;
       
-      saveQuests(updated);
-      return updated;
+      const gameScore = highScores[quest.gameId] || 0;
+      const isComplete = gameScore >= quest.target;
+      
+      if (isComplete && !quest.completed) {
+        anyCompleted = true;
+        addXP(quest.reward);
+      }
+      
+      return {
+        ...quest,
+        progress: Math.min(gameScore, quest.target),
+        completed: isComplete,
+      };
     });
+    
+    if (anyCompleted) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 2000);
+      setQuests(updatedQuests);
+      saveQuests(updatedQuests);
+    }
+  };
+
+  // Navigate to game
+  const handlePlayGame = (gameId: string) => {
+    router.push(`/games/${gameId}` as any);
   };
 
   const totalRewards = quests.reduce((sum, q) => sum + (q.completed ? q.reward : 0), 0);
@@ -141,7 +276,7 @@ export const DailyQuests: React.FC<DailyQuestsProps> = ({ onClose }) => {
         <CRTFlickerText style={styles.title} color={CRT_COLORS.primary} glitch>
           📅 DAILY QUESTS 📅
         </CRTFlickerText>
-        <Text style={styles.subtitle}>Tap quests to complete them & earn XP!</Text>
+        <Text style={styles.subtitle}>Complete games to earn rewards!</Text>
       </View>
 
       {/* Progress Bar */}
@@ -159,98 +294,88 @@ export const DailyQuests: React.FC<DailyQuestsProps> = ({ onClose }) => {
             key={quest.id}
             entering={FadeInDown.delay(index * 100)}
           >
-            <TouchableOpacity
-              activeOpacity={quest.completed ? 1 : 0.7}
-              onPress={() => !quest.completed && handleQuestTap(quest.id)}
+            <CRTGlowBorder
+              color={quest.completed ? CRT_COLORS.primary : CRT_COLORS.accentCyan}
+              style={[styles.questCard, quest.completed && styles.questCardCompleted]}
             >
-              <CRTGlowBorder
-                color={quest.completed ? CRT_COLORS.primary : CRT_COLORS.accentCyan}
-                style={[styles.questCard, quest.completed && styles.questCardCompleted]}
-              >
-                <View style={styles.questHeader}>
-                  <View style={[
-                    styles.questIcon,
-                    quest.completed && styles.questIconCompleted
-                  ]}>
-                    <Text style={styles.questIconText}>{quest.icon}</Text>
-                  </View>
-                  <View style={styles.questInfo}>
-                    <Text style={styles.questTitle}>{quest.title}</Text>
-                    <Text style={styles.questTask}>
-                      {quest.completed ? '✓ COMPLETED!' : quest.task}
-                    </Text>
-                  </View>
-                  <View style={[
-                    styles.questReward,
-                    quest.completed && styles.questRewardCompleted
-                  ]}>
-                    <Text style={[
-                      styles.rewardText,
-                      quest.completed && styles.rewardTextCompleted
-                    ]}>+{quest.reward}</Text>
-                    <Text style={[
-                      styles.rewardLabel,
-                      quest.completed && styles.rewardLabelCompleted
-                    ]}>XP</Text>
-                  </View>
+              <View style={styles.questHeader}>
+                <View style={[
+                  styles.questIcon,
+                  quest.completed && styles.questIconCompleted
+                ]}>
+                  <Text style={styles.questIconText}>{quest.icon}</Text>
                 </View>
-
-                {/* Progress */}
-                <View style={styles.questProgress}>
-                  <View style={styles.questProgressBar}>
-                    <Animated.View 
-                      style={[
-                        styles.questProgressFill, 
-                        { width: `${Math.min(100, (quest.progress / quest.target) * 100)}%` },
-                        quest.completed && styles.questProgressFillCompleted
-                      ]} 
-                    />
-                  </View>
-                  <Text style={styles.questProgressText}>
-                    {quest.progress}/{quest.target}
+                <View style={styles.questInfo}>
+                  <Text style={styles.questTitle}>{quest.title}</Text>
+                  <Text style={styles.questTask}>
+                    {quest.completed ? '✓ COMPLETED!' : quest.task}
                   </Text>
                 </View>
+                <View style={[
+                  styles.questReward,
+                  quest.completed && styles.questRewardCompleted
+                ]}>
+                  <Text style={[
+                    styles.rewardText,
+                    quest.completed && styles.rewardTextCompleted
+                  ]}>+{quest.reward}</Text>
+                  <Text style={[
+                    styles.rewardLabel,
+                    quest.completed && styles.rewardLabelCompleted
+                  ]}>XP</Text>
+                </View>
+              </View>
 
-                {/* Tap indicator */}
-                {!quest.completed && (
-                  <View style={styles.tapIndicator}>
-                    <Text style={styles.tapText}>👆 TAP TO PROGRESS!</Text>
-                  </View>
-                )}
+              {/* Progress */}
+              <View style={styles.questProgress}>
+                <View style={styles.questProgressBar}>
+                  <Animated.View 
+                    style={[
+                      styles.questProgressFill, 
+                      { width: `${Math.min(100, (quest.progress / quest.target) * 100)}%` },
+                      quest.completed && styles.questProgressFillCompleted
+                    ]} 
+                  />
+                </View>
+                <Text style={styles.questProgressText}>
+                  {quest.progress}/{quest.target}
+                </Text>
+              </View>
 
-                {/* Dad Joke Button */}
+              {/* Play Button - Links to game! */}
+              {!quest.completed && (
                 <TouchableOpacity
-                  style={styles.jokeBtn}
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    setSelectedJoke(selectedJoke === quest.id ? null : quest.id);
-                  }}
+                  style={styles.playBtn}
+                  onPress={() => handlePlayGame(quest.gameId)}
+                  activeOpacity={0.7}
                 >
-                  <Text style={styles.jokeBtnText}>
-                    {selectedJoke === quest.id ? '🙈 Hide Joke' : '😂 Show Dad Joke'}
-                  </Text>
+                  <Text style={styles.playBtnText}>🎮 PLAY {quest.gameName.toUpperCase()}</Text>
                 </TouchableOpacity>
+              )}
 
-                {/* Joke Display */}
-                {selectedJoke === quest.id && (
-                  <Animated.View entering={ZoomIn} style={styles.jokeBox}>
-                    <Text style={styles.jokeText}>{quest.joke}</Text>
-                  </Animated.View>
-                )}
+              {/* Dad Joke Button */}
+              <TouchableOpacity
+                style={styles.jokeBtn}
+                onPress={() => setSelectedJoke(selectedJoke === quest.id ? null : quest.id)}
+              >
+                <Text style={styles.jokeBtnText}>
+                  {selectedJoke === quest.id ? '🙈 Hide Joke' : '😂 Show Dad Joke'}
+                </Text>
+              </TouchableOpacity>
 
-                {quest.completed && lastCompletedId === quest.id && (
-                  <Animated.View entering={BounceIn} style={styles.completedBadge}>
-                    <Text style={styles.completedText}>🎉 DONE!</Text>
-                  </Animated.View>
-                )}
-                
-                {quest.completed && lastCompletedId !== quest.id && (
-                  <View style={styles.completedBadge}>
-                    <Text style={styles.completedText}>✓ DONE!</Text>
-                  </View>
-                )}
-              </CRTGlowBorder>
-            </TouchableOpacity>
+              {/* Joke Display */}
+              {selectedJoke === quest.id && (
+                <Animated.View entering={ZoomIn} style={styles.jokeBox}>
+                  <Text style={styles.jokeText}>{quest.joke}</Text>
+                </Animated.View>
+              )}
+
+              {quest.completed && (
+                <Animated.View entering={BounceIn} style={styles.completedBadge}>
+                  <Text style={styles.completedText}>🎉 DONE!</Text>
+                </Animated.View>
+              )}
+            </CRTGlowBorder>
           </Animated.View>
         ))}
 
@@ -431,21 +556,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    minWidth: 45,
+    minWidth: 50,
     textAlign: 'right',
   },
-  tapIndicator: {
-    marginTop: 10,
-    padding: 8,
-    backgroundColor: CRT_COLORS.accentMagenta + '20',
-    borderRadius: 6,
+  playBtn: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: CRT_COLORS.accentMagenta,
+    borderRadius: 8,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: CRT_COLORS.accentMagenta + '40',
   },
-  tapText: {
-    fontSize: 12,
-    color: CRT_COLORS.accentMagenta,
+  playBtnText: {
+    fontSize: 13,
+    color: '#FFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
