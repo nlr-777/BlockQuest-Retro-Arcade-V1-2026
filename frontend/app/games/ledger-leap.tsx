@@ -161,9 +161,16 @@ export default function LedgerLeapGame() {
     setLevel(1);
     setRecordsCollected(0);
     setDistance(0);
+    setHighScoreBeaten(false);
     setGameState('playing');
     playGameStart();
   }, [generatePlatforms, playGameStart]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Check platform collision
   const checkPlatformCollision = useCallback((x: number, y: number, vy: number) => {
