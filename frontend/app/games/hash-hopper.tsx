@@ -116,9 +116,16 @@ export default function HashHopperGame() {
   const startGame = useCallback(() => {
     initGame();
     setGameState('playing');
+    setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();
   }, [initGame, playGameStart]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Move player
   const movePlayer = useCallback((dx: number, dy: number) => {
