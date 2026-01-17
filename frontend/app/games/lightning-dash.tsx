@@ -214,7 +214,8 @@ export default function LightningDashGame() {
               obs.y < playerY + PLAYER_HEIGHT) {
             // Collision!
             playGameOver();
-          setGameState('gameover');
+            setHighScoreBeaten(score > 0); // Lightning dash doesn't have high scores stored yet
+            setGameState('rewards');
             submitScore('lightning-dash', score);
             if (Platform.OS !== 'web') Vibration.vibrate(300);
             return prev;
