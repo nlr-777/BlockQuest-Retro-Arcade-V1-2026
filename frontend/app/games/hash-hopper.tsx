@@ -192,7 +192,12 @@ export default function HashHopperGame() {
               // Hit by car!
               setLives(l => {
                 if (l <= 1) {
-                  setGameState('gameover');
+                  const currentHighScore = profile?.highScores?.['hash-hopper'] || 0;
+                  if (score > currentHighScore) {
+                    setHighScoreBeaten(true);
+                  }
+                  playGameOver();
+                  setGameState('rewards');
                   return 0;
                 }
                 setPlayerPos({ x: 4, y: 10 });
