@@ -169,7 +169,7 @@ export default function PowerSmashGame() {
   const startGame = useCallback(() => {
     setBricks(initBricks(1));
     setBalls([initBall()]);
-    setPowerUps([]);
+    setGamePowerUps([]);
     setPaddleX(GAME_WIDTH / 2 - PADDLE_WIDTH / 2);
     setPaddleWidth(PADDLE_WIDTH);
     setScore(0);
@@ -197,7 +197,7 @@ export default function PowerSmashGame() {
     setLevel(newLevel);
     setBricks(initBricks(newLevel));
     setBalls([initBall()]);
-    setPowerUps([]);
+    setGamePowerUps([]);
     setPaddleWidth(PADDLE_WIDTH);
     ballSpeedRef.current = Math.min(5 + newLevel * 0.5, 10);
     setScore(s => s + 500); // Level completion bonus
@@ -234,7 +234,7 @@ export default function PowerSmashGame() {
     if (Math.random() > 0.85) { // 15% chance
       const types = Object.keys(POWER_UPS) as PowerUpType[];
       const type = types[Math.floor(Math.random() * types.length)];
-      setPowerUps(prev => [...prev, {
+      setGamePowerUps(prev => [...prev, {
         id: Date.now(),
         x,
         y,
@@ -386,7 +386,7 @@ export default function PowerSmashGame() {
       });
 
       // Update power-ups
-      setPowerUps(prev => {
+      setGamePowerUps(prev => {
         return prev.map(pu => {
           if (!pu.active) return pu;
           
@@ -533,7 +533,7 @@ export default function PowerSmashGame() {
           {bricks.map(renderBrick)}
 
           {/* Power-ups */}
-          {powerUps.filter(pu => pu.active).map(pu => (
+          {gamePowerUps.filter(pu => pu.active).map(pu => (
             <View
               key={pu.id}
               style={[
