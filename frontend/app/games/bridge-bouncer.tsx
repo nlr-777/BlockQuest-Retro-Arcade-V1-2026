@@ -116,9 +116,16 @@ export default function BridgeBouncerGame() {
     setLives(3);
     setBridgesCompleted(0);
     setTargetChain(1);
+    setHighScoreBeaten(false);
     setGameState('playing');
     playGameStart();
   }, [initializeTiles]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Continue to next level
   const nextLevel = useCallback(() => {
