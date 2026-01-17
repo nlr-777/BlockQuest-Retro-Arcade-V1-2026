@@ -39,6 +39,8 @@ import { RARITY_COLORS, BQO_AIRDROP_AMOUNTS } from '../src/constants/badges';
 import { bqoTokenService } from '../src/services/BQOTokenService';
 import { loyaltyService } from '../src/services/LoyaltyService';
 import { getRankByXP, getRankProgress } from '../src/constants/ranks';
+import { PowerUpBar } from '../src/components/PowerUpBar';
+import { POWER_UPS } from '../src/store/powerUpStore';
 import {
   CRTScanlines,
   CRTGlowBorder,
