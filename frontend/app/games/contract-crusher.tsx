@@ -575,6 +575,17 @@ export default function ContractCrusherGame() {
           </View>
         )}
 
+        {/* Game Rewards Modal */}
+        <GameRewardsModal
+          visible={gameState === 'rewards'}
+          gameId="contract-crusher"
+          gameName="Contract Crusher"
+          score={score}
+          baseXP={Math.floor(score / 5)}
+          isNewHighScore={highScoreBeaten}
+          onContinue={handleRewardsContinue}
+        />
+
         {/* Game Over - Using RektScreen */}
         <RektScreen
           visible={gameState === 'gameover'}
