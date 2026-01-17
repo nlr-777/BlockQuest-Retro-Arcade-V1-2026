@@ -154,8 +154,15 @@ export default function IPFSPinballGame() {
   // Start game
   const startGame = useCallback(() => {
     initGame();
+    setHighScoreBeaten(false);
     setGameState('playing');
   }, [initGame]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Flipper controls
   useEffect(() => {
