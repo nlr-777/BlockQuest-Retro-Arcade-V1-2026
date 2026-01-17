@@ -536,8 +536,8 @@ export default function ArcadeHub() {
             contentContainerStyle={styles.gamesContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Welcome Tip - Rotating tips for new players */}
-            <WelcomeTipCard />
+            {/* Blocky Guide - Visual mascot instead of text */}
+            <BlockyGuide />
             
             {renderAllGames()}
             
