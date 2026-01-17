@@ -399,6 +399,13 @@ export default function SeedSprintGame() {
         />
       )}
       
+      {/* Power-Up HUD - Shows available power-ups */}
+      {gameState === 'playing' && powerUps.availablePowerUps.length > 0 && (
+        <View style={styles.powerUpContainer}>
+          <PowerUpHUD onActivate={(p) => console.log('Activated:', p.name)} />
+        </View>
+      )}
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
