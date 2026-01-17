@@ -235,47 +235,6 @@ const blockyGuideStyles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-    backgroundColor: CRT_COLORS.bgDark,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  icon: {
-    fontSize: 18,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: CRT_COLORS.accentCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    letterSpacing: 1,
-  },
-  tip: {
-    fontSize: 9,
-    color: CRT_COLORS.textBright,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginTop: 2,
-    opacity: 0.9,
-  },
-  dots: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginLeft: 6,
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: CRT_COLORS.textDim,
-    marginVertical: 1,
-  },
-  dotActive: {
-    backgroundColor: CRT_COLORS.accentCyan,
-  },
-});
 
 // Game icon mapping
 const getGameIcon = (gameId: string): React.FC<any> => {
