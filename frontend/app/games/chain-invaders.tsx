@@ -340,7 +340,12 @@ export default function ChainInvadersGame() {
             } else {
               setLives(l => {
                 if (l <= 1) {
-                  setGameState('gameover');
+                  const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
+                  if (score > currentHighScore) {
+                    setHighScoreBeaten(true);
+                  }
+                  playGameOver();
+                  setGameState('rewards');
                   return 0;
                 }
                 return l - 1;
