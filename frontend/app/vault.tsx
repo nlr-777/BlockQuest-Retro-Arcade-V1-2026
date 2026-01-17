@@ -497,6 +497,48 @@ export default function VaultFlexGallery() {
                   </Text>
                 </View>
               </View>
+
+              {/* Power-ups Section */}
+              <View style={styles.powerUpsSection}>
+                <Text style={styles.powerUpsTitle}>⚡ BADGE POWER-UPS ⚡</Text>
+                <Text style={styles.powerUpsSubtitle}>
+                  Your badges unlock special abilities in games!
+                </Text>
+                
+                <PowerUpBar />
+                
+                {/* Power-up List */}
+                <View style={styles.powerUpsList}>
+                  <Text style={styles.powerUpsListTitle}>ALL POWER-UPS:</Text>
+                  {POWER_UPS.map((powerUp) => (
+                    <View key={powerUp.id} style={styles.powerUpItem}>
+                      <Text style={styles.powerUpItemIcon}>{powerUp.icon}</Text>
+                      <View style={styles.powerUpItemInfo}>
+                        <Text style={[styles.powerUpItemName, { color: powerUp.color }]}>
+                          {powerUp.name}
+                        </Text>
+                        <Text style={styles.powerUpItemDesc}>{powerUp.description}</Text>
+                        <Text style={styles.powerUpItemUnlock}>
+                          🔓 Unlocked by: {powerUp.unlockedByBadge}+ badge
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+                
+                {/* NFT Utility Lesson */}
+                <View style={styles.utilityLesson}>
+                  <Text style={styles.utilityLessonIcon}>🎮</Text>
+                  <View style={styles.utilityLessonContent}>
+                    <Text style={styles.utilityLessonTitle}>NFT UTILITY</Text>
+                    <Text style={styles.utilityLessonText}>
+                      In real blockchain games, NFTs aren't just pictures - they DO things! 
+                      They can give you powers, access to special areas, or bonus rewards.
+                      That's called "utility"! 🚀
+                    </Text>
+                  </View>
+                </View>
+              </View>
             </View>
           )}
 
