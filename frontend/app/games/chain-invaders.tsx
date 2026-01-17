@@ -341,9 +341,22 @@ export default function ChainInvadersGame() {
             bullet.y > GAME_HEIGHT - PLAYER_HEIGHT - 20 &&
             bullet.y < GAME_HEIGHT - 20
           ) {
+            // Check badge-based shield power-up first!
+            if (powerUps.hasShield) {
+              // Badge shield absorbs the hit!
+              playCollect();
+              if (Platform.OS !== 'web') Vibration.vibrate(50);
+              return prev.filter(b => b !== bullet);
+            }
             if (hasShield) {
               setHasShield(false);
             } else {
+              // Check for extra life power-up!
+              if (powerUps.hasExtraLife && powerUps.useExtraLife()) {
+                playLevelUp();
+                if (Platform.OS !== 'web') Vibration.vibrate([0, 100, 100, 100]);
+                return prev.filter(b => b !== bullet);
+              }
               setLives(l => {
                 if (l <= 1) {
                   const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
