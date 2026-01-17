@@ -309,19 +309,14 @@ export default function FactionsPage() {
         </View>
         
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* DAO Introduction */}
-          <Animated.View entering={FadeIn}>
-            <CRTGlowBorder color={CRT_COLORS.accentCyan} style={styles.introCard}>
-              <Text style={styles.introTitle}>🏛️ What's a Faction?</Text>
-              <Text style={styles.introText}>
-                Factions are teams that work together! You can vote on decisions, 
-                pool resources in a treasury, and earn bonus XP.
-              </Text>
-              <Text style={styles.introHint}>
-                💡 Fun fact: In the blockchain world, groups like this are called "DAOs" 
-                (Decentralized Autonomous Organizations)!
-              </Text>
-            </CRTGlowBorder>
+          {/* Unity Mascot Guide - Visual instead of text explanation */}
+          <Animated.View entering={FadeIn} style={styles.unityGuideSection}>
+            <Mascot 
+              type="faction" 
+              size="md" 
+              message={playerFaction ? UNITY_HINTS.hasFaction : UNITY_HINTS.noFaction}
+              mood="excited"
+            />
           </Animated.View>
           
           {/* Current Faction Status */}
