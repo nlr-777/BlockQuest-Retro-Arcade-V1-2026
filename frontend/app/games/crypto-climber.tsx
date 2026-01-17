@@ -564,6 +564,17 @@ export default function CryptoClimberGame() {
               </View>
             )}
 
+            {/* Game Rewards Modal */}
+            <GameRewardsModal
+              visible={gameState === 'rewards'}
+              gameId="crypto-climber"
+              gameName="Crypto Climber"
+              score={score}
+              baseXP={Math.floor(score / 10)}
+              isNewHighScore={highScoreBeaten}
+              onContinue={handleRewardsContinue}
+            />
+
             {/* Game Over - Using RektScreen */}
             <RektScreen
               visible={gameState === 'gameover'}
