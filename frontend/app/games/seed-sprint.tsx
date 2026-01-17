@@ -138,9 +138,11 @@ export default function SeedSprintGame() {
     initGame();
     setGameState('playing');
     setHighScoreBeaten(false);
+    setShieldUsedThisHit(false);
+    powerUps.resetSession(); // Reset power-ups for new game
     startTimeRef.current = Date.now();
     playGameStart();
-  }, [initGame, playGameStart]);
+  }, [initGame, playGameStart, powerUps]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
