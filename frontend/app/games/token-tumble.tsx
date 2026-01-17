@@ -312,14 +312,19 @@ export default function BlockTumbleGame() {
       if (nextPiece) {
         if (checkCollision(clearedBoard, nextPiece)) {
           playGameOver();
-          setGameState('gameover');
+          // Check high score before showing rewards
+          const currentHighScore = profile?.highScores?.['token-tumble'] || 0;
+          if (score > currentHighScore) {
+            setHighScoreBeaten(true);
+          }
+          setGameState('rewards'); // Show rewards first!
         } else {
           setCurrentPiece(nextPiece);
           setNextPiece(randomPiece());
         }
       }
     }
-  }, [currentPiece, board, gameState, level, linesTotal, nextPiece]);
+  }, [currentPiece, board, gameState, level, linesTotal, nextPiece, profile, score]);
 
   // Rotate piece
   const rotatePiece = useCallback(() => {
