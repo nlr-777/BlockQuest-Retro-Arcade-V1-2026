@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeIn, ZoomIn, FadeInUp } from 'react-native-reanimated';
 import { CRT_COLORS } from '../src/constants/crtTheme';
-import { CRTGlowBorder } from '../src/components/CRTGlowBorder';
+import { CRTGlowBorder } from '../src/components/CRTEffects';
 import { PixelText } from '../src/components/PixelText';
 import { useFactionStore, FACTIONS, FactionId, FactionProposal } from '../src/store/factionStore';
 import { useGameStore } from '../src/store/gameStore';
