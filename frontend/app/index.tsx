@@ -40,6 +40,7 @@ import { AvatarSelector } from '../src/components/AvatarSelector';
 import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
 import { MintCarnival } from '../src/components/MintCarnival';
 import { XPProgressBar } from '../src/components/XPProgressBar';
+import { Mascot, getRandomHint } from '../src/components/Mascots';
 import { loyaltyService, LoginReward } from '../src/services/LoyaltyService';
 import { Badge } from '../src/store/gameStore';
 import audioManager from '../src/utils/AudioManager';
