@@ -73,7 +73,7 @@ interface Particle {
   color: string;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function RockBlasterGame() {
   const router = useRouter();
