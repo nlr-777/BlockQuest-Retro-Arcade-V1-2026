@@ -391,6 +391,17 @@ export default function LightningDashGame() {
             </View>
           )}
 
+          {/* Game Rewards Modal */}
+          <GameRewardsModal
+            visible={gameState === 'rewards'}
+            gameId="lightning-dash"
+            gameName="Lightning Dash"
+            score={score}
+            baseXP={Math.floor(score / 10)}
+            isNewHighScore={highScoreBeaten}
+            onContinue={handleRewardsContinue}
+          />
+
           {/* Game Over - Using RektScreen */}
           <RektScreen
             visible={gameState === 'gameover'}
