@@ -159,8 +159,15 @@ export default function ContractCrusherGame() {
   // Start game
   const startGame = useCallback(() => {
     initGame();
+    setHighScoreBeaten(false);
     setGameState('playing');
   }, [initGame]);
+
+  // Handle rewards -> gameover transition
+  const handleRewardsContinue = useCallback(() => {
+    setGameState('gameover');
+    setHighScoreBeaten(false);
+  }, []);
 
   // Move paddle
   const movePaddle = useCallback((touchX: number) => {
