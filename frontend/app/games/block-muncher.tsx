@@ -265,6 +265,9 @@ export default function BlockMuncherGame() {
     playLevelUp, playPowerup 
   } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);
@@ -290,7 +293,7 @@ export default function BlockMuncherGame() {
   // Blockchain collectibles
   const [bqoTokens, setBqoTokens] = useState<Position[]>([]);
   const [nftGems, setNftGems] = useState<{pos: Position; rarity: 'common' | 'rare' | 'epic' | 'legendary'}[]>([]);
-  const [powerups, setPowerups] = useState<{pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[]>([]);
+  const [gamePowerups, setGamePowerups] = useState<{pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[]>([]);
   const [bqoCollected, setBqoCollected] = useState(0);
   const [showTokenEffect, setShowTokenEffect] = useState<{x: number; y: number; amount: number} | null>(null);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
