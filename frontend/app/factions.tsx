@@ -19,6 +19,7 @@ import { CRTGlowBorder } from '../src/components/CRTEffects';
 import { PixelText } from '../src/components/PixelText';
 import { useFactionStore, FACTIONS, FactionId, FactionProposal } from '../src/store/factionStore';
 import { useGameStore } from '../src/store/gameStore';
+import { FactionQuestBoard } from '../src/components/FactionQuestBoard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
