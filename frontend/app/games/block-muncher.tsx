@@ -465,7 +465,13 @@ export default function BlockMuncherGame() {
         setLives(l => {
           if (l <= 1) {
             playGameOver();
-            setGameState('gameover');
+            // Check if high score was beaten
+            const currentHighScore = profile?.highScores?.['block-muncher'] || 0;
+            previousHighScore.current = currentHighScore;
+            if (score > currentHighScore) {
+              setHighScoreBeaten(true);
+            }
+            setGameState('rewards'); // Show rewards first!
             return 0;
           }
           // Reset player position
