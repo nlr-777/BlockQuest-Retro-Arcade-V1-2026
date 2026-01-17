@@ -62,7 +62,7 @@ interface Enemy {
   platformId: number;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function LedgerLeapGame() {
   const router = useRouter();
