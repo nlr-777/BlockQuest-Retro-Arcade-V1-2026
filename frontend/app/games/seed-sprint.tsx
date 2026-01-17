@@ -456,7 +456,7 @@ export default function SeedSprintGame() {
                 HOW TO PLAY:
               </PixelText>
               <View style={styles.instructionRow}>
-                <PixelText size="xs" color={COLORS.textSecondary}>🔹 TAP screen to JUMP over obstacles</PixelText>
+                <PixelText size="xs" color={COLORS.textSecondary}>🔹 TAP to JUMP - tap again for DOUBLE JUMP!</PixelText>
               </View>
               <View style={styles.instructionRow}>
                 <PixelText size="xs" color={COLORS.textSecondary}>🔹 Collect 12 SEED WORDS (shown as icons)</PixelText>
