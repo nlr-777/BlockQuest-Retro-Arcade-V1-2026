@@ -47,7 +47,7 @@ const INVADER_ROWS = 4;
 const INVADER_COLS = 8;
 
 type Position = { x: number; y: number };
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards' | 'victory';
 
 interface Invader extends Position {
   alive: boolean;
@@ -332,7 +332,7 @@ export default function ChainInvadersGame() {
             } else {
               setLives(l => {
                 if (l <= 1) {
-                  setGameState('gameover');
+                  setGameState('gameover' | 'rewards');
                   return 0;
                 }
                 return l - 1;
@@ -354,7 +354,7 @@ export default function ChainInvadersGame() {
 
       // Check if invaders reached bottom
       if (invaders.some(i => i.alive && i.y > GAME_HEIGHT - 60)) {
-        setGameState('gameover');
+        setGameState('gameover' | 'rewards');
       }
     }, 50);
 
@@ -365,7 +365,7 @@ export default function ChainInvadersGame() {
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' && profile) {
+    if (gameState === 'gameover' | 'rewards' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('chain-invaders', score, duration);
@@ -561,7 +561,7 @@ export default function ChainInvadersGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover'}
+        visible={gameState === 'gameover' | 'rewards'}
         score={score}
         reason={`Wave: ${wave} | Consensus: ${consensusVotes}`}
         onRetry={startGame}

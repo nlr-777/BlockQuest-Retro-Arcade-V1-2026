@@ -46,7 +46,7 @@ const GROUND_HEIGHT = 60;
 const OBSTACLE_WIDTH = 30;
 const WORD_COLLECT_SIZE = 50;
 
-type GameState = 'menu' | 'playing' | 'checkpoint' | 'gameover';
+type GameState = 'menu' | 'playing' | 'checkpoint' | 'gameover' | 'rewards';
 
 // BIP-39 inspired seed words (kid-friendly)
 const SEED_WORDS = [
@@ -227,7 +227,7 @@ export default function SeedSprintGame() {
             if (!isJumping) {
               // Hit obstacle!
               playHit();
-              setGameState('gameover');
+              setGameState('gameover' | 'rewards');
               playGameOver();
               if (Platform.OS !== 'web') Vibration.vibrate(100);
               return newObs;
@@ -294,13 +294,13 @@ export default function SeedSprintGame() {
       setGameState('playing');
       if (Platform.OS !== 'web') Vibration.vibrate(50);
     } else {
-      setGameState('gameover');
+      setGameState('gameover' | 'rewards');
     }
   };
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' && profile) {
+    if (gameState === 'gameover' | 'rewards' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('seed-sprint', score, duration);
@@ -527,7 +527,7 @@ export default function SeedSprintGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover'}
+        visible={gameState === 'gameover' | 'rewards'}
         score={score}
         reason={`Distance: ${distance}m | Words: ${collectedWords.length}/12`}
         onRetry={startGame}

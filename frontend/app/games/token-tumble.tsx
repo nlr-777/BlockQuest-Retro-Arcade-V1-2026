@@ -82,7 +82,7 @@ const BLOCKS = {
 };
 
 type BlockType = keyof typeof BLOCKS;
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover';
+type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards';
 type Board = (string | null)[][];
 
 interface Piece {
@@ -310,7 +310,7 @@ export default function BlockTumbleGame() {
       if (nextPiece) {
         if (checkCollision(clearedBoard, nextPiece)) {
           playGameOver();
-          setGameState('gameover');
+          setGameState('gameover' | 'rewards');
         } else {
           setCurrentPiece(nextPiece);
           setNextPiece(randomPiece());
@@ -365,7 +365,7 @@ export default function BlockTumbleGame() {
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' && profile) {
+    if (gameState === 'gameover' | 'rewards' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('token-tumble', score, duration);
@@ -533,7 +533,7 @@ export default function BlockTumbleGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover'}
+        visible={gameState === 'gameover' | 'rewards'}
         score={score}
         reason={`Level: ${level} | Lines: ${linesTotal} | Value: $${collectionValue}`}
         onRetry={startGame}

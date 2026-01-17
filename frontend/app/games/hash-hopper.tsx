@@ -44,7 +44,7 @@ const GAME_WIDTH = GRID_COLS * CELL_SIZE;
 const GAME_HEIGHT = GRID_ROWS * CELL_SIZE;
 
 type Position = { x: number; y: number };
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory';
+type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards' | 'victory';
 
 interface Lane {
   type: 'safe' | 'road' | 'water' | 'goal';
@@ -184,7 +184,7 @@ export default function HashHopperGame() {
               // Hit by car!
               setLives(l => {
                 if (l <= 1) {
-                  setGameState('gameover');
+                  setGameState('gameover' | 'rewards');
                   return 0;
                 }
                 setPlayerPos({ x: 4, y: 10 });
@@ -213,7 +213,7 @@ export default function HashHopperGame() {
             // Fell in water!
             setLives(l => {
               if (l <= 1) {
-                setGameState('gameover');
+                setGameState('gameover' | 'rewards');
                 return 0;
               }
               setPlayerPos({ x: 4, y: 10 });
@@ -233,7 +233,7 @@ export default function HashHopperGame() {
 
   // Handle game over
   useEffect(() => {
-    if (gameState === 'gameover' && profile) {
+    if (gameState === 'gameover' | 'rewards' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       updateScore('hash-hopper', score, duration);
@@ -411,7 +411,7 @@ export default function HashHopperGame() {
 
       {/* Game Over - Using RektScreen */}
       <RektScreen
-        visible={gameState === 'gameover'}
+        visible={gameState === 'gameover' | 'rewards'}
         score={score}
         reason={`Hash: 0x${currentHash} | Path: ${pathTaken.length}`}
         onRetry={startGame}
