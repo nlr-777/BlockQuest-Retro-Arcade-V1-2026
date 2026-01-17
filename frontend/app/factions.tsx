@@ -483,7 +483,14 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   
-  // Intro Card
+  // Unity Guide Section
+  unityGuideSection: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginBottom: 16,
+  },
+  
+  // Intro Card (kept for backwards compatibility)
   introCard: {
     padding: 16,
     marginBottom: 16,
