@@ -71,6 +71,9 @@ export default function HashHopperGame() {
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);

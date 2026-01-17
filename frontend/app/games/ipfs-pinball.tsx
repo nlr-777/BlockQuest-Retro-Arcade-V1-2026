@@ -83,6 +83,9 @@ export default function IPFSPinballGame() {
   const { submitScore, addXP } = useGameStore();
   const { playCollect, playHit, playGameStart, playGameOver, playPowerup } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [score, setScore] = useState(0);

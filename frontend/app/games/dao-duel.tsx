@@ -52,6 +52,9 @@ export default function DAODuelGame() {
   // Audio hook
   const { playHit, playCollect, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'tension' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [playerScore, setPlayerScore] = useState(0);

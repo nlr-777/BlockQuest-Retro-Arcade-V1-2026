@@ -116,6 +116,9 @@ export default function ChainInvadersGame() {
     playLevelUp, playPowerup, playMove 
   } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);

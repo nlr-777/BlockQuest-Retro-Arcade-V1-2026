@@ -137,6 +137,9 @@ export default function CryptoClimberGame() {
   
   // Audio hook - must be called before any other hooks
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
+
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
   
   // Game state
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'paused' | 'gameover' | 'won' | 'rewards'>('ready');

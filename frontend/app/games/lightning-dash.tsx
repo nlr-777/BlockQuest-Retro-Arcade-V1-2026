@@ -69,6 +69,9 @@ export default function LightningDashGame() {
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'euphoria' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [score, setScore] = useState(0);

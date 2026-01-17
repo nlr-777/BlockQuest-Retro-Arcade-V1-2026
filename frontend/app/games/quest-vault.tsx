@@ -120,6 +120,9 @@ export default function QuestVaultGame() {
   const { submitScore, addXP } = useGameStore();
   const { playCollect, playHit, playGameStart, playGameOver, playPowerup, playLevelUp, playMove } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [score, setScore] = useState(0);

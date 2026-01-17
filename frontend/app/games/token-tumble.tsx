@@ -247,6 +247,9 @@ export default function BlockTumbleGame() {
   const { profile, updateScore, mintBadge, addXP } = useGameStore();
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [board, setBoard] = useState<Board>(() => 

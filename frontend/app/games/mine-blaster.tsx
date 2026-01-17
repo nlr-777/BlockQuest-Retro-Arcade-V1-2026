@@ -84,6 +84,9 @@ export default function RockBlasterGame() {
   // Audio hook
   const { playShoot, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [score, setScore] = useState(0);

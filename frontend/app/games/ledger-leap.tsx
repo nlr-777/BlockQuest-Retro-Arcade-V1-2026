@@ -73,6 +73,9 @@ export default function LedgerLeapGame() {
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
+  // Power-up effects hook
+  const powerUps = usePowerUpEffects();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
   const [score, setScore] = useState(0);
