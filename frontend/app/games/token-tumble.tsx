@@ -256,6 +256,7 @@ export default function BlockTumbleGame() {
   const [level, setLevel] = useState(1);
   const [linesTotal, setLinesTotal] = useState(0);
   const [collectionValue, setCollectionValue] = useState(0);
+  const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -270,6 +271,7 @@ export default function BlockTumbleGame() {
     setLevel(1);
     setLinesTotal(0);
     setCollectionValue(0);
+    setHighScoreBeaten(false);
   }, []);
 
   // Start game
