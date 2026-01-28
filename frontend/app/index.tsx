@@ -505,9 +505,15 @@ export default function ArcadeHub() {
             </View>
             <View style={styles.playerInfo}>
               <Text style={styles.playerName}>{profile.username}</Text>
-              <Text style={[styles.playerStats, { color: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
-                {playerCharacter?.specialAbility.icon} {playerCharacter?.name} • LV.{profile.level}
-              </Text>
+              <TouchableOpacity 
+                onPress={(e) => { e.stopPropagation(); router.push('/characters'); }}
+                accessibilityLabel="View character profile"
+                accessibilityRole="button"
+              >
+                <Text style={[styles.playerStats, { color: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
+                  {playerCharacter?.specialAbility.icon} {playerCharacter?.name} • LV.{profile.level} ▸
+                </Text>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={(e) => { e.stopPropagation(); testMintCarnival(); }}>
               <HexBadge size={32} rarity="common" icon="🎰" />
