@@ -491,7 +491,9 @@ interface DifficultyConfig {
   difficultyName: string;
 }
 
-export const useDifficultyScaling = (score: number) => {
+// PERMANENT FIX: Accept optional score with default 0
+// This prevents "cannot access before initialization" errors
+export const useDifficultyScaling = (score: number = 0) => {
   const [difficulty, setDifficulty] = useState<DifficultyConfig>({
     speedMultiplier: 1.0,
     spawnRate: 1.0,
@@ -499,10 +501,13 @@ export const useDifficultyScaling = (score: number) => {
     difficultyName: 'EASY',
   });
   
+  // Use safe score value (handle undefined/null)
+  const safeScore = score ?? 0;
+  
   useEffect(() => {
     let newDifficulty: DifficultyConfig;
     
-    if (score >= 5000) {
+    if (safeScore >= 5000) {
       newDifficulty = {
         speedMultiplier: 2.0,
         spawnRate: 0.5,
