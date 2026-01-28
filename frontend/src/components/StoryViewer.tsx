@@ -1,7 +1,8 @@
 // BlockQuest Official - Story Viewer
 // Comic-panel style story viewer for Web3 Chaos Chronicles
+// Enhanced with polished animations and reading progress
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -11,16 +12,25 @@ import {
   Text,
   Modal,
   Image,
+  Dimensions,
 } from 'react-native';
 import Animated, {
   FadeIn,
   FadeInDown,
+  FadeInUp,
   SlideInRight,
+  SlideInLeft,
+  ZoomIn,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withSequence,
   withTiming,
+  withDelay,
+  withRepeat,
+  Easing,
+  interpolate,
+  Extrapolation,
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,6 +50,9 @@ import {
 } from '../constants/characters';
 import { useCharacterStore } from '../store/characterStore';
 import { useGameStore } from '../store/gameStore';
+import { useAccessibilityStore } from '../utils/accessibility';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Character avatar component
 const CharacterAvatar: React.FC<{ characterId: string; size?: number }> = ({ 
