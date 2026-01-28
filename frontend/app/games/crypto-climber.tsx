@@ -197,10 +197,8 @@ export default function CryptoClimberGame() {
   }, []);
 
   // Start game
-  const startGame = () => {
-    setGameState('playing');
-    powerUps.resetSession();
-    playGameStart();
+  // Initialize game state
+  const initGame = () => {
     setScore(0);
     setLives(3);
     setLevel(1);
@@ -213,6 +211,25 @@ export default function CryptoClimberGame() {
     setBarrels([]);
     setHighScoreBeaten(false);
     initializeEggs();
+  };
+
+  // Begin gameplay after dialogue
+  const beginGameplay = () => {
+    setGameState('playing');
+    powerUps.resetSession();
+    playGameStart();
+  };
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, []);
+
+  // Start game - shows intro dialogue first
+  const startGame = () => {
+    initGame();
+    setShowIntroDialogue(true);
   };
 
   // Handle rewards -> gameover transition
