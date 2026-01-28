@@ -332,12 +332,6 @@ export default function VaultFlexGallery() {
               <Text style={styles.quickStatLabel}>BADGES</Text>
             </View>
             <View style={styles.quickStat}>
-              <Text style={[styles.quickStatValue, { color: CRT_COLORS.accentGold }]}>
-                {bqoStats.totalBQOEarned}
-              </Text>
-              <Text style={styles.quickStatLabel}>BQO</Text>
-            </View>
-            <View style={styles.quickStat}>
               <Text style={styles.quickStatValue}>{totalScore.toLocaleString()}</Text>
               <Text style={styles.quickStatLabel}>SCORE</Text>
             </View>
@@ -356,14 +350,6 @@ export default function VaultFlexGallery() {
           >
             <Text style={[styles.tabText, activeTab === 'badges' && styles.tabTextActive]}>
               🏆 BADGES
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'bqo' && styles.tabActive]}
-            onPress={() => setActiveTab('bqo')}
-          >
-            <Text style={[styles.tabText, activeTab === 'bqo' && styles.tabTextActive]}>
-              💎 BQO
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
