@@ -139,11 +139,6 @@ const FlexBadgeCard: React.FC<{
             {rarityConfig.label}
           </Text>
         </View>
-        
-        {/* BQO earned indicator */}
-        <View style={styles.bqoIndicator}>
-          <Text style={styles.bqoText}>+{rarityConfig.bqo} BQO</Text>
-        </View>
       </TouchableOpacity>
     </Animated.View>
   );
