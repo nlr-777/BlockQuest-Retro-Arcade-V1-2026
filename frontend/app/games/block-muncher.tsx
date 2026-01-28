@@ -385,21 +385,12 @@ export default function BlockMuncherGame() {
     generateBlockchainItems();
   }, [generateBlockchainItems]);
 
-  // Start game - now shows intro dialogue first
+  // Start game - shows intro dialogue first
   const startGame = useCallback(() => {
     initGame();
-    // Show intro dialogue before starting
+    // Show intro dialogue - game starts when player dismisses it
     showIntroDialogue();
   }, [initGame, showIntroDialogue]);
-  
-  // Actually start gameplay after dialogue is dismissed
-  const onIntroComplete = useCallback(() => {
-    hideIntroDialogue();
-    setGameState('playing');
-    powerUps.resetSession();
-    startTimeRef.current = Date.now();
-    playGameStart();
-  }, [hideIntroDialogue, playGameStart]);
 
   // Move player
   const movePlayer = useCallback((dir: Direction) => {
