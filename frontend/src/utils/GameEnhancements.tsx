@@ -514,21 +514,21 @@ export const useDifficultyScaling = (score: number = 0) => {
         scoreMultiplier: 3.0,
         difficultyName: 'INSANE',
       };
-    } else if (score >= 3000) {
+    } else if (safeScore >= 3000) {
       newDifficulty = {
         speedMultiplier: 1.7,
         spawnRate: 0.6,
         scoreMultiplier: 2.5,
         difficultyName: 'HARD',
       };
-    } else if (score >= 1500) {
+    } else if (safeScore >= 1500) {
       newDifficulty = {
         speedMultiplier: 1.4,
         spawnRate: 0.75,
         scoreMultiplier: 2.0,
         difficultyName: 'MEDIUM',
       };
-    } else if (score >= 500) {
+    } else if (safeScore >= 500) {
       newDifficulty = {
         speedMultiplier: 1.2,
         spawnRate: 0.85,
@@ -545,7 +545,7 @@ export const useDifficultyScaling = (score: number = 0) => {
     }
     
     setDifficulty(newDifficulty);
-  }, [score]);
+  }, [safeScore]);
   
   return difficulty;
 };
