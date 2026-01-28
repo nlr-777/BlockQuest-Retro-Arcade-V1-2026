@@ -848,6 +848,17 @@ const styles = StyleSheet.create({
   scoreContainer: {
     alignItems: 'center',
   },
+  bonusIndicator: {
+    fontSize: 10,
+    color: '#00FF88',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginTop: 2,
+    backgroundColor: 'rgba(0, 255, 136, 0.2)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
   livesContainer: {
     flexDirection: 'row',
   },
