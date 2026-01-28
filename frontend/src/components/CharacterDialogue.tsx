@@ -145,11 +145,11 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
         
         <Animated.View style={[styles.container, containerStyle]}>
           {/* Book Chapter Header */}
-          <View style={[styles.bookHeader, { borderColor: dialogueCharacter.colors.primary }]}>
+          <View style={[styles.bookHeader, { borderColor: displayCharacter.colors.primary }]}>
             <Text style={styles.bookIcon}>{bookInfo.icon}</Text>
             <View style={styles.bookInfo}>
               <Text style={styles.bookTitle}>{bookInfo.title}: {bookInfo.subtitle}</Text>
-              <Text style={[styles.chapterTitle, { color: dialogueCharacter.colors.primary }]}>
+              <Text style={[styles.chapterTitle, { color: displayCharacter.colors.primary }]}>
                 {storyMapping.chapterTitle}
               </Text>
             </View>
@@ -158,10 +158,10 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
           {/* Character Dialogue */}
           <Animated.View style={[styles.dialogueBox, dialogueStyle]}>
             <View style={styles.characterRow}>
-              <CharacterAvatar character={dialogueCharacter} size={56} />
+              <CharacterAvatar character={displayCharacter} size={56} />
               <View style={styles.speechBubble}>
-                <Text style={[styles.characterName, { color: dialogueCharacter.colors.primary }]}>
-                  {dialogueCharacter.name}:
+                <Text style={[styles.characterName, { color: displayCharacter.colors.primary }]}>
+                  {displayCharacter.name}:
                 </Text>
                 <Text style={styles.dialogueText}>
                   "{storyMapping.dialogueOnLoad.line}"
