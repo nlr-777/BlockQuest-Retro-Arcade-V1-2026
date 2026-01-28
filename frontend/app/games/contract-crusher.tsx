@@ -130,7 +130,6 @@ export default function ContractCrusherGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
   const [contractsExecuted, setContractsExecuted] = useState(0);
   const [combo, setCombo] = useState(0);
   

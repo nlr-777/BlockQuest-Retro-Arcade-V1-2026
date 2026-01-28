@@ -148,7 +148,6 @@ export default function PowerSmashGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
   const [energyStored, setEnergyStored] = useState(0);
   const [powerLevel, setPowerLevel] = useState(0);
   const [combo, setCombo] = useState(0);

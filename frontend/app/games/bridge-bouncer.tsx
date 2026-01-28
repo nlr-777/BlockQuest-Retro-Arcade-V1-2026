@@ -109,7 +109,6 @@ export default function BridgeBouncerGame() {
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
   const [lives, setLives] = useState(3);
   const [bridgesCompleted, setBridgesCompleted] = useState(0);
 

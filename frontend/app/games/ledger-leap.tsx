@@ -119,7 +119,6 @@ export default function LedgerLeapGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
   const [recordsCollected, setRecordsCollected] = useState(0);
   const [distance, setDistance] = useState(0);
 

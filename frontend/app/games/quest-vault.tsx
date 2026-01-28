@@ -166,7 +166,6 @@ export default function QuestVaultGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(100);
-  const [level, setLevel] = useState(1);
   const [gold, setGold] = useState(0);
   
   // Map and entities

@@ -297,7 +297,6 @@ export default function BlockTumbleGame() {
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
   const [nextPiece, setNextPiece] = useState<Piece | null>(null);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
   const [linesTotal, setLinesTotal] = useState(0);
   const [collectionValue, setCollectionValue] = useState(0);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);

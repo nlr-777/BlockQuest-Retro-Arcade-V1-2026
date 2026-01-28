@@ -321,7 +321,6 @@ export default function BlockMuncherGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
   const [playerPos, setPlayerPos] = useState<Position>({ x: 7, y: 7 });
   const [playerDir, setPlayerDir] = useState<Direction>('RIGHT');
   const [blocks, setBlocks] = useState<Position[]>([]);

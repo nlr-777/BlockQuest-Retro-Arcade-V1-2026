@@ -184,7 +184,6 @@ export default function CryptoClimberGame() {
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
   const [collectedEggs, setCollectedEggs] = useState<typeof EGG_TRAITS[0][]>([]);
   const [showCollectInfo, setShowCollectInfo] = useState(false);
   const [lastCollectedEgg, setLastCollectedEgg] = useState<typeof EGG_TRAITS[0] | null>(null);
