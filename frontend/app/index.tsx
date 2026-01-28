@@ -262,11 +262,12 @@ const getGameIcon = (gameId: string): React.FC<any> => {
 export default function ArcadeHub() {
   const router = useRouter();
   const { profile, initProfile, highScores } = useGameStore();
+  const { selectCharacter, selectedCharacterId, getSelectedCharacter } = useCharacterStore();
   const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
   const hasHydrated = useTutorialHydrated();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [username, setUsername] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig | null>(AVATARS[0]);
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig | null>(CHARACTERS[0]);
   const [currentPun, setCurrentPun] = useState('');
   
   // Loyalty rewards state
