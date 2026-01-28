@@ -796,6 +796,13 @@ export default function BlockMuncherGame() {
         onRetry={startGame}
         onQuit={() => router.push('/')}
       />
+      
+      {/* Character Story Dialogue - Shows before game starts */}
+      <IntroDialogue />
+      
+      {/* In-game character encouragement/tips */}
+      <EncouragementDialogue />
+      <StrugglingDialogue />
     </SafeAreaView>
   );
 }
