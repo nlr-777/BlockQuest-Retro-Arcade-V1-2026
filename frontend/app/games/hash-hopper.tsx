@@ -1,5 +1,6 @@
 // Block Quest Official - Hash Hopper (Frogger Style Game)
 // Teaches: Hash Functions - Tiny changes scramble everything
+// Enhanced with better touch controls, combos, particles, and haptics
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
@@ -8,6 +9,7 @@ import {
   TouchableOpacity,
   Platform,
   Vibration,
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -16,6 +18,8 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withTiming,
+  withSpring,
+  withSequence,
   Easing,
   FadeInDown,
 } from 'react-native-reanimated';
@@ -37,6 +41,19 @@ import { useCharacterStore } from '../../src/store/characterStore';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
+import {
+  GameHaptics,
+  useSwipeGesture,
+  ScreenShake,
+  ComboDisplay,
+  useFloatingScores,
+  useComboSystem,
+  useDifficultyScaling,
+  ParticleBurst,
+  TouchControls,
+  LevelUpFlash,
+  DangerWarning,
+} from '../../src/utils/GameEnhancements';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
