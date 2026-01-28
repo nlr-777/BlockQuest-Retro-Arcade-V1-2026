@@ -382,3 +382,110 @@ export const getAchievementRarityColor = (rarity: string): string => {
     default: return '#888888';
   }
 };
+
+// Check and award achievements after game completion
+// Returns array of newly unlocked achievements
+export const checkAndAwardStoryAchievements = async (
+  gameId: string,
+  score: number,
+  gameStore: any,
+  characterStore: any
+): Promise<StoryAchievement[]> => {
+  const { unlockedStoryChapters, unlockedCharacterIds } = characterStore.getState();
+  const { highScores, profile, awardBadge } = gameStore.getState();
+  
+  const newlyUnlocked: StoryAchievement[] = [];
+  
+  // Get all achievements that should now be unlocked
+  for (const achievement of STORY_ACHIEVEMENTS) {
+    const wasUnlocked = checkAchievementUnlocked(
+      achievement,
+      unlockedStoryChapters,
+      unlockedCharacterIds,
+      highScores,
+      profile?.level || 1
+    );
+    
+    // Skip if already unlocked and badge awarded
+    const alreadyHasBadge = profile?.badges?.some(
+      (b: any) => b.id === `story-${achievement.id}`
+    );
+    
+    if (wasUnlocked && !alreadyHasBadge) {
+      // Award the badge through game store
+      try {
+        await awardBadge({
+          id: `story-${achievement.id}`,
+          name: achievement.name,
+          description: achievement.description,
+          icon: achievement.icon,
+          rarity: achievement.rarity,
+          gameId: 'story-progress',
+          earnedAt: Date.now(),
+        });
+        newlyUnlocked.push(achievement);
+        
+        // Award XP reward if applicable
+        if (achievement.reward?.type === 'xp') {
+          gameStore.getState().addXP(achievement.reward.value as number);
+        }
+      } catch (e) {
+        console.warn('Failed to award story achievement:', achievement.name);
+      }
+    }
+  }
+  
+  return newlyUnlocked;
+};
+
+// Simplified function to call from game completion
+export const processGameCompletion = async (
+  gameId: string,
+  score: number
+): Promise<{ achievements: StoryAchievement[]; chaptersUnlocked: boolean }> => {
+  // Dynamically import stores to avoid circular dependencies
+  const { useGameStore } = await import('../store/gameStore');
+  const { useCharacterStore } = await import('../store/characterStore');
+  const { getStoryMappingByGameId } = await import('../constants/storyMapping');
+  
+  const gameStore = useGameStore;
+  const characterStore = useCharacterStore;
+  
+  // Check if this game unlocks a chapter
+  const storyMapping = getStoryMappingByGameId(gameId);
+  let chaptersUnlocked = false;
+  
+  if (storyMapping && score > 0) {
+    // Unlock the chapter in character store
+    characterStore.getState().unlockStoryChapter(storyMapping.chapterId);
+    chaptersUnlocked = true;
+    
+    // Check if character should be unlocked
+    const { unlockedCharacterIds, unlockedStoryChapters } = characterStore.getState();
+    const totalChapters = unlockedStoryChapters.length;
+    
+    // Unlock characters based on progress
+    if (totalChapters >= 3 && !unlockedCharacterIds.includes('kira')) {
+      characterStore.getState().unlockCharacter('kira');
+    }
+    if (totalChapters >= 6 && !unlockedCharacterIds.includes('rex')) {
+      characterStore.getState().unlockCharacter('rex');
+    }
+    if (totalChapters >= 9 && !unlockedCharacterIds.includes('nova')) {
+      characterStore.getState().unlockCharacter('nova');
+    }
+    if (totalChapters >= 12 && !unlockedCharacterIds.includes('max')) {
+      characterStore.getState().unlockCharacter('max');
+    }
+  }
+  
+  // Check and award story achievements
+  const achievements = await checkAndAwardStoryAchievements(
+    gameId,
+    score,
+    gameStore,
+    characterStore
+  );
+  
+  return { achievements, chaptersUnlocked };
+};
