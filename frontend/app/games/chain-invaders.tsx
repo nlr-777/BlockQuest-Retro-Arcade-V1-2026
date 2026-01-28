@@ -34,6 +34,8 @@ import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
+import { CharacterDialogue } from '../../src/components/CharacterDialogue';
+import { useCharacterStore } from '../../src/store/characterStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -119,6 +121,10 @@ export default function ChainInvadersGame() {
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
 
+  // Character dialogue state
+  const [showIntroDialogue, setShowIntroDialogue] = useState(false);
+  const { getSelectedCharacter } = useCharacterStore();
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
   const [score, setScore] = useState(0);
@@ -174,15 +180,25 @@ export default function ChainInvadersGame() {
     setPowerUp(null);
   }, [initInvaders]);
 
-  // Start game
-  const startGame = useCallback(() => {
-    initGame();
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
-    setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();
-  }, [initGame, playGameStart]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
@@ -614,6 +630,12 @@ export default function ChainInvadersGame() {
         reason={`Wave: ${wave} | Consensus: ${consensusVotes}`}
         onRetry={startGame}
         onQuit={() => router.push('/')}
+      />
+      {/* Character Story Dialogue */}
+      <CharacterDialogue
+        gameId="chain-invaders"
+        visible={showIntroDialogue}
+        onDismiss={handleDialogueDismiss}
       />
     </SafeAreaView>
   );
