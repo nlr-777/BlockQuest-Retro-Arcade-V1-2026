@@ -657,6 +657,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bgDark,
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
