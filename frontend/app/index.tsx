@@ -273,31 +273,6 @@ export default function ArcadeHub() {
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [loyaltyRewards, setLoyaltyRewards] = useState<LoginReward[]>([]);
   
-  // Mint Carnival state
-  const [showMintCarnival, setShowMintCarnival] = useState(false);
-  const [earnedBadge, setEarnedBadge] = useState<Badge | null>(null);
-  
-  // Function to trigger mint carnival when a badge is earned
-  const triggerMintCarnival = (badge: Badge) => {
-    setEarnedBadge(badge);
-    setShowMintCarnival(true);
-  };
-  
-  // Test function to demo the mint carnival
-  const testMintCarnival = () => {
-    const testBadge: Badge = {
-      id: `badge_test_${Date.now()}`,
-      name: 'Chain Champion',
-      description: 'Reached Level 10 in BlockQuest!',
-      rarity: 'Rare',
-      gameId: 'arcade',
-      mintedAt: Date.now(),
-      traits: { level: 10 },
-      icon: '🏆',
-    };
-    triggerMintCarnival(testBadge);
-  };
-
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
 
