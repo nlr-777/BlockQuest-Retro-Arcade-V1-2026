@@ -54,12 +54,12 @@ import audioManager from '../src/utils/AudioManager';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Rarity config with CRT colors
-const RARITY_CONFIG: Record<string, { color: string; label: string; bqo: number }> = {
-  Common: { color: CRT_COLORS.rarityCommon, label: 'COMMON', bqo: 1 },
-  Uncommon: { color: CRT_COLORS.rarityUncommon, label: 'UNCOMMON', bqo: 3 },
-  Rare: { color: CRT_COLORS.rarityRare, label: 'RARE', bqo: 10 },
-  Epic: { color: CRT_COLORS.rarityEpic, label: 'EPIC', bqo: 25 },
-  Legendary: { color: CRT_COLORS.rarityLegendary, label: 'LEGENDARY', bqo: 100 },
+const RARITY_CONFIG: Record<string, { color: string; label: string }> = {
+  Common: { color: CRT_COLORS.rarityCommon, label: 'COMMON' },
+  Uncommon: { color: CRT_COLORS.rarityUncommon, label: 'UNCOMMON' },
+  Rare: { color: CRT_COLORS.rarityRare, label: 'RARE' },
+  Epic: { color: CRT_COLORS.rarityEpic, label: 'EPIC' },
+  Legendary: { color: CRT_COLORS.rarityLegendary, label: 'LEGENDARY' },
 };
 
 // 3D Spinning Badge Card
