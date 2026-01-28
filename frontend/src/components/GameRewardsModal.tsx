@@ -234,6 +234,14 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
           </TouchableOpacity>
         </View>
       </Animated.View>
+      
+      {/* Achievement Toast */}
+      <AchievementToast
+        achievement={currentAchievement}
+        visible={showAchievementToast}
+        onDismiss={handleAchievementDismiss}
+        autoDismiss={5000}
+      />
     </View>
   );
 };
