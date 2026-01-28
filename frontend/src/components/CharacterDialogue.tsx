@@ -162,11 +162,11 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
         return () => clearTimeout(timer);
       }
     } else {
-      scale.value = 0.8;
-      dialogueOpacity.value = 0;
+      scale.value = reduceMotion ? 1 : 0.8;
+      dialogueOpacity.value = reduceMotion ? 1 : 0;
       setShowBonus(false);
     }
-  }, [visible, bonus, autoClose]);
+  }, [visible, bonus, autoClose, reduceMotion]);
   
   const containerStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -174,6 +174,10 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
   
   const dialogueStyle = useAnimatedStyle(() => ({
     opacity: dialogueOpacity.value,
+  }));
+  
+  const buttonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonPulse.value }],
   }));
   
   if (!storyMapping) {
