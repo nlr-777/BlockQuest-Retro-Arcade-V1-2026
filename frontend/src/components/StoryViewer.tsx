@@ -169,19 +169,44 @@ const progressBarStyles = StyleSheet.create({
   },
 });
 
-// Single story panel component
+// Single story panel component with enhanced animations
 const StoryPanel: React.FC<{
   chapter: StoryChapter;
   isUnlocked: boolean;
   onPress: () => void;
   index: number;
 }> = ({ chapter, isUnlocked, onPress, index }) => {
+  const { reduceMotion } = useAccessibilityStore();
   const bookInfo = BOOK_TITLES[chapter.bookNumber] || { icon: '📖', title: 'Prologue', subtitle: '' };
   const gamesInChapter = STORY_MAPPINGS.filter(m => chapter.gameIds.includes(m.gameId));
   const focusCharacter = gamesInChapter[0]?.characterFocus || 'zara';
   
+  // Unlock shine animation
+  const shinePosition = useSharedValue(-100);
+  
+  useEffect(() => {
+    if (isUnlocked && !reduceMotion) {
+      shinePosition.value = withRepeat(
+        withSequence(
+          withTiming(SCREEN_WIDTH + 100, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(-100, { duration: 0 })
+        ),
+        -1,
+        false
+      );
+    }
+  }, [isUnlocked, reduceMotion]);
+  
+  const shineStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shinePosition.value }],
+  }));
+  
+  const enteringAnimation = reduceMotion 
+    ? undefined 
+    : FadeInDown.delay(index * 80).duration(400).springify();
+  
   return (
-    <Animated.View entering={FadeInDown.delay(index * 100).duration(300)}>
+    <Animated.View entering={enteringAnimation}>
       <TouchableOpacity
         style={[
           styles.panel,
@@ -190,6 +215,10 @@ const StoryPanel: React.FC<{
         onPress={onPress}
         activeOpacity={0.8}
       >
+        {/* Shine effect for unlocked panels */}
+        {isUnlocked && !reduceMotion && (
+          <Animated.View style={[styles.shineEffect, shineStyle]} />
+        )}
         {/* Chapter Number Badge */}
         <View style={[
           styles.chapterBadge,
