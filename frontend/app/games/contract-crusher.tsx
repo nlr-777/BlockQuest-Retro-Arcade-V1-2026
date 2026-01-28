@@ -126,12 +126,14 @@ export default function ContractCrusherGame() {
   
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
-  const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
+  // Note: This game uses its own combo state, not useComboSystem
   const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [contractsExecuted, setContractsExecuted] = useState(0);
   const [combo, setCombo] = useState(0);
+  const showCombo = combo > 1;
+  const getMultiplier = () => combo >= 10 ? 3.0 : combo >= 5 ? 2.0 : combo >= 3 ? 1.5 : 1.0;
   
   // Game objects
   const [paddleX, setPaddleX] = useState(GAME_WIDTH / 2 - PADDLE_WIDTH / 2);
