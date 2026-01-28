@@ -145,8 +145,9 @@ export default function PowerSmashGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   // Note: This game uses its own combo state, not useComboSystem
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [lives, setLives] = useState(3);
   const [energyStored, setEnergyStored] = useState(0);
   const [powerLevel, setPowerLevel] = useState(0);

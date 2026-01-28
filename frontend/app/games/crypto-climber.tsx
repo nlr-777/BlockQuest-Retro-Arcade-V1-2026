@@ -181,8 +181,9 @@ export default function CryptoClimberGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [lives, setLives] = useState(3);
   const [collectedEggs, setCollectedEggs] = useState<typeof EGG_TRAITS[0][]>([]);
   const [showCollectInfo, setShowCollectInfo] = useState(false);

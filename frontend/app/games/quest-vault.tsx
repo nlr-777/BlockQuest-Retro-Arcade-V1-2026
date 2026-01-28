@@ -163,8 +163,9 @@ export default function QuestVaultGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [health, setHealth] = useState(100);
   const [gold, setGold] = useState(0);
   

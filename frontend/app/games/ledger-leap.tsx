@@ -116,8 +116,9 @@ export default function LedgerLeapGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [lives, setLives] = useState(3);
   const [recordsCollected, setRecordsCollected] = useState(0);
   const [distance, setDistance] = useState(0);

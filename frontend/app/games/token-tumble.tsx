@@ -290,13 +290,14 @@ export default function BlockTumbleGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [board, setBoard] = useState<Board>(() => 
     Array(ROWS).fill(null).map(() => Array(COLS).fill(null))
   );
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
   const [nextPiece, setNextPiece] = useState<Piece | null>(null);
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [linesTotal, setLinesTotal] = useState(0);
   const [collectionValue, setCollectionValue] = useState(0);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);

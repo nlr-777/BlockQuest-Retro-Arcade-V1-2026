@@ -112,8 +112,9 @@ export default function LightningDashGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [distance, setDistance] = useState(0);
   const [speedLevel, setSpeedLevel] = useState(0);
   const [boltsCollected, setBoltsCollected] = useState(0);

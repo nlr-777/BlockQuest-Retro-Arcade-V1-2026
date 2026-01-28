@@ -126,8 +126,9 @@ export default function IPFSPinballGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  
   const [score, setScore] = useState(0);
+  const difficulty = useDifficultyScaling(score);
   const [balls, setBalls] = useState(3);
   const [multiplier, setMultiplier] = useState(1);
   const [filesStored, setFilesStored] = useState(0);
