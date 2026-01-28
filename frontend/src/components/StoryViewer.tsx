@@ -54,12 +54,32 @@ import { useAccessibilityStore } from '../utils/accessibility';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Character avatar component
+// Character avatar component with glow animation
 const CharacterAvatar: React.FC<{ characterId: string; size?: number }> = ({ 
   characterId, 
   size = 40 
 }) => {
   const character = getCharacterById(characterId);
+  const { reduceMotion } = useAccessibilityStore();
+  const glowOpacity = useSharedValue(0.5);
+  
+  useEffect(() => {
+    if (!reduceMotion) {
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.8, { duration: 1000 }),
+          withTiming(0.5, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+    }
+  }, [reduceMotion]);
+  
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
+  
   if (!character) return null;
   
   return (
@@ -72,12 +92,82 @@ const CharacterAvatar: React.FC<{ characterId: string; size?: number }> = ({
         borderColor: character.colors.primary,
       }
     ]}>
+      <Animated.View 
+        style={[
+          styles.avatarGlow,
+          { 
+            backgroundColor: character.colors.primary,
+            width: size + 4,
+            height: size + 4,
+            borderRadius: (size + 4) / 2,
+          },
+          glowStyle
+        ]} 
+      />
       <Text style={[styles.avatarIcon, { fontSize: size * 0.5 }]}>
         {character.specialAbility.icon}
       </Text>
     </View>
   );
 };
+
+// Reading Progress Indicator
+const ReadingProgress: React.FC<{ progress: number }> = ({ progress }) => {
+  const { reduceMotion } = useAccessibilityStore();
+  const animatedWidth = useSharedValue(0);
+  
+  useEffect(() => {
+    if (reduceMotion) {
+      animatedWidth.value = progress;
+    } else {
+      animatedWidth.value = withTiming(progress, {
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+      });
+    }
+  }, [progress, reduceMotion]);
+  
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${animatedWidth.value}%`,
+  }));
+  
+  return (
+    <View style={progressBarStyles.container}>
+      <View style={progressBarStyles.track}>
+        <Animated.View style={[progressBarStyles.fill, progressStyle]} />
+      </View>
+      <Text style={progressBarStyles.text}>{Math.round(progress)}% Complete</Text>
+    </View>
+  );
+};
+
+const progressBarStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderBottomWidth: 1,
+    borderBottomColor: CRT_COLORS.primary + '30',
+  },
+  track: {
+    height: 8,
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  fill: {
+    height: '100%',
+    backgroundColor: CRT_COLORS.primary,
+    borderRadius: 4,
+  },
+  text: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+});
 
 // Single story panel component
 const StoryPanel: React.FC<{
