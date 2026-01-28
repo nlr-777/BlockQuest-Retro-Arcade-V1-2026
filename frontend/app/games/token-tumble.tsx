@@ -417,7 +417,7 @@ export default function BlockTumbleGame() {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       // Update score (XP is already awarded by GameRewardsModal)
-      updateScore('token-tumble', score, duration);
+      updateScore('token-tumble', applyBonus(score), duration);
 
       // Submit to leaderboard
       axios.post(`${BACKEND_URL}/api/leaderboard`, {

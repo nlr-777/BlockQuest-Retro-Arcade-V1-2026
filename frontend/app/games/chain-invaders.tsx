@@ -433,7 +433,7 @@ export default function ChainInvadersGame() {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       // Update score (XP is already awarded by GameRewardsModal)
-      updateScore('chain-invaders', score, duration);
+      updateScore('chain-invaders', applyBonus(score), duration);
 
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,

@@ -283,7 +283,7 @@ export default function HashHopperGame() {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       // Update score (XP is already awarded by GameRewardsModal)
-      updateScore('hash-hopper', score, duration);
+      updateScore('hash-hopper', applyBonus(score), duration);
 
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,

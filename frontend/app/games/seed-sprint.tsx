@@ -388,7 +388,7 @@ export default function SeedSprintGame() {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
       // Update score (XP is already awarded by GameRewardsModal)
-      updateScore('seed-sprint', score, duration);
+      updateScore('seed-sprint', applyBonus(score), duration);
 
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,
