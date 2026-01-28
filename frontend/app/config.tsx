@@ -208,6 +208,8 @@ export default function ConfigScreen() {
                 <TouchableOpacity
                   style={styles.settingContent}
                   onPress={() => setSelectedTip(selectedTip === setting.id ? null : setting.id)}
+                  accessibilityLabel={`${setting.label}: ${setting.description}. Currently ${settings[setting.id] ? 'enabled' : 'disabled'}`}
+                  accessibilityRole="button"
                 >
                   <View style={styles.settingIcon}>
                     <Text style={styles.iconText}>{setting.icon}</Text>
@@ -221,6 +223,7 @@ export default function ConfigScreen() {
                     onValueChange={(value) => handleToggle(setting.id, value)}
                     trackColor={{ false: CRT_COLORS.bgDark, true: CRT_COLORS.primary + '60' }}
                     thumbColor={settings[setting.id] ? CRT_COLORS.primary : CRT_COLORS.textDim}
+                    accessibilityLabel={`Toggle ${setting.label}`}
                   />
                 </TouchableOpacity>
 
@@ -228,6 +231,54 @@ export default function ConfigScreen() {
                 {selectedTip === setting.id && (
                   <View style={styles.tipBox}>
                     <Text style={styles.tipLabel}>💡 FUN FACT</Text>
+                    <Text style={styles.tipText}>{setting.funTip}</Text>
+                  </View>
+                )}
+              </CRTGlowBorder>
+            </Animated.View>
+          ))}
+          
+          {/* Accessibility Section */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>♿ ACCESSIBILITY</Text>
+            <Text style={styles.sectionDesc}>Make the app work for everyone</Text>
+          </View>
+          
+          {ACCESSIBILITY_SETTINGS.map((setting, index) => (
+            <Animated.View
+              key={setting.id}
+              entering={FadeInDown.delay((SETTINGS.length + index) * 50)}
+            >
+              <CRTGlowBorder
+                color={accessibilitySettings[setting.id] ? '#00FF88' : CRT_COLORS.textDim}
+                style={styles.settingCard}
+              >
+                <TouchableOpacity
+                  style={styles.settingContent}
+                  onPress={() => setSelectedTip(selectedTip === setting.id ? null : setting.id)}
+                  accessibilityLabel={`${setting.label}: ${setting.description}. Currently ${accessibilitySettings[setting.id] ? 'enabled' : 'disabled'}`}
+                  accessibilityRole="button"
+                >
+                  <View style={styles.settingIcon}>
+                    <Text style={styles.iconText}>{setting.icon}</Text>
+                  </View>
+                  <View style={styles.settingInfo}>
+                    <Text style={styles.settingLabel}>{setting.label}</Text>
+                    <Text style={styles.settingDesc}>{setting.description}</Text>
+                  </View>
+                  <Switch
+                    value={accessibilitySettings[setting.id]}
+                    onValueChange={(value) => handleAccessibilityToggle(setting.id, value)}
+                    trackColor={{ false: CRT_COLORS.bgDark, true: '#00FF88' + '60' }}
+                    thumbColor={accessibilitySettings[setting.id] ? '#00FF88' : CRT_COLORS.textDim}
+                    accessibilityLabel={`Toggle ${setting.label}`}
+                  />
+                </TouchableOpacity>
+
+                {/* Fun Tip */}
+                {selectedTip === setting.id && (
+                  <View style={[styles.tipBox, { borderColor: '#00FF88' }]}>
+                    <Text style={[styles.tipLabel, { color: '#00FF88' }]}>💡 TIP</Text>
                     <Text style={styles.tipText}>{setting.funTip}</Text>
                   </View>
                 )}
@@ -253,7 +304,17 @@ export default function ConfigScreen() {
                     dadJokes: true,
                     hardMode: false,
                   });
+                  setAccessibilitySettings({
+                    highContrast: false,
+                    largeText: false,
+                    reduceMotion: false,
+                  });
+                  setHighContrastMode(false);
+                  setLargeTextMode(false);
+                  setReduceMotion(false);
                 }}
+                accessibilityLabel="Reset all settings to default values"
+                accessibilityRole="button"
               >
                 <Text style={styles.resetBtnText}>🔄 Reset Settings</Text>
               </TouchableOpacity>
