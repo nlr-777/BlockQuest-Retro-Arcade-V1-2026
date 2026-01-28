@@ -20,6 +20,8 @@ import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
+import { CharacterDialogue } from '../../src/components/CharacterDialogue';
+import { useCharacterStore } from '../../src/store/characterStore';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
@@ -71,6 +73,10 @@ export default function LightningDashGame() {
 
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
+
+  // Character dialogue state
+  const [showIntroDialogue, setShowIntroDialogue] = useState(false);
+  const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');

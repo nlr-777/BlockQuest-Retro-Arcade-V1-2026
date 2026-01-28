@@ -31,6 +31,8 @@ import { useGameStore } from '../../src/store/gameStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
+import { CharacterDialogue } from '../../src/components/CharacterDialogue';
+import { useCharacterStore } from '../../src/store/characterStore';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
@@ -73,6 +75,10 @@ export default function HashHopperGame() {
 
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
+
+  // Character dialogue state
+  const [showIntroDialogue, setShowIntroDialogue] = useState(false);
+  const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
@@ -117,15 +123,25 @@ export default function HashHopperGame() {
     setHighestRow(10);
   }, [initLanes]);
 
-  // Start game
-  const startGame = useCallback(() => {
-    initGame();
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
-    setHighScoreBeaten(false);
     startTimeRef.current = Date.now();
     playGameStart();
-  }, [initGame, playGameStart]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
@@ -446,6 +462,12 @@ export default function HashHopperGame() {
         reason={`Hash: 0x${currentHash} | Path: ${pathTaken.length}`}
         onRetry={startGame}
         onQuit={() => router.push('/')}
+      />
+      {/* Character Story Dialogue */}
+      <CharacterDialogue
+        gameId="hash-hopper"
+        visible={showIntroDialogue}
+        onDismiss={handleDialogueDismiss}
       />
     </SafeAreaView>
   );
