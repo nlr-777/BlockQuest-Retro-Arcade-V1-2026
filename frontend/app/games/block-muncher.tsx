@@ -33,6 +33,7 @@ import { COLORS } from '../../src/constants/colors';
 import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
 import { useCharacterStore } from '../../src/store/characterStore';
+import { useCharacterBonus } from '../../src/hooks/useCharacterBonus';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { RoastHUD } from '../../src/components/RoastHUD';
