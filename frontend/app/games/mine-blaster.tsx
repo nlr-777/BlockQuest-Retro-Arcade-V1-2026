@@ -147,7 +147,8 @@ export default function RockBlasterGame() {
   }, []);
 
   // Start game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     setShipX(GAME_WIDTH / 2);
     setShipY(GAME_HEIGHT / 2);
     setShipVX(0);
@@ -161,10 +162,26 @@ export default function RockBlasterGame() {
     setParticles([]);
     setRocks(spawnRocks(4));
     setHighScoreBeaten(false);
+  }, [spawnRocks]);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, [spawnRocks]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
