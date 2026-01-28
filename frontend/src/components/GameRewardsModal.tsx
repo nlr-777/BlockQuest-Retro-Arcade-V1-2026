@@ -112,14 +112,30 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
       setXpAwarded(false);
       counterValue.value = 0;
       bonusScale.value = 0;
+      setUnlockedAchievements([]);
+      setShowAchievementToast(false);
+      setCurrentAchievementIndex(0);
     }
   }, [visible]);
+  
+  // Handle achievement toast dismiss
+  const handleAchievementDismiss = () => {
+    if (currentAchievementIndex < unlockedAchievements.length - 1) {
+      // Show next achievement
+      setCurrentAchievementIndex(prev => prev + 1);
+    } else {
+      // All achievements shown
+      setShowAchievementToast(false);
+    }
+  };
   
   const bonusStyle = useAnimatedStyle(() => ({
     transform: [{ scale: bonusScale.value }],
   }));
 
   if (!visible) return null;
+
+  const currentAchievement = unlockedAchievements[currentAchievementIndex] || null;
 
   return (
     <View style={styles.container}>
