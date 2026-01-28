@@ -112,6 +112,7 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
   autoClose = 0,
 }) => {
   const { selectedCharacterId, getSelectedCharacter } = useCharacterStore();
+  const { reduceMotion } = useAccessibilityStore();
   const [showBonus, setShowBonus] = useState(false);
   
   const storyMapping = getStoryMappingByGameId(gameId);
@@ -126,17 +127,33 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
   const bonus = selectedCharacter ? getCharacterBonus(selectedCharacter, gameId) : 0;
   
   // Animation values
-  const scale = useSharedValue(0.8);
-  const dialogueOpacity = useSharedValue(0);
+  const scale = useSharedValue(reduceMotion ? 1 : 0.8);
+  const dialogueOpacity = useSharedValue(reduceMotion ? 1 : 0);
+  const buttonPulse = useSharedValue(1);
   
   useEffect(() => {
     if (visible) {
-      scale.value = withSpring(1, { damping: 12 });
-      dialogueOpacity.value = withDelay(300, withTiming(1, { duration: 400 }));
+      if (reduceMotion) {
+        scale.value = 1;
+        dialogueOpacity.value = 1;
+      } else {
+        scale.value = withSpring(1, { damping: 12 });
+        dialogueOpacity.value = withDelay(300, withTiming(1, { duration: 400 }));
+        
+        // Pulse animation for continue button
+        buttonPulse.value = withRepeat(
+          withSequence(
+            withTiming(1.02, { duration: 800 }),
+            withTiming(1, { duration: 800 })
+          ),
+          -1,
+          true
+        );
+      }
       
       // Show bonus after dialogue appears
       if (bonus > 0) {
-        setTimeout(() => setShowBonus(true), 800);
+        setTimeout(() => setShowBonus(true), reduceMotion ? 0 : 800);
       }
       
       // Auto close if set
