@@ -139,16 +139,27 @@ export default function SeedSprintGame() {
     playerY.value = 0;
   }, [generateSeedPhrase]);
 
-  // Start game
-  const startGame = useCallback(() => {
-    initGame();
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     setHighScoreBeaten(false);
     setShieldUsedThisHit(false);
     powerUps.resetSession(); // Reset power-ups for new game
     startTimeRef.current = Date.now();
     playGameStart();
-  }, [initGame, playGameStart, powerUps]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss  
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {

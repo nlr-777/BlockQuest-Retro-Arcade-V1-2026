@@ -220,14 +220,25 @@ export default function QuestVaultGame() {
     setVault({ x: GRID_SIZE - 2, y: GRID_SIZE - 2, requiredSigners: 2, unlocked: false });
   }, []);
 
-  // Start game
-  const startGame = useCallback(() => {
-    initGame();
-    setHighScoreBeaten(false);
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
+    setHighScoreBeaten(false);
     powerUps.resetSession();
     playGameStart();
-  }, [initGame, playGameStart]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss  
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
