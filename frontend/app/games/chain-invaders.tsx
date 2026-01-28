@@ -35,6 +35,7 @@ import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { CharacterDialogue } from '../../src/components/CharacterDialogue';
+import { useCharacterBonus } from '../../src/hooks/useCharacterBonus';
 import { useCharacterStore } from '../../src/store/characterStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -120,6 +121,16 @@ export default function ChainInvadersGame() {
 
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
+
+  // Character bonus hook - for score multipliers
+  const { 
+    hasBonus, 
+    bonusPercent, 
+    applyBonus, 
+    getBonusPoints,
+    recordGame,
+    abilityIcon 
+  } = useCharacterBonus('chain-invaders');
 
   // Character dialogue state
   const [showIntroDialogue, setShowIntroDialogue] = useState(false);

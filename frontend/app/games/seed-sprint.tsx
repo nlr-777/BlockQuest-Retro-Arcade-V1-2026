@@ -34,6 +34,7 @@ import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { CharacterDialogue } from '../../src/components/CharacterDialogue';
+import { useCharacterBonus } from '../../src/hooks/useCharacterBonus';
 import { useCharacterStore } from '../../src/store/characterStore';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
@@ -88,6 +89,16 @@ export default function SeedSprintGame() {
 
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
+
+  // Character bonus hook - for score multipliers
+  const { 
+    hasBonus, 
+    bonusPercent, 
+    applyBonus, 
+    getBonusPoints,
+    recordGame,
+    abilityIcon 
+  } = useCharacterBonus('seed-sprint');
 
   // Character dialogue state
   const [showIntroDialogue, setShowIntroDialogue] = useState(false);
