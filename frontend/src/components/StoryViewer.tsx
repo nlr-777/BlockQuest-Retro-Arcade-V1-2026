@@ -659,6 +659,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  avatarGlow: {
+    position: 'absolute',
+    opacity: 0.3,
+  },
   avatarIcon: {
     textAlign: 'center',
   },
