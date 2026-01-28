@@ -242,7 +242,7 @@ export const MiniDialogue: React.FC<MiniDialogueProps> = ({
 };
 
 // Hook for easy dialogue management in games
-export const useCharacterDialogue = (gameId: string) => {
+export const useCharacterDialogue = (gameId: string, onStartGame?: () => void) => {
   const [showIntro, setShowIntro] = useState(false);
   const [showEncouragement, setShowEncouragement] = useState(false);
   const [showStruggling, setShowStruggling] = useState(false);
@@ -253,7 +253,13 @@ export const useCharacterDialogue = (gameId: string) => {
   const bonus = character ? getCharacterBonus(character, gameId) : 0;
   
   const showIntroDialogue = () => setShowIntro(true);
-  const hideIntroDialogue = () => setShowIntro(false);
+  const hideIntroDialogue = () => {
+    setShowIntro(false);
+    // Call the start game callback if provided
+    if (onStartGame) {
+      onStartGame();
+    }
+  };
   
   const triggerEncouragement = () => {
     setShowEncouragement(true);
