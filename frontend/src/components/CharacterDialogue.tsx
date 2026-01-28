@@ -121,7 +121,14 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
     opacity: dialogueOpacity.value,
   }));
   
-  if (!storyMapping || !dialogueCharacter) {
+  if (!storyMapping) {
+    // No story mapping for this game, skip dialogue
+    return null;
+  }
+  
+  // Use story character or fall back to default Zara
+  const displayCharacter = dialogueCharacter || getCharacterById('zara');
+  if (!displayCharacter) {
     return null;
   }
   
