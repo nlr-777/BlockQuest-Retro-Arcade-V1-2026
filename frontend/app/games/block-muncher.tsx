@@ -38,6 +38,7 @@ import { RoastHUD } from '../../src/components/RoastHUD';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
+import { useCharacterDialogue } from '../../src/components/CharacterDialogue';
 import { 
   BQOToken, 
   NFTGem, 
