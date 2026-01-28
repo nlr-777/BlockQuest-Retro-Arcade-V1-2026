@@ -405,8 +405,12 @@ export default function ArcadeHub() {
   const playableCount = GAMES.filter(g => g.isPlayable).length;
   const comingSoonCount = GAMES.filter(g => !g.isPlayable).length;
   
-  // Get player's avatar
-  const playerAvatar = profile?.avatarId ? getAvatarById(profile.avatarId) : AVATARS[0];
+  // Get player's current character
+  const playerCharacter = profile?.avatarId ? getCharacterById(profile.avatarId) : CHARACTERS[0];
+  // Character portrait URL
+  const playerAvatarUrl = playerCharacter 
+    ? `https://api.dicebear.com/7.x/pixel-art/png?seed=${playerCharacter.id}&backgroundColor=${playerCharacter.colors.primary.replace('#', '')}`
+    : null;
 
   const glowStyle = useAnimatedStyle(() => ({
     textShadowRadius: 10 + glowOpacity.value * 10,
