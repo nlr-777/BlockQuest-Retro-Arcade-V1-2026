@@ -117,7 +117,8 @@ export default function BridgeBouncerGame() {
   }, []);
 
   // Start game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     setTiles(initializeTiles());
     setPlayerRow(0);
     setPlayerCol(0);
@@ -128,10 +129,26 @@ export default function BridgeBouncerGame() {
     setBridgesCompleted(0);
     setTargetChain(1);
     setHighScoreBeaten(false);
+  }, [initializeTiles]);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, [initializeTiles]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
