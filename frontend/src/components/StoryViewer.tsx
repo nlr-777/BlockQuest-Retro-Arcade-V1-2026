@@ -569,6 +569,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 12,
     overflow: 'hidden',
+    position: 'relative',
   },
   panelUnlocked: {
     borderColor: CRT_COLORS.primary,
@@ -576,6 +577,14 @@ const styles = StyleSheet.create({
   panelLocked: {
     borderColor: CRT_COLORS.bgMedium,
     opacity: 0.7,
+  },
+  shineEffect: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    transform: [{ skewX: '-20deg' }],
   },
   chapterBadge: {
     width: 50,
