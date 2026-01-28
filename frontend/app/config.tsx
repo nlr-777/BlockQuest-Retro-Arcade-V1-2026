@@ -110,15 +110,18 @@ const ACCESSIBILITY_SETTINGS: SettingToggle[] = [
     funTip: 'Sometimes less is more!',
   },
 ];
-    label: 'Hard Mode',
-    description: 'Extra challenge for pros!',
-    icon: '🔥',
-    funTip: 'Why did hard mode go to the gym? To get TOUGHER!',
-  },
-];
 
 export default function ConfigScreen() {
   const router = useRouter();
+  const { 
+    highContrastMode, 
+    largeTextMode, 
+    reduceMotion,
+    setHighContrastMode,
+    setLargeTextMode,
+    setReduceMotion,
+  } = useAccessibilityStore();
+  
   const [settings, setSettings] = useState<Record<string, boolean>>({
     sound: true,
     music: true,
@@ -129,6 +132,13 @@ export default function ConfigScreen() {
     dadJokes: true,
     hardMode: false,
   });
+  
+  const [accessibilitySettings, setAccessibilitySettings] = useState<Record<string, boolean>>({
+    highContrast: highContrastMode,
+    largeText: largeTextMode,
+    reduceMotion: reduceMotion,
+  });
+  
   const [selectedTip, setSelectedTip] = useState<string | null>(null);
 
   const handleToggle = (id: string, value: boolean) => {
@@ -146,6 +156,23 @@ export default function ConfigScreen() {
       case 'voice':
         ttsManager.setEnabled(value);
         if (value) ttsManager.speak('Voice enabled!');
+        break;
+    }
+  };
+  
+  const handleAccessibilityToggle = (id: string, value: boolean) => {
+    setAccessibilitySettings(prev => ({ ...prev, [id]: value }));
+    
+    // Apply accessibility settings
+    switch (id) {
+      case 'highContrast':
+        setHighContrastMode(value);
+        break;
+      case 'largeText':
+        setLargeTextMode(value);
+        break;
+      case 'reduceMotion':
+        setReduceMotion(value);
         break;
     }
   };
