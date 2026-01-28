@@ -24,7 +24,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { processGameCompletion, StoryAchievement } from '../services/StoryAchievements';
 import { AchievementToast, useAchievementToast } from './AchievementToast';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface GameRewardsModalProps {
   visible: boolean;
