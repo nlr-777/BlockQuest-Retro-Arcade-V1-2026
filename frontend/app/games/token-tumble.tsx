@@ -492,7 +492,7 @@ export default function BlockTumbleGame() {
         <LevelUpFlash trigger={levelUpTrigger} level={level} />
         
         {/* Danger Warning when low health */}
-        <DangerWarning active={lives === 1 && gameState === 'playing'} />
+        <DangerWarning active={false} />
         
         {/* Particle Burst */}
         <ParticleBurst 
