@@ -408,18 +408,25 @@ export default function ChainInvadersGame() {
             if (powerUps.hasShield) {
               // Badge shield absorbs the hit!
               playCollect();
-              if (Platform.OS !== 'web') Vibration.vibrate(50);
+              GameHaptics.medium();
               return prev.filter(b => b !== bullet);
             }
             if (hasShield) {
               setHasShield(false);
+              GameHaptics.warning();
             } else {
               // Check for extra life power-up!
               if (powerUps.hasExtraLife && powerUps.useExtraLife()) {
                 playLevelUp();
-                if (Platform.OS !== 'web') Vibration.vibrate([0, 100, 100, 100]);
+                GameHaptics.success();
                 return prev.filter(b => b !== bullet);
               }
+              
+              // Player hit - reset combo, shake screen
+              resetCombo();
+              setShakeCount(prev => prev + 1);
+              GameHaptics.error();
+              
               setLives(l => {
                 if (l <= 1) {
                   const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
