@@ -900,15 +900,7 @@ const dangerStyles = StyleSheet.create({
   },
 });
 
-// ============================================
-// EXPORT ALL
-// ============================================
-export {
-  ScreenShake,
-  ComboDisplay,
-  FloatingScores,
-  ParticleBurst,
-  TouchControls,
-  LevelUpFlash,
-  DangerWarning,
-};
+// Note: All components are already exported at their definition
+// GameHaptics, useSwipeGesture, ScreenShake, ComboDisplay, 
+// useFloatingScores, useComboSystem, useDifficultyScaling,
+// ParticleBurst, TouchControls, LevelUpFlash, DangerWarning
