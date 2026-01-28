@@ -15,7 +15,7 @@ import Animated, {
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
 import { CRTFlickerText, CRTScanlines } from './CRTEffects';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface RektScreenProps {
   visible: boolean;
