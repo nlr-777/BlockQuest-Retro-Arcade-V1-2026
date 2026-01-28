@@ -1,5 +1,5 @@
 // Block Quest Official - Settings Screen
-// Mobile-first design with future blockchain integration preparation
+// Mobile-first design
 import React, { useState } from 'react';
 import {
   View,
