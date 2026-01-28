@@ -237,7 +237,7 @@ export default function DAODuelGame() {
               playGameOver();
               setHighScoreBeaten(playerScore > 0);
               setGameState('rewards');
-              submitScore('dao-duel', playerScore * 100);
+              submitScore('dao-duel', applyBonus(playerScore * 100));
             } else {
               setRound(r => r + 1);
               resetBall(1);
@@ -253,7 +253,7 @@ export default function DAODuelGame() {
             const newScore = s + 1;
             if (newScore >= 5) {
               setGameState('victory');
-              submitScore('dao-duel', (newScore * 100) + (votingPower * 50) + 500);
+              submitScore('dao-duel', applyBonus((newScore * 100) + (votingPower * 50) + 500));
             } else {
               setRound(r => r + 1);
               setVotingPower(v => Math.min(v + 1, 5)); // Earn voting power
