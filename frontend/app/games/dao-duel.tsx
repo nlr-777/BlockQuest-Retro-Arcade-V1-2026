@@ -99,7 +99,8 @@ export default function DAODuelGame() {
   }, [ballSpeed]);
 
   // Start game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     setPlayerScore(0);
     setAiScore(0);
     setRound(1);
@@ -112,10 +113,26 @@ export default function DAODuelGame() {
     setAiSpeed(4);
     setHighScoreBeaten(false);
     resetBall(1);
+  }, [resetBall]);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, [resetBall]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
