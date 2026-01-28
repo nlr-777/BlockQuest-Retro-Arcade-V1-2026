@@ -252,9 +252,11 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
           )}
           
           {/* Tap to Continue */}
-          <TouchableOpacity style={styles.continueButton} onPress={onDismiss}>
-            <Text style={styles.continueText}>▶ TAP TO PLAY</Text>
-          </TouchableOpacity>
+          <Animated.View style={buttonStyle}>
+            <TouchableOpacity style={styles.continueButton} onPress={onDismiss}>
+              <Text style={styles.continueText}>▶ TAP TO PLAY</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </Animated.View>
       </View>
     </Modal>
