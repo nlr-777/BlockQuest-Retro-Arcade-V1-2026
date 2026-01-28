@@ -816,9 +816,12 @@ const styles = StyleSheet.create({
   },
   brickText: {
     fontSize: 8,
-    color: '#000',
+    color: '#FFF',
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   ball: {
     position: 'absolute',
