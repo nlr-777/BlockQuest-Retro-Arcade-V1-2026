@@ -649,20 +649,6 @@ export default function ArcadeHub() {
         rewards={loyaltyRewards}
         onClose={() => setShowLoyaltyRewards(false)}
       />
-      
-      {/* NFT Badge Mint Carnival */}
-      <MintCarnival
-        visible={showMintCarnival}
-        badge={earnedBadge}
-        onClose={() => {
-          setShowMintCarnival(false);
-          setEarnedBadge(null);
-        }}
-        onMint={() => {
-          // Badge is already minted in game store, this is just for the animation
-          console.log('Badge minted!', earnedBadge?.name);
-        }}
-      />
     </View>
   );
 }
