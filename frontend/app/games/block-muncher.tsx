@@ -269,6 +269,11 @@ export default function BlockMuncherGame() {
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
   
+  // Character dialogue state
+  const [showIntroDialogue, setShowIntroDialogue] = useState(false);
+  const { getSelectedCharacter } = useCharacterStore();
+  const selectedCharacter = getSelectedCharacter();
+  
   // Function to actually start gameplay (called after dialogue)
   const beginGameplay = useCallback(() => {
     setGameState('playing');
@@ -276,21 +281,6 @@ export default function BlockMuncherGame() {
     startTimeRef.current = Date.now();
     playGameStart();
   }, [playGameStart]);
-  
-  // Character dialogue hook - for story integration
-  const { 
-    showIntro, 
-    showIntroDialogue, 
-    hideIntroDialogue, 
-    IntroDialogue,
-    EncouragementDialogue,
-    StrugglingDialogue,
-    triggerEncouragement,
-    triggerStruggling,
-    applyBonus,
-    bonus,
-    character,
-  } = useCharacterDialogue('block-muncher', beginGameplay);
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
