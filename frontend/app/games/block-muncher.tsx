@@ -613,6 +613,11 @@ export default function BlockMuncherGame() {
         <View style={styles.scoreContainer}>
           <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
           <PixelText size="lg" color={COLORS.chainGold} glow>{score}</PixelText>
+          {hasBonus && (
+            <Text style={styles.bonusIndicator}>
+              {abilityIcon} +{bonusPercent}%
+            </Text>
+          )}
         </View>
         
         <View style={styles.livesContainer}>
