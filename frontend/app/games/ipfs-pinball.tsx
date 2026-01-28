@@ -501,6 +501,13 @@ export default function IPFSPinballGame() {
           onRetry={startGame}
           onQuit={() => router.back()}
         />
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="ipfs-pinball"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

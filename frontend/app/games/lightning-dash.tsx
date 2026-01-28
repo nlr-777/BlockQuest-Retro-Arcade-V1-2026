@@ -459,6 +459,13 @@ export default function LightningDashGame() {
             <Text style={styles.laneBtnText}>▶</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="lightning-dash"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

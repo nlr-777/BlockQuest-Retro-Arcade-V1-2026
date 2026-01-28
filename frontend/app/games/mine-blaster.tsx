@@ -632,6 +632,13 @@ export default function RockBlasterGame() {
             <Text style={styles.fireBtnText}>FIRE</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="mine-blaster"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

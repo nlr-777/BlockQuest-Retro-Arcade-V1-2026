@@ -671,6 +671,13 @@ export default function PowerSmashGame() {
             <Text style={styles.controlText}>▶</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="stake-smash"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

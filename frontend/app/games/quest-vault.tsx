@@ -579,6 +579,13 @@ export default function QuestVaultGame() {
             </View>
           </View>
         )}
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="quest-vault"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

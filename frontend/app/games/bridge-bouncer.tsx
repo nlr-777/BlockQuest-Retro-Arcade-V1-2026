@@ -483,6 +483,13 @@ export default function BridgeBouncerGame() {
             </TouchableOpacity>
           </View>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="bridge-bouncer"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

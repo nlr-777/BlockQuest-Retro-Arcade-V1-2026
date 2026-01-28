@@ -685,6 +685,13 @@ export default function CryptoClimberGame() {
             <Text style={styles.jumpText}>JUMP</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="crypto-climber"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );

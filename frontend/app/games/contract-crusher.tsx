@@ -633,6 +633,13 @@ export default function ContractCrusherGame() {
             </View>
           </View>
         )}
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="contract-crusher"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );
