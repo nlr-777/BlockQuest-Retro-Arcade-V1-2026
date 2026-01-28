@@ -139,8 +139,8 @@ export default function LedgerLeapGame() {
     return newPlatforms;
   }, []);
 
-  // Initialize game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     const initialPlatforms: Platform[] = [
       { id: 0, x: 0, y: GAME_HEIGHT - 20, width: 150 }, // Ground start
       ...generatePlatforms(100, 15),
@@ -173,10 +173,26 @@ export default function LedgerLeapGame() {
     setRecordsCollected(0);
     setDistance(0);
     setHighScoreBeaten(false);
+  }, [generatePlatforms]);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, [generatePlatforms, playGameStart]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
