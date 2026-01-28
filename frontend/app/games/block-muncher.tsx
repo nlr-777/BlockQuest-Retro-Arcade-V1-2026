@@ -794,11 +794,11 @@ export default function BlockMuncherGame() {
       />
       
       {/* Character Story Dialogue - Shows before game starts */}
-      <IntroDialogue />
-      
-      {/* In-game character encouragement/tips */}
-      <EncouragementDialogue />
-      <StrugglingDialogue />
+      <CharacterDialogue
+        gameId="block-muncher"
+        visible={showIntroDialogue}
+        onDismiss={handleDialogueDismiss}
+      />
     </SafeAreaView>
   );
 }
