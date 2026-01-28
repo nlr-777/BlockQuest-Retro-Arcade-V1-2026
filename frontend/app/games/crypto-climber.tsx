@@ -396,7 +396,7 @@ export default function CryptoClimberGame() {
         // Check win
         if (checkWin(playerX, newY)) {
           setGameState('won');
-          submitScore('crypto-climber', score + 500);
+          submitScore('crypto-climber', applyBonus(score + 500));
         }
         
         return Math.max(0, Math.min(GAME_HEIGHT - PLAYER_SIZE, newY));
