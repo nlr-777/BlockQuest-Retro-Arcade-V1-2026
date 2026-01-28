@@ -477,6 +477,13 @@ export default function DAODuelGame() {
             </TouchableOpacity>
           </View>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="dao-duel"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );
