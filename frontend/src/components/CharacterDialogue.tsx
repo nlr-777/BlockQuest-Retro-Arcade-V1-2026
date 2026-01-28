@@ -49,12 +49,30 @@ interface CharacterDialogueProps {
   autoClose?: number; // Auto close after ms (0 = manual close)
 }
 
-// Character avatar placeholder
+// Character avatar with glow animation
 const CharacterAvatar: React.FC<{ character: CharacterConfig; size?: number }> = ({ 
   character, 
   size = 48 
 }) => {
-  const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/png?seed=${character.id}&backgroundColor=${character.colors.primary.replace('#', '')}`;
+  const glowOpacity = useSharedValue(0.5);
+  const { reduceMotion } = useAccessibilityStore();
+  
+  useEffect(() => {
+    if (!reduceMotion) {
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1000 }),
+          withTiming(0.5, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+    }
+  }, [reduceMotion]);
+  
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
   
   return (
     <View style={[
@@ -66,6 +84,19 @@ const CharacterAvatar: React.FC<{ character: CharacterConfig; size?: number }> =
         backgroundColor: character.colors.primary + '30',
       }
     ]}>
+      {/* Glow effect */}
+      <Animated.View 
+        style={[
+          styles.avatarGlow,
+          { 
+            backgroundColor: character.colors.primary,
+            width: size + 4,
+            height: size + 4,
+            borderRadius: (size + 4) / 2,
+          },
+          glowStyle,
+        ]} 
+      />
       <Text style={[styles.avatarEmoji, { fontSize: size * 0.5 }]}>
         {character.specialAbility.icon}
       </Text>
