@@ -451,6 +451,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'visible',
+  },
+  avatarGlow: {
+    position: 'absolute',
+    opacity: 0.3,
   },
   avatarEmoji: {
     textAlign: 'center',
