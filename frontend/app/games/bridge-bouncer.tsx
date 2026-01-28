@@ -27,6 +27,17 @@ import { RoastHUD } from '../../src/components/RoastHUD';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
 import { Scanlines } from '../../src/components/RetroEffects';
+import {
+  GameHaptics,
+  ScreenShake,
+  ComboDisplay,
+  useFloatingScores,
+  useComboSystem,
+  useDifficultyScaling,
+  ParticleBurst,
+  LevelUpFlash,
+  DangerWarning,
+} from '../../src/utils/GameEnhancements';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -86,6 +97,17 @@ export default function BridgeBouncerGame() {
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
+  
+  // Enhanced game features
+  const [shakeCount, setShakeCount] = useState(0);
+  const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
+  const [level, setLevel] = useState(1);
+  const [levelUpTrigger, setLevelUpTrigger] = useState(0);
+  
+  // Game enhancement hooks
+  const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
+  const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
+  const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [lives, setLives] = useState(3);

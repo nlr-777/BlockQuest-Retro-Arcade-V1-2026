@@ -37,6 +37,17 @@ import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { CharacterDialogue } from '../../src/components/CharacterDialogue';
 import { useCharacterBonus } from '../../src/hooks/useCharacterBonus';
 import { useCharacterStore } from '../../src/store/characterStore';
+import {
+  GameHaptics,
+  ScreenShake,
+  ComboDisplay,
+  useFloatingScores,
+  useComboSystem,
+  useDifficultyScaling,
+  ParticleBurst,
+  LevelUpFlash,
+  DangerWarning,
+} from '../../src/utils/GameEnhancements';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -138,6 +149,17 @@ export default function ChainInvadersGame() {
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
+  
+  // Enhanced game features
+  const [shakeCount, setShakeCount] = useState(0);
+  const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
+  const [level, setLevel] = useState(1);
+  const [levelUpTrigger, setLevelUpTrigger] = useState(0);
+  
+  // Game enhancement hooks
+  const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
+  const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
+  const difficulty = useDifficultyScaling(score);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [wave, setWave] = useState(1);
