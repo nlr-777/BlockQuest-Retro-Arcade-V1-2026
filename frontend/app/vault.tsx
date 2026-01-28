@@ -208,9 +208,9 @@ const BadgeDetailModal: React.FC<{
               </Text>
             </View>
             <View style={styles.modalStat}>
-              <Text style={styles.modalStatLabel}>BQO AIRDROP</Text>
-              <Text style={[styles.modalStatValue, { color: CRT_COLORS.accentGold }]}>
-                +{rarityConfig.bqo} BQO
+              <Text style={styles.modalStatLabel}>RARITY</Text>
+              <Text style={[styles.modalStatValue, { color: rarityConfig.color }]}>
+                {rarityConfig.label}
               </Text>
             </View>
             <View style={styles.modalStat}>
