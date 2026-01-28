@@ -32,13 +32,14 @@ import VFXLayer from '../../src/vfx/VFXManager';
 import { COLORS } from '../../src/constants/colors';
 import { GAMES } from '../../src/constants/games';
 import { useGameStore } from '../../src/store/gameStore';
+import { useCharacterStore } from '../../src/store/characterStore';
 import { useGameAudio } from '../../src/hooks/useGameAudio';
 import { RektScreen } from '../../src/components/RektScreen';
 import { RoastHUD } from '../../src/components/RoastHUD';
 import { GameRewardsModal } from '../../src/components/GameRewardsModal';
 import { PowerUpHUD } from '../../src/components/PowerUpBar';
 import { usePowerUpEffects } from '../../src/hooks/usePowerUpEffects';
-import { useCharacterDialogue } from '../../src/components/CharacterDialogue';
+import { CharacterDialogue } from '../../src/components/CharacterDialogue';
 import { 
   BQOToken, 
   NFTGem, 
