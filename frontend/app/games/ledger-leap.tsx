@@ -623,6 +623,13 @@ export default function LedgerLeapGame() {
             <Text style={styles.jumpBtnText}>JUMP</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Character Story Dialogue */}
+        <CharacterDialogue
+          gameId="ledger-leap"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
       </SafeAreaView>
     </View>
   );
