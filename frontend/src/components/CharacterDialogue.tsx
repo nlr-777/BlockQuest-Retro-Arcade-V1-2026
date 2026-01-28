@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   bookTitle: {
     fontSize: 10,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 1,
   },
@@ -498,9 +498,12 @@ const styles = StyleSheet.create({
   },
   funFactText: {
     fontSize: 11,
-    color: CRT_COLORS.textSecondary,
+    color: '#FFFFFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     lineHeight: 16,
+    textShadowColor: 'rgba(0, 255, 200, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 4,
   },
   bonusBox: {
     flexDirection: 'row',
