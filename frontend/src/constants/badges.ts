@@ -1,18 +1,9 @@
 // BlockQuest Official - Badge Definitions
-// 50+ collectible NFT-style badges with BQO airdrops
+// 50+ collectible badge achievements
 
 import { CRT_COLORS } from './crtTheme';
 
 export type BadgeRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
-
-// BQO Airdrop amounts based on badge rarity
-export const BQO_AIRDROP_AMOUNTS: Record<BadgeRarity, number> = {
-  common: 1,      // Common badges = 1 BQO
-  uncommon: 3,    // Uncommon badges = 3 BQO
-  rare: 10,       // Rare badges = 10 BQO
-  epic: 25,       // Epic badges = 25 BQO
-  legendary: 100, // Legendary badges = 100 BQO
-};
 
 export interface BadgeDefinition {
   id: string;
