@@ -224,19 +224,6 @@ export const useGameStore = create<GameState>()(
     // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
     
-    // Process BQO airdrop for badge
-    try {
-      const { getBQOTokenService } = await import('../services/BQOTokenService');
-      const bqoService = getBQOTokenService();
-      await bqoService.processBadgeAirdrop({
-        id: badge.id,
-        name: badge.name,
-        rarity: badge.rarity,
-      });
-    } catch (e) {
-      // Silent fail - BQO service may not be available on SSR
-    }
-    
     return badge;
   },
 
