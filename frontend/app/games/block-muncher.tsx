@@ -537,29 +537,36 @@ export default function BlockMuncherGame() {
     if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
       
-      // Update score (XP is already awarded by GameRewardsModal)
-      updateScore('block-muncher', score, duration);
+      // Apply character bonus to score
+      const finalScore = applyBonus(score);
+      const bonusPoints = getBonusPoints(score);
+      
+      // Record character game progress
+      recordGame(score);
+      
+      // Update score with bonus applied
+      updateScore('block-muncher', finalScore, duration);
 
-      // Submit to leaderboard
+      // Submit to leaderboard with final score
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,
         player_name: profile.username,
         game_id: 'block-muncher',
-        score,
+        score: finalScore,
         duration,
       }).catch(console.error);
 
-      // Award badge for high score
-      if (score >= 500) {
+      // Award badge for high score (based on final score)
+      if (finalScore >= 500) {
         mintBadge({
-          name: score >= 1000 ? 'Chain Master' : 'Block Collector',
-          description: score >= 1000 
+          name: finalScore >= 1000 ? 'Chain Master' : 'Block Collector',
+          description: finalScore >= 1000 
             ? 'Scored 1000+ in Block Muncher!' 
             : 'Scored 500+ in Block Muncher!',
-          rarity: score >= 1000 ? 'Epic' : 'Rare',
+          rarity: finalScore >= 1000 ? 'Epic' : 'Rare',
           gameId: 'block-muncher',
-          traits: { score, level, chain_length: chain.length },
-          icon: score >= 1000 ? '🏆' : '⛓️',
+          traits: { score: finalScore, level, chain_length: chain.length, bonus_applied: bonusPoints },
+          icon: finalScore >= 1000 ? '🏆' : '⛓️',
         });
       }
     }
