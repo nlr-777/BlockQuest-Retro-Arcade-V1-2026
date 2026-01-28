@@ -39,7 +39,6 @@ import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
 import { CharacterSelector } from '../src/components/CharacterSelector';
 import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
-import { MintCarnival } from '../src/components/MintCarnival';
 import { XPProgressBar } from '../src/components/XPProgressBar';
 import { Mascot, getRandomHint } from '../src/components/Mascots';
 import { loyaltyService, LoginReward } from '../src/services/LoyaltyService';
