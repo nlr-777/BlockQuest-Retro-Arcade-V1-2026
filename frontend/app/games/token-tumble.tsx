@@ -479,9 +479,30 @@ export default function BlockTumbleGame() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <VFXLayer type="crt-breathe" intensity={0.2} />
-      
-      {/* Roast HUD - Shows during gameplay */}
+      <ScreenShake intensity={8} trigger={shakeCount}>
+        <VFXLayer type="crt-breathe" intensity={0.2} />
+        
+        {/* Floating Scores */}
+        <FloatingScoresComponent />
+        
+        {/* Combo Display */}
+        <ComboDisplay combo={combo} visible={showCombo} />
+        
+        {/* Level Up Flash */}
+        <LevelUpFlash trigger={levelUpTrigger} level={level} />
+        
+        {/* Danger Warning when low health */}
+        <DangerWarning active={lives === 1 && gameState === 'playing'} />
+        
+        {/* Particle Burst */}
+        <ParticleBurst 
+          x={particleBurst.x} 
+          y={particleBurst.y} 
+          trigger={particleBurst.trigger}
+          color="#FFD700"
+        />
+        
+        {/* Roast HUD - Shows during gameplay */}
       {gameState === 'playing' && (
         <RoastHUD
           score={score}
@@ -625,7 +646,7 @@ export default function BlockTumbleGame() {
         gameId="token-tumble"
         visible={showIntroDialogue}
         onDismiss={handleDialogueDismiss}
-      />
+      />      </ScreenShake>
     </SafeAreaView>
   );
 }
