@@ -620,10 +620,10 @@ export default function ArcadeHub() {
                 <View style={styles.titleUnderline} />
               </View>
               
-              {/* Avatar Selection */}
-              <AvatarSelector 
-                selectedId={selectedAvatar?.id || null}
-                onSelect={handleAvatarSelect}
+              {/* Character Selection - Web3 Chaos Chronicles Heroes */}
+              <CharacterSelector 
+                selectedId={selectedCharacter?.id || null}
+                onSelect={handleCharacterSelect}
               />
               
               {/* Player Name Input */}
@@ -648,12 +648,15 @@ export default function ArcadeHub() {
               <TouchableOpacity
                 style={[
                   styles.startBtn, 
-                  (username.trim().length < 3 || !selectedAvatar) && styles.btnDisabled
+                  (username.trim().length < 3 || !selectedCharacter) && styles.btnDisabled
                 ]}
                 onPress={handleCreateProfile}
-                disabled={username.trim().length < 3 || !selectedAvatar}
+                disabled={username.trim().length < 3 || !selectedCharacter}
               >
-                <View style={styles.startBtnInner}>
+                <View style={[
+                  styles.startBtnInner, 
+                  selectedCharacter && { backgroundColor: selectedCharacter.colors.primary }
+                ]}>
                   <Text style={styles.startBtnText}>▶ INSERT COIN</Text>
                 </View>
               </TouchableOpacity>
