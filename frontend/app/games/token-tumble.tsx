@@ -51,10 +51,12 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
-// Game constants
+// Game constants - Adjusted for mobile screens
 const COLS = 10;
 const ROWS = 20;
-const CELL_SIZE = Math.min((SCREEN_WIDTH - 100) / COLS, 20);
+// Ensure game fits on mobile with side panels (60px each side + padding)
+const AVAILABLE_WIDTH = Math.min(SCREEN_WIDTH - 160, 300);
+const CELL_SIZE = Math.floor(AVAILABLE_WIDTH / COLS);
 const BOARD_WIDTH = COLS * CELL_SIZE;
 const BOARD_HEIGHT = ROWS * CELL_SIZE;
 
