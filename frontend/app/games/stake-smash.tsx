@@ -172,7 +172,8 @@ export default function PowerSmashGame() {
   }, []);
 
   // Start game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     setBricks(initBricks(1));
     setBalls([initBall()]);
     setGamePowerUps([]);
@@ -186,10 +187,26 @@ export default function PowerSmashGame() {
     setCombo(0);
     setHighScoreBeaten(false);
     ballSpeedRef.current = 5;
+  }, [initBricks, initBall]);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, [initBricks, initBall]);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
