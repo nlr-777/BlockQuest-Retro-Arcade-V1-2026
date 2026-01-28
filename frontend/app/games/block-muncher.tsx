@@ -268,6 +268,21 @@ export default function BlockMuncherGame() {
 
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
+  
+  // Character dialogue hook - for story integration
+  const { 
+    showIntro, 
+    showIntroDialogue, 
+    hideIntroDialogue, 
+    IntroDialogue,
+    EncouragementDialogue,
+    StrugglingDialogue,
+    triggerEncouragement,
+    triggerStruggling,
+    applyBonus,
+    bonus,
+    character,
+  } = useCharacterDialogue('block-muncher');
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
