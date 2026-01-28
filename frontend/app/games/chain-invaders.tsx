@@ -503,31 +503,55 @@ export default function ChainInvadersGame() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <VFXLayer type="crt-breathe" intensity={0.2} />
-      
-      {/* Roast HUD - Shows during gameplay */}
-      {gameState === 'playing' && (
-        <RoastHUD
-          score={score}
-          lives={lives}
-          goal={`Defend wave ${wave}!`}
-          gameId="chain-invaders"
-          showPuns={true}
+      <ScreenShake intensity={8} trigger={shakeCount}>
+        <VFXLayer type="crt-breathe" intensity={0.2} />
+        
+        {/* Floating Scores */}
+        <FloatingScoresComponent />
+        
+        {/* Combo Display */}
+        <ComboDisplay combo={combo} visible={showCombo} />
+        
+        {/* Level Up Flash */}
+        <LevelUpFlash trigger={levelUpTrigger} level={level} />
+        
+        {/* Danger Warning when low health */}
+        <DangerWarning active={lives === 1 && gameState === 'playing'} />
+        
+        {/* Particle Burst */}
+        <ParticleBurst 
+          x={particleBurst.x} 
+          y={particleBurst.y} 
+          trigger={particleBurst.trigger}
+          color="#9945FF"
         />
-      )}
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
-        </TouchableOpacity>
         
-        <View style={styles.scoreContainer}>
-          <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
-          <PixelText size="lg" color={COLORS.tokenPurple} glow>{score}</PixelText>
-        </View>
+        {/* Roast HUD - Shows during gameplay */}
+        {gameState === 'playing' && (
+          <RoastHUD
+            score={score}
+            lives={lives}
+            goal={`Defend wave ${wave}!`}
+            gameId="chain-invaders"
+            showPuns={true}
+          />
+        )}
         
-        <View style={styles.livesContainer}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+          </TouchableOpacity>
+          
+          <View style={styles.scoreContainer}>
+            <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
+            <PixelText size="lg" color={COLORS.tokenPurple} glow>{score}</PixelText>
+            {combo > 1 && (
+              <PixelText size="xs" color="#00FFFF">{combo}x COMBO</PixelText>
+            )}
+          </View>
+          
+          <View style={styles.livesContainer}>
           {Array(lives).fill(0).map((_, i) => (
             <PixelText key={i} size="md">💜</PixelText>
           ))}
