@@ -410,44 +410,75 @@ export default function HashHopperGame() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <VFXLayer type="crt-breathe" intensity={0.2} />
-      
-      {/* Roast HUD - Shows during gameplay */}
-      {gameState === 'playing' && (
-        <RoastHUD
-          score={score}
-          lives={lives}
-          goal="Reach the goal!"
-          gameId="hash-hopper"
-          showPuns={true}
+      <ScreenShake intensity={8} trigger={shakeCount}>
+        <VFXLayer type="crt-breathe" intensity={0.2} />
+        
+        {/* Floating Scores */}
+        <FloatingScoresComponent />
+        
+        {/* Combo Display */}
+        <ComboDisplay combo={combo} visible={showCombo} />
+        
+        {/* Level Up Flash */}
+        <LevelUpFlash trigger={levelUpTrigger} level={level} />
+        
+        {/* Danger Warning when low health */}
+        <DangerWarning active={lives === 1 && gameState === 'playing'} />
+        
+        {/* Particle Burst */}
+        <ParticleBurst 
+          x={particleBurst.x} 
+          y={particleBurst.y} 
+          trigger={particleBurst.trigger}
+          color="#00FF41"
         />
-      )}
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
-        </TouchableOpacity>
         
-        <View style={styles.scoreContainer}>
-          <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
-          <PixelText size="lg" color={COLORS.hashGreen} glow>{score}</PixelText>
+        {/* Roast HUD - Shows during gameplay */}
+        {gameState === 'playing' && (
+          <RoastHUD
+            score={score}
+            lives={lives}
+            goal="Reach the goal!"
+            gameId="hash-hopper"
+            showPuns={true}
+          />
+        )}
+        
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+          </TouchableOpacity>
+          
+          <View style={styles.scoreContainer}>
+            <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
+            <PixelText size="lg" color={COLORS.hashGreen} glow>{score}</PixelText>
+            {combo > 1 && (
+              <Text style={styles.comboIndicator}>{combo}x</Text>
+            )}
+          </View>
+          
+          <View style={styles.livesContainer}>
+            {Array(lives).fill(0).map((_, i) => (
+              <PixelText key={i} size="md">💚</PixelText>
+            ))}
+          </View>
         </View>
         
-        <View style={styles.livesContainer}>
-          {Array(lives).fill(0).map((_, i) => (
-            <PixelText key={i} size="md">💚</PixelText>
-          ))}
-        </View>
-      </View>
+        {/* Difficulty Indicator */}
+        {gameState === 'playing' && (
+          <View style={styles.difficultyBadge}>
+            <Text style={styles.difficultyText}>{difficulty.difficultyName}</Text>
+          </View>
+        )}
 
-      {/* Hash Display */}
-      <View style={styles.hashDisplay}>
-        <PixelText size="xs" color={COLORS.textSecondary}>CURRENT HASH:</PixelText>
-        <PixelText size="md" color={COLORS.hashGreen} glow style={styles.hashText}>
-          0x{currentHash}
-        </PixelText>
-        <PixelText size="xs" color={COLORS.textMuted}>
+        {/* Hash Display */}
+        <View style={styles.hashDisplay}>
+          <PixelText size="xs" color={COLORS.textSecondary}>CURRENT HASH:</PixelText>
+          <PixelText size="md" color={COLORS.hashGreen} glow style={styles.hashText}>
+            0x{currentHash}
+          </PixelText>
+          <PixelText size="xs" color={COLORS.textMuted}>
           Path: {pathTaken || 'START'}
         </PixelText>
       </View>
