@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   },
   bonusText: {
     fontSize: 10,
-    color: CRT_COLORS.textSecondary,
+    color: '#FFFFFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   continueButton: {
