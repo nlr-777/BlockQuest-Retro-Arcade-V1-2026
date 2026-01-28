@@ -404,7 +404,7 @@ export default function VaultFlexGallery() {
                 <View style={styles.emptyState}>
                   <Text style={styles.emptyEmoji}>🏆</Text>
                   <Text style={styles.emptyTitle}>No Badges Yet!</Text>
-                  <Text style={styles.emptyText}>Play games to earn badges and BQO tokens!</Text>
+                  <Text style={styles.emptyText}>Play games to earn badges!</Text>
                   <TouchableOpacity style={styles.playBtn} onPress={() => router.push('/')}>
                     <Text style={styles.playBtnText}>🎮 PLAY NOW</Text>
                   </TouchableOpacity>
