@@ -86,6 +86,37 @@ const SETTINGS: SettingToggle[] = [
   },
 ];
 
+// Accessibility settings
+const ACCESSIBILITY_SETTINGS: SettingToggle[] = [
+  {
+    id: 'highContrast',
+    label: 'High Contrast',
+    description: 'Enhanced visibility colors',
+    icon: '🎨',
+    funTip: 'High contrast helps everyone see better!',
+  },
+  {
+    id: 'largeText',
+    label: 'Large Text',
+    description: 'Bigger text for easier reading',
+    icon: '🔤',
+    funTip: 'Because size matters... for text!',
+  },
+  {
+    id: 'reduceMotion',
+    label: 'Reduce Motion',
+    description: 'Less animations and effects',
+    icon: '🎬',
+    funTip: 'Sometimes less is more!',
+  },
+];
+    label: 'Hard Mode',
+    description: 'Extra challenge for pros!',
+    icon: '🔥',
+    funTip: 'Why did hard mode go to the gym? To get TOUGHER!',
+  },
+];
+
 export default function ConfigScreen() {
   const router = useRouter();
   const [settings, setSettings] = useState<Record<string, boolean>>({
