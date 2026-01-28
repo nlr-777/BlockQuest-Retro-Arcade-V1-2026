@@ -111,7 +111,8 @@ export default function LightningDashGame() {
   };
 
   // Start game
-  const startGame = useCallback(() => {
+  // Initialize game state
+  const initGame = useCallback(() => {
     setPlayerLane(1);
     setObstacles([]);
     setBolts([]);
@@ -122,10 +123,26 @@ export default function LightningDashGame() {
     setBoostMeter(0);
     setIsBoosting(false);
     setHighScoreBeaten(false);
+  }, []);
+
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
-  }, []);
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
+  }, [initGame]);
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {
