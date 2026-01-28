@@ -988,8 +988,11 @@ const styles = StyleSheet.create({
   },
   modalBtnConfirmText: {
     fontSize: 12,
-    color: '#000',
+    color: '#FFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
