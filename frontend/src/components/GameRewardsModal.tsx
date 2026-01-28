@@ -47,8 +47,12 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
 }) => {
   const { playerFaction, getFactionBonus, contributeXP } = useFactionStore();
   const { addXP } = useGameStore();
+  const { unlockStoryChapter, unlockCharacter } = useCharacterStore();
   const [showConfetti, setShowConfetti] = useState(false);
   const [xpAwarded, setXpAwarded] = useState(false);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<StoryAchievement[]>([]);
+  const [showAchievementToast, setShowAchievementToast] = useState(false);
+  const [currentAchievementIndex, setCurrentAchievementIndex] = useState(0);
   
   // Calculate faction bonus
   const factionBonusPercent = playerFaction ? getFactionBonus(gameId) : 0;
@@ -84,6 +88,19 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
       if (playerFaction) {
         contributeXP(totalXP);
       }
+      
+      // Process story progression and achievements
+      processGameCompletion(gameId, score).then(({ achievements, chaptersUnlocked }) => {
+        if (achievements.length > 0) {
+          setUnlockedAchievements(achievements);
+          // Show achievement toast after a delay
+          setTimeout(() => {
+            setShowAchievementToast(true);
+          }, 2000);
+        }
+      }).catch(err => {
+        console.warn('Failed to process game completion:', err);
+      });
       
       setXpAwarded(true);
     }
