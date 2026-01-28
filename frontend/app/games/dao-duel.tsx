@@ -85,6 +85,12 @@ export default function DAODuelGame() {
 
   // Game state
   const [gameState, setGameState] = useState<GameState>('ready');
+  const [playerScore, setPlayerScore] = useState(0);
+  const [aiScore, setAiScore] = useState(0);
+  const [round, setRound] = useState(1);
+  const [votingPower, setVotingPower] = useState(3);
+  const [activeVote, setActiveVote] = useState<string | null>(null);
+  const [showVoteMenu, setShowVoteMenu] = useState(false);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -95,13 +101,7 @@ export default function DAODuelGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(playerScore);  // Use playerScore for this game
-  const [playerScore, setPlayerScore] = useState(0);
-  const [aiScore, setAiScore] = useState(0);
-  const [round, setRound] = useState(1);
-  const [votingPower, setVotingPower] = useState(3);
-  const [activeVote, setActiveVote] = useState<string | null>(null);
-  const [showVoteMenu, setShowVoteMenu] = useState(false);
+  const difficulty = useDifficultyScaling(playerScore);
 
   // Paddle positions
   const [playerY, setPlayerY] = useState(GAME_HEIGHT / 2 - PADDLE_HEIGHT / 2);
