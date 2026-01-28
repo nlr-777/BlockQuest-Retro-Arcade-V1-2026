@@ -250,35 +250,6 @@ export default function SettingsScreen() {
           </View>
         </Animated.View>
 
-        {/* Blockchain Section - Now Active */}
-        <Animated.View entering={FadeIn.delay(500)} style={styles.section}>
-          <PixelText size="md" color={COLORS.neonCyan} style={styles.sectionTitle}>
-            ⛓️ BLOCKCHAIN
-          </PixelText>
-          <TouchableOpacity 
-            style={[styles.card, styles.blockchainCard]}
-            onPress={() => router.push('/blockchain')}
-          >
-            <View style={styles.blockchainHeader}>
-              <View style={styles.blockchainIcon}>
-                <Text style={{ fontSize: 28 }}>🔗</Text>
-              </View>
-              <View style={styles.blockchainInfo}>
-                <PixelText size="sm" color={COLORS.textPrimary}>
-                  Web3 Features
-                </PixelText>
-                <PixelText size="xs" color={COLORS.textSecondary}>
-                  BQO Tokens • NFT Badges • Wallet
-                </PixelText>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={COLORS.neonCyan} />
-            </View>
-            <View style={styles.blockchainBadge}>
-              <Text style={styles.blockchainBadgeText}>APERTUM NETWORK</Text>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-
         {/* Danger Zone - Separated and requires multiple confirmations */}
         <Animated.View entering={FadeIn.delay(600)} style={styles.section}>
           <PixelText size="md" color={COLORS.error} style={styles.sectionTitle}>
