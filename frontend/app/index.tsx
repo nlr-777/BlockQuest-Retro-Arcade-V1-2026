@@ -30,13 +30,14 @@ import Animated, {
 import { COLORS } from '../src/constants/colors';
 import { CRT_COLORS, CRT_PUNS } from '../src/constants/crtTheme';
 import { GAMES, GameConfig } from '../src/constants/games';
-import { AVATARS, AvatarConfig, getAvatarById } from '../src/constants/avatars';
+import { CHARACTERS, CharacterConfig, getCharacterById } from '../src/constants/characters';
 import { useGameStore } from '../src/store/gameStore';
+import { useCharacterStore } from '../src/store/characterStore';
 import { useTutorialStore, useTutorialHydrated } from '../src/store/tutorialStore';
 import { useFactionStore, FACTIONS } from '../src/store/factionStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
-import { AvatarSelector } from '../src/components/AvatarSelector';
+import { CharacterSelector } from '../src/components/CharacterSelector';
 import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
 import { MintCarnival } from '../src/components/MintCarnival';
 import { XPProgressBar } from '../src/components/XPProgressBar';
