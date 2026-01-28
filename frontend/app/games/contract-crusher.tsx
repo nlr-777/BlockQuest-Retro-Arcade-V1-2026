@@ -168,11 +168,23 @@ export default function ContractCrusherGame() {
   }, [ballActive, paddleX, paddleWidth, playGameStart]);
 
   // Start game
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
+    setGameState('playing');
+    powerUps.resetSession();
+  }, []);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
   const startGame = useCallback(() => {
     initGame();
     setHighScoreBeaten(false);
-    setGameState('playing');
-    powerUps.resetSession();
+    setShowIntroDialogue(true);
   }, [initGame]);
 
   // Handle rewards -> gameover transition
