@@ -188,11 +188,13 @@ export default function HashHopperGame() {
     setHighScoreBeaten(false);
   }, []);
 
-  // Move player
+  // Move player with enhanced feedback
   const movePlayer = useCallback((dx: number, dy: number) => {
     if (gameState !== 'playing') return;
 
     playJump();
+    GameHaptics.light();
+    
     setPlayerPos(prev => {
       const newX = Math.max(0, Math.min(GRID_COLS - 1, prev.x + dx));
       const newY = Math.max(0, Math.min(GRID_ROWS - 1, prev.y + dy));
@@ -203,15 +205,43 @@ export default function HashHopperGame() {
       setPathTaken(newPath);
       setCurrentHash(generateHash(newPath));
       
-      // Score for progress
+      // Score for progress with combo multiplier
       if (newY < highestRow) {
-        setScore(s => s + (highestRow - newY) * 10);
+        const basePoints = (highestRow - newY) * 10;
+        const multipliedPoints = Math.floor(basePoints * getMultiplier() * difficulty.scoreMultiplier);
+        setScore(s => s + multipliedPoints);
+        incrementCombo();
+        
+        // Show floating score
+        const screenX = SCREEN_WIDTH / 2 + (newX - 4) * CELL_SIZE;
+        const screenY = 200 + newY * CELL_SIZE;
+        addPopup(multipliedPoints, screenX, screenY, combo >= 3 ? 'combo' : 'normal');
+        
+        // Particle burst for combos
+        if (combo >= 3) {
+          setParticleBurst({ x: screenX, y: screenY, trigger: Date.now() });
+        }
+        
         setHighestRow(newY);
+        
+        // Level up check
+        const newLevel = Math.floor(score / 500) + 1;
+        if (newLevel > level) {
+          setLevel(newLevel);
+          setLevelUpTrigger(prev => prev + 1);
+          playLevelUp();
+          GameHaptics.success();
+        }
       }
       
-      // Check goal
+      // Check goal - big reward!
       if (newY === 0) {
-        setScore(s => s + powerUps.calculateScore(100));
+        const goalBonus = Math.floor(100 * getMultiplier() * difficulty.scoreMultiplier);
+        setScore(s => s + powerUps.calculateScore(goalBonus));
+        addPopup(goalBonus, SCREEN_WIDTH / 2, 150, 'bonus');
+        GameHaptics.success();
+        playCollect();
+        
         // Reset position but keep score
         setTimeout(() => {
           setPlayerPos({ x: 4, y: 10 });
@@ -220,11 +250,9 @@ export default function HashHopperGame() {
         }, 500);
       }
       
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
-      
       return { x: newX, y: newY };
     });
-  }, [gameState, pathTaken, highestRow]);
+  }, [gameState, pathTaken, highestRow, combo, level, score, difficulty, getMultiplier, incrementCombo, addPopup]);
 
   // Game loop
   useEffect(() => {
