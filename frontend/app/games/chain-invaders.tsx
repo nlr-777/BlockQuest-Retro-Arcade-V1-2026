@@ -715,6 +715,7 @@ export default function ChainInvadersGame() {
         visible={showIntroDialogue}
         onDismiss={handleDialogueDismiss}
       />
+      </ScreenShake>
     </SafeAreaView>
   );
 }
