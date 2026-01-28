@@ -580,6 +580,7 @@ export default function HashHopperGame() {
         visible={showIntroDialogue}
         onDismiss={handleDialogueDismiss}
       />
+      </ScreenShake>
     </SafeAreaView>
   );
 }
@@ -590,6 +591,9 @@ const styles = StyleSheet.create({
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   scoreContainer: { alignItems: 'center' },
   livesContainer: { flexDirection: 'row' },
+  comboIndicator: { fontSize: 12, color: '#00FFFF', fontWeight: 'bold', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
+  difficultyBadge: { position: 'absolute', top: 100, right: 16, backgroundColor: 'rgba(0, 255, 65, 0.2)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, borderWidth: 1, borderColor: '#00FF41' },
+  difficultyText: { fontSize: 10, color: '#00FF41', fontWeight: 'bold', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
   hashDisplay: { alignItems: 'center', paddingVertical: 8, backgroundColor: COLORS.cardBg, marginHorizontal: 16, borderRadius: 8, marginBottom: 8 },
   hashText: { fontFamily: 'monospace', letterSpacing: 2 },
   gameArea: { alignSelf: 'center', backgroundColor: COLORS.bgMedium, borderWidth: 2, borderColor: COLORS.hashGreen, position: 'relative', overflow: 'hidden' },
