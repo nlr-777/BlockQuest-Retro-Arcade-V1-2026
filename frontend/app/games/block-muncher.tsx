@@ -380,8 +380,14 @@ export default function BlockMuncherGame() {
   const startGame = useCallback(() => {
     initGame();
     // Show intro dialogue - game starts when player dismisses it
-    showIntroDialogue();
-  }, [initGame, showIntroDialogue]);
+    setShowIntroDialogue(true);
+  }, [initGame]);
+  
+  // Handle dialogue dismiss - actually start gameplay
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
 
   // Move player
   const movePlayer = useCallback((dir: Direction) => {
