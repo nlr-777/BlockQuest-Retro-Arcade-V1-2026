@@ -496,6 +496,32 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
   },
+  quickLinksGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginBottom: 20,
+  },
+  quickLinkBtn: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    width: '48%',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: CRT_COLORS.primary + '40',
+  },
+  quickLinkIcon: {
+    fontSize: 28,
+    marginBottom: 8,
+  },
+  quickLinkText: {
+    fontSize: 11,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
   resetSection: {
     marginTop: 20,
     marginBottom: 10,
