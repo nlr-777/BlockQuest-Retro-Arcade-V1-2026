@@ -95,7 +95,7 @@ export default function DAODuelGame() {
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
-  const difficulty = useDifficultyScaling(score);
+  const difficulty = useDifficultyScaling(playerScore);  // Use playerScore for this game
   const [playerScore, setPlayerScore] = useState(0);
   const [aiScore, setAiScore] = useState(0);
   const [round, setRound] = useState(1);
