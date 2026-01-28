@@ -271,7 +271,7 @@ export default function VaultFlexGallery() {
 
   const handleShare = async (badge: Badge) => {
     const rarityConfig = RARITY_CONFIG[badge.rarity] || RARITY_CONFIG.Common;
-    const message = `🎮 Just earned "${badge.name}" badge in BlockQuest! ${badge.icon}\n\n✨ Rarity: ${rarityConfig.label}\n💎 +${rarityConfig.bqo} BQO earned!\n\n🔗 Play & earn: blockquest.io\n\n#BlockQuest #Web3Gaming #NFTBadges`;
+    const message = `🎮 Just earned "${badge.name}" badge in BlockQuest! ${badge.icon}\n\n✨ Rarity: ${rarityConfig.label}\n\n🔗 Play & earn: blockquest.io\n\n#BlockQuest #Gaming`;
     
     try {
       await Share.share({
