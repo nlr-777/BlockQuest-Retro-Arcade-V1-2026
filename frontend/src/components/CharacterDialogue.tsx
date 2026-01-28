@@ -1,5 +1,6 @@
 // BlockQuest Official - Character Dialogue Component
 // Shows character dialogue and story context when entering a game
+// Polished animations with accessibility support
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -17,8 +18,13 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
+  withRepeat,
   FadeIn,
+  FadeInDown,
   SlideInUp,
+  SlideInRight,
+  ZoomIn,
+  Easing,
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../constants/crtTheme';
 import { COLORS } from '../constants/colors';
@@ -34,6 +40,7 @@ import {
   BOOK_TITLES,
 } from '../constants/storyMapping';
 import { useCharacterStore } from '../store/characterStore';
+import { useAccessibilityStore } from '../utils/accessibility';
 
 interface CharacterDialogueProps {
   gameId: string;
