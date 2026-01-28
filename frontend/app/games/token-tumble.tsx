@@ -286,12 +286,24 @@ export default function BlockTumbleGame() {
   }, []);
 
   // Start game
-  const startGame = useCallback(() => {
-    initGame();
+  // Begin gameplay after dialogue
+  const beginGameplay = useCallback(() => {
     setGameState('playing');
     powerUps.resetSession();
     playGameStart();
     startTimeRef.current = Date.now();
+  }, [playGameStart]);
+
+  // Handle dialogue dismiss
+  const handleDialogueDismiss = useCallback(() => {
+    setShowIntroDialogue(false);
+    beginGameplay();
+  }, [beginGameplay]);
+
+  // Start game - shows intro dialogue first
+  const startGame = useCallback(() => {
+    initGame();
+    setShowIntroDialogue(true);
   }, [initGame]);
 
   // Move piece
