@@ -271,6 +271,17 @@ export default function BlockMuncherGame() {
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
   
+  // Character bonus hook - for score multipliers
+  const { 
+    hasBonus, 
+    bonusPercent, 
+    applyBonus, 
+    getBonusPoints,
+    recordGame,
+    abilityIcon,
+    abilityName 
+  } = useCharacterBonus('block-muncher');
+  
   // Character dialogue state
   const [showIntroDialogue, setShowIntroDialogue] = useState(false);
   const { getSelectedCharacter } = useCharacterStore();
