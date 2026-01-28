@@ -166,16 +166,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
   },
   modal: {
     backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 16,
     borderWidth: 3,
     borderColor: CRT_COLORS.accentGold,
-    maxWidth: 340,
-    width: '100%',
-    maxHeight: SCREEN_HEIGHT * 0.8,
+    width: Math.min(SCREEN_WIDTH - 32, 340),
+    maxHeight: SCREEN_HEIGHT * 0.75,
     shadowColor: CRT_COLORS.accentGold,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -183,10 +182,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   scrollView: {
-    maxHeight: SCREEN_HEIGHT * 0.4,
+    maxHeight: SCREEN_HEIGHT * 0.35,
   },
   scrollContent: {
-    padding: 16,
+    padding: 12,
     alignItems: 'center',
   },
   header: {
