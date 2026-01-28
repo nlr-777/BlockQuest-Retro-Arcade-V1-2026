@@ -317,25 +317,34 @@ export default function HashHopperGame() {
           }
           if (!onLog) {
             // Fell in water!
+            GameHaptics.error();
+            setShakeCount(prev => prev + 1);
+            resetCombo();
+            playHit();
+            
             setLives(l => {
               if (l <= 1) {
-                setGameState('gameover');
+                const currentHighScore = profile?.highScores?.['hash-hopper'] || 0;
+                if (score > currentHighScore) {
+                  setHighScoreBeaten(true);
+                }
+                playGameOver();
+                setGameState('rewards');
                 return 0;
               }
               setPlayerPos({ x: 4, y: 10 });
               setHighestRow(10);
-              if (Platform.OS !== 'web') Vibration.vibrate(100);
               return l - 1;
             });
           }
         }
       }
-    }, 100);
+    }, 100 / difficulty.speedMultiplier);
 
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [gameState, lanes, playerPos]);
+  }, [gameState, lanes, playerPos, difficulty.speedMultiplier]);
 
   // Handle game over (after rewards modal)
   useEffect(() => {
