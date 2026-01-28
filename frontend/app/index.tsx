@@ -515,9 +515,6 @@ export default function ArcadeHub() {
                 </Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={(e) => { e.stopPropagation(); testMintCarnival(); }}>
-              <HexBadge size={32} rarity="common" icon="🎰" />
-            </TouchableOpacity>
           </TouchableOpacity>
         )}
 
