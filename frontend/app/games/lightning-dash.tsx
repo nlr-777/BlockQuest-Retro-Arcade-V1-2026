@@ -256,7 +256,7 @@ export default function LightningDashGame() {
             playGameOver();
             setHighScoreBeaten(score > 0); // Lightning dash doesn't have high scores stored yet
             setGameState('rewards');
-            submitScore('lightning-dash', score);
+            submitScore('lightning-dash', applyBonus(score));
             if (Platform.OS !== 'web') Vibration.vibrate(300);
             return prev;
           }

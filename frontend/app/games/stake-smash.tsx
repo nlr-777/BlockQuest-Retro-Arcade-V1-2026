@@ -453,7 +453,7 @@ export default function PowerSmashGame() {
               playGameOver();
               setHighScoreBeaten(score > 0);
               setGameState('rewards');
-              submitScore('stake-smash', score);
+              submitScore('stake-smash', applyBonus(score));
               return 0;
             }
             // Respawn ball

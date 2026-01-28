@@ -265,7 +265,7 @@ export default function BridgeBouncerGame() {
         playGameOver();
         setHighScoreBeaten(score > 0);
         setGameState('rewards');
-        submitScore('bridge-bouncer', score);
+        submitScore('bridge-bouncer', applyBonus(score));
       } else {
         // Reset position
         setPlayerRow(0);

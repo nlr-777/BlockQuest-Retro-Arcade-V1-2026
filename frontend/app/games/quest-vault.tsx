@@ -320,7 +320,7 @@ export default function QuestVaultGame() {
             playGameOver();
             setHighScoreBeaten(score > 0);
             setGameState('rewards');
-            submitScore('quest-vault', score);
+            submitScore('quest-vault', applyBonus(score));
             return 0;
           }
           if (Platform.OS !== 'web') Vibration.vibrate(100);
@@ -364,7 +364,7 @@ export default function QuestVaultGame() {
                   playGameOver();
                   setHighScoreBeaten(score > 0);
                   setGameState('rewards');
-                  submitScore('quest-vault', score);
+                  submitScore('quest-vault', applyBonus(score));
                   return 0;
                 }
                 if (Platform.OS !== 'web') Vibration.vibrate(100);

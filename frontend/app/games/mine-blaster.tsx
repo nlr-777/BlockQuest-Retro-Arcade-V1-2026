@@ -377,7 +377,7 @@ export default function RockBlasterGame() {
                 playGameOver();
                 setHighScoreBeaten(score > 0);
                 setGameState('rewards');
-                submitScore('mine-blaster', score);
+                submitScore('mine-blaster', applyBonus(score));
                 return 0;
               }
               // Reset ship position

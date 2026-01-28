@@ -303,7 +303,7 @@ export default function LedgerLeapGame() {
               playGameOver();
               setHighScoreBeaten(score > 0);
               setGameState('rewards');
-              submitScore('ledger-leap', score);
+              submitScore('ledger-leap', applyBonus(score));
               return 0;
             }
             // Reset position
@@ -391,7 +391,7 @@ export default function LedgerLeapGame() {
                 playGameOver();
                 setHighScoreBeaten(score > 0);
                 setGameState('rewards');
-                submitScore('ledger-leap', score);
+                submitScore('ledger-leap', applyBonus(score));
                 return 0;
               }
               setPlayerX(50);

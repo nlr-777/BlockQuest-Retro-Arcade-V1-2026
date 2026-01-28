@@ -312,7 +312,7 @@ export default function IPFSPinballGame() {
               playGameOver();
               setHighScoreBeaten(score > 0);
               setGameState('rewards');
-              submitScore('ipfs-pinball', score);
+              submitScore('ipfs-pinball', applyBonus(score));
             }
             return newBalls;
           });

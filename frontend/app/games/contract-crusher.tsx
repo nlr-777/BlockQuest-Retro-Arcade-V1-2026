@@ -326,7 +326,7 @@ export default function ContractCrusherGame() {
               playGameOver();
               setHighScoreBeaten(score > 0);
               setGameState('rewards');
-              submitScore('contract-crusher', score);
+              submitScore('contract-crusher', applyBonus(score));
             }
             return newLives;
           });
@@ -378,7 +378,7 @@ export default function ContractCrusherGame() {
             const newLevel = l + 1;
             if (newLevel > 5) {
               setGameState('victory');
-              submitScore('contract-crusher', score);
+              submitScore('contract-crusher', applyBonus(score));
               addXP(Math.floor(score / 3));
             } else {
               setBricks(generateBricks(newLevel));
