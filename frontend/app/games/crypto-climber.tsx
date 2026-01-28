@@ -317,7 +317,7 @@ export default function CryptoClimberGame() {
         setLastCollectedEgg(egg.trait);
         setShowCollectInfo(true);
         setTimeout(() => setShowCollectInfo(false), 2000);
-        if (Platform.OS !== 'web') Vibration.vibrate(50);
+        if (Platform.OS !== 'web') GameHaptics.medium();
         return { ...egg, collected: true };
       }
       return egg;

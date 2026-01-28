@@ -445,7 +445,7 @@ export default function LedgerLeapGame() {
     if (!isJumping && gameState === 'playing') {
       setPlayerVY(JUMP_FORCE);
       setIsJumping(true);
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
+      if (Platform.OS !== 'web') GameHaptics.light();
     }
   };
 

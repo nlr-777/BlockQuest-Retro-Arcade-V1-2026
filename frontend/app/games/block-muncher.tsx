@@ -461,7 +461,7 @@ export default function BlockMuncherGame() {
           setScore(s => s + 10);
           setChain(c => [...c, { ...playerPos }]);
           playCollect();
-          if (Platform.OS !== 'web') Vibration.vibrate(10);
+          if (Platform.OS !== 'web') GameHaptics.light();
           return prev.filter(b => !(b.x === playerPos.x && b.y === playerPos.y));
         }
         return prev;
@@ -491,7 +491,7 @@ export default function BlockMuncherGame() {
                         collected.rarity === 'rare' ? 100 : 25;
           setScore(s => s + points);
           playLevelUp();
-          if (Platform.OS !== 'web') Vibration.vibrate(50);
+          if (Platform.OS !== 'web') GameHaptics.medium();
           return prev.filter(g => !(g.pos.x === playerPos.x && g.pos.y === playerPos.y));
         }
         return prev;
@@ -535,7 +535,7 @@ export default function BlockMuncherGame() {
           }
           // Reset player position
           setPlayerPos({ x: 7, y: 7 });
-          if (Platform.OS !== 'web') Vibration.vibrate(100);
+          if (Platform.OS !== 'web') GameHaptics.error();
           return l - 1;
         });
       }

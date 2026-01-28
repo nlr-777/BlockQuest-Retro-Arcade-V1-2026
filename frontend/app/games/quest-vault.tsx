@@ -304,7 +304,7 @@ export default function QuestVaultGame() {
           setCollectedSigners(prev => [...prev, c.signerId!]);
           setScore(s => s + 50);
           playPowerup();
-          if (Platform.OS !== 'web') Vibration.vibrate(50);
+          if (Platform.OS !== 'web') GameHaptics.medium();
         }
         return { ...c, collected: true };
       }
@@ -345,7 +345,7 @@ export default function QuestVaultGame() {
             submitScore('quest-vault', applyBonus(score));
             return 0;
           }
-          if (Platform.OS !== 'web') Vibration.vibrate(100);
+          if (Platform.OS !== 'web') GameHaptics.error();
           return newHealth;
         });
       }
@@ -389,7 +389,7 @@ export default function QuestVaultGame() {
                   submitScore('quest-vault', applyBonus(score));
                   return 0;
                 }
-                if (Platform.OS !== 'web') Vibration.vibrate(100);
+                if (Platform.OS !== 'web') GameHaptics.error();
                 return newHealth;
               });
             }

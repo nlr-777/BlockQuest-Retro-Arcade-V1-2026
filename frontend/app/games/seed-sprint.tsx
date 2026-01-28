@@ -227,7 +227,7 @@ export default function SeedSprintGame() {
         setJumpCount(0);
       }, 850);
       
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
+      if (Platform.OS !== 'web') GameHaptics.light();
     }
     // Double jump! (while in air)
     else if (isJumping && jumpCount === 1 && canDoubleJump) {
@@ -305,7 +305,7 @@ export default function SeedSprintGame() {
               if (powerUps.hasShield) {
                 // Shield absorbs the hit - don't die!
                 playCollect(); // Play a "saved" sound
-                if (Platform.OS !== 'web') Vibration.vibrate(50);
+                if (Platform.OS !== 'web') GameHaptics.medium();
                 return newObs.filter(o => o !== obs); // Remove the obstacle
               }
               
@@ -325,7 +325,7 @@ export default function SeedSprintGame() {
               }
               playGameOver();
               setGameState('rewards');
-              if (Platform.OS !== 'web') Vibration.vibrate(100);
+              if (Platform.OS !== 'web') GameHaptics.error();
               return newObs;
             }
           }
@@ -393,7 +393,7 @@ export default function SeedSprintGame() {
       setCheckpoints(c => c + 1);
       setScore(s => s + 200);
       setGameState('playing');
-      if (Platform.OS !== 'web') Vibration.vibrate(50);
+      if (Platform.OS !== 'web') GameHaptics.medium();
     } else {
       const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
       if (score > currentHighScore) {

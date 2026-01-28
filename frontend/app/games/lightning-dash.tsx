@@ -187,14 +187,14 @@ export default function LightningDashGame() {
   const moveLeft = () => {
     if (playerLane > 0) {
       setPlayerLane(prev => prev - 1);
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
+      if (Platform.OS !== 'web') GameHaptics.light();
     }
   };
 
   const moveRight = () => {
     if (playerLane < LANE_COUNT - 1) {
       setPlayerLane(prev => prev + 1);
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
+      if (Platform.OS !== 'web') GameHaptics.light();
     }
   };
 
@@ -204,7 +204,7 @@ export default function LightningDashGame() {
       setIsBoosting(true);
       setBoostMeter(0);
       setTimeout(() => setIsBoosting(false), 3000);
-      if (Platform.OS !== 'web') Vibration.vibrate(100);
+      if (Platform.OS !== 'web') GameHaptics.error();
     }
   };
 

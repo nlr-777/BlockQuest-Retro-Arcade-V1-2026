@@ -355,7 +355,7 @@ export default function BlockTumbleGame() {
         setScore(s => s + lineScore);
         setLinesTotal(l => l + linesCleared);
         setCollectionValue(w => w + linesCleared * 10);
-        if (Platform.OS !== 'web') Vibration.vibrate(50);
+        if (Platform.OS !== 'web') GameHaptics.medium();
         
         // Level up every 10 lines
         if (Math.floor((linesTotal + linesCleared) / 10) > Math.floor(linesTotal / 10)) {
@@ -392,7 +392,7 @@ export default function BlockTumbleGame() {
     
     if (!checkCollision(board, rotatedPiece)) {
       setCurrentPiece(rotatedPiece);
-      if (Platform.OS !== 'web') Vibration.vibrate(10);
+      if (Platform.OS !== 'web') GameHaptics.light();
     }
   }, [currentPiece, board, gameState]);
 

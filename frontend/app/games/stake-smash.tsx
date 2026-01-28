@@ -258,7 +258,7 @@ export default function PowerSmashGame() {
     ballSpeedRef.current = Math.min(5 + newLevel * 0.5, 10);
     setScore(s => s + 500); // Level completion bonus
     setEnergyStored(s => s + 100); // Energy reward
-    if (Platform.OS !== 'web') Vibration.vibrate(100);
+    if (Platform.OS !== 'web') GameHaptics.error();
   }, [level, initBricks, initBall]);
 
   // Move paddle
@@ -329,7 +329,7 @@ export default function PowerSmashGame() {
         ballSpeedRef.current = Math.max(3, ballSpeedRef.current - 1);
         break;
     }
-    if (Platform.OS !== 'web') Vibration.vibrate(50);
+    if (Platform.OS !== 'web') GameHaptics.medium();
   }, []);
 
   // Game loop
@@ -367,7 +367,7 @@ export default function PowerSmashGame() {
             const hitPos = (newX + BALL_SIZE / 2 - paddleX) / paddleWidth;
             newVX = (hitPos - 0.5) * 8;
             newY = GAME_HEIGHT - PADDLE_HEIGHT - 10 - BALL_SIZE;
-            if (Platform.OS !== 'web') Vibration.vibrate(10);
+            if (Platform.OS !== 'web') GameHaptics.light();
           }
 
           // Ball lost

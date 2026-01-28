@@ -203,7 +203,7 @@ export default function DAODuelGame() {
         break;
     }
 
-    if (Platform.OS !== 'web') Vibration.vibrate(50);
+    if (Platform.OS !== 'web') GameHaptics.medium();
   };
 
   // Game loop
@@ -237,7 +237,7 @@ export default function DAODuelGame() {
           setBallVX(Math.abs(ballVX) * 1.05); // Speed up slightly
           const hitPos = (ballY + BALL_SIZE / 2 - playerY) / playerPaddleHeight;
           setBallVY((hitPos - 0.5) * 10);
-          if (Platform.OS !== 'web') Vibration.vibrate(10);
+          if (Platform.OS !== 'web') GameHaptics.light();
           return PADDLE_WIDTH + 12;
         }
 
@@ -283,7 +283,7 @@ export default function DAODuelGame() {
             }
             return newScore;
           });
-          if (Platform.OS !== 'web') Vibration.vibrate(100);
+          if (Platform.OS !== 'web') GameHaptics.error();
           return GAME_WIDTH / 2 - BALL_SIZE / 2;
         }
 

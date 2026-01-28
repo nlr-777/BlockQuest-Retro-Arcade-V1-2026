@@ -240,7 +240,7 @@ export default function RockBlasterGame() {
       life: 60,
     }]);
 
-    if (Platform.OS !== 'web') Vibration.vibrate(10);
+    if (Platform.OS !== 'web') GameHaptics.light();
   }, [shipX, shipY, shipRotation, shipVX, shipVY]);
 
   // Create explosion particles
