@@ -244,14 +244,13 @@ export default function VaultFlexGallery() {
   const { profile, highScores } = useGameStore();
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'badges' | 'stats' | 'bqo'>('badges');
+  const [activeTab, setActiveTab] = useState<'badges' | 'stats'>('badges');
   const [sortBy, setSortBy] = useState<'date' | 'rarity'>('date');
   
   // Calculate stats
   const totalScore = Object.values(highScores).reduce((sum, score) => sum + score, 0);
   const currentRank = getRankByXP(profile?.xp || 0);
   const rankProgress = getRankProgress(profile?.xp || 0);
-  const bqoStats = bqoTokenService.getStats();
   const loyaltyStats = loyaltyService.getStats();
 
   // Sort badges
