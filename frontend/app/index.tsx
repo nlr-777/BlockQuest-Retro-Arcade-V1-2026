@@ -492,10 +492,10 @@ export default function ArcadeHub() {
         {/* Player Bar */}
         {profile && (
           <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
-            <View style={[styles.avatar, { borderColor: CRT_COLORS.primary }]}>
-              {playerAvatar?.imageUrl ? (
+            <View style={[styles.avatar, { borderColor: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
+              {playerAvatarUrl ? (
                 <Image 
-                  source={{ uri: playerAvatar.imageUrl }} 
+                  source={{ uri: playerAvatarUrl }} 
                   style={styles.avatarImage} 
                   resizeMode="cover"
                 />
@@ -505,7 +505,9 @@ export default function ArcadeHub() {
             </View>
             <View style={styles.playerInfo}>
               <Text style={styles.playerName}>{profile.username}</Text>
-              <Text style={styles.playerStats}>LV.{profile.level} • {profile.xp} XP • {totalHighScore} PTS</Text>
+              <Text style={[styles.playerStats, { color: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
+                {playerCharacter?.specialAbility.icon} {playerCharacter?.name} • LV.{profile.level}
+              </Text>
             </View>
             <TouchableOpacity onPress={(e) => { e.stopPropagation(); testMintCarnival(); }}>
               <HexBadge size={32} rarity="common" icon="🎰" />
