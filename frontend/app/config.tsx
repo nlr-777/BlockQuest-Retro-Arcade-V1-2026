@@ -17,6 +17,7 @@ import { CRT_COLORS } from '../src/constants/crtTheme';
 import { CRTScanlines, PixelRain, CRTGlowBorder, CRTFlickerText } from '../src/components/CRTEffects';
 import audioManager from '../src/utils/AudioManager';
 import ttsManager from '../src/utils/TTSManager';
+import { useAccessibilityStore } from '../src/utils/accessibility';
 
 interface SettingToggle {
   id: string;
