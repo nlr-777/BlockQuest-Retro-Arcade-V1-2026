@@ -1,7 +1,7 @@
 // BlockQuest Official - Game Rewards Modal
 // Shows XP earned with faction bonus breakdown
 // Teaches: Community benefits, shared rewards, contribution
-// FIXED: Scrollable content so button is always accessible
+// Integrated with Story Achievements system
 
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
@@ -20,6 +20,9 @@ import { CRT_COLORS } from '../constants/crtTheme';
 import { CRTFlickerText, CRTScanlines, ConfettiBurst } from './CRTEffects';
 import { useFactionStore, FACTIONS } from '../store/factionStore';
 import { useGameStore } from '../store/gameStore';
+import { useCharacterStore } from '../store/characterStore';
+import { processGameCompletion, StoryAchievement } from '../services/StoryAchievements';
+import { AchievementToast, useAchievementToast } from './AchievementToast';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
