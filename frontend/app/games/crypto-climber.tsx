@@ -540,6 +540,11 @@ export default function CryptoClimberGame() {
     <View style={styles.container}>
       <Scanlines opacity={0.05} />
       
+
+        {/* Game Enhancements */}
+        <FloatingScoresComponent />
+        <ComboDisplay combo={combo} visible={showCombo} />
+        <ParticleBurst x={particleBurst.x} y={particleBurst.y} trigger={particleBurst.trigger} color="#FFD700" />
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>

@@ -542,6 +542,11 @@ export default function PowerSmashGame() {
     <View style={styles.container}>
       <Scanlines opacity={0.05} />
       
+
+        {/* Game Enhancements */}
+        <FloatingScoresComponent />
+        <ComboDisplay combo={combo} visible={showCombo} />
+        <ParticleBurst x={particleBurst.x} y={particleBurst.y} trigger={particleBurst.trigger} color="#FF6B6B" />
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>

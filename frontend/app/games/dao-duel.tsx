@@ -326,6 +326,11 @@ export default function DAODuelGame() {
     <View style={styles.container}>
       <Scanlines opacity={0.05} />
       
+
+        {/* Game Enhancements */}
+        <FloatingScoresComponent />
+        <ComboDisplay combo={combo} visible={showCombo} />
+        <ParticleBurst x={particleBurst.x} y={particleBurst.y} trigger={particleBurst.trigger} color="#9945FF" />
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>

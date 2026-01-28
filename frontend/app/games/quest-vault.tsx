@@ -418,6 +418,11 @@ export default function QuestVaultGame() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+
+        {/* Game Enhancements */}
+        <FloatingScoresComponent />
+        <ComboDisplay combo={combo} visible={showCombo} />
+        <ParticleBurst x={particleBurst.x} y={particleBurst.y} trigger={particleBurst.trigger} color="#9945FF" />
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
