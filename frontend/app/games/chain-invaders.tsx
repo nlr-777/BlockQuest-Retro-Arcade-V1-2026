@@ -368,7 +368,21 @@ export default function ChainInvadersGame() {
               ) {
                 newInvaders[i].alive = false;
                 newBullets[b].active = false;
-                setScore(s => s + (4 - inv.type) * 10);
+                
+                // Enhanced scoring with combo
+                const basePoints = (4 - inv.type) * 10;
+                const comboMultiplier = getMultiplier();
+                const totalPoints = Math.floor(basePoints * comboMultiplier * difficulty.scoreMultiplier);
+                setScore(s => s + totalPoints);
+                incrementCombo();
+                
+                // Visual feedback
+                addPopup(totalPoints, inv.x, inv.y, combo >= 3 ? 'combo' : 'normal');
+                if (combo >= 3) {
+                  setParticleBurst({ x: inv.x, y: inv.y, trigger: Date.now() });
+                }
+                GameHaptics.medium();
+                
                 setConsensusVotes(v => Math.min(v + 1, 15));
                 break;
               }
