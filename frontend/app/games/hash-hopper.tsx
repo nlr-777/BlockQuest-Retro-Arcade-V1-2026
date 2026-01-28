@@ -118,6 +118,17 @@ export default function HashHopperGame() {
   const [currentHash, setCurrentHash] = useState('00000000');
   const [highestRow, setHighestRow] = useState(10);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
+  
+  // Enhanced game features
+  const [shakeCount, setShakeCount] = useState(0);
+  const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
+  const [level, setLevel] = useState(1);
+  const [levelUpTrigger, setLevelUpTrigger] = useState(0);
+  
+  // Game enhancement hooks
+  const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
+  const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
+  const difficulty = useDifficultyScaling(score);
 
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
