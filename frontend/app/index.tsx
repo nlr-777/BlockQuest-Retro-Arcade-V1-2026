@@ -363,10 +363,13 @@ export default function ArcadeHub() {
   };
 
   const handleCreateProfile = async () => {
-    if (username.trim().length >= 3 && selectedAvatar) {
+    if (username.trim().length >= 3 && selectedCharacter) {
       audioManager.playSound('powerup');
       ttsManager.speakLine('welcome');
-      await initProfile(username.trim(), selectedAvatar.id);
+      // Use character ID for avatar
+      await initProfile(username.trim(), selectedCharacter.id);
+      // Also select the character in the character store
+      selectCharacter(selectedCharacter.id);
       setShowOnboarding(false);
       setOnboardingComplete();
       
@@ -383,8 +386,8 @@ export default function ArcadeHub() {
     }
   };
 
-  const handleAvatarSelect = (avatar: AvatarConfig) => {
-    setSelectedAvatar(avatar);
+  const handleCharacterSelect = (character: CharacterConfig) => {
+    setSelectedCharacter(character);
     audioManager.playSound('click');
   };
 
