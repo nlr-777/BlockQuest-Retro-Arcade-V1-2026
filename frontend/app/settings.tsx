@@ -23,17 +23,6 @@ import VFXLayer from '../src/vfx/VFXManager';
 import { COLORS } from '../src/constants/colors';
 import { useGameStore } from '../src/store/gameStore';
 
-// Future blockchain integration placeholder
-const BLOCKCHAIN_CONFIG = {
-  network: 'apertum',
-  enabled: false, // Will be enabled in 16+ version
-  features: {
-    badgeMinting: false,
-    nftCollection: false,
-    walletConnect: false,
-  },
-};
-
 export default function SettingsScreen() {
   const router = useRouter();
   const {
