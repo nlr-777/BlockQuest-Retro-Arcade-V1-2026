@@ -287,6 +287,54 @@ export default function ConfigScreen() {
           ))}
 
           {/* Reset Section */}
+          {/* Quick Links Section */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>🔗 QUICK LINKS</Text>
+            <Text style={styles.sectionDesc}>Jump to other sections</Text>
+          </View>
+          
+          <View style={styles.quickLinksGrid}>
+            <TouchableOpacity
+              style={styles.quickLinkBtn}
+              onPress={() => router.push('/progress')}
+              accessibilityLabel="View Progress Dashboard"
+              accessibilityRole="button"
+            >
+              <Text style={styles.quickLinkIcon}>📊</Text>
+              <Text style={styles.quickLinkText}>PROGRESS</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.quickLinkBtn}
+              onPress={() => router.push('/story')}
+              accessibilityLabel="View Story"
+              accessibilityRole="button"
+            >
+              <Text style={styles.quickLinkIcon}>📚</Text>
+              <Text style={styles.quickLinkText}>STORY</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.quickLinkBtn}
+              onPress={() => router.push('/characters')}
+              accessibilityLabel="View Characters"
+              accessibilityRole="button"
+            >
+              <Text style={styles.quickLinkIcon}>🦸</Text>
+              <Text style={styles.quickLinkText}>HEROES</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.quickLinkBtn}
+              onPress={() => router.push('/settings')}
+              accessibilityLabel="Go to Settings"
+              accessibilityRole="button"
+            >
+              <Text style={styles.quickLinkIcon}>⚙️</Text>
+              <Text style={styles.quickLinkText}>SETTINGS</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.resetSection}>
             <Text style={styles.resetTitle}>RESET OPTIONS</Text>
             <View style={styles.resetButtons}>
