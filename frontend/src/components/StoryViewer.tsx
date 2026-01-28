@@ -427,7 +427,7 @@ export const StoryViewer: React.FC = () => {
   // Calculate progress
   const totalChapters = STORY_CHAPTERS.length;
   const unlockedCount = unlockedStoryChapters.length;
-  const progressPercent = Math.round((unlockedCount / totalChapters) * 100);
+  const progressPercent = (unlockedCount / totalChapters) * 100;
   
   return (
     <SafeAreaView style={styles.container}>
@@ -443,10 +443,14 @@ export const StoryViewer: React.FC = () => {
         <View style={styles.headerRight} />
       </View>
       
-      {/* Progress Bar */}
-      <View style={styles.progressContainer}>
+      {/* Reading Progress */}
+      <ReadingProgress progress={progressPercent} />
+      
+      {/* Legacy Progress Bar - hidden */}
+      {/* <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: `${progressPercent}%` }]} />
+        </View>
         </View>
         <Text style={styles.progressText}>
           {unlockedCount}/{totalChapters} CHAPTERS • {progressPercent}%
