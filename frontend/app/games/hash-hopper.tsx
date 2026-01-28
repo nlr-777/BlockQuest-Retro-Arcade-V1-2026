@@ -279,6 +279,11 @@ export default function HashHopperGame() {
           for (const obj of currentLane.objects) {
             if (playerPos.x >= obj.x && playerPos.x < obj.x + obj.width) {
               // Hit by car!
+              GameHaptics.error();
+              setShakeCount(prev => prev + 1);
+              resetCombo();
+              playHit();
+              
               setLives(l => {
                 if (l <= 1) {
                   const currentHighScore = profile?.highScores?.['hash-hopper'] || 0;
@@ -291,7 +296,6 @@ export default function HashHopperGame() {
                 }
                 setPlayerPos({ x: 4, y: 10 });
                 setHighestRow(10);
-                if (Platform.OS !== 'web') Vibration.vibrate(100);
                 return l - 1;
               });
               break;
