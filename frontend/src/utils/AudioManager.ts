@@ -507,41 +507,34 @@ class AudioManager {
       return;
     }
     
-    console.log('Playing pad:', frequencies[0], 'Hz, volume:', volume);
+    console.log('Playing pad:', frequencies[0], 'Hz, volume:', volume, 'masterVol:', this.masterVolume, 'musicVol:', this.musicVolume);
     
     const now = this.audioContext.currentTime;
     
-    // Just 3 detuned oscillators for warmth (not 7 like before)
-    frequencies.slice(0, 2).forEach(freq => {
-      const detunes = [-8, 0, 8];
+    // Use more oscillators for richer sound
+    frequencies.forEach(freq => {
+      const detunes = [-5, 0, 5];
       
       detunes.forEach(detune => {
         const osc = this.audioContext!.createOscillator();
         const gain = this.audioContext!.createGain();
-        const filter = this.audioContext!.createBiquadFilter();
         
-        osc.type = 'sine'; // Sine for cleaner, less harsh sound
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now);
         osc.detune.setValueAtTime(detune, now);
         
-        // Warm lowpass
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, now);
-        filter.Q.value = 0.5;
-        
-        // Slow, gentle envelope - MUCH louder
-        const vol = (this.musicVolume * volume * 0.6) / 3;
+        // MUCH LOUDER - direct gain without too many divisions
+        const vol = this.musicVolume * volume * 0.8;
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(vol, now + 0.4);
-        gain.gain.setValueAtTime(vol, now + 1.5);
-        gain.gain.linearRampToValueAtTime(0.001, now + 2.5);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.3);
+        gain.gain.setValueAtTime(vol, now + 1.2);
+        gain.gain.linearRampToValueAtTime(0.001, now + 2.0);
         
-        osc.connect(filter);
-        filter.connect(gain);
+        osc.connect(gain);
         gain.connect(this.fadeGain!);
         
         osc.start(now);
-        osc.stop(now + 3);
+        osc.stop(now + 2.5);
       });
     });
   }
