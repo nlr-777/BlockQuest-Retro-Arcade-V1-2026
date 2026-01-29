@@ -751,6 +751,77 @@ class AudioManager {
   getCurrentTrack(): MusicTrack | null {
     return this.currentTrack;
   }
+
+  // === DEBUG: Simple test tone to verify audio chain ===
+  playTestTone() {
+    console.log('=== PLAYING TEST TONE ===');
+    
+    if (!this.audioContext) {
+      console.log('No audio context - initializing...');
+      this.initAudioContext();
+    }
+    
+    if (!this.audioContext) {
+      console.log('FAILED: Cannot create audio context');
+      return;
+    }
+    
+    // Resume if suspended
+    if (this.audioContext.state === 'suspended') {
+      console.log('Resuming suspended context...');
+      this.audioContext.resume();
+    }
+    
+    console.log('AudioContext state:', this.audioContext.state);
+    console.log('MasterGain exists:', !!this.masterGain);
+    console.log('Master volume:', this.masterVolume);
+    console.log('Music volume:', this.musicVolume);
+    console.log('Music enabled:', this.musicEnabled);
+    
+    const now = this.audioContext.currentTime;
+    
+    // Create a VERY simple, LOUD tone - bypass everything
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, now); // A4 note
+    
+    // Full volume, no fancy envelopes
+    gain.gain.setValueAtTime(0.5, now);
+    
+    // Connect directly to destination (bypass all our nodes)
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    
+    console.log('Playing 440Hz tone for 1 second DIRECTLY to destination...');
+    
+    osc.start(now);
+    osc.stop(now + 1.0);
+    
+    // After 1.5 seconds, also test through our chain
+    setTimeout(() => {
+      if (!this.audioContext || !this.masterGain) return;
+      
+      console.log('Now testing through masterGain chain...');
+      
+      const osc2 = this.audioContext.createOscillator();
+      const gain2 = this.audioContext.createGain();
+      
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(880, this.audioContext.currentTime); // A5 note (higher)
+      
+      gain2.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+      
+      osc2.connect(gain2);
+      gain2.connect(this.masterGain);
+      
+      osc2.start(this.audioContext.currentTime);
+      osc2.stop(this.audioContext.currentTime + 1.0);
+      
+      console.log('Playing 880Hz tone through masterGain...');
+    }, 1500);
+  }
 }
 
 export const audioManager = AudioManager.getInstance();
