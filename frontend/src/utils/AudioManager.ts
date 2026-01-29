@@ -601,7 +601,7 @@ class AudioManager {
   
   // Clean arp - subtle sparkle
   private playCleanArp(freq: number, volume: number) {
-    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
+    if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -616,13 +616,14 @@ class AudioManager {
     filter.frequency.setValueAtTime(2000, now);
     filter.Q.value = 1;
     
-    // Quick, gentle pluck - MUCH louder
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.5, now);
+    // SIMPLIFIED - connect directly to masterGain
+    const vol = this.musicVolume * 0.25;
+    gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
     
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(this.fadeGain);
+    gain.connect(this.masterGain);
     
     osc.start(now);
     osc.stop(now + 0.2);
