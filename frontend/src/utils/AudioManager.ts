@@ -839,17 +839,12 @@ class AudioManager {
     osc.stop(now + 0.08);
   }
   
-  // Clean, warm pad - ambient and non-intrusive
+  // Clean pad - smooth ambient sound
   private playCleanPad(frequencies: number[], volume: number) {
-    if (!this.audioContext || !this.masterGain) {
-      console.log('playCleanPad: Missing audio context or masterGain');
-      return;
-    }
+    if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
-    // SIMPLIFIED: Connect directly to masterGain, not fadeGain
-    // This bypasses the fadeGain entirely for more reliable audio
     frequencies.forEach(freq => {
       const osc = this.audioContext!.createOscillator();
       const gain = this.audioContext!.createGain();
@@ -857,24 +852,18 @@ class AudioManager {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
       
-      // DIRECT volume calculation - much simpler and louder
-      // musicVolume default is 0.35, we want audible output around 0.15-0.25
-      const vol = this.musicVolume * 0.5; // Simplified: just use music volume * 0.5
-      
+      const vol = this.musicVolume * 0.5;
       gain.gain.setValueAtTime(0.001, now);
       gain.gain.linearRampToValueAtTime(vol, now + 0.2);
       gain.gain.setValueAtTime(vol, now + 1.5);
       gain.gain.linearRampToValueAtTime(0.001, now + 2.0);
       
       osc.connect(gain);
-      // Connect directly to masterGain like SFX does - this WORKS
       gain.connect(this.masterGain!);
       
       osc.start(now);
       osc.stop(now + 2.5);
     });
-    
-    console.log('Pad played - freq:', frequencies[0], 'vol:', this.musicVolume * 0.5);
   }
   
   // Clean bass - subtle low-end foundation
