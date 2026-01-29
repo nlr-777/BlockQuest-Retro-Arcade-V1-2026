@@ -30,13 +30,17 @@ export type SoundEffect =
   | 'combo'       // Combo multiplier
   | 'notification'; // Toast/notification
 
-// Music track types - dynamic game states
+// Music track types - dynamic game states (includes legacy names for backwards compatibility)
 export type MusicTrack = 
   | 'menu'       // Calm, welcoming - main hub
   | 'gameplay'   // Focused, rhythmic - during games
   | 'intense'    // Building tension - near game over/boss
   | 'victory'    // Triumphant - win state
-  | 'ambient';   // Minimal - reading/story
+  | 'ambient'    // Minimal - reading/story
+  // Legacy track names (mapped to new tracks)
+  | 'action'     // -> gameplay
+  | 'euphoria'   // -> gameplay (high intensity)
+  | 'tension';   // -> intense
 
 // Music intensity levels for dynamic adjustment
 export type MusicIntensity = 'low' | 'medium' | 'high';
@@ -73,8 +77,8 @@ const CHORD_PROGRESSIONS = {
   ],
 };
 
-// Track configurations - simpler, cleaner
-const MUSIC_CONFIG: Record<MusicTrack, {
+// Base track config type
+type TrackConfig = {
   bpm: number;
   progression: keyof typeof CHORD_PROGRESSIONS;
   layers: {
@@ -84,7 +88,11 @@ const MUSIC_CONFIG: Record<MusicTrack, {
     beat: boolean;
   };
   baseVolume: number;
-}> = {
+};
+
+// Track configurations - simpler, cleaner
+const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
+  // New track names
   menu: { 
     bpm: 85, 
     progression: 'calm', 
@@ -114,6 +122,25 @@ const MUSIC_CONFIG: Record<MusicTrack, {
     progression: 'calm', 
     layers: { pad: true, bass: false, arp: false, beat: false },
     baseVolume: 0.08,
+  },
+  // Legacy track names (for backwards compatibility)
+  action: { 
+    bpm: 110, 
+    progression: 'focused', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
+    baseVolume: 0.10,
+  },
+  euphoria: { 
+    bpm: 120, 
+    progression: 'triumph', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
+    baseVolume: 0.11,
+  },
+  tension: { 
+    bpm: 128, 
+    progression: 'tense', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
+    baseVolume: 0.11,
   },
 };
 
