@@ -87,19 +87,33 @@ const LEAD_PATTERNS = {
 };
 
 // SFX frequencies for retro 8-bit sounds
-const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type: OscillatorType; envelope: 'pluck' | 'pad' | 'hit' }> = {
-  jump: { freqs: [400, 600], duration: 100, type: 'square', envelope: 'pluck' },
-  collect: { freqs: [800, 1200, 1600], duration: 120, type: 'sine', envelope: 'pluck' },
-  hit: { freqs: [150, 100], duration: 200, type: 'sawtooth', envelope: 'hit' },
-  powerup: { freqs: [400, 500, 600, 800, 1000], duration: 400, type: 'sine', envelope: 'pad' },
-  gameover: { freqs: [400, 300, 200, 150], duration: 600, type: 'square', envelope: 'pad' },
-  victory: { freqs: [523, 659, 784, 1047], duration: 500, type: 'sine', envelope: 'pad' },
-  click: { freqs: [800], duration: 30, type: 'square', envelope: 'pluck' },
-  move: { freqs: [300], duration: 20, type: 'square', envelope: 'pluck' },
-  shoot: { freqs: [1000, 500, 250], duration: 80, type: 'sawtooth', envelope: 'pluck' },
-  levelup: { freqs: [523, 659, 784, 880, 1047], duration: 600, type: 'sine', envelope: 'pad' },
-  start: { freqs: [440, 554, 659, 880], duration: 300, type: 'sine', envelope: 'pluck' },
-  pause: { freqs: [440, 330], duration: 200, type: 'square', envelope: 'pluck' },
+const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type: OscillatorType; envelope: 'pluck' | 'pad' | 'hit'; priority: number }> = {
+  // High priority - important game events
+  jump: { freqs: [400, 600], duration: 100, type: 'square', envelope: 'pluck', priority: 5 },
+  collect: { freqs: [800, 1200, 1600], duration: 120, type: 'sine', envelope: 'pluck', priority: 4 },
+  hit: { freqs: [150, 100], duration: 200, type: 'sawtooth', envelope: 'hit', priority: 8 },
+  powerup: { freqs: [400, 500, 600, 800, 1000], duration: 400, type: 'sine', envelope: 'pad', priority: 7 },
+  gameover: { freqs: [400, 300, 200, 150], duration: 600, type: 'square', envelope: 'pad', priority: 10 },
+  victory: { freqs: [523, 659, 784, 1047], duration: 500, type: 'sine', envelope: 'pad', priority: 10 },
+  levelup: { freqs: [523, 659, 784, 880, 1047], duration: 600, type: 'sine', envelope: 'pad', priority: 9 },
+  
+  // Medium priority - UI interactions
+  click: { freqs: [800], duration: 30, type: 'square', envelope: 'pluck', priority: 2 },
+  move: { freqs: [300], duration: 20, type: 'square', envelope: 'pluck', priority: 1 },
+  shoot: { freqs: [1000, 500, 250], duration: 80, type: 'sawtooth', envelope: 'pluck', priority: 5 },
+  start: { freqs: [440, 554, 659, 880], duration: 300, type: 'sine', envelope: 'pluck', priority: 6 },
+  pause: { freqs: [440, 330], duration: 200, type: 'square', envelope: 'pluck', priority: 6 },
+  
+  // New sounds - distinct and non-overlapping
+  reward: { freqs: [659, 784, 988, 1319], duration: 450, type: 'sine', envelope: 'pad', priority: 9 },
+  streak: { freqs: [523, 698, 880], duration: 350, type: 'sine', envelope: 'pad', priority: 8 },
+  coin: { freqs: [1047, 1319], duration: 80, type: 'sine', envelope: 'pluck', priority: 3 },
+  whoosh: { freqs: [200, 400, 200], duration: 150, type: 'sawtooth', envelope: 'pluck', priority: 2 },
+  confirm: { freqs: [523, 659], duration: 100, type: 'sine', envelope: 'pluck', priority: 4 },
+  error: { freqs: [200, 150], duration: 250, type: 'square', envelope: 'hit', priority: 7 },
+  unlock: { freqs: [392, 523, 659, 784, 1047], duration: 500, type: 'sine', envelope: 'pad', priority: 8 },
+  combo: { freqs: [880, 1047, 1319], duration: 150, type: 'sine', envelope: 'pluck', priority: 5 },
+  notification: { freqs: [659, 880], duration: 200, type: 'sine', envelope: 'pluck', priority: 6 },
 };
 
 // Track configurations
