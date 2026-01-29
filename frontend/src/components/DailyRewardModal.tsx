@@ -74,6 +74,8 @@ export const DailyRewardModal: React.FC<DailyRewardModalProps> = ({ visible, onC
   const handleClaim = async () => {
     if (!streakData?.canClaimToday || claimed) return;
     
+    // Play victory sound for claiming reward
+    audioManager.playSound('victory');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     
     const result = await dailyRewardsService.claimDailyReward();
@@ -81,9 +83,17 @@ export const DailyRewardModal: React.FC<DailyRewardModalProps> = ({ visible, onC
       setClaimed(true);
       setClaimedReward(result.reward);
       
+      // Play collect sound for XP bonus
+      setTimeout(() => audioManager.playSound('collect'), 300);
+      
       // Apply bonus XP
       const bonusXP = Math.floor(result.reward.xp * (1 + result.bonus / 100));
       addXP(bonusXP);
+      
+      // Play levelup sound if streak is high
+      if (result.newStreak >= 7) {
+        setTimeout(() => audioManager.playSound('levelup'), 600);
+      }
       
       // Refresh streak data
       await loadStreakData();
