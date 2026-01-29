@@ -339,281 +339,123 @@ class AudioManager {
     });
   }
 
-  // === HIGH-DOPAMINE TRANCE MUSIC ENGINE ===
-
+  // === CLEAN ADAPTIVE MUSIC ENGINE ===
+  // Dynamic music that complements gameplay without overwhelming
+  
+  private currentIntensity: MusicIntensity = 'low';
+  private fadeGain: GainNode | null = null;
+  
   startMusic(track: MusicTrack = 'menu') {
     if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext || !this.compressor) return;
     
+    // Fade out existing music smoothly
     this.stopMusic();
     this.currentTrack = track;
     this.beatCount = 0;
     this.barCount = 0;
     this.chordIndex = 0;
-    this.arpIndex = 0;
-    this.leadIndex = 0;
     
-    const config = TRACK_CONFIG[track];
+    const config = MUSIC_CONFIG[track];
     const msPerBeat = (60 / config.bpm) * 1000;
-    const progression = EUPHORIC_PROGRESSIONS[config.progression];
-    const arpPattern = ARP_PATTERNS[config.arpPattern];
-    const leadPattern = LEAD_PATTERNS[config.leadPattern];
+    const progression = CHORD_PROGRESSIONS[config.progression];
     
-    // Main beat loop (quarter notes)
-    const beatLoop = setInterval(() => {
-      if (!this.audioContext || !this.compressor) return;
+    // Create fade gain for smooth volume control
+    this.fadeGain = this.audioContext.createGain();
+    this.fadeGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+    this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 0.5);
+    this.fadeGain.connect(this.compressor);
+    
+    // Main chord/bar loop - simpler, one loop to rule them all
+    const mainLoop = setInterval(() => {
+      if (!this.audioContext || !this.compressor || !this.fadeGain) return;
       
       this.beatCount++;
       
       // Change chord every 4 beats (1 bar)
       if (this.beatCount % 4 === 1) {
         this.barCount++;
-        if (this.barCount % 2 === 1) {
-          this.chordIndex = (this.chordIndex + 1) % progression.length;
+        this.chordIndex = (this.chordIndex + 1) % progression.length;
+        
+        // Play pad on new chord (smooth, ambient)
+        if (config.layers.pad) {
+          this.playCleanPad(progression[this.chordIndex], config.baseVolume);
         }
       }
       
-      const chord = progression[this.chordIndex];
-      
-      // Kick on every beat
-      if (config.hasKick) {
-        this.playEuphoricKick(config.intensity);
+      // Bass on beat 1 and 3 (subtle, grounding)
+      if (config.layers.bass && (this.beatCount % 4 === 1 || this.beatCount % 4 === 3)) {
+        this.playCleanBass(progression[this.chordIndex][0] / 2, config.baseVolume);
       }
       
-      // Snare/clap on 2 and 4
-      if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
-        this.playClap(config.intensity * 0.7);
-      }
-      
-      // Hi-hat on every beat
-      this.playHiHat(config.intensity * 0.4);
-      
-      // Supersaw pad (sustain through bar)
-      if (this.beatCount % 8 === 1) {
-        this.playSupersawPad(chord, config.intensity);
-      }
-      
-      // Bass on beat 1 and 3
-      if (config.hasBass && (this.beatCount % 4 === 1 || this.beatCount % 4 === 3)) {
-        this.playSubBass(chord[0] / 2, config.intensity);
+      // Soft beat on 2 and 4 (gentle pulse)
+      if (config.layers.beat && (this.beatCount % 4 === 2 || this.beatCount % 4 === 0)) {
+        this.playCleanPulse(config.baseVolume * 0.6);
       }
       
     }, msPerBeat);
-    this.musicLoops.push(beatLoop);
+    this.musicLoops.push(mainLoop);
     
-    // Arpeggiator loop (16th notes - high dopamine!)
-    const arpLoop = setInterval(() => {
-      if (!this.audioContext || !this.compressor) return;
-      
-      const chord = progression[this.chordIndex];
-      const baseNote = chord[0];
-      const arpSemitone = arpPattern[this.arpIndex % arpPattern.length];
-      const freq = baseNote * Math.pow(2, arpSemitone / 12);
-      
-      this.playArpNote(freq, config.intensity * 0.55);
-      this.arpIndex++;
-    }, msPerBeat / 4);
-    this.musicLoops.push(arpLoop);
-    
-    // Lead melody (8th notes - for euphoria/action tracks)
-    if (config.hasLead) {
-      const leadLoop = setInterval(() => {
-        if (!this.audioContext || !this.compressor) return;
+    // Separate arpeggio loop - only for gameplay tracks (subtle sparkle)
+    if (config.layers.arp) {
+      const arpLoop = setInterval(() => {
+        if (!this.audioContext || !this.compressor || !this.fadeGain) return;
         
-        const chord = progression[this.chordIndex];
-        const baseNote = chord[0] * 2; // One octave up
-        const leadSemitone = leadPattern[this.leadIndex % leadPattern.length];
-        const freq = baseNote * Math.pow(2, leadSemitone / 12);
-        
-        this.playLeadNote(freq, config.intensity * 0.4);
-        this.leadIndex++;
+        // Only play arp on certain beats for less busy feel
+        if (this.beatCount % 2 === 0) {
+          const chord = progression[this.chordIndex];
+          const noteIndex = this.arpIndex % chord.length;
+          this.playCleanArp(chord[noteIndex] * 2, config.baseVolume * 0.4);
+          this.arpIndex++;
+        }
       }, msPerBeat / 2);
-      this.musicLoops.push(leadLoop);
-    }
-    
-    // Crash cymbal every 16 bars for build-up feel
-    const crashLoop = setInterval(() => {
-      if (config.intensity > 0.7) {
-        this.playCrash(config.intensity * 0.3);
-      }
-    }, msPerBeat * 64);
-    this.musicLoops.push(crashLoop);
-  }
-
-  private playEuphoricKick(intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
-    
-    const now = this.audioContext.currentTime;
-    
-    // Punchy kick with pitch envelope
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(160, now);
-    osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
-    
-    // Punchy envelope
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 1.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    
-    osc.connect(gain);
-    gain.connect(this.compressor);
-    
-    osc.start(now);
-    osc.stop(now + 0.25);
-    
-    // Click transient for punch
-    const click = this.audioContext.createOscillator();
-    const clickGain = this.audioContext.createGain();
-    click.type = 'square';
-    click.frequency.setValueAtTime(1000, now);
-    clickGain.gain.setValueAtTime(this.musicVolume * intensity * 0.3, now);
-    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
-    click.connect(clickGain);
-    clickGain.connect(this.compressor);
-    click.start(now);
-    click.stop(now + 0.02);
-  }
-
-  private playClap(intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
-    
-    const now = this.audioContext.currentTime;
-    
-    // Layered noise for clap
-    for (let i = 0; i < 3; i++) {
-      const bufferSize = this.audioContext.sampleRate * 0.08;
-      const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let j = 0; j < bufferSize; j++) {
-        data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.15));
-      }
-      
-      const noise = this.audioContext.createBufferSource();
-      noise.buffer = buffer;
-      
-      const filter = this.audioContext.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.value = 1500 + i * 500;
-      filter.Q.value = 1;
-      
-      const gain = this.audioContext.createGain();
-      gain.gain.setValueAtTime(this.musicVolume * intensity * 0.25, now + i * 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-      
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.compressor);
-      
-      noise.start(now + i * 0.01);
-      noise.stop(now + 0.15);
+      this.musicLoops.push(arpLoop);
     }
   }
-
-  private playHiHat(intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
+  
+  // Clean, warm pad - ambient and non-intrusive
+  private playCleanPad(frequencies: number[], volume: number) {
+    if (!this.audioContext || !this.fadeGain) return;
     
     const now = this.audioContext.currentTime;
     
-    const bufferSize = this.audioContext.sampleRate * 0.04;
-    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-    
-    const noise = this.audioContext.createBufferSource();
-    noise.buffer = buffer;
-    
-    const filter = this.audioContext.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.value = 9000;
-    
-    const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-    
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.compressor);
-    
-    noise.start(now);
-    noise.stop(now + 0.05);
-  }
-
-  private playCrash(intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
-    
-    const now = this.audioContext.currentTime;
-    
-    const bufferSize = this.audioContext.sampleRate * 1.5;
-    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
-    }
-    
-    const noise = this.audioContext.createBufferSource();
-    noise.buffer = buffer;
-    
-    const filter = this.audioContext.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.value = 5000;
-    
-    const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-    
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.compressor);
-    
-    noise.start(now);
-    noise.stop(now + 1.6);
-  }
-
-  private playSupersawPad(frequencies: number[], intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
-    
-    const now = this.audioContext.currentTime;
-    
-    // Rich supersaw with 7 detuned oscillators per note
-    frequencies.forEach(freq => {
-      const detunes = [-15, -10, -5, 0, 5, 10, 15];
+    // Just 3 detuned oscillators for warmth (not 7 like before)
+    frequencies.slice(0, 2).forEach(freq => {
+      const detunes = [-8, 0, 8];
       
       detunes.forEach(detune => {
         const osc = this.audioContext!.createOscillator();
         const gain = this.audioContext!.createGain();
         const filter = this.audioContext!.createBiquadFilter();
         
-        osc.type = 'sawtooth';
+        osc.type = 'sine'; // Sine for cleaner, less harsh sound
         osc.frequency.setValueAtTime(freq, now);
-        osc.detune.setValueAtTime(detune + Math.random() * 5, now);
+        osc.detune.setValueAtTime(detune, now);
         
-        // Warm lowpass filter
+        // Warm lowpass
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1500 + intensity * 2500, now);
-        filter.Q.value = 1.5;
+        filter.frequency.setValueAtTime(800, now);
+        filter.Q.value = 0.5;
         
-        // Smooth pad envelope
-        const vol = (this.musicVolume * intensity * 0.06) / 7;
+        // Slow, gentle envelope
+        const vol = (this.musicVolume * volume * 0.08) / 3;
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(vol, now + 0.15);
-        gain.gain.setValueAtTime(vol, now + 0.6);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        gain.gain.linearRampToValueAtTime(vol, now + 0.4);
+        gain.gain.setValueAtTime(vol, now + 1.5);
+        gain.gain.linearRampToValueAtTime(0.001, now + 2.5);
         
         osc.connect(filter);
         filter.connect(gain);
-        gain.connect(this.compressor!);
+        gain.connect(this.fadeGain!);
         
         osc.start(now);
-        osc.stop(now + 1.5);
+        osc.stop(now + 3);
       });
     });
   }
-
-  private playSubBass(freq: number, intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
+  
+  // Clean bass - subtle low-end foundation
+  private playCleanBass(freq: number, volume: number) {
+    if (!this.audioContext || !this.fadeGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -623,18 +465,55 @@ class AudioManager {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.35, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    // Soft attack and release
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.25, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
     
     osc.connect(gain);
-    gain.connect(this.compressor);
+    gain.connect(this.fadeGain);
     
     osc.start(now);
-    osc.stop(now + 0.35);
+    osc.stop(now + 0.5);
   }
-
-  private playArpNote(freq: number, intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
+  
+  // Clean pulse - gentle rhythmic element
+  private playCleanPulse(volume: number) {
+    if (!this.audioContext || !this.fadeGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Soft filtered noise pulse instead of harsh kick
+    const bufferSize = this.audioContext.sampleRate * 0.05;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 200;
+    filter.Q.value = 1;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.fadeGain);
+    
+    noise.start(now);
+    noise.stop(now + 0.1);
+  }
+  
+  // Clean arp - subtle sparkle
+  private playCleanArp(freq: number, volume: number) {
+    if (!this.audioContext || !this.fadeGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -642,74 +521,78 @@ class AudioManager {
     const gain = this.audioContext.createGain();
     const filter = this.audioContext.createBiquadFilter();
     
-    osc.type = 'sawtooth';
+    osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    // Resonant filter sweep for that trance feel
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(4000, now);
-    filter.frequency.exponentialRampToValueAtTime(600, now + 0.12);
-    filter.Q.value = 8;
+    filter.frequency.setValueAtTime(2000, now);
+    filter.Q.value = 1;
     
-    gain.gain.setValueAtTime(this.musicVolume * intensity * 0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    // Quick, gentle pluck
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
     
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(this.compressor);
+    gain.connect(this.fadeGain);
     
     osc.start(now);
-    osc.stop(now + 0.15);
+    osc.stop(now + 0.2);
   }
-
-  private playLeadNote(freq: number, intensity: number) {
-    if (!this.audioContext || !this.compressor) return;
+  
+  // Dynamic intensity adjustment - call this based on game state
+  setMusicIntensity(intensity: MusicIntensity) {
+    if (this.currentIntensity === intensity) return;
+    this.currentIntensity = intensity;
     
-    const now = this.audioContext.currentTime;
+    // Adjust volume based on intensity
+    if (this.fadeGain && this.audioContext) {
+      const now = this.audioContext.currentTime;
+      const targetVolume = intensity === 'high' ? 1.2 : intensity === 'medium' ? 1.0 : 0.7;
+      this.fadeGain.gain.linearRampToValueAtTime(targetVolume, now + 0.5);
+    }
+  }
+  
+  // Smooth transition to a different track
+  transitionToTrack(track: MusicTrack, fadeTime: number = 1.0) {
+    if (this.currentTrack === track) return;
     
-    // Dual oscillator lead for richness
-    ['sawtooth', 'square'].forEach((type, i) => {
-      const osc = this.audioContext!.createOscillator();
-      const gain = this.audioContext!.createGain();
-      const filter = this.audioContext!.createBiquadFilter();
+    if (this.fadeGain && this.audioContext) {
+      const now = this.audioContext.currentTime;
+      // Fade out current
+      this.fadeGain.gain.linearRampToValueAtTime(0, now + fadeTime);
       
-      osc.type = type as OscillatorType;
-      osc.frequency.setValueAtTime(freq, now);
-      osc.detune.setValueAtTime(i * 7, now); // Slight detune
-      
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(3000, now);
-      filter.Q.value = 2;
-      
-      const vol = this.musicVolume * intensity * 0.08;
-      gain.gain.setValueAtTime(vol, now);
-      gain.gain.setValueAtTime(vol * 0.8, now + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-      
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.compressor!);
-      
-      osc.start(now);
-      osc.stop(now + 0.3);
-    });
+      // Start new track after fade
+      setTimeout(() => {
+        this.startMusic(track);
+      }, fadeTime * 1000);
+    } else {
+      this.startMusic(track);
+    }
   }
 
   stopMusic() {
-    this.musicLoops.forEach(loop => clearInterval(loop));
-    this.musicLoops = [];
-    this.currentTrack = null;
-    this.beatCount = 0;
-    this.barCount = 0;
-    this.chordIndex = 0;
-    this.arpIndex = 0;
-    this.leadIndex = 0;
+    // Smooth fade out if possible
+    if (this.fadeGain && this.audioContext) {
+      const now = this.audioContext.currentTime;
+      this.fadeGain.gain.linearRampToValueAtTime(0, now + 0.3);
+    }
+    
+    // Clear loops after fade
+    setTimeout(() => {
+      this.musicLoops.forEach(loop => clearInterval(loop));
+      this.musicLoops = [];
+      this.currentTrack = null;
+      this.beatCount = 0;
+      this.barCount = 0;
+      this.chordIndex = 0;
+      this.arpIndex = 0;
+      this.fadeGain = null;
+    }, 350);
   }
 
   changeTrack(track: MusicTrack) {
-    if (this.currentTrack !== track) {
-      this.startMusic(track);
-    }
+    this.transitionToTrack(track);
   }
 
   getCurrentBeat(): number {
