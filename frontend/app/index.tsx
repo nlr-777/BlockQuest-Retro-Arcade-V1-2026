@@ -343,6 +343,9 @@ export default function ArcadeHub() {
       
       // Also check daily rewards
       const dailyData = await dailyRewardsService.getStreakData();
+      setCurrentStreak(dailyData.currentStreak);
+      setCanClaimDaily(dailyData.canClaimToday);
+      
       if (dailyData.canClaimToday) {
         // Small delay to avoid modal overlap
         setTimeout(() => setShowDailyRewards(true), 500);
@@ -350,6 +353,14 @@ export default function ArcadeHub() {
     } catch (e) {
       // Silent fail
     }
+  };
+  
+  // Refresh streak after claiming
+  const handleDailyRewardsClose = async () => {
+    setShowDailyRewards(false);
+    const dailyData = await dailyRewardsService.getStreakData();
+    setCurrentStreak(dailyData.currentStreak);
+    setCanClaimDaily(dailyData.canClaimToday);
   };
 
   const handleCreateProfile = async () => {
