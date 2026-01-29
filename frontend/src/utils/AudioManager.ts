@@ -5,7 +5,7 @@
 
 import { Platform } from 'react-native';
 
-// Sound effect types
+// Sound effect types - expanded for better variety
 export type SoundEffect = 
   | 'jump'
   | 'collect'
@@ -18,7 +18,17 @@ export type SoundEffect =
   | 'shoot'
   | 'levelup'
   | 'start'
-  | 'pause';
+  | 'pause'
+  // New sound types for better UX
+  | 'reward'      // Daily reward claim
+  | 'streak'      // Streak milestone
+  | 'coin'        // Coin/currency collect
+  | 'whoosh'      // UI transitions
+  | 'confirm'     // Confirmation sound
+  | 'error'       // Error/invalid action
+  | 'unlock'      // Unlock new content
+  | 'combo'       // Combo multiplier
+  | 'notification'; // Toast/notification
 
 // Music track types - different moods for games
 export type MusicTrack = 
