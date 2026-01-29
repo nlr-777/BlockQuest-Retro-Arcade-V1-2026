@@ -507,36 +507,35 @@ class AudioManager {
       return;
     }
     
-    console.log('Playing pad:', frequencies[0], 'Hz, volume:', volume, 'masterVol:', this.masterVolume, 'musicVol:', this.musicVolume);
-    
     const now = this.audioContext.currentTime;
     
-    // Use more oscillators for richer sound
+    // SIMPLIFIED: Connect directly to masterGain, not fadeGain
+    // This bypasses the fadeGain entirely for more reliable audio
     frequencies.forEach(freq => {
-      const detunes = [-5, 0, 5];
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
       
-      detunes.forEach(detune => {
-        const osc = this.audioContext!.createOscillator();
-        const gain = this.audioContext!.createGain();
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        osc.detune.setValueAtTime(detune, now);
-        
-        // MUCH LOUDER - direct gain without too many divisions
-        const vol = this.musicVolume * volume * 0.8;
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(vol, now + 0.3);
-        gain.gain.setValueAtTime(vol, now + 1.2);
-        gain.gain.linearRampToValueAtTime(0.001, now + 2.0);
-        
-        osc.connect(gain);
-        gain.connect(this.fadeGain!);
-        
-        osc.start(now);
-        osc.stop(now + 2.5);
-      });
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      
+      // DIRECT volume calculation - much simpler and louder
+      // musicVolume default is 0.35, we want audible output around 0.15-0.25
+      const vol = this.musicVolume * 0.5; // Simplified: just use music volume * 0.5
+      
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.2);
+      gain.gain.setValueAtTime(vol, now + 1.5);
+      gain.gain.linearRampToValueAtTime(0.001, now + 2.0);
+      
+      osc.connect(gain);
+      // Connect directly to masterGain like SFX does - this WORKS
+      gain.connect(this.masterGain!);
+      
+      osc.start(now);
+      osc.stop(now + 2.5);
     });
+    
+    console.log('Pad played - freq:', frequencies[0], 'vol:', this.musicVolume * 0.5);
   }
   
   // Clean bass - subtle low-end foundation
