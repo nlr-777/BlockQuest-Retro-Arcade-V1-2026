@@ -111,7 +111,7 @@ const HolographicScan: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[styles.scanLine, animatedStyle]} style={{ pointerEvents: 'none' }} />
+    <Animated.View style={[styles.scanLine, animatedStyle, { pointerEvents: 'none' }]} />
   );
 };
 
@@ -144,7 +144,7 @@ const CRTBreathe: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, containerStyle]} style={{ pointerEvents: 'none' }}>
+    <Animated.View style={[StyleSheet.absoluteFill, containerStyle, { pointerEvents: 'none' }]}>
       <Animated.View style={[styles.scanlines, scanlineStyle]} />
       <View style={styles.vignette} />
     </Animated.View>
