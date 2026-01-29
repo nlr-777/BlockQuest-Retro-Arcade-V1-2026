@@ -301,7 +301,7 @@ export const ConfettiBurst: React.FC<{ active: boolean }> = ({ active }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       {confetti.map(c => (
         <ConfettiPiece key={c.id} startX={c.x} color={c.color} />
       ))}
