@@ -436,12 +436,12 @@ class AudioManager {
     
     // Create fade gain for smooth volume control FIRST before starting loops
     this.fadeGain = this.audioContext.createGain();
-    this.fadeGain.gain.setValueAtTime(0, this.audioContext.currentTime);
-    this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 0.5);
-    // Connect fadeGain -> masterGain (which connects to destination)
+    this.fadeGain.gain.setValueAtTime(0.5, this.audioContext.currentTime); // Start at 50% instead of 0
+    this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 1.0);
+    // Connect fadeGain -> masterGain -> destination (skip compressor for cleaner sound)
     this.fadeGain.connect(this.masterGain!);
     
-    console.log('FadeGain created and connected');
+    console.log('FadeGain created, connected to masterGain. Master volume:', this.masterVolume);
     
     // Main chord/bar loop - simpler, one loop to rule them all
     const mainLoop = setInterval(() => {
