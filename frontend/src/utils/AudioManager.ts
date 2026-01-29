@@ -90,54 +90,54 @@ type TrackConfig = {
   baseVolume: number;
 };
 
-// Track configurations - simpler, cleaner with increased volume
+// Track configurations - ENERGETIC arcade feel with faster tempos
 const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
-  // New track names
+  // New track names - ALL faster tempos for arcade energy
   menu: { 
-    bpm: 85, 
+    bpm: 120,  // Upbeat menu music
     progression: 'calm', 
-    layers: { pad: true, bass: true, arp: false, beat: false },
+    layers: { pad: true, bass: true, arp: false, beat: true },
     baseVolume: 0.35,
   },
   gameplay: { 
-    bpm: 110, 
+    bpm: 128,  // Driving gameplay rhythm
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.30,
   },
   intense: { 
-    bpm: 128, 
+    bpm: 140,  // Heart-pumping intensity
     progression: 'tense', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.32,
   },
   victory: { 
-    bpm: 100, 
+    bpm: 125,  // Triumphant celebration
     progression: 'triumph', 
-    layers: { pad: true, bass: true, arp: false, beat: false },
+    layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.38,
   },
   ambient: { 
-    bpm: 70, 
+    bpm: 100,  // Chill but not sleepy
     progression: 'calm', 
-    layers: { pad: true, bass: false, arp: false, beat: false },
+    layers: { pad: true, bass: true, arp: false, beat: false },
     baseVolume: 0.25,
   },
   // Legacy track names (for backwards compatibility)
   action: { 
-    bpm: 110, 
+    bpm: 128, 
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.30,
   },
   euphoria: { 
-    bpm: 120, 
+    bpm: 135, 
     progression: 'triumph', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.32,
   },
   tension: { 
-    bpm: 128, 
+    bpm: 140, 
     progression: 'tense', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.32,
