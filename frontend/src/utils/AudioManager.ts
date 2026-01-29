@@ -730,35 +730,41 @@ class AudioManager {
     noise.stop(now + 0.06);
   }
   
-  // Riser sound for builds
+  // Riser sound for builds - soft filtered sweep
   private playRiser(volume: number, progress: number) {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
+    // Use filtered noise instead of harsh sawtooth
+    const bufferSize = this.audioContext.sampleRate * 0.3;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.5;
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
     const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'bandpass';
+    // Rising center frequency
+    const centerFreq = 500 + progress * 200;
+    filter.frequency.setValueAtTime(centerFreq, now);
+    filter.frequency.linearRampToValueAtTime(centerFreq + 300, now + 0.25);
+    filter.Q.value = 2;
     
-    osc.type = 'sawtooth';
-    // Rising pitch based on progress (0-8)
-    const startFreq = 200 + progress * 100;
-    osc.frequency.setValueAtTime(startFreq, now);
-    osc.frequency.linearRampToValueAtTime(startFreq + 50, now + 0.3);
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
     
-    filter.type = 'lowpass';
-    filter.frequency.value = 3000 + progress * 500;
-    filter.Q.value = 5;
-    
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-    
-    osc.connect(filter);
+    noise.connect(filter);
     filter.connect(gain);
     gain.connect(this.masterGain);
     
-    osc.start(now);
-    osc.stop(now + 0.35);
+    noise.start(now);
+    noise.stop(now + 0.3);
   }
   
   // Drop impact sound
