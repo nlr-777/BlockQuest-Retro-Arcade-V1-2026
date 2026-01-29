@@ -49,7 +49,7 @@ const PixelChainRain: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} style={{ pointerEvents: 'none' }}>
       {drops.map((drop) => (
         <RainDrop key={drop.id} x={drop.x} delay={drop.delay} intensity={intensity} />
       ))}
@@ -111,7 +111,7 @@ const HolographicScan: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[styles.scanLine, animatedStyle]} pointerEvents="none" />
+    <Animated.View style={[styles.scanLine, animatedStyle]} style={{ pointerEvents: 'none' }} />
   );
 };
 
@@ -144,7 +144,7 @@ const CRTBreathe: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, containerStyle]} pointerEvents="none">
+    <Animated.View style={[StyleSheet.absoluteFill, containerStyle]} style={{ pointerEvents: 'none' }}>
       <Animated.View style={[styles.scanlines, scanlineStyle]} />
       <View style={styles.vignette} />
     </Animated.View>
@@ -187,7 +187,7 @@ const ParallaxBlocks: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} style={{ pointerEvents: 'none' }}>
       <Animated.View style={[styles.parallaxLayer, { bottom: 50, opacity: 0.2 }, layer1Style]}>
         {Array(10).fill(0).map((_, i) => (
           <View key={i} style={[styles.parallaxBlock, { left: i * 50, backgroundColor: COLORS.blockCyan }]} />
@@ -237,7 +237,7 @@ const GlitchLock: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[styles.glitchOverlay, animatedStyle]} pointerEvents="none">
+    <Animated.View style={[styles.glitchOverlay, animatedStyle]} style={{ pointerEvents: 'none' }}>
       <View style={styles.glitchLine} />
       <View style={[styles.glitchLine, { top: '30%', backgroundColor: COLORS.vfxScan }]} />
       <View style={[styles.glitchLine, { top: '60%', backgroundColor: COLORS.chainGold }]} />
@@ -261,7 +261,7 @@ const IPFSOrbit: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={styles.orbitContainer} pointerEvents="none">
+    <View style={styles.orbitContainer} style={{ pointerEvents: 'none' }}>
       <Animated.View style={[styles.orbitPath, orbitStyle]}>
         <View style={styles.orbitDot} />
       </Animated.View>
@@ -295,7 +295,7 @@ const GenesisBirth: React.FC<{ intensity: number; onComplete?: () => void }> = (
   }));
 
   return (
-    <Animated.View style={[styles.genesisContainer, containerStyle]} pointerEvents="none">
+    <Animated.View style={[styles.genesisContainer, containerStyle]} style={{ pointerEvents: 'none' }}>
       <Animated.View style={[styles.genesisBurst, burstStyle]}>
         <View style={styles.genesisCore} />
       </Animated.View>
