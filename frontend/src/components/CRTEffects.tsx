@@ -59,7 +59,7 @@ export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = 
   }
   
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]} pointerEvents="none">
+    <Animated.View style={[StyleSheet.absoluteFill, animatedStyle, { pointerEvents: 'none' }]}>
       {lines}
     </Animated.View>
   );
