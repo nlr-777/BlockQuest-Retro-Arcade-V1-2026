@@ -702,7 +702,7 @@ export default function ArcadeHub() {
       {/* Daily Reward Modal */}
       <DailyRewardModal
         visible={showDailyRewards}
-        onClose={() => setShowDailyRewards(false)}
+        onClose={handleDailyRewardsClose}
       />
     </View>
   );
