@@ -565,7 +565,7 @@ class AudioManager {
   
   // Clean pulse - gentle rhythmic element
   private playCleanPulse(volume: number) {
-    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
+    if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -586,12 +586,14 @@ class AudioManager {
     filter.Q.value = 1;
     
     const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.9, now);
+    // SIMPLIFIED - connect directly to masterGain
+    const vol = this.musicVolume * 0.35;
+    gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
     
     noise.connect(filter);
     filter.connect(gain);
-    gain.connect(this.fadeGain);
+    gain.connect(this.masterGain);
     
     noise.start(now);
     noise.stop(now + 0.1);
