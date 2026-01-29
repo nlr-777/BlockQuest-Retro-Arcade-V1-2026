@@ -447,6 +447,8 @@ class AudioManager {
     }, msPerBeat);
     this.musicLoops.push(mainLoop);
     
+    console.log('Music loop started, beat interval:', msPerBeat, 'ms');
+    
     // Separate arpeggio loop - only for gameplay tracks (subtle sparkle)
     if (config.layers.arp) {
       const arpLoop = setInterval(() => {
