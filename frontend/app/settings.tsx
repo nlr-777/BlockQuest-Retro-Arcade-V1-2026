@@ -203,7 +203,7 @@ export default function SettingsScreen() {
               <PixelText size="sm" color={COLORS.textSecondary}>Master Sound</PixelText>
               <Switch
                 value={!isMuted}
-                onValueChange={toggleMute}
+                onValueChange={handleToggleMute}
                 trackColor={{ false: COLORS.bgMedium, true: COLORS.chainGold }}
                 thumbColor={COLORS.textPrimary}
               />
@@ -211,12 +211,12 @@ export default function SettingsScreen() {
             
             <View style={styles.volumeRow}>
               <PixelText size="sm" color={COLORS.textSecondary}>Music</PixelText>
-              {renderVolumeBar(musicVolume, setMusicVolume)}
+              {renderVolumeBar(musicVolume, handleMusicVolumeChange)}
             </View>
             
             <View style={styles.volumeRow}>
               <PixelText size="sm" color={COLORS.textSecondary}>Effects</PixelText>
-              {renderVolumeBar(sfxVolume, setSfxVolume)}
+              {renderVolumeBar(sfxVolume, handleSfxVolumeChange)}
             </View>
           </View>
         </Animated.View>
