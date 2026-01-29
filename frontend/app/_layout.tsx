@@ -23,14 +23,12 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [musicStarted, setMusicStarted] = useState(false);
 
-  // Start music immediately on first user interaction or load
+  // Start music immediately on load
   useEffect(() => {
     if (isClient && !musicStarted) {
-      // Initialize audio context and start menu music right away
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
       setMusicStarted(true);
-      console.log('Music started during loading screen');
     }
   }, [musicStarted]);
 
