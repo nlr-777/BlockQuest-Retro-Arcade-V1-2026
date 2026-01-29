@@ -894,8 +894,6 @@ class AudioManager {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
-    
-    // Soft filtered noise pulse instead of harsh kick
     const bufferSize = this.audioContext.sampleRate * 0.05;
     const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
     const data = buffer.getChannelData(0);
@@ -912,7 +910,6 @@ class AudioManager {
     filter.Q.value = 1;
     
     const gain = this.audioContext.createGain();
-    // SIMPLIFIED - connect directly to masterGain
     const vol = this.musicVolume * 0.35;
     gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
