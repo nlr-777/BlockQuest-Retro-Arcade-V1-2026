@@ -49,7 +49,7 @@ const PixelChainRain: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} style={{ pointerEvents: 'none' }}>
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       {drops.map((drop) => (
         <RainDrop key={drop.id} x={drop.x} delay={drop.delay} intensity={intensity} />
       ))}
