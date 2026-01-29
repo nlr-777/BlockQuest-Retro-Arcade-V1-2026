@@ -30,60 +30,91 @@ export type SoundEffect =
   | 'combo'       // Combo multiplier
   | 'notification'; // Toast/notification
 
-// Music track types - different moods for games
+// Music track types - dynamic game states
 export type MusicTrack = 
-  | 'menu'      // Chill euphoric intro
-  | 'action'    // High energy gameplay
-  | 'euphoria'  // Peak dopamine rush
-  | 'tension'   // Intense boss vibes
-  | 'ambient';  // Dreamy background
+  | 'menu'       // Calm, welcoming - main hub
+  | 'gameplay'   // Focused, rhythmic - during games
+  | 'intense'    // Building tension - near game over/boss
+  | 'victory'    // Triumphant - win state
+  | 'ambient';   // Minimal - reading/story
 
-// Euphoric chord progressions (high-dopamine keys)
-const EUPHORIC_PROGRESSIONS = {
-  // Classic trance uplifting progression (Am-F-C-G)
-  uplifting: [
-    [220.00, 277.18, 329.63, 440.00], // Am
-    [174.61, 220.00, 261.63, 349.23], // F
-    [261.63, 329.63, 392.00, 523.25], // C
-    [196.00, 246.94, 293.66, 392.00], // G
+// Music intensity levels for dynamic adjustment
+export type MusicIntensity = 'low' | 'medium' | 'high';
+
+// Simple, clean chord progressions (less busy)
+const CHORD_PROGRESSIONS = {
+  // Calm and welcoming (C - Am - F - G)
+  calm: [
+    [261.63, 329.63, 392.00],  // C major
+    [220.00, 261.63, 329.63],  // A minor
+    [174.61, 220.00, 261.63],  // F major
+    [196.00, 246.94, 293.66],  // G major
   ],
-  // Euphoric major progression (C-G-Am-F) 
-  euphoric: [
-    [261.63, 329.63, 392.00, 523.25], // C
-    [196.00, 246.94, 293.66, 392.00], // G
-    [220.00, 277.18, 329.63, 440.00], // Am
-    [174.61, 220.00, 261.63, 349.23], // F
+  // Focused and driving (Em - C - G - D)
+  focused: [
+    [164.81, 196.00, 246.94],  // E minor
+    [261.63, 329.63, 392.00],  // C major
+    [196.00, 246.94, 293.66],  // G major
+    [146.83, 174.61, 220.00],  // D major
   ],
-  // Driving trance (Em-C-G-D)
-  driving: [
-    [164.81, 196.00, 246.94, 329.63], // Em
-    [261.63, 329.63, 392.00, 523.25], // C
-    [196.00, 246.94, 293.66, 392.00], // G
-    [146.83, 185.00, 220.00, 293.66], // D
+  // Tense and urgent (Am - Dm - E - Am)
+  tense: [
+    [220.00, 261.63, 329.63],  // A minor
+    [146.83, 174.61, 220.00],  // D minor
+    [164.81, 207.65, 246.94],  // E major
+    [220.00, 261.63, 329.63],  // A minor
   ],
-  // Epic cinematic (Am-Em-F-G)
-  epic: [
-    [220.00, 277.18, 329.63, 440.00], // Am
-    [164.81, 196.00, 246.94, 329.63], // Em
-    [174.61, 220.00, 261.63, 349.23], // F
-    [196.00, 246.94, 293.66, 392.00], // G
+  // Triumphant (C - G - Am - F - C - G - F - C)
+  triumph: [
+    [261.63, 329.63, 392.00],  // C major
+    [196.00, 246.94, 293.66],  // G major
+    [220.00, 261.63, 329.63],  // A minor
+    [174.61, 220.00, 261.63],  // F major
   ],
 };
 
-// High-energy arpeggio patterns
-const ARP_PATTERNS = {
-  classic: [0, 4, 7, 12, 7, 4],           // Octave bounce
-  staccato: [0, 0, 4, 4, 7, 7, 12, 12],   // Gated trance
-  rising: [0, 2, 4, 7, 9, 12, 14, 16],    // Rising euphoria
-  plucky: [0, 7, 4, 12, 7, 4, 0, 7],      // Plucky bounce
-  anthem: [0, 4, 7, 4, 0, 4, 7, 12],      // Anthem style
-};
-
-// Lead melody patterns (semitone offsets)
-const LEAD_PATTERNS = {
-  soaring: [0, 2, 4, 7, 9, 7, 4, 2, 0, -2, 0, 2, 4, 7, 12, 7],
-  catchy: [0, 0, 4, 4, 7, 7, 4, 4, 0, 0, 4, 4, 7, 9, 7, 4],
-  euphoric: [0, 4, 7, 12, 11, 9, 7, 4, 0, 4, 7, 12, 14, 12, 9, 7],
+// Track configurations - simpler, cleaner
+const MUSIC_CONFIG: Record<MusicTrack, {
+  bpm: number;
+  progression: keyof typeof CHORD_PROGRESSIONS;
+  layers: {
+    pad: boolean;
+    bass: boolean;
+    arp: boolean;
+    beat: boolean;
+  };
+  baseVolume: number;
+}> = {
+  menu: { 
+    bpm: 85, 
+    progression: 'calm', 
+    layers: { pad: true, bass: true, arp: false, beat: false },
+    baseVolume: 0.12,
+  },
+  gameplay: { 
+    bpm: 110, 
+    progression: 'focused', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
+    baseVolume: 0.10,
+  },
+  intense: { 
+    bpm: 128, 
+    progression: 'tense', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
+    baseVolume: 0.11,
+  },
+  victory: { 
+    bpm: 100, 
+    progression: 'triumph', 
+    layers: { pad: true, bass: true, arp: false, beat: false },
+    baseVolume: 0.14,
+  },
+  ambient: { 
+    bpm: 70, 
+    progression: 'calm', 
+    layers: { pad: true, bass: false, arp: false, beat: false },
+    baseVolume: 0.08,
+  },
 };
 
 // SFX frequencies for retro 8-bit sounds
