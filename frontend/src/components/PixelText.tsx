@@ -34,9 +34,7 @@ export const PixelText: React.FC<PixelTextProps> = ({
         {
           fontSize: SIZES[size],
           color,
-          textShadowColor: glow ? color : 'transparent',
-          textShadowOffset: glow ? { width: 0, height: 0 } : { width: 0, height: 0 },
-          textShadowRadius: glow ? 10 : 0,
+          textShadow: glow ? `0 0 10px ${color}` : 'none',
         },
         style,
       ]}
