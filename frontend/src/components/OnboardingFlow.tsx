@@ -120,21 +120,21 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   };
 
   const handleNext = () => {
-    // Play navigation sound
-    audioManager.playSound('click');
+    // Play confirm sound for navigation
+    audioManager.playSound('confirm');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     if (currentStep < ONBOARDING_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Play victory sound when completing onboarding
-      audioManager.playSound('victory');
+      // Play unlock sound when completing onboarding
+      audioManager.playSound('unlock');
       completeOnboarding();
     }
   };
 
   const handleSkip = () => {
-    audioManager.playSound('click');
+    audioManager.playSound('whoosh');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     completeOnboarding();
   };
