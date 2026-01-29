@@ -603,13 +603,13 @@ class AudioManager {
     });
   }
   
-  // Heavy bass for drops
+  // Heavy bass for drops - clean sub only
   private playHeavyBass(freq: number, volume: number) {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
-    // Sub bass
+    // Sub bass only - clean and punchy
     const sub = this.audioContext.createOscillator();
     const subGain = this.audioContext.createGain();
     sub.type = 'sine';
@@ -617,26 +617,12 @@ class AudioManager {
     
     const vol = this.musicVolume * volume * 0.6;
     subGain.gain.setValueAtTime(vol, now);
-    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
     
     sub.connect(subGain);
     subGain.connect(this.masterGain);
     sub.start(now);
-    sub.stop(now + 0.4);
-    
-    // Mid bass with distortion character
-    const mid = this.audioContext.createOscillator();
-    const midGain = this.audioContext.createGain();
-    mid.type = 'sawtooth';
-    mid.frequency.setValueAtTime(freq, now);
-    
-    midGain.gain.setValueAtTime(vol * 0.4, now);
-    midGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    
-    mid.connect(midGain);
-    midGain.connect(this.masterGain);
-    mid.start(now);
-    mid.stop(now + 0.3);
+    sub.stop(now + 0.3);
   }
   
   // Kick drum
