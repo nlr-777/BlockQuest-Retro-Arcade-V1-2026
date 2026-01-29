@@ -155,6 +155,40 @@ class AudioManager {
   private masterVolume: number = 0.18;
   private musicVolume: number = 0.14;
   private sfxVolume: number = 0.20;
+  
+  // Sound queue system to prevent overlap
+  private lastSoundTime: Record<SoundEffect, number> = {} as Record<SoundEffect, number>;
+  private soundCooldowns: Record<SoundEffect, number> = {
+    // Short cooldowns for quick sounds
+    click: 50,
+    move: 30,
+    coin: 80,
+    whoosh: 100,
+    confirm: 100,
+    combo: 100,
+    // Medium cooldowns
+    collect: 150,
+    jump: 120,
+    shoot: 100,
+    notification: 200,
+    // Longer cooldowns for important sounds
+    hit: 200,
+    powerup: 400,
+    error: 300,
+    start: 300,
+    pause: 300,
+    streak: 400,
+    // Long cooldowns for major sounds (prevent overlap)
+    reward: 500,
+    victory: 600,
+    gameover: 700,
+    levelup: 600,
+    unlock: 500,
+  };
+  
+  // Track currently playing priority sounds
+  private currentPriority: number = 0;
+  private priorityTimeout: NodeJS.Timeout | null = null;
 
   private constructor() {
     this.initAudioContext();
