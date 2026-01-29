@@ -562,7 +562,6 @@ class AudioManager {
     
     console.log('Music started with clean sync');
   }
-  }
   
   // === NEW DYNAMIC SYNTH FUNCTIONS ===
   
