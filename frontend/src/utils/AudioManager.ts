@@ -767,35 +767,35 @@ class AudioManager {
     noise.stop(now + 0.3);
   }
   
-  // Drop impact sound
+  // Drop impact sound - punchy kick + cymbal
   private playDrop(volume: number) {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
-    // Big impact sweep down
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
+    // Big punchy kick (sine, not sawtooth)
+    const kick = this.audioContext.createOscillator();
+    const kickGain = this.audioContext.createGain();
     
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+    kick.type = 'sine';
+    kick.frequency.setValueAtTime(100, now);
+    kick.frequency.exponentialRampToValueAtTime(30, now + 0.15);
     
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.8, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    kickGain.gain.setValueAtTime(this.musicVolume * volume * 0.7, now);
+    kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
     
-    osc.connect(gain);
-    gain.connect(this.masterGain);
+    kick.connect(kickGain);
+    kickGain.connect(this.masterGain);
     
-    osc.start(now);
-    osc.stop(now + 0.5);
+    kick.start(now);
+    kick.stop(now + 0.35);
     
-    // Crash cymbal
-    const bufferSize = this.audioContext.sampleRate * 0.5;
+    // Crash cymbal (noise)
+    const bufferSize = this.audioContext.sampleRate * 0.4;
     const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
     }
     
     const crash = this.audioContext.createBufferSource();
@@ -803,18 +803,18 @@ class AudioManager {
     
     const crashFilter = this.audioContext.createBiquadFilter();
     crashFilter.type = 'highpass';
-    crashFilter.frequency.value = 3000;
+    crashFilter.frequency.value = 4000;
     
     const crashGain = this.audioContext.createGain();
-    crashGain.gain.setValueAtTime(this.musicVolume * volume * 0.4, now);
-    crashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    crashGain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    crashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
     
     crash.connect(crashFilter);
     crashFilter.connect(crashGain);
     crashGain.connect(this.masterGain);
     
     crash.start(now);
-    crash.stop(now + 0.6);
+    crash.stop(now + 0.5);
   }
   
   // Sharp arp for drops
