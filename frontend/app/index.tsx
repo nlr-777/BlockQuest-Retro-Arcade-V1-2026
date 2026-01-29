@@ -506,14 +506,34 @@ export default function ArcadeHub() {
           </TouchableOpacity>
         )}
 
-        {/* XP Progress Bar - Prominent CRT-styled tracker */}
+        {/* Quick Actions Row - Daily Rewards & Progress */}
         {profile && (
-          <XPProgressBar
-            currentXP={profile.xp}
-            level={profile.level}
-            xpPerLevel={100}
-            showFlicker={true}
-          />
+          <View style={styles.quickActionsRow}>
+            <TouchableOpacity 
+              style={styles.streakButton}
+              onPress={() => setShowDailyRewards(true)}
+            >
+              <Text style={styles.streakEmoji}>🔥</Text>
+              <Text style={styles.streakText}>DAILY</Text>
+            </TouchableOpacity>
+            
+            <View style={styles.xpBarWrapper}>
+              <XPProgressBar
+                currentXP={profile.xp}
+                level={profile.level}
+                xpPerLevel={100}
+                showFlicker={true}
+              />
+            </View>
+            
+            <TouchableOpacity 
+              style={styles.progressButton}
+              onPress={() => router.push('/progress')}
+            >
+              <Text style={styles.progressEmoji}>📊</Text>
+              <Text style={styles.progressText}>STATS</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         {/* Faction Status Badge - Quick access to faction info */}
