@@ -540,7 +540,7 @@ class AudioManager {
   
   // Clean bass - subtle low-end foundation
   private playCleanBass(freq: number, volume: number) {
-    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
+    if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -550,13 +550,14 @@ class AudioManager {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    // Soft attack and release - MUCH louder
+    // SIMPLIFIED - connect to masterGain directly like SFX
+    const vol = this.musicVolume * 0.4; // Bass is a bit quieter
     gain.gain.setValueAtTime(0.001, now);
-    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.9, now + 0.05);
+    gain.gain.linearRampToValueAtTime(vol, now + 0.03);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
     
     osc.connect(gain);
-    gain.connect(this.fadeGain);
+    gain.connect(this.masterGain);
     
     osc.start(now);
     osc.stop(now + 0.5);
