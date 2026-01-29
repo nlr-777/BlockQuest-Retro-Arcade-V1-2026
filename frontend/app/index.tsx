@@ -523,11 +523,13 @@ export default function ArcadeHub() {
         {profile && (
           <View style={styles.quickActionsRow}>
             <TouchableOpacity 
-              style={styles.streakButton}
+              style={[styles.streakButton, canClaimDaily && styles.streakButtonClaim]}
               onPress={() => setShowDailyRewards(true)}
             >
-              <Text style={styles.streakEmoji}>🔥</Text>
-              <Text style={styles.streakText}>DAILY</Text>
+              <Text style={styles.streakEmoji}>{canClaimDaily ? '🎁' : '🔥'}</Text>
+              <Text style={styles.streakText}>
+                {canClaimDaily ? 'CLAIM!' : `${currentStreak}d`}
+              </Text>
             </TouchableOpacity>
             
             <View style={styles.xpBarWrapper}>
