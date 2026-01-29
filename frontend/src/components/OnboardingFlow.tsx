@@ -26,6 +26,7 @@ import { CRT_COLORS } from '../constants/crtTheme';
 import { COLORS } from '../constants/colors';
 import PixelText from './PixelText';
 import * as Haptics from 'expo-haptics';
+import audioManager from '../utils/AudioManager';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ONBOARDING_KEY = 'blockquest_onboarding_complete';
