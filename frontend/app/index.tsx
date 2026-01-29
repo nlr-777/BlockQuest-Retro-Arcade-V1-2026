@@ -31,7 +31,7 @@ import { COLORS } from '../src/constants/colors';
 import { CRT_COLORS, CRT_PUNS } from '../src/constants/crtTheme';
 import { GAMES, GameConfig } from '../src/constants/games';
 import { CHARACTERS, CharacterConfig, getCharacterById } from '../src/constants/characters';
-import { useGameStore } from '../src/store/gameStore';
+import { useGameStore, useGameStoreHydrated } from '../src/store/gameStore';
 import { useCharacterStore } from '../src/store/characterStore';
 import { useTutorialStore, useTutorialHydrated } from '../src/store/tutorialStore';
 import { useFactionStore, FACTIONS } from '../src/store/factionStore';
