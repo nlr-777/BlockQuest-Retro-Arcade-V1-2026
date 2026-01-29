@@ -391,21 +391,35 @@ class AudioManager {
     }
     
     // Ensure audio context is initialized and resumed
-    if (!this.audioContext || !this.compressor) {
+    if (!this.audioContext || !this.masterGain) {
       console.log('Initializing audio context for music...');
       this.initAudioContext();
     }
     
-    if (!this.audioContext || !this.compressor) {
+    if (!this.audioContext || !this.masterGain) {
       console.log('Audio context still not available');
       return;
     }
     
-    // Resume if suspended (browser autoplay policy)
+    // Resume if suspended (browser autoplay policy) - THIS IS CRITICAL
     if (this.audioContext.state === 'suspended') {
-      console.log('Resuming suspended audio context...');
-      this.audioContext.resume();
+      console.log('Audio context is SUSPENDED - attempting to resume...');
+      this.audioContext.resume().then(() => {
+        console.log('Audio context resumed! State now:', this.audioContext?.state);
+        // Continue with music start after resume
+        this._startMusicInternal(track);
+      }).catch(e => {
+        console.log('Failed to resume:', e);
+      });
+      return;
     }
+    
+    console.log('Audio context state:', this.audioContext.state);
+    this._startMusicInternal(track);
+  }
+  
+  private _startMusicInternal(track: MusicTrack) {
+    if (!this.audioContext || !this.masterGain) return;
     
     // Fade out existing music smoothly
     this.stopMusic();
