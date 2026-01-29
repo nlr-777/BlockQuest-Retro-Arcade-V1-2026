@@ -187,7 +187,7 @@ const ParallaxBlocks: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} style={{ pointerEvents: 'none' }}>
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       <Animated.View style={[styles.parallaxLayer, { bottom: 50, opacity: 0.2 }, layer1Style]}>
         {Array(10).fill(0).map((_, i) => (
           <View key={i} style={[styles.parallaxBlock, { left: i * 50, backgroundColor: COLORS.blockCyan }]} />
@@ -237,7 +237,7 @@ const GlitchLock: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <Animated.View style={[styles.glitchOverlay, animatedStyle]} style={{ pointerEvents: 'none' }}>
+    <Animated.View style={[styles.glitchOverlay, animatedStyle, { pointerEvents: 'none' }]}>
       <View style={styles.glitchLine} />
       <View style={[styles.glitchLine, { top: '30%', backgroundColor: COLORS.vfxScan }]} />
       <View style={[styles.glitchLine, { top: '60%', backgroundColor: COLORS.chainGold }]} />
