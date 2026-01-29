@@ -31,6 +31,7 @@ import { useAccessibilityStore } from '../utils/accessibility';
 import { getCharacterById } from '../constants/characters';
 import { useCharacterStore } from '../store/characterStore';
 import { StoryAchievement, getAchievementRarityColor } from '../services/StoryAchievements';
+import audioManager from '../utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
