@@ -562,22 +562,6 @@ class AudioManager {
     
     console.log('Music started with clean sync');
   }
-        if (isDrop) {
-          // Fast arps during drop
-          const noteIndex = this.arpIndex % chord.length;
-          this.playSharpArp(chord[noteIndex] * 2, config.baseVolume * 0.5);
-          this.arpIndex++;
-        } else if (!isBuilding && this.beatCount % 2 === 0) {
-          // Normal arps
-          const noteIndex = this.arpIndex % chord.length;
-          this.playCleanArp(chord[noteIndex] * 2, config.baseVolume * 0.4);
-          this.arpIndex++;
-        }
-      }, msPerBeat / 4); // Faster for 16th notes
-      this.musicLoops.push(arpLoop);
-    }
-    
-    console.log('Dynamic music loop started');
   }
   
   // === NEW DYNAMIC SYNTH FUNCTIONS ===
