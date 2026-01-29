@@ -497,8 +497,8 @@ class AudioManager {
   
   // Clean, warm pad - ambient and non-intrusive
   private playCleanPad(frequencies: number[], volume: number) {
-    if (!this.audioContext || !this.fadeGain || !this.masterGain) {
-      console.log('playCleanPad: Missing audio nodes');
+    if (!this.audioContext || !this.masterGain) {
+      console.log('playCleanPad: Missing audio context or masterGain');
       return;
     }
     
