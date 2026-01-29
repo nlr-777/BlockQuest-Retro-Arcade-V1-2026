@@ -421,7 +421,7 @@ class AudioManager {
   private _startMusicInternal(track: MusicTrack) {
     if (!this.audioContext || !this.masterGain) return;
     
-    // Fade out existing music smoothly
+    // Stop any existing music
     this.stopMusic();
     this.currentTrack = track;
     this.beatCount = 0;
@@ -432,16 +432,9 @@ class AudioManager {
     const msPerBeat = (60 / config.bpm) * 1000;
     const progression = CHORD_PROGRESSIONS[config.progression];
     
-    console.log('Music config:', config.bpm, 'BPM, progression:', config.progression);
+    console.log('Starting music:', track, config.bpm, 'BPM');
     
-    // Create fade gain for smooth volume control FIRST before starting loops
-    this.fadeGain = this.audioContext.createGain();
-    this.fadeGain.gain.setValueAtTime(0.5, this.audioContext.currentTime); // Start at 50% instead of 0
-    this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 1.0);
-    // Connect fadeGain -> masterGain -> destination (skip compressor for cleaner sound)
-    this.fadeGain.connect(this.masterGain!);
-    
-    console.log('FadeGain created, connected to masterGain. Master volume:', this.masterVolume);
+    // Music now connects directly to masterGain - no fadeGain needed!
     
     // Main chord/bar loop - simpler, one loop to rule them all
     const mainLoop = setInterval(() => {
