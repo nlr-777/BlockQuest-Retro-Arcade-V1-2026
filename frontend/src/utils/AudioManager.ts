@@ -128,19 +128,19 @@ const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
     bpm: 110, 
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
-    baseVolume: 0.10,
+    baseVolume: 0.30,
   },
   euphoria: { 
     bpm: 120, 
     progression: 'triumph', 
     layers: { pad: true, bass: true, arp: true, beat: true },
-    baseVolume: 0.11,
+    baseVolume: 0.32,
   },
   tension: { 
     bpm: 128, 
     progression: 'tense', 
     layers: { pad: true, bass: true, arp: true, beat: true },
-    baseVolume: 0.11,
+    baseVolume: 0.32,
   },
 };
 
