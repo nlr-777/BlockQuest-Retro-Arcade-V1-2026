@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { CRT_COLORS } from '../constants/crtTheme';
 import PixelText from './PixelText';
 import { useSharing } from '../services/SharingService';
+import audioManager from '../utils/AudioManager';
 
 interface ShareButtonProps {
   type: 'achievement' | 'score' | 'streak' | 'level' | 'story';
@@ -24,6 +25,8 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ type, data, compact = 
   const { shareAchievement, shareHighScore, shareStreak, shareLevelUp, shareStoryProgress } = useSharing();
 
   const handleShare = async () => {
+    // Play click sound
+    audioManager.playSound('click');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
     switch (type) {
