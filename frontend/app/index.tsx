@@ -313,6 +313,10 @@ export default function ArcadeHub() {
     if (!profile) {
       setShowOnboarding(true);
     } else {
+      // Sync audio settings from store before starting music
+      const { isMuted, musicVolume, sfxVolume } = useGameStore.getState();
+      audioManager.syncWithStore({ isMuted, musicVolume, sfxVolume });
+      
       // Start menu music when hub loads
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
