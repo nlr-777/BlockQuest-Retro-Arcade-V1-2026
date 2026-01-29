@@ -173,6 +173,9 @@ export const AchievementToast: React.FC<AchievementToastProps> = ({
   
   useEffect(() => {
     if (visible && achievement) {
+      // Play achievement sound
+      audioManager.playSound('powerup');
+      
       if (!reduceMotion) {
         // Entry animation
         scale.value = withSpring(1, { damping: 10, stiffness: 100 });
