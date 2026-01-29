@@ -1,6 +1,6 @@
 // Block Quest Official - Settings Screen
 // Mobile-first design
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -22,6 +22,7 @@ import { PixelButton } from '../src/components/PixelButton';
 import VFXLayer from '../src/vfx/VFXManager';
 import { COLORS } from '../src/constants/colors';
 import { useGameStore } from '../src/store/gameStore';
+import audioManager from '../src/utils/AudioManager';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -42,6 +43,30 @@ export default function SettingsScreen() {
   } = useGameStore();
 
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  // Sync audio settings whenever they change
+  useEffect(() => {
+    audioManager.syncWithStore({ isMuted, musicVolume, sfxVolume });
+  }, [isMuted, musicVolume, sfxVolume]);
+
+  // Handle mute toggle with audio sync
+  const handleToggleMute = () => {
+    toggleMute();
+    audioManager.playSound('click');
+  };
+
+  // Handle volume changes with audio sync
+  const handleMusicVolumeChange = (value: number) => {
+    setMusicVolume(value);
+    audioManager.setMusicVolume(value);
+  };
+
+  const handleSfxVolumeChange = (value: number) => {
+    setSfxVolume(value);
+    audioManager.setSfxVolume(value);
+    // Play a test sound so user can hear the change
+    audioManager.playSound('click');
+  };
 
   // Logout - saves progress, returns to welcome screen
   const handleLogout = () => {
