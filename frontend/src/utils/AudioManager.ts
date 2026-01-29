@@ -927,7 +927,6 @@ class AudioManager {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
-    
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     const filter = this.audioContext.createBiquadFilter();
@@ -939,7 +938,6 @@ class AudioManager {
     filter.frequency.setValueAtTime(2000, now);
     filter.Q.value = 1;
     
-    // SIMPLIFIED - connect directly to masterGain
     const vol = this.musicVolume * 0.25;
     gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
