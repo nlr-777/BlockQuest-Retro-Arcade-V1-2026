@@ -268,6 +268,7 @@ export default function ArcadeHub() {
   const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
   const hasHydrated = useTutorialHydrated();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
   const [username, setUsername] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig | null>(CHARACTERS[0]);
   const [currentPun, setCurrentPun] = useState('');
@@ -275,6 +276,9 @@ export default function ArcadeHub() {
   // Loyalty rewards state
   const [showLoyaltyRewards, setShowLoyaltyRewards] = useState(false);
   const [loyaltyRewards, setLoyaltyRewards] = useState<LoginReward[]>([]);
+  
+  // Daily rewards state
+  const [showDailyRewards, setShowDailyRewards] = useState(false);
   
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
