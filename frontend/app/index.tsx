@@ -663,6 +663,12 @@ export default function ArcadeHub() {
         rewards={loyaltyRewards}
         onClose={() => setShowLoyaltyRewards(false)}
       />
+      
+      {/* Daily Reward Modal */}
+      <DailyRewardModal
+        visible={showDailyRewards}
+        onClose={() => setShowDailyRewards(false)}
+      />
     </View>
   );
 }
