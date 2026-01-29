@@ -54,7 +54,7 @@ export const RetroGrid: React.FC<{ color?: string }> = ({ color = COLORS.neonPin
   }));
 
   return (
-    <View style={styles.gridContainer} pointerEvents="none">
+    <View style={[styles.gridContainer, { pointerEvents: 'none' }]}>
       <Animated.View style={[styles.gridInner, animatedStyle]}>
         <Svg width={SCREEN_WIDTH} height={200}>
           <Defs>
