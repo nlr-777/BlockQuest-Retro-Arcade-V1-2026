@@ -162,7 +162,6 @@ class AudioManager {
   private barCount: number = 0;
   private chordIndex: number = 0;
   private arpIndex: number = 0;
-  private leadIndex: number = 0;
   
   // Volume controls (kid-safe <75dB)
   private masterVolume: number = 0.18;
