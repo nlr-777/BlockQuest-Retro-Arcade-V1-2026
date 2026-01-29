@@ -230,9 +230,19 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
         
         {/* Button - Always visible at bottom */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.continueBtn} onPress={onContinue}>
-            <Text style={styles.continueBtnText}>AWESOME! →</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <ShareButton 
+              type={isNewHighScore ? 'score' : 'achievement'}
+              data={{ 
+                score: isNewHighScore ? score : undefined,
+                gameName,
+                badgeName: `${gameName} Master`,
+              }}
+            />
+            <TouchableOpacity style={styles.continueBtn} onPress={onContinue}>
+              <Text style={styles.continueBtnText}>AWESOME! →</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Animated.View>
       
