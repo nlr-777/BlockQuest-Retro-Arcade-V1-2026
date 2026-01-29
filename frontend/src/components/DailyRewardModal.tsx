@@ -23,6 +23,7 @@ import PixelText from './PixelText';
 import { dailyRewardsService, StreakData, DailyReward } from '../services/DailyRewardsService';
 import { useGameStore } from '../store/gameStore';
 import * as Haptics from 'expo-haptics';
+import audioManager from '../utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
