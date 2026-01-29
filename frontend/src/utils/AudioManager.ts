@@ -45,35 +45,35 @@ export type MusicTrack =
 // Music intensity levels for dynamic adjustment
 export type MusicIntensity = 'low' | 'medium' | 'high';
 
-// Simple, clean chord progressions (less busy)
+// Simple, clean chord progressions - ENERGETIC arcade feel
 const CHORD_PROGRESSIONS = {
-  // Calm and welcoming (C - Am - F - G)
+  // Uplifting and energetic (C - G - Am - F) - Classic pop/rock feel
   calm: [
     [261.63, 329.63, 392.00],  // C major
+    [196.00, 246.94, 293.66],  // G major
     [220.00, 261.63, 329.63],  // A minor
     [174.61, 220.00, 261.63],  // F major
-    [196.00, 246.94, 293.66],  // G major
   ],
-  // Focused and driving (Em - C - G - D)
+  // Driving and powerful (Em - G - D - C) - Arena rock progression
   focused: [
     [164.81, 196.00, 246.94],  // E minor
-    [261.63, 329.63, 392.00],  // C major
     [196.00, 246.94, 293.66],  // G major
-    [146.83, 174.61, 220.00],  // D major
+    [146.83, 185.00, 220.00],  // D major
+    [261.63, 329.63, 392.00],  // C major
   ],
-  // Tense and urgent (Am - Dm - E - Am)
+  // Intense and urgent (Am - F - C - G) - Dramatic tension
   tense: [
     [220.00, 261.63, 329.63],  // A minor
-    [146.83, 174.61, 220.00],  // D minor
-    [164.81, 207.65, 246.94],  // E major
-    [220.00, 261.63, 329.63],  // A minor
+    [174.61, 220.00, 261.63],  // F major
+    [261.63, 329.63, 392.00],  // C major
+    [196.00, 246.94, 293.66],  // G major
   ],
-  // Triumphant (C - G - Am - F - C - G - F - C)
+  // Triumphant and victorious (C - G - F - G) - Victory fanfare
   triumph: [
     [261.63, 329.63, 392.00],  // C major
     [196.00, 246.94, 293.66],  // G major
-    [220.00, 261.63, 329.63],  // A minor
     [174.61, 220.00, 261.63],  // F major
+    [196.00, 246.94, 293.66],  // G major
   ],
 };
 
