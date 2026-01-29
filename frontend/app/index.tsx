@@ -320,13 +320,9 @@ export default function ArcadeHub() {
     if (!profile) {
       setShowOnboarding(true);
     } else {
-      // Sync audio settings from store before starting music
+      // Sync audio settings from store (music already started in _layout)
       const { isMuted, musicVolume, sfxVolume } = useGameStore.getState();
       audioManager.syncWithStore({ isMuted, musicVolume, sfxVolume });
-      
-      // Start menu music when hub loads
-      audioManager.resumeAudioContext();
-      audioManager.startMusic('menu');
       
       // Only navigate to tutorial after a small delay to ensure router is ready
       if (!hasCompletedTutorial && hasCompletedOnboarding) {
@@ -341,8 +337,8 @@ export default function ArcadeHub() {
       checkLoyaltyRewards();
     }
     
-    return () => {
-      audioManager.stopMusic();
+    // Don't stop music on unmount - let it play globally
+  }, [profile, hasCompletedTutorial, hasCompletedOnboarding, isFullyHydrated]);
     };
   }, [profile, hasCompletedTutorial, hasCompletedOnboarding, isFullyHydrated]);
 
