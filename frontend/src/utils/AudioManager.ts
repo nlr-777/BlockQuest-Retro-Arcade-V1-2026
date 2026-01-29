@@ -90,38 +90,38 @@ type TrackConfig = {
   baseVolume: number;
 };
 
-// Track configurations - simpler, cleaner
+// Track configurations - simpler, cleaner with increased volume
 const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
   // New track names
   menu: { 
     bpm: 85, 
     progression: 'calm', 
     layers: { pad: true, bass: true, arp: false, beat: false },
-    baseVolume: 0.12,
+    baseVolume: 0.35,
   },
   gameplay: { 
     bpm: 110, 
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
-    baseVolume: 0.10,
+    baseVolume: 0.30,
   },
   intense: { 
     bpm: 128, 
     progression: 'tense', 
     layers: { pad: true, bass: true, arp: true, beat: true },
-    baseVolume: 0.11,
+    baseVolume: 0.32,
   },
   victory: { 
     bpm: 100, 
     progression: 'triumph', 
     layers: { pad: true, bass: true, arp: false, beat: false },
-    baseVolume: 0.14,
+    baseVolume: 0.38,
   },
   ambient: { 
     bpm: 70, 
     progression: 'calm', 
     layers: { pad: true, bass: false, arp: false, beat: false },
-    baseVolume: 0.08,
+    baseVolume: 0.25,
   },
   // Legacy track names (for backwards compatibility)
   action: { 
