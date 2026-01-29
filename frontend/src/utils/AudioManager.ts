@@ -950,16 +950,9 @@ class AudioManager {
     osc.stop(now + 0.2);
   }
   
-  // Dynamic intensity adjustment - adjusts music volume based on game state
   setMusicIntensity(intensity: MusicIntensity) {
     if (this.currentIntensity === intensity) return;
     this.currentIntensity = intensity;
-    
-    // Adjust music volume based on intensity (affects next notes played)
-    const volumeMultiplier = intensity === 'high' ? 1.3 : intensity === 'medium' ? 1.0 : 0.8;
-    // Store for use in synth functions (they read this.musicVolume)
-    // This is a simple approach - more complex would be to have a separate intensity multiplier
-    console.log('Music intensity changed to:', intensity, 'multiplier:', volumeMultiplier);
   }
   
   // Smooth transition to a different track
