@@ -1,5 +1,5 @@
 // BlockQuest Official - Retro Arcade - Root Layout
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Stack, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
@@ -16,51 +16,48 @@ SplashScreen.preventAutoHideAsync();
 // Check if running on client
 const isClient = typeof window !== 'undefined';
 
+// Track if music has been initialized (outside component to persist across renders)
+let musicInitialized = false;
+
 export default function RootLayout() {
   const loadProfile = useGameStore((state) => state.loadProfile);
   const hasHydrated = useGameStoreHydrated();
   const [showGenesis, setShowGenesis] = useState(true);
   const [isReady, setIsReady] = useState(false);
-  const [musicStarted, setMusicStarted] = useState(false);
+  const initRef = useRef(false);
 
-  // Start music immediately on load
+  // Start music once on mount
   useEffect(() => {
-    if (isClient && !musicStarted) {
+    if (isClient && !musicInitialized) {
+      musicInitialized = true;
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
-      setMusicStarted(true);
     }
-  }, [musicStarted]);
+  }, []);
 
-  // Memoize the initialization function
-  const initializeApp = useCallback(async () => {
-    if (isClient) {
-      await loadProfile();
-    }
-    setIsReady(true);
-    // Hide splash screen once ready
-    SplashScreen.hideAsync();
+  // Initialize app once
+  useEffect(() => {
+    if (initRef.current) return;
+    initRef.current = true;
+    
+    const init = async () => {
+      if (isClient) {
+        await loadProfile();
+      }
+      setIsReady(true);
+      SplashScreen.hideAsync();
+    };
+    
+    init();
+    
+    const genesisTimer = setTimeout(() => setShowGenesis(false), 2500);
+    return () => clearTimeout(genesisTimer);
   }, [loadProfile]);
 
-  useEffect(() => {
-    // Initialize app
-    initializeApp();
-    
-    // Hide genesis effect after animation
-    const genesisTimer = setTimeout(() => setShowGenesis(false), 2500);
-    
-    return () => {
-      clearTimeout(genesisTimer);
-    };
-  }, [initializeApp]);
-
-  // Always render Stack - expo-router v6 requires this
-  // Use loading overlay instead of conditional return
   return (
     <GestureHandlerRootView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Loading overlay - shown while initializing */}
       {(!hasHydrated || !isReady) && (
         <View style={styles.loadingOverlay}>
           <PixelText size="xl" color={COLORS.chainGold} glow>
@@ -69,7 +66,6 @@ export default function RootLayout() {
         </View>
       )}
       
-      {/* Genesis effect */}
       {showGenesis && hasHydrated && isReady && <VFXLayer type="genesis-birth" />}
       
       <Stack
