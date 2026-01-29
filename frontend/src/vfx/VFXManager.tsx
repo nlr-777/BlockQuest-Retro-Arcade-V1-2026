@@ -261,7 +261,7 @@ const IPFSOrbit: React.FC<{ intensity: number }> = ({ intensity }) => {
   }));
 
   return (
-    <View style={styles.orbitContainer} style={{ pointerEvents: 'none' }}>
+    <View style={[styles.orbitContainer, { pointerEvents: 'none' }]}>
       <Animated.View style={[styles.orbitPath, orbitStyle]}>
         <View style={styles.orbitDot} />
       </Animated.View>
@@ -295,7 +295,7 @@ const GenesisBirth: React.FC<{ intensity: number; onComplete?: () => void }> = (
   }));
 
   return (
-    <Animated.View style={[styles.genesisContainer, containerStyle]} style={{ pointerEvents: 'none' }}>
+    <Animated.View style={[styles.genesisContainer, containerStyle, { pointerEvents: 'none' }]}>
       <Animated.View style={[styles.genesisBurst, burstStyle]}>
         <View style={styles.genesisCore} />
       </Animated.View>
