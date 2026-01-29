@@ -1,8 +1,8 @@
 // BlockQuest Official - Retro Arcade - Root Layout
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useGameStore, useGameStoreHydrated } from '../src/store/gameStore';
 import { COLORS } from '../src/constants/colors';
@@ -13,31 +13,41 @@ import PixelText from '../src/components/PixelText';
 const isClient = typeof window !== 'undefined';
 
 export default function RootLayout() {
-  const { loadProfile, isLoading } = useGameStore();
+  const loadProfile = useGameStore((state) => state.loadProfile);
   const hasHydrated = useGameStoreHydrated();
   const [showGenesis, setShowGenesis] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  // Memoize the initialization function
+  const initializeApp = useCallback(async () => {
+    if (isClient) {
+      await loadProfile();
+    }
+    setIsReady(true);
+  }, [loadProfile]);
 
   useEffect(() => {
-    // Mark as mounted (client-side)
-    setMounted(true);
+    // Mark as mounted (client-side) - use a microtask to avoid synchronous setState warning
+    const mountTimer = setTimeout(() => setMounted(true), 0);
     
-    // loadProfile is now just a marker since persist handles loading
-    if (isClient) {
-      loadProfile();
-    }
+    // Initialize app after mount
+    initializeApp();
     
     // Hide genesis effect after animation
-    const timer = setTimeout(() => setShowGenesis(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
+    const genesisTimer = setTimeout(() => setShowGenesis(false), 2500);
+    
+    return () => {
+      clearTimeout(mountTimer);
+      clearTimeout(genesisTimer);
+    };
+  }, [initializeApp]);
 
-  // During SSR or before hydration, show loading
-  // Wait for both mounting AND store hydration
-  if (!mounted || !hasHydrated) {
+  // During SSR or before hydration, show a simple loading screen
+  // Use a simpler loading screen to avoid VFX issues on initial load
+  if (!mounted || !hasHydrated || !isReady) {
     return (
       <View style={styles.loadingContainer}>
-        <VFXLayer type="crt-breathe" />
         <PixelText size="xl" color={COLORS.chainGold} glow>
           LOADING...
         </PixelText>
