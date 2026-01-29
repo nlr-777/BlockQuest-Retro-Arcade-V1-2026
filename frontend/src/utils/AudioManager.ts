@@ -372,7 +372,30 @@ class AudioManager {
   private fadeGain: GainNode | null = null;
   
   startMusic(track: MusicTrack = 'menu') {
-    if (!this.musicEnabled || Platform.OS !== 'web' || !this.audioContext || !this.compressor) return;
+    // Debug: log music start attempt
+    console.log('Starting music track:', track, 'musicEnabled:', this.musicEnabled, 'platform:', Platform.OS);
+    
+    if (!this.musicEnabled || Platform.OS !== 'web') {
+      console.log('Music disabled or not on web');
+      return;
+    }
+    
+    // Ensure audio context is initialized and resumed
+    if (!this.audioContext || !this.compressor) {
+      console.log('Initializing audio context for music...');
+      this.initAudioContext();
+    }
+    
+    if (!this.audioContext || !this.compressor) {
+      console.log('Audio context still not available');
+      return;
+    }
+    
+    // Resume if suspended (browser autoplay policy)
+    if (this.audioContext.state === 'suspended') {
+      console.log('Resuming suspended audio context...');
+      this.audioContext.resume();
+    }
     
     // Fade out existing music smoothly
     this.stopMusic();
@@ -384,6 +407,8 @@ class AudioManager {
     const config = MUSIC_CONFIG[track];
     const msPerBeat = (60 / config.bpm) * 1000;
     const progression = CHORD_PROGRESSIONS[config.progression];
+    
+    console.log('Music config:', config.bpm, 'BPM, progression:', config.progression);
     
     // Create fade gain for smooth volume control
     this.fadeGain = this.audioContext.createGain();
