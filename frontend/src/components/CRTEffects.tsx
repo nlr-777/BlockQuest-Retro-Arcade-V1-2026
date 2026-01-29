@@ -454,7 +454,7 @@ export const GhostHand: React.FC<{
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.ghostHand, animatedStyle]} pointerEvents="none">
+    <Animated.View style={[styles.ghostHand, animatedStyle, { pointerEvents: 'none' }]}>
       <Text style={styles.ghostHandIcon}>👆</Text>
       {action === 'tap' && (
         <View style={styles.tapRing} />
