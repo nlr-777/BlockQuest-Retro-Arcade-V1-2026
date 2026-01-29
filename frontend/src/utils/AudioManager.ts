@@ -487,7 +487,8 @@ class AudioManager {
     // Separate arpeggio loop - only for gameplay tracks (subtle sparkle)
     if (config.layers.arp) {
       const arpLoop = setInterval(() => {
-        if (!this.audioContext || !this.compressor || !this.fadeGain) return;
+        if (!this.audioContext || !this.masterGain) return;
+        if (this.currentTrack !== track) return; // Stop if track changed
         
         // Only play arp on certain beats for less busy feel
         if (this.beatCount % 2 === 0) {
