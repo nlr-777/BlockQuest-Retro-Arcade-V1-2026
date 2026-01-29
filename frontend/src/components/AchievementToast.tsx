@@ -173,8 +173,8 @@ export const AchievementToast: React.FC<AchievementToastProps> = ({
   
   useEffect(() => {
     if (visible && achievement) {
-      // Play achievement sound
-      audioManager.playSound('powerup');
+      // Play notification sound (distinct, doesn't overlap with game sounds)
+      audioManager.playSound('notification');
       
       if (!reduceMotion) {
         // Entry animation
