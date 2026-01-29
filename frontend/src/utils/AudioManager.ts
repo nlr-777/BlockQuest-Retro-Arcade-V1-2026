@@ -265,8 +265,18 @@ class AudioManager {
   }
 
   resumeAudioContext() {
-    if (this.audioContext && this.audioContext.state === 'suspended') {
-      this.audioContext.resume();
+    if (this.audioContext) {
+      console.log('Audio context state:', this.audioContext.state);
+      if (this.audioContext.state === 'suspended') {
+        console.log('Resuming suspended audio context...');
+        this.audioContext.resume().then(() => {
+          console.log('Audio context resumed successfully, state:', this.audioContext?.state);
+        }).catch(e => {
+          console.log('Failed to resume audio context:', e);
+        });
+      }
+    } else {
+      console.log('No audio context to resume');
     }
   }
 
