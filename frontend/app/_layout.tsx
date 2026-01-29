@@ -77,10 +77,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.bgDark,
   },
-  loadingContainer: {
-    flex: 1,
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: COLORS.bgDark,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
   },
 });
