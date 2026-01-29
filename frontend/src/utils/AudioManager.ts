@@ -147,24 +147,6 @@ const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type:
   notification: { freqs: [659, 880], duration: 200, type: 'sine', envelope: 'pluck', priority: 6 },
 };
 
-// Track configurations
-const TRACK_CONFIG: Record<MusicTrack, { 
-  bpm: number; 
-  progression: keyof typeof EUPHORIC_PROGRESSIONS; 
-  arpPattern: keyof typeof ARP_PATTERNS;
-  leadPattern: keyof typeof LEAD_PATTERNS;
-  intensity: number;
-  hasKick: boolean;
-  hasBass: boolean;
-  hasLead: boolean;
-}> = {
-  menu: { bpm: 128, progression: 'uplifting', arpPattern: 'classic', leadPattern: 'soaring', intensity: 0.5, hasKick: true, hasBass: true, hasLead: false },
-  action: { bpm: 138, progression: 'driving', arpPattern: 'staccato', leadPattern: 'catchy', intensity: 0.85, hasKick: true, hasBass: true, hasLead: true },
-  euphoria: { bpm: 140, progression: 'euphoric', arpPattern: 'anthem', leadPattern: 'euphoric', intensity: 1.0, hasKick: true, hasBass: true, hasLead: true },
-  tension: { bpm: 140, progression: 'epic', arpPattern: 'rising', leadPattern: 'soaring', intensity: 0.9, hasKick: true, hasBass: true, hasLead: true },
-  ambient: { bpm: 120, progression: 'uplifting', arpPattern: 'plucky', leadPattern: 'soaring', intensity: 0.3, hasKick: false, hasBass: true, hasLead: false },
-};
-
 class AudioManager {
   private static instance: AudioManager;
   private soundEnabled: boolean = true;
