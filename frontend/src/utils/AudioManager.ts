@@ -866,20 +866,18 @@ class AudioManager {
     });
   }
   
-  // Clean bass - subtle low-end foundation
+  // Clean bass - subtle low-end
   private playCleanBass(freq: number, volume: number) {
     if (!this.audioContext || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
-    
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    // SIMPLIFIED - connect to masterGain directly like SFX
-    const vol = this.musicVolume * 0.4; // Bass is a bit quieter
+    const vol = this.musicVolume * 0.4;
     gain.gain.setValueAtTime(0.001, now);
     gain.gain.linearRampToValueAtTime(vol, now + 0.03);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
