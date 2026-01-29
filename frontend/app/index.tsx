@@ -812,6 +812,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center',
   },
+  streakButtonClaim: {
+    borderColor: CRT_COLORS.accentGold,
+    backgroundColor: CRT_COLORS.accentGold + '20',
+  },
   streakEmoji: {
     fontSize: 16,
   },
