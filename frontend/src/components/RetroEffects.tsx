@@ -34,7 +34,7 @@ export const Scanlines: React.FC<{ opacity?: number }> = ({ opacity = 0.15 }) =>
       />
     );
   }
-  return <View style={StyleSheet.absoluteFill} pointerEvents="none">{lines}</View>;
+  return <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>{lines}</View>;
 };
 
 // Retro Grid Floor (perspective grid like in synthwave)
