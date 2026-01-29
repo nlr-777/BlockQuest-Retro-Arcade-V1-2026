@@ -445,17 +445,18 @@ class AudioManager {
     
     // Main chord/bar loop - simpler, one loop to rule them all
     const mainLoop = setInterval(() => {
-      if (!this.audioContext || !this.masterGain || !this.fadeGain) {
-        console.log('Loop: Missing nodes - ctx:', !!this.audioContext, 'master:', !!this.masterGain, 'fade:', !!this.fadeGain);
+      if (!this.audioContext || !this.masterGain) {
+        console.log('Loop: Missing audio context or master gain');
+        return;
+      }
+      
+      // Check if music was stopped
+      if (this.currentTrack !== track) {
+        console.log('Track changed, stopping this loop');
         return;
       }
       
       this.beatCount++;
-      
-      // Log every 4th beat
-      if (this.beatCount % 4 === 1) {
-        console.log('Beat', this.beatCount, '- playing pad and bass');
-      }
       
       // Change chord every 4 beats (1 bar)
       if (this.beatCount % 4 === 1) {
