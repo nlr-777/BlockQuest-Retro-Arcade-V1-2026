@@ -45,6 +45,9 @@ import { loyaltyService, LoginReward } from '../src/services/LoyaltyService';
 import { Badge } from '../src/store/gameStore';
 import audioManager from '../src/utils/AudioManager';
 import ttsManager from '../src/utils/TTSManager';
+import { DailyRewardModal } from '../src/components/DailyRewardModal';
+import { OnboardingFlow } from '../src/components/OnboardingFlow';
+import { dailyRewardsService } from '../src/services/DailyRewardsService';
 import {
   IconGhost,
   IconTetris,
