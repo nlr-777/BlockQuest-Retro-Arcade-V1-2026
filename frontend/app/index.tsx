@@ -339,8 +339,6 @@ export default function ArcadeHub() {
     
     // Don't stop music on unmount - let it play globally
   }, [profile, hasCompletedTutorial, hasCompletedOnboarding, isFullyHydrated]);
-    };
-  }, [profile, hasCompletedTutorial, hasCompletedOnboarding, isFullyHydrated]);
 
   // Check and display loyalty rewards
   const checkLoyaltyRewards = async () => {
