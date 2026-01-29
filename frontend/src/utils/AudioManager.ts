@@ -491,9 +491,9 @@ class AudioManager {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    // Soft attack and release
+    // Soft attack and release - increased volume
     gain.gain.setValueAtTime(0.001, now);
-    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.25, now + 0.05);
+    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.6, now + 0.05);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
     
     osc.connect(gain);
@@ -526,7 +526,7 @@ class AudioManager {
     filter.Q.value = 1;
     
     const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.7, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
     
     noise.connect(filter);
