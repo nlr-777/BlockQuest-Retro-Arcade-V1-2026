@@ -969,13 +969,8 @@ class AudioManager {
   }
 
   stopMusic() {
-    console.log('Stopping music...');
-    
-    // Clear ALL music loops
     this.musicLoops.forEach(loop => clearInterval(loop));
     this.musicLoops = [];
-    
-    // Reset state
     this.currentTrack = null;
     this.beatCount = 0;
     this.barCount = 0;
