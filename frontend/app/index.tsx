@@ -279,6 +279,8 @@ export default function ArcadeHub() {
   
   // Daily rewards state
   const [showDailyRewards, setShowDailyRewards] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [canClaimDaily, setCanClaimDaily] = useState(false);
   
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
