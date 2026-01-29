@@ -410,18 +410,28 @@ class AudioManager {
     
     console.log('Music config:', config.bpm, 'BPM, progression:', config.progression);
     
-    // Create fade gain for smooth volume control
+    // Create fade gain for smooth volume control FIRST before starting loops
     this.fadeGain = this.audioContext.createGain();
     this.fadeGain.gain.setValueAtTime(0, this.audioContext.currentTime);
     this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 0.5);
     // Connect fadeGain -> masterGain (which connects to destination)
     this.fadeGain.connect(this.masterGain!);
     
+    console.log('FadeGain created and connected');
+    
     // Main chord/bar loop - simpler, one loop to rule them all
     const mainLoop = setInterval(() => {
-      if (!this.audioContext || !this.compressor || !this.fadeGain) return;
+      if (!this.audioContext || !this.masterGain || !this.fadeGain) {
+        console.log('Loop: Missing nodes - ctx:', !!this.audioContext, 'master:', !!this.masterGain, 'fade:', !!this.fadeGain);
+        return;
+      }
       
       this.beatCount++;
+      
+      // Log every 4th beat
+      if (this.beatCount % 4 === 1) {
+        console.log('Beat', this.beatCount, '- playing pad and bass');
+      }
       
       // Change chord every 4 beats (1 bar)
       if (this.beatCount % 4 === 1) {
