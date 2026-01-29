@@ -23,6 +23,7 @@ import { useGameStore } from '../store/gameStore';
 import { useCharacterStore } from '../store/characterStore';
 import { processGameCompletion, StoryAchievement } from '../services/StoryAchievements';
 import { AchievementToast, useAchievementToast } from './AchievementToast';
+import { ShareButton } from './ShareButton';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
