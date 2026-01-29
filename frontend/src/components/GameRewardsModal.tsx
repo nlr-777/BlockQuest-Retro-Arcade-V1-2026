@@ -428,12 +428,19 @@ const styles = StyleSheet.create({
     borderTopColor: CRT_COLORS.textDim + '30',
     backgroundColor: CRT_COLORS.bgMedium,
   },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
   continueBtn: {
     backgroundColor: CRT_COLORS.primary,
     paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 8,
     alignItems: 'center',
+    flex: 1,
   },
   continueBtnText: {
     fontSize: 16,
