@@ -414,7 +414,8 @@ class AudioManager {
     this.fadeGain = this.audioContext.createGain();
     this.fadeGain.gain.setValueAtTime(0, this.audioContext.currentTime);
     this.fadeGain.gain.linearRampToValueAtTime(1, this.audioContext.currentTime + 0.5);
-    this.fadeGain.connect(this.compressor);
+    // Connect fadeGain -> masterGain (which connects to destination)
+    this.fadeGain.connect(this.masterGain!);
     
     // Main chord/bar loop - simpler, one loop to rule them all
     const mainLoop = setInterval(() => {
