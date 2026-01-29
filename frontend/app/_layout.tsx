@@ -8,6 +8,7 @@ import { useGameStore, useGameStoreHydrated } from '../src/store/gameStore';
 import { COLORS } from '../src/constants/colors';
 import VFXLayer from '../src/vfx/VFXManager';
 import PixelText from '../src/components/PixelText';
+import audioManager from '../src/utils/AudioManager';
 
 // Prevent auto-hide of splash screen
 SplashScreen.preventAutoHideAsync();
@@ -20,6 +21,18 @@ export default function RootLayout() {
   const hasHydrated = useGameStoreHydrated();
   const [showGenesis, setShowGenesis] = useState(true);
   const [isReady, setIsReady] = useState(false);
+  const [musicStarted, setMusicStarted] = useState(false);
+
+  // Start music immediately on first user interaction or load
+  useEffect(() => {
+    if (isClient && !musicStarted) {
+      // Initialize audio context and start menu music right away
+      audioManager.resumeAudioContext();
+      audioManager.startMusic('menu');
+      setMusicStarted(true);
+      console.log('Music started during loading screen');
+    }
+  }, [musicStarted]);
 
   // Memoize the initialization function
   const initializeApp = useCallback(async () => {
