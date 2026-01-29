@@ -94,13 +94,13 @@ type TrackConfig = {
 const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
   // New track names - ALL faster tempos for arcade energy
   menu: { 
-    bpm: 120,  // Upbeat menu music
-    progression: 'calm', 
-    layers: { pad: true, bass: true, arp: false, beat: true },
+    bpm: 128,  // Fast, energetic menu music!
+    progression: 'focused', 
+    layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.35,
   },
   gameplay: { 
-    bpm: 128,  // Driving gameplay rhythm
+    bpm: 132,  // Driving gameplay rhythm
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.30,
@@ -112,26 +112,26 @@ const MUSIC_CONFIG: Record<MusicTrack, TrackConfig> = {
     baseVolume: 0.32,
   },
   victory: { 
-    bpm: 125,  // Triumphant celebration
+    bpm: 130,  // Triumphant celebration
     progression: 'triumph', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.38,
   },
   ambient: { 
-    bpm: 100,  // Chill but not sleepy
+    bpm: 110,  // Chill but groovy
     progression: 'calm', 
-    layers: { pad: true, bass: true, arp: false, beat: false },
+    layers: { pad: true, bass: true, arp: false, beat: true },
     baseVolume: 0.25,
   },
   // Legacy track names (for backwards compatibility)
   action: { 
-    bpm: 128, 
+    bpm: 132, 
     progression: 'focused', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.30,
   },
   euphoria: { 
-    bpm: 135, 
+    bpm: 138, 
     progression: 'triumph', 
     layers: { pad: true, bass: true, arp: true, beat: true },
     baseVolume: 0.32,
