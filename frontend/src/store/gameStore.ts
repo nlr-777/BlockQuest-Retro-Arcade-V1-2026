@@ -314,10 +314,7 @@ export const useGameStore = create<GameState>()(
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           console.warn('Failed to rehydrate game store:', error);
-        } else {
-          console.log('Game store rehydrated! Profile:', state?.profile?.username || 'None');
         }
-        // Use the store's set method to properly update state
         useGameStore.setState({ _hasHydrated: true, isLoading: false });
       },
     }
