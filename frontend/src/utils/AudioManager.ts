@@ -1011,23 +1011,19 @@ class AudioManager {
 
   setMusicVolume(vol: number) {
     this.musicVolume = Math.min(1.0, Math.max(0, vol));
-    console.log('Music volume set to:', this.musicVolume);
   }
 
   setSfxVolume(vol: number) {
     this.sfxVolume = Math.min(1.0, Math.max(0, vol));
   }
 
-  // Sync with external store settings
   syncWithStore(settings: { isMuted: boolean; musicVolume: number; sfxVolume: number }) {
-    console.log('Syncing audio settings:', settings);
     this.soundEnabled = !settings.isMuted;
     this.musicEnabled = !settings.isMuted;
     this.setMusicVolume(settings.musicVolume);
     this.setSfxVolume(settings.sfxVolume);
     this.setMasterVolume(settings.isMuted ? 0 : 0.8);
     
-    // Stop music if muted
     if (settings.isMuted && this.currentTrack) {
       this.stopMusic();
     }
