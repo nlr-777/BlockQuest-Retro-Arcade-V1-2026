@@ -466,7 +466,7 @@ class AudioManager {
   
   // Clean, warm pad - ambient and non-intrusive
   private playCleanPad(frequencies: number[], volume: number) {
-    if (!this.audioContext || !this.fadeGain) return;
+    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -488,8 +488,8 @@ class AudioManager {
         filter.frequency.setValueAtTime(800, now);
         filter.Q.value = 0.5;
         
-        // Slow, gentle envelope - increased volume
-        const vol = (this.musicVolume * volume * 0.25) / 3;
+        // Slow, gentle envelope - MUCH louder
+        const vol = (this.musicVolume * volume * 0.6) / 3;
         gain.gain.setValueAtTime(0.001, now);
         gain.gain.linearRampToValueAtTime(vol, now + 0.4);
         gain.gain.setValueAtTime(vol, now + 1.5);
@@ -507,7 +507,7 @@ class AudioManager {
   
   // Clean bass - subtle low-end foundation
   private playCleanBass(freq: number, volume: number) {
-    if (!this.audioContext || !this.fadeGain) return;
+    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -517,9 +517,9 @@ class AudioManager {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, now);
     
-    // Soft attack and release - increased volume
+    // Soft attack and release - MUCH louder
     gain.gain.setValueAtTime(0.001, now);
-    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.6, now + 0.05);
+    gain.gain.linearRampToValueAtTime(this.musicVolume * volume * 0.9, now + 0.05);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
     
     osc.connect(gain);
@@ -531,7 +531,7 @@ class AudioManager {
   
   // Clean pulse - gentle rhythmic element
   private playCleanPulse(volume: number) {
-    if (!this.audioContext || !this.fadeGain) return;
+    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -552,7 +552,7 @@ class AudioManager {
     filter.Q.value = 1;
     
     const gain = this.audioContext.createGain();
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.7, now);
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.9, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
     
     noise.connect(filter);
@@ -565,7 +565,7 @@ class AudioManager {
   
   // Clean arp - subtle sparkle
   private playCleanArp(freq: number, volume: number) {
-    if (!this.audioContext || !this.fadeGain) return;
+    if (!this.audioContext || !this.fadeGain || !this.masterGain) return;
     
     const now = this.audioContext.currentTime;
     
@@ -580,8 +580,8 @@ class AudioManager {
     filter.frequency.setValueAtTime(2000, now);
     filter.Q.value = 1;
     
-    // Quick, gentle pluck - increased volume
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    // Quick, gentle pluck - MUCH louder
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.5, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
     
     osc.connect(filter);
