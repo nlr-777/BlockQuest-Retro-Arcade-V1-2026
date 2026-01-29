@@ -123,14 +123,14 @@ async def generate_badges():
                 print(f"  ✅ Saved: {filepath}")
                 generated.append(badge['id'])
             else:
-                print(f"  ❌ No image generated")
+                print("  ❌ No image generated")
                 failed.append(badge['id'])
                 
         except Exception as e:
             print(f"  ❌ Error: {e}")
             failed.append(badge['id'])
     
-    print(f"\n=== SUMMARY ===")
+    print("\n=== SUMMARY ===")
     print(f"Generated: {len(generated)}")
     print(f"Failed: {len(failed)}")
     if failed:
