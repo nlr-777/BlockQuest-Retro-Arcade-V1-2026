@@ -434,65 +434,430 @@ class AudioManager {
     
     console.log('Starting music:', track, config.bpm, 'BPM');
     
-    // Music now connects directly to masterGain - no fadeGain needed!
+    // Track musical sections for drops and builds
+    let sectionBeat = 0;
+    let isBuilding = false;
+    let isDrop = false;
+    let filterFreq = 2000; // For filter sweeps
     
-    // Main chord/bar loop - simpler, one loop to rule them all
+    // Main loop with dynamic variations
     const mainLoop = setInterval(() => {
-      if (!this.audioContext || !this.masterGain) {
-        console.log('Loop: Missing audio context or master gain');
-        return;
-      }
-      
-      // Check if music was stopped
-      if (this.currentTrack !== track) {
-        console.log('Track changed, stopping this loop');
-        return;
-      }
+      if (!this.audioContext || !this.masterGain) return;
+      if (this.currentTrack !== track) return;
       
       this.beatCount++;
+      sectionBeat++;
+      
+      // === SECTION MANAGEMENT (every 32 beats = 8 bars) ===
+      const sectionLength = 32;
+      const beatInSection = sectionBeat % sectionLength;
+      
+      // Build-up starts at beat 25 (last 8 beats of section)
+      if (beatInSection === 25) {
+        isBuilding = true;
+        isDrop = false;
+        console.log('Building up...');
+      }
+      
+      // DROP on beat 1 of new section
+      if (beatInSection === 1 && sectionBeat > 1) {
+        isBuilding = false;
+        isDrop = true;
+        console.log('DROP!');
+        // Play impact sound on drop
+        this.playDrop(config.baseVolume);
+        // Reset filter
+        filterFreq = 2000;
+      }
+      
+      // End drop state after 8 beats
+      if (beatInSection === 9) {
+        isDrop = false;
+      }
+      
+      // === FILTER SWEEP during build ===
+      if (isBuilding) {
+        // Sweep filter up during build
+        filterFreq = Math.min(8000, filterFreq + 300);
+      }
       
       // Change chord every 4 beats (1 bar)
       if (this.beatCount % 4 === 1) {
         this.barCount++;
         this.chordIndex = (this.chordIndex + 1) % progression.length;
         
-        // Play pad on new chord (smooth, ambient)
+        // Play pad with filter variation
         if (config.layers.pad) {
-          this.playCleanPad(progression[this.chordIndex], config.baseVolume);
+          const padVol = isDrop ? config.baseVolume * 1.3 : config.baseVolume;
+          this.playDynamicPad(progression[this.chordIndex], padVol, filterFreq, isBuilding);
         }
       }
       
-      // Bass on beat 1 and 3 (subtle, grounding)
-      if (config.layers.bass && (this.beatCount % 4 === 1 || this.beatCount % 4 === 3)) {
-        this.playCleanBass(progression[this.chordIndex][0] / 2, config.baseVolume);
+      // === BASS with variation ===
+      if (config.layers.bass) {
+        const bassFreq = progression[this.chordIndex][0] / 2;
+        
+        if (isDrop) {
+          // Heavy bass on every beat during drop
+          this.playHeavyBass(bassFreq, config.baseVolume * 1.2);
+        } else if (isBuilding) {
+          // Faster bass rhythm during build (every beat)
+          this.playCleanBass(bassFreq, config.baseVolume * 0.8);
+        } else if (this.beatCount % 4 === 1 || this.beatCount % 4 === 3) {
+          // Normal bass on 1 and 3
+          this.playCleanBass(bassFreq, config.baseVolume);
+        }
       }
       
-      // Soft beat on 2 and 4 (gentle pulse)
-      if (config.layers.beat && (this.beatCount % 4 === 2 || this.beatCount % 4 === 0)) {
-        this.playCleanPulse(config.baseVolume * 0.6);
+      // === DRUMS with variation ===
+      if (config.layers.beat) {
+        if (isDrop) {
+          // Heavy kick on every beat during drop
+          this.playKick(config.baseVolume * 1.2);
+          // Snare on 2 and 4
+          if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
+            this.playSnare(config.baseVolume);
+          }
+        } else if (isBuilding) {
+          // Building snare roll - gets faster
+          const rollSpeed = Math.max(1, 4 - Math.floor((beatInSection - 25) / 2));
+          if (this.beatCount % rollSpeed === 0) {
+            this.playSnare(config.baseVolume * 0.7);
+          }
+          // Rising pitch effect
+          this.playRiser(config.baseVolume * 0.4, beatInSection - 24);
+        } else {
+          // Standard beat on 2 and 4
+          if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
+            this.playCleanPulse(config.baseVolume * 0.6);
+          }
+          // Light kick on 1 and 3
+          if (this.beatCount % 4 === 1 || this.beatCount % 4 === 3) {
+            this.playKick(config.baseVolume * 0.5);
+          }
+        }
+      }
+      
+      // === HI-HATS for rhythm ===
+      if (config.layers.arp || isDrop) {
+        // Hi-hats on off-beats for groove
+        if (this.beatCount % 2 === 0) {
+          this.playHiHat(config.baseVolume * (isDrop ? 0.5 : 0.3));
+        }
       }
       
     }, msPerBeat);
     this.musicLoops.push(mainLoop);
     
-    console.log('Music loop started, beat interval:', msPerBeat, 'ms');
-    
-    // Separate arpeggio loop - only for gameplay tracks (subtle sparkle)
+    // Arpeggio loop with variation
     if (config.layers.arp) {
       const arpLoop = setInterval(() => {
         if (!this.audioContext || !this.masterGain) return;
-        if (this.currentTrack !== track) return; // Stop if track changed
+        if (this.currentTrack !== track) return;
         
-        // Only play arp on certain beats for less busy feel
-        if (this.beatCount % 2 === 0) {
-          const chord = progression[this.chordIndex];
+        const chord = progression[this.chordIndex];
+        
+        // More interesting arp patterns
+        if (isDrop) {
+          // Fast arps during drop
+          const noteIndex = this.arpIndex % chord.length;
+          this.playSharpArp(chord[noteIndex] * 2, config.baseVolume * 0.5);
+          this.arpIndex++;
+        } else if (!isBuilding && this.beatCount % 2 === 0) {
+          // Normal arps
           const noteIndex = this.arpIndex % chord.length;
           this.playCleanArp(chord[noteIndex] * 2, config.baseVolume * 0.4);
           this.arpIndex++;
         }
-      }, msPerBeat / 2);
+      }, msPerBeat / 4); // Faster for 16th notes
       this.musicLoops.push(arpLoop);
     }
+    
+    console.log('Dynamic music loop started');
+  }
+  
+  // === NEW DYNAMIC SYNTH FUNCTIONS ===
+  
+  // Dynamic pad with filter sweep
+  private playDynamicPad(frequencies: number[], volume: number, filterFreq: number, isBuilding: boolean) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    frequencies.forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      const filter = this.audioContext!.createBiquadFilter();
+      
+      // Use different waveforms for more interest
+      osc.type = isBuilding ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      
+      // Add slight detune for richness
+      osc.detune.setValueAtTime((i - 1) * 8, now);
+      
+      // Dynamic filter
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(filterFreq, now);
+      filter.Q.value = isBuilding ? 5 : 1;
+      
+      const vol = this.musicVolume * volume * 0.5;
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.1);
+      gain.gain.setValueAtTime(vol, now + 1.2);
+      gain.gain.linearRampToValueAtTime(0.001, now + 1.8);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain!);
+      
+      osc.start(now);
+      osc.stop(now + 2);
+    });
+  }
+  
+  // Heavy bass for drops
+  private playHeavyBass(freq: number, volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Sub bass
+    const sub = this.audioContext.createOscillator();
+    const subGain = this.audioContext.createGain();
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(freq / 2, now);
+    
+    const vol = this.musicVolume * volume * 0.6;
+    subGain.gain.setValueAtTime(vol, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    
+    sub.connect(subGain);
+    subGain.connect(this.masterGain);
+    sub.start(now);
+    sub.stop(now + 0.4);
+    
+    // Mid bass with distortion character
+    const mid = this.audioContext.createOscillator();
+    const midGain = this.audioContext.createGain();
+    mid.type = 'sawtooth';
+    mid.frequency.setValueAtTime(freq, now);
+    
+    midGain.gain.setValueAtTime(vol * 0.4, now);
+    midGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    
+    mid.connect(midGain);
+    midGain.connect(this.masterGain);
+    mid.start(now);
+    mid.stop(now + 0.3);
+  }
+  
+  // Kick drum
+  private playKick(volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'sine';
+    // Pitch envelope for punch
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.05);
+    
+    const vol = this.musicVolume * volume * 0.7;
+    gain.gain.setValueAtTime(vol, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+  
+  // Snare drum
+  private playSnare(volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Noise burst
+    const bufferSize = this.audioContext.sampleRate * 0.1;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 1000;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    noise.start(now);
+    noise.stop(now + 0.15);
+    
+    // Add tone body
+    const tone = this.audioContext.createOscillator();
+    const toneGain = this.audioContext.createGain();
+    tone.type = 'triangle';
+    tone.frequency.setValueAtTime(200, now);
+    tone.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+    
+    toneGain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    toneGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    
+    tone.connect(toneGain);
+    toneGain.connect(this.masterGain);
+    tone.start(now);
+    tone.stop(now + 0.1);
+  }
+  
+  // Hi-hat
+  private playHiHat(volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    const bufferSize = this.audioContext.sampleRate * 0.03;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+    }
+    
+    const noise = this.audioContext.createBufferSource();
+    noise.buffer = buffer;
+    
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 7000;
+    
+    const gain = this.audioContext.createGain();
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    noise.start(now);
+    noise.stop(now + 0.06);
+  }
+  
+  // Riser sound for builds
+  private playRiser(volume: number, progress: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    const filter = this.audioContext.createBiquadFilter();
+    
+    osc.type = 'sawtooth';
+    // Rising pitch based on progress (0-8)
+    const startFreq = 200 + progress * 100;
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.linearRampToValueAtTime(startFreq + 50, now + 0.3);
+    
+    filter.type = 'lowpass';
+    filter.frequency.value = 3000 + progress * 500;
+    filter.Q.value = 5;
+    
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.35);
+  }
+  
+  // Drop impact sound
+  private playDrop(volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    // Big impact sweep down
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+    
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.8, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.5);
+    
+    // Crash cymbal
+    const bufferSize = this.audioContext.sampleRate * 0.5;
+    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+    }
+    
+    const crash = this.audioContext.createBufferSource();
+    crash.buffer = buffer;
+    
+    const crashFilter = this.audioContext.createBiquadFilter();
+    crashFilter.type = 'highpass';
+    crashFilter.frequency.value = 3000;
+    
+    const crashGain = this.audioContext.createGain();
+    crashGain.gain.setValueAtTime(this.musicVolume * volume * 0.4, now);
+    crashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    
+    crash.connect(crashFilter);
+    crashFilter.connect(crashGain);
+    crashGain.connect(this.masterGain);
+    
+    crash.start(now);
+    crash.stop(now + 0.6);
+  }
+  
+  // Sharp arp for drops
+  private playSharpArp(freq: number, volume: number) {
+    if (!this.audioContext || !this.masterGain) return;
+    
+    const now = this.audioContext.currentTime;
+    
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(freq, now);
+    
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    
+    osc.start(now);
+    osc.stop(now + 0.1);
   }
   
   // Clean, warm pad - ambient and non-intrusive
