@@ -264,9 +264,10 @@ const getGameIcon = (gameId: string): React.FC<any> => {
 export default function ArcadeHub() {
   const router = useRouter();
   const { profile, initProfile, highScores } = useGameStore();
+  const gameStoreHydrated = useGameStoreHydrated();
   const { selectCharacter, selectedCharacterId, getSelectedCharacter } = useCharacterStore();
   const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
-  const hasHydrated = useTutorialHydrated();
+  const tutorialHydrated = useTutorialHydrated();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
   const [username, setUsername] = useState('');
@@ -281,6 +282,9 @@ export default function ArcadeHub() {
   const [showDailyRewards, setShowDailyRewards] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [canClaimDaily, setCanClaimDaily] = useState(false);
+  
+  // Combined hydration check - wait for both stores
+  const isFullyHydrated = gameStoreHydrated && tutorialHydrated;
   
   // Neon glow animation
   const glowOpacity = useSharedValue(0.5);
