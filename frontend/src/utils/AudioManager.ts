@@ -576,30 +576,30 @@ class AudioManager {
       const gain = this.audioContext!.createGain();
       const filter = this.audioContext!.createBiquadFilter();
       
-      // Use different waveforms for more interest
-      osc.type = isBuilding ? 'sawtooth' : 'sine';
+      // Always use sine for smooth, pleasant sound (no harsh horn/organ)
+      osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
       
       // Add slight detune for richness
-      osc.detune.setValueAtTime((i - 1) * 8, now);
+      osc.detune.setValueAtTime((i - 1) * 5, now);
       
       // Dynamic filter
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(filterFreq, now);
-      filter.Q.value = isBuilding ? 5 : 1;
+      filter.Q.value = 1;
       
-      const vol = this.musicVolume * volume * 0.5;
+      const vol = this.musicVolume * volume * 0.4;
       gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(vol, now + 0.1);
-      gain.gain.setValueAtTime(vol, now + 1.2);
-      gain.gain.linearRampToValueAtTime(0.001, now + 1.8);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.15);
+      gain.gain.setValueAtTime(vol, now + 1.0);
+      gain.gain.linearRampToValueAtTime(0.001, now + 1.6);
       
       osc.connect(filter);
       filter.connect(gain);
       gain.connect(this.masterGain!);
       
       osc.start(now);
-      osc.stop(now + 2);
+      osc.stop(now + 1.8);
     });
   }
   
