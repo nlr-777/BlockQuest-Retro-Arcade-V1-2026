@@ -190,10 +190,10 @@ class AudioManager {
   private chordIndex: number = 0;
   private arpIndex: number = 0;
   
-  // Volume controls (kid-safe <75dB)
-  private masterVolume: number = 0.18;
-  private musicVolume: number = 0.14;
-  private sfxVolume: number = 0.20;
+  // Volume controls - increased for better audibility
+  private masterVolume: number = 0.45;
+  private musicVolume: number = 0.35;
+  private sfxVolume: number = 0.50;
   
   // Sound queue system to prevent overlap
   private lastSoundTime: Record<SoundEffect, number> = {} as Record<SoundEffect, number>;
