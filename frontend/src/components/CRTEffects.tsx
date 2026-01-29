@@ -226,7 +226,7 @@ export const ParticleBurst: React.FC<{
   }, []);
 
   return (
-    <View style={[StyleSheet.absoluteFill]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       {particles.map(p => (
         <BurstParticle key={p.id} x={x} y={y} {...p} color={color} />
       ))}
