@@ -338,6 +338,13 @@ export default function ArcadeHub() {
         setLoyaltyRewards(rewards);
         setShowLoyaltyRewards(true);
       }
+      
+      // Also check daily rewards
+      const dailyData = await dailyRewardsService.getStreakData();
+      if (dailyData.canClaimToday) {
+        // Small delay to avoid modal overlap
+        setTimeout(() => setShowDailyRewards(true), 500);
+      }
     } catch (e) {
       // Silent fail
     }
