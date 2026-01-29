@@ -462,8 +462,8 @@ class AudioManager {
         filter.frequency.setValueAtTime(800, now);
         filter.Q.value = 0.5;
         
-        // Slow, gentle envelope
-        const vol = (this.musicVolume * volume * 0.08) / 3;
+        // Slow, gentle envelope - increased volume
+        const vol = (this.musicVolume * volume * 0.25) / 3;
         gain.gain.setValueAtTime(0.001, now);
         gain.gain.linearRampToValueAtTime(vol, now + 0.4);
         gain.gain.setValueAtTime(vol, now + 1.5);
