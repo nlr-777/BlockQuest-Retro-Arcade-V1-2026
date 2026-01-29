@@ -780,6 +780,54 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   
+  // Quick Actions Row
+  quickActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 12,
+    marginTop: 8,
+    gap: 8,
+  },
+  streakButton: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentGold + '60',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  streakEmoji: {
+    fontSize: 16,
+  },
+  streakText: {
+    fontSize: 8,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  xpBarWrapper: {
+    flex: 1,
+  },
+  progressButton: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentCyan + '60',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  progressEmoji: {
+    fontSize: 16,
+  },
+  progressText: {
+    fontSize: 8,
+    color: CRT_COLORS.accentCyan,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  
   // Panel
   panel: {
     flex: 1,
