@@ -438,9 +438,9 @@ class AudioManager {
     let sectionBeat = 0;
     let isBuilding = false;
     let isDrop = false;
-    let filterFreq = 2000; // For filter sweeps
+    let filterFreq = 1500;
     
-    // Main loop with dynamic variations
+    // Main loop - SIMPLIFIED for better sync
     const mainLoop = setInterval(() => {
       if (!this.audioContext || !this.masterGain) return;
       if (this.currentTrack !== track) return;
@@ -449,115 +449,119 @@ class AudioManager {
       sectionBeat++;
       
       // === SECTION MANAGEMENT (every 32 beats = 8 bars) ===
-      const sectionLength = 32;
-      const beatInSection = sectionBeat % sectionLength;
+      const beatInSection = sectionBeat % 32;
       
-      // Build-up starts at beat 25 (last 8 beats of section)
+      // Build-up starts at beat 25 (last 8 beats)
       if (beatInSection === 25) {
         isBuilding = true;
         isDrop = false;
-        console.log('Building up...');
       }
       
       // DROP on beat 1 of new section
       if (beatInSection === 1 && sectionBeat > 1) {
         isBuilding = false;
         isDrop = true;
-        console.log('DROP!');
-        // Play impact sound on drop
         this.playDrop(config.baseVolume);
-        // Reset filter
-        filterFreq = 2000;
+        filterFreq = 1500;
       }
       
-      // End drop state after 8 beats
+      // End drop after 8 beats
       if (beatInSection === 9) {
         isDrop = false;
       }
       
-      // === FILTER SWEEP during build ===
+      // Filter sweep during build
       if (isBuilding) {
-        // Sweep filter up during build
-        filterFreq = Math.min(8000, filterFreq + 300);
+        filterFreq = Math.min(6000, filterFreq + 200);
       }
       
-      // Change chord every 4 beats (1 bar)
+      // === CHORD CHANGES on beat 1 of each bar ===
       if (this.beatCount % 4 === 1) {
         this.barCount++;
         this.chordIndex = (this.chordIndex + 1) % progression.length;
         
-        // Play pad with filter variation
+        // Pad on chord change
         if (config.layers.pad) {
-          const padVol = isDrop ? config.baseVolume * 1.3 : config.baseVolume;
-          this.playDynamicPad(progression[this.chordIndex], padVol, filterFreq, isBuilding);
+          const vol = isDrop ? config.baseVolume * 1.2 : config.baseVolume;
+          this.playDynamicPad(progression[this.chordIndex], vol, filterFreq, isBuilding);
         }
       }
       
-      // === BASS with variation ===
+      // === BASS - simple pattern ===
       if (config.layers.bass) {
         const bassFreq = progression[this.chordIndex][0] / 2;
         
-        if (isDrop) {
-          // Heavy bass on every beat during drop
-          this.playHeavyBass(bassFreq, config.baseVolume * 1.2);
-        } else if (isBuilding) {
-          // Faster bass rhythm during build (every beat)
-          this.playCleanBass(bassFreq, config.baseVolume * 0.8);
-        } else if (this.beatCount % 4 === 1 || this.beatCount % 4 === 3) {
-          // Normal bass on 1 and 3
-          this.playCleanBass(bassFreq, config.baseVolume);
+        // Bass on beat 1 only (cleaner groove)
+        if (this.beatCount % 4 === 1) {
+          if (isDrop) {
+            this.playHeavyBass(bassFreq, config.baseVolume * 1.0);
+          } else {
+            this.playCleanBass(bassFreq, config.baseVolume * 0.8);
+          }
+        }
+        // Extra bass hit on beat 3 during drop
+        if (isDrop && this.beatCount % 4 === 3) {
+          this.playHeavyBass(bassFreq, config.baseVolume * 0.8);
         }
       }
       
-      // === DRUMS with variation ===
+      // === DRUMS - clean pattern, NO snare rolls ===
       if (config.layers.beat) {
-        if (isDrop) {
-          // Heavy kick on every beat during drop
-          this.playKick(config.baseVolume * 1.2);
-          // Snare on 2 and 4
-          if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
-            this.playSnare(config.baseVolume);
-          }
-        } else if (isBuilding) {
-          // Building snare roll - gets faster
-          const rollSpeed = Math.max(1, 4 - Math.floor((beatInSection - 25) / 2));
-          if (this.beatCount % rollSpeed === 0) {
+        // Kick on 1 and 3
+        if (this.beatCount % 4 === 1 || this.beatCount % 4 === 3) {
+          const kickVol = isDrop ? config.baseVolume * 0.9 : config.baseVolume * 0.5;
+          this.playKick(kickVol);
+        }
+        
+        // Snare/clap on 2 and 4 (not during build)
+        if (!isBuilding && (this.beatCount % 4 === 2 || this.beatCount % 4 === 0)) {
+          if (isDrop) {
             this.playSnare(config.baseVolume * 0.7);
+          } else {
+            this.playCleanPulse(config.baseVolume * 0.4);
           }
-          // Rising pitch effect
-          this.playRiser(config.baseVolume * 0.4, beatInSection - 24);
-        } else {
-          // Standard beat on 2 and 4
-          if (this.beatCount % 4 === 2 || this.beatCount % 4 === 0) {
-            this.playCleanPulse(config.baseVolume * 0.6);
-          }
-          // Light kick on 1 and 3
-          if (this.beatCount % 4 === 1 || this.beatCount % 4 === 3) {
-            this.playKick(config.baseVolume * 0.5);
-          }
+        }
+        
+        // Simple riser during build (no snare roll)
+        if (isBuilding && this.beatCount % 4 === 1) {
+          this.playRiser(config.baseVolume * 0.3, beatInSection - 24);
         }
       }
       
-      // === HI-HATS for rhythm ===
-      if (config.layers.arp || isDrop) {
-        // Hi-hats on off-beats for groove
-        if (this.beatCount % 2 === 0) {
-          this.playHiHat(config.baseVolume * (isDrop ? 0.5 : 0.3));
-        }
+      // === HI-HATS - subtle groove ===
+      if ((config.layers.arp || isDrop) && this.beatCount % 2 === 0) {
+        this.playHiHat(config.baseVolume * (isDrop ? 0.4 : 0.2));
       }
       
     }, msPerBeat);
     this.musicLoops.push(mainLoop);
     
-    // Arpeggio loop with variation
+    // Arpeggio - separate loop for smoother timing
     if (config.layers.arp) {
+      let arpNote = 0;
       const arpLoop = setInterval(() => {
         if (!this.audioContext || !this.masterGain) return;
         if (this.currentTrack !== track) return;
+        if (isBuilding) return; // No arps during build
         
         const chord = progression[this.chordIndex];
+        const note = chord[arpNote % chord.length];
         
-        // More interesting arp patterns
+        if (isDrop) {
+          // Faster arps during drop
+          this.playSharpArp(note * 2, config.baseVolume * 0.35);
+        } else {
+          // Gentle arps normally
+          this.playCleanArp(note * 2, config.baseVolume * 0.25);
+        }
+        arpNote++;
+        
+      }, msPerBeat / 2); // 8th notes
+      this.musicLoops.push(arpLoop);
+    }
+    
+    console.log('Music started with clean sync');
+  }
         if (isDrop) {
           // Fast arps during drop
           const noteIndex = this.arpIndex % chord.length;
