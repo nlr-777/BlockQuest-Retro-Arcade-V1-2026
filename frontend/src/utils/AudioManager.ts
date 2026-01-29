@@ -697,11 +697,7 @@ class AudioManager {
 
   setMusicVolume(vol: number) {
     this.musicVolume = Math.min(1.0, Math.max(0, vol));
-    // Update fadeGain if music is playing
-    if (this.fadeGain && this.audioContext) {
-      const now = this.audioContext.currentTime;
-      this.fadeGain.gain.linearRampToValueAtTime(vol, now + 0.1);
-    }
+    console.log('Music volume set to:', this.musicVolume);
   }
 
   setSfxVolume(vol: number) {
