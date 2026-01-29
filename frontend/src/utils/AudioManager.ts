@@ -554,8 +554,8 @@ class AudioManager {
     filter.frequency.setValueAtTime(2000, now);
     filter.Q.value = 1;
     
-    // Quick, gentle pluck
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.1, now);
+    // Quick, gentle pluck - increased volume
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.3, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
     
     osc.connect(filter);
@@ -574,7 +574,7 @@ class AudioManager {
     // Adjust volume based on intensity
     if (this.fadeGain && this.audioContext) {
       const now = this.audioContext.currentTime;
-      const targetVolume = intensity === 'high' ? 1.2 : intensity === 'medium' ? 1.0 : 0.7;
+      const targetVolume = intensity === 'high' ? 1.3 : intensity === 'medium' ? 1.0 : 0.8;
       this.fadeGain.gain.linearRampToValueAtTime(targetVolume, now + 0.5);
     }
   }
