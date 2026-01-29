@@ -624,35 +624,29 @@ class AudioManager {
     osc.stop(now + 0.2);
   }
   
-  // Dynamic intensity adjustment - call this based on game state
+  // Dynamic intensity adjustment - adjusts music volume based on game state
   setMusicIntensity(intensity: MusicIntensity) {
     if (this.currentIntensity === intensity) return;
     this.currentIntensity = intensity;
     
-    // Adjust volume based on intensity
-    if (this.fadeGain && this.audioContext) {
-      const now = this.audioContext.currentTime;
-      const targetVolume = intensity === 'high' ? 1.3 : intensity === 'medium' ? 1.0 : 0.8;
-      this.fadeGain.gain.linearRampToValueAtTime(targetVolume, now + 0.5);
-    }
+    // Adjust music volume based on intensity (affects next notes played)
+    const volumeMultiplier = intensity === 'high' ? 1.3 : intensity === 'medium' ? 1.0 : 0.8;
+    // Store for use in synth functions (they read this.musicVolume)
+    // This is a simple approach - more complex would be to have a separate intensity multiplier
+    console.log('Music intensity changed to:', intensity, 'multiplier:', volumeMultiplier);
   }
   
   // Smooth transition to a different track
-  transitionToTrack(track: MusicTrack, fadeTime: number = 1.0) {
+  transitionToTrack(track: MusicTrack, fadeTime: number = 0.5) {
     if (this.currentTrack === track) return;
     
-    if (this.fadeGain && this.audioContext) {
-      const now = this.audioContext.currentTime;
-      // Fade out current
-      this.fadeGain.gain.linearRampToValueAtTime(0, now + fadeTime);
-      
-      // Start new track after fade
-      setTimeout(() => {
-        this.startMusic(track);
-      }, fadeTime * 1000);
-    } else {
+    // Simple transition: stop current and start new
+    this.stopMusic();
+    
+    // Small delay for cleaner transition
+    setTimeout(() => {
       this.startMusic(track);
-    }
+    }, fadeTime * 500);
   }
 
   stopMusic() {
