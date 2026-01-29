@@ -314,6 +314,9 @@ export default function ArcadeHub() {
   }, []);
 
   useEffect(() => {
+    // Don't do anything until hydration is complete
+    if (!isFullyHydrated) return;
+    
     if (!profile) {
       setShowOnboarding(true);
     } else {
@@ -325,10 +328,13 @@ export default function ArcadeHub() {
       audioManager.resumeAudioContext();
       audioManager.startMusic('menu');
       
-      // Wait for hydration before making routing decisions
-      // This ensures persisted state is loaded before checking tutorial status
-      if (hasHydrated && !hasCompletedTutorial && hasCompletedOnboarding) {
-        router.push('/tutorial');
+      // Only navigate to tutorial after a small delay to ensure router is ready
+      if (!hasCompletedTutorial && hasCompletedOnboarding) {
+        // Use setTimeout to ensure layout is mounted before navigation
+        const navTimer = setTimeout(() => {
+          router.push('/tutorial');
+        }, 100);
+        return () => clearTimeout(navTimer);
       }
       
       // Check for loyalty rewards (returning player bonus)
@@ -338,7 +344,7 @@ export default function ArcadeHub() {
     return () => {
       audioManager.stopMusic();
     };
-  }, [profile, hasCompletedTutorial, hasCompletedOnboarding, hasHydrated]);
+  }, [profile, hasCompletedTutorial, hasCompletedOnboarding, isFullyHydrated]);
 
   // Check and display loyalty rewards
   const checkLoyaltyRewards = async () => {
