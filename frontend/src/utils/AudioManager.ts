@@ -817,7 +817,7 @@ class AudioManager {
     crash.stop(now + 0.5);
   }
   
-  // Sharp arp for drops
+  // Sharp arp for drops - use triangle for softer sound
   private playSharpArp(freq: number, volume: number) {
     if (!this.audioContext || !this.masterGain) return;
     
@@ -826,17 +826,17 @@ class AudioManager {
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     
-    osc.type = 'square';
+    osc.type = 'triangle'; // Softer than square
     osc.frequency.setValueAtTime(freq, now);
     
-    gain.gain.setValueAtTime(this.musicVolume * volume * 0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    gain.gain.setValueAtTime(this.musicVolume * volume * 0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
     
     osc.connect(gain);
     gain.connect(this.masterGain);
     
     osc.start(now);
-    osc.stop(now + 0.1);
+    osc.stop(now + 0.08);
   }
   
   // Clean, warm pad - ambient and non-intrusive
