@@ -641,23 +641,27 @@ class AudioManager {
   }
 
   stopMusic() {
+    console.log('Stopping music...');
+    
+    // Clear ALL pending timeouts by immediately clearing loops
+    this.musicLoops.forEach(loop => clearInterval(loop));
+    this.musicLoops = [];
+    
     // Smooth fade out if possible
     if (this.fadeGain && this.audioContext) {
       const now = this.audioContext.currentTime;
-      this.fadeGain.gain.linearRampToValueAtTime(0, now + 0.3);
+      try {
+        this.fadeGain.gain.linearRampToValueAtTime(0, now + 0.3);
+      } catch (e) {}
     }
     
-    // Clear loops after fade
-    setTimeout(() => {
-      this.musicLoops.forEach(loop => clearInterval(loop));
-      this.musicLoops = [];
-      this.currentTrack = null;
-      this.beatCount = 0;
-      this.barCount = 0;
-      this.chordIndex = 0;
-      this.arpIndex = 0;
-      this.fadeGain = null;
-    }, 350);
+    // Reset state immediately (not in setTimeout!)
+    this.currentTrack = null;
+    this.beatCount = 0;
+    this.barCount = 0;
+    this.chordIndex = 0;
+    this.arpIndex = 0;
+    this.fadeGain = null;
   }
 
   changeTrack(track: MusicTrack) {
