@@ -233,11 +233,52 @@ class AudioManager {
 
   // === SOUND EFFECTS ===
   
+  // Check if sound can be played (debounce + priority check)
+  private canPlaySound(effect: SoundEffect): boolean {
+    const now = Date.now();
+    const lastPlayed = this.lastSoundTime[effect] || 0;
+    const cooldown = this.soundCooldowns[effect] || 100;
+    const config = SFX_CONFIG[effect];
+    
+    // Check cooldown
+    if (now - lastPlayed < cooldown) {
+      return false;
+    }
+    
+    // Check priority - don't interrupt higher priority sounds with lower ones
+    if (config.priority < this.currentPriority) {
+      return false;
+    }
+    
+    return true;
+  }
+  
   playSound(effect: SoundEffect) {
     if (!this.soundEnabled || !this.audioContext || !this.masterGain) return;
     
+    // Check debounce and priority
+    if (!this.canPlaySound(effect)) return;
+    
     const config = SFX_CONFIG[effect];
     const now = this.audioContext.currentTime;
+    
+    // Update tracking
+    this.lastSoundTime[effect] = Date.now();
+    
+    // Set current priority and clear after sound duration
+    if (config.priority >= this.currentPriority) {
+      this.currentPriority = config.priority;
+      
+      // Clear priority timeout if exists
+      if (this.priorityTimeout) {
+        clearTimeout(this.priorityTimeout);
+      }
+      
+      // Reset priority after sound finishes
+      this.priorityTimeout = setTimeout(() => {
+        this.currentPriority = 0;
+      }, config.duration + 50);
+    }
     
     config.freqs.forEach((freq, i) => {
       const osc = this.audioContext!.createOscillator();
@@ -270,6 +311,18 @@ class AudioManager {
       
       osc.start(startTime);
       osc.stop(endTime + 0.1);
+    });
+  }
+  
+  // Play sound with delay (for sequencing multiple sounds)
+  playSoundDelayed(effect: SoundEffect, delayMs: number) {
+    setTimeout(() => this.playSound(effect), delayMs);
+  }
+  
+  // Play a sequence of sounds with proper spacing
+  playSoundSequence(effects: SoundEffect[], spacingMs: number = 200) {
+    effects.forEach((effect, index) => {
+      this.playSoundDelayed(effect, index * spacingMs);
     });
   }
 
