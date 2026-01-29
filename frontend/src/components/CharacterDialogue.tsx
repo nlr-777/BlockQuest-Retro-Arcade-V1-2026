@@ -501,9 +501,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     lineHeight: 16,
-    textShadowColor: 'rgba(0, 255, 200, 0.5)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
+    textShadow: '0 0 4px rgba(0, 255, 200, 0.5)',
   },
   bonusBox: {
     flexDirection: 'row',
