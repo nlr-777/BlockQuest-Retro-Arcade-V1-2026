@@ -137,7 +137,7 @@ export const PixelRain: React.FC<{ count?: number; speed?: number }> = ({
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       {particles.map(p => (
         <RainParticle key={p.id} {...p} />
       ))}
