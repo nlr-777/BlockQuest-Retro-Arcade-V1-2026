@@ -1,0 +1,434 @@
+// BlockQuest Official - Login Screen
+// Email/Password and Google OAuth authentication
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+
+import { CRT_COLORS } from '../src/constants/crtTheme';
+import { COLORS } from '../src/constants/colors';
+import { PixelText } from '../src/components/PixelText';
+import { PixelButton } from '../src/components/PixelButton';
+import { authService } from '../src/services/AuthService';
+import { useGameStore } from '../src/store/gameStore';
+import VFXLayer from '../src/vfx/VFXManager';
+
+WebBrowser.maybeCompleteAuthSession();
+
+type AuthMode = 'login' | 'register';
+
+export default function LoginScreen() {
+  const router = useRouter();
+  const { initProfile, profile } = useGameStore();
+  
+  const [mode, setMode] = useState<AuthMode>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Google Auth - configure with your client ID
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+  });
+
+  // Handle Google auth response
+  useEffect(() => {
+    if (response?.type === 'success') {
+      handleGoogleLogin(response.authentication?.idToken || '');
+    }
+  }, [response]);
+
+  const handleGoogleLogin = async (idToken: string) => {
+    if (!idToken) {
+      setError('Failed to get Google token');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const authResponse = await authService.googleLogin(idToken);
+      // Sync local profile with cloud data
+      await syncWithCloudProfile(authResponse.user);
+      router.replace('/');
+    } catch (err: any) {
+      setError(err.message || 'Google login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailAuth = async () => {
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+    
+    if (mode === 'register' && !username) {
+      setError('Please enter a username');
+      return;
+    }
+    
+    if (mode === 'register' && password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      let authResponse;
+      if (mode === 'register') {
+        authResponse = await authService.register(email, password, username);
+      } else {
+        authResponse = await authService.login(email, password);
+      }
+      
+      // Sync local profile with cloud data
+      await syncWithCloudProfile(authResponse.user);
+      router.replace('/');
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sync cloud profile with local game store
+  const syncWithCloudProfile = async (cloudUser: any) => {
+    // If cloud user has progress, load it
+    if (cloudUser.total_xp > 0 || Object.keys(cloudUser.high_scores || {}).length > 0) {
+      // Cloud has data - use it
+      const store = useGameStore.getState();
+      if (store.profile) {
+        // Merge: take higher scores
+        const mergedHighScores = { ...cloudUser.high_scores };
+        Object.entries(store.profile.highScores || {}).forEach(([game, score]) => {
+          if ((score as number) > (mergedHighScores[game] || 0)) {
+            mergedHighScores[game] = score;
+          }
+        });
+        
+        // Update with merged data
+        // This will be handled by the game store sync
+      }
+    }
+    
+    // Initialize profile if not exists
+    if (!profile) {
+      await initProfile(cloudUser.username, cloudUser.avatar_id || 'zara');
+    }
+  };
+
+  const toggleMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login');
+    setError('');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <VFXLayer type="crt-breathe" intensity={0.2} />
+      <VFXLayer type="pixel-chain-rain" intensity={0.3} />
+      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Header */}
+          <Animated.View entering={FadeInDown.duration(500)} style={styles.header}>
+            <Text style={styles.logo}>🎮</Text>
+            <PixelText size="xl" color={COLORS.chainGold} glow>
+              BLOCK QUEST
+            </PixelText>
+            <Text style={styles.subtitle}>Web3 Chaos Chronicles</Text>
+          </Animated.View>
+
+          {/* Auth Form */}
+          <Animated.View entering={FadeInUp.delay(200).duration(500)} style={styles.formContainer}>
+            <Text style={styles.formTitle}>
+              {mode === 'login' ? '🔐 SIGN IN' : '✨ CREATE ACCOUNT'}
+            </Text>
+            
+            {/* Error Message */}
+            {error ? (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>⚠️ {error}</Text>
+              </View>
+            ) : null}
+
+            {/* Username (Register only) */}
+            {mode === 'register' && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>USERNAME</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Choose a cool name"
+                  placeholderTextColor={CRT_COLORS.textDim}
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+            )}
+
+            {/* Email */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>EMAIL</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="your@email.com"
+                placeholderTextColor={CRT_COLORS.textDim}
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+              />
+            </View>
+
+            {/* Password */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>PASSWORD</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="••••••••"
+                placeholderTextColor={CRT_COLORS.textDim}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
+
+            {/* Submit Button */}
+            <PixelButton
+              title={loading ? 'LOADING...' : mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}
+              onPress={handleEmailAuth}
+              color={COLORS.chainGold}
+              disabled={loading}
+              style={styles.submitButton}
+            />
+
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>OR</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            {/* Google Sign In */}
+            <Pressable
+              style={styles.googleButton}
+              onPress={() => promptAsync()}
+              disabled={loading || !request}
+              role="button"
+            >
+              {loading ? (
+                <ActivityIndicator color={CRT_COLORS.textBright} />
+              ) : (
+                <>
+                  <Text style={styles.googleIcon}>G</Text>
+                  <Text style={styles.googleText}>Continue with Google</Text>
+                </>
+              )}
+            </Pressable>
+
+            {/* Toggle Mode */}
+            <Pressable style={styles.toggleButton} onPress={toggleMode} role="button">
+              <Text style={styles.toggleText}>
+                {mode === 'login'
+                  ? "Don't have an account? Sign Up"
+                  : 'Already have an account? Sign In'}
+              </Text>
+            </Pressable>
+          </Animated.View>
+
+          {/* Skip Login */}
+          <Pressable
+            style={styles.skipButton}
+            onPress={() => router.replace('/')}
+            role="button"
+          >
+            <Text style={styles.skipText}>▶ PLAY AS GUEST</Text>
+            <Text style={styles.skipSubtext}>Progress saved locally only</Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: CRT_COLORS.bgDark,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 24,
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  logo: {
+    fontSize: 60,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+  },
+  formContainer: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 2,
+    borderColor: COLORS.chainGold + '40',
+  },
+  formTitle: {
+    fontSize: 18,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  errorBox: {
+    backgroundColor: '#FF4444' + '20',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FF4444' + '40',
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 10,
+    color: CRT_COLORS.primary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  input: {
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.bgMedium,
+    padding: 14,
+    fontSize: 14,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  submitButton: {
+    marginTop: 8,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: CRT_COLORS.textDim + '40',
+  },
+  dividerText: {
+    color: CRT_COLORS.textDim,
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginHorizontal: 16,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#4285F4',
+    borderRadius: 8,
+    padding: 14,
+  },
+  googleIcon: {
+    fontSize: 18,
+    color: '#FFF',
+    fontWeight: 'bold',
+    marginRight: 10,
+    backgroundColor: '#FFF',
+    color: '#4285F4',
+    width: 24,
+    height: 24,
+    textAlign: 'center',
+    lineHeight: 24,
+    borderRadius: 4,
+  },
+  googleText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  toggleButton: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  toggleText: {
+    color: CRT_COLORS.primary,
+    fontSize: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  skipButton: {
+    marginTop: 24,
+    alignItems: 'center',
+    padding: 16,
+  },
+  skipText: {
+    color: CRT_COLORS.textDim,
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  skipSubtext: {
+    color: CRT_COLORS.textDim + '80',
+    fontSize: 10,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+  },
+});
