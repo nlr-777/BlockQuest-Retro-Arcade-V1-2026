@@ -113,6 +113,9 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
+  pressable: {
+    // Ensure the pressable area covers the full button
+  },
   container: {
     position: 'relative',
   },
