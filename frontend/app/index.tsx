@@ -42,6 +42,7 @@ import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
 import { XPProgressBar } from '../src/components/XPProgressBar';
 import { Mascot, getRandomHint } from '../src/components/Mascots';
 import { loyaltyService, LoginReward } from '../src/services/LoyaltyService';
+import { authService } from '../src/services/AuthService';
 import { Badge } from '../src/store/gameStore';
 import audioManager from '../src/utils/AudioManager';
 import ttsManager from '../src/utils/TTSManager';
