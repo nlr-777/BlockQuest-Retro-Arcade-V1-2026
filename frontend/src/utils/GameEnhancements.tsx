@@ -358,7 +358,7 @@ const FloatingScoreItem: React.FC<{ popup: ScorePopup }> = ({ popup }) => {
 
 export const FloatingScores: React.FC<FloatingScoreProps> = ({ popups }) => {
   return (
-    <View style={floatingStyles.container} pointerEvents="none">
+    <View style={[floatingStyles.container, { pointerEvents: 'none' }]}>
       {popups.map(popup => (
         <FloatingScoreItem key={popup.id} popup={popup} />
       ))}
