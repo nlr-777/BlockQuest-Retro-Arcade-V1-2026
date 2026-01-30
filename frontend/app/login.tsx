@@ -17,8 +17,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
 
 import { CRT_COLORS } from '../src/constants/crtTheme';
 import { COLORS } from '../src/constants/colors';
@@ -27,8 +25,6 @@ import { PixelButton } from '../src/components/PixelButton';
 import { authService } from '../src/services/AuthService';
 import { useGameStore } from '../src/store/gameStore';
 import VFXLayer from '../src/vfx/VFXManager';
-
-WebBrowser.maybeCompleteAuthSession();
 
 type AuthMode = 'login' | 'register';
 
@@ -42,41 +38,6 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Google Auth - configure with your client ID
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-  });
-
-  // Handle Google auth response
-  useEffect(() => {
-    if (response?.type === 'success') {
-      handleGoogleLogin(response.authentication?.idToken || '');
-    }
-  }, [response]);
-
-  const handleGoogleLogin = async (idToken: string) => {
-    if (!idToken) {
-      setError('Failed to get Google token');
-      return;
-    }
-    
-    setLoading(true);
-    setError('');
-    
-    try {
-      const authResponse = await authService.googleLogin(idToken);
-      // Sync local profile with cloud data
-      await syncWithCloudProfile(authResponse.user);
-      router.replace('/');
-    } catch (err: any) {
-      setError(err.message || 'Google login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEmailAuth = async () => {
     if (!email || !password) {
@@ -174,6 +135,10 @@ export default function LoginScreen() {
               {mode === 'login' ? '🔐 SIGN IN' : '✨ CREATE ACCOUNT'}
             </Text>
             
+            <Text style={styles.formSubtext}>
+              Save your progress to the cloud!
+            </Text>
+            
             {/* Error Message */}
             {error ? (
               <View style={styles.errorBox}>
@@ -234,30 +199,6 @@ export default function LoginScreen() {
               style={styles.submitButton}
             />
 
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>OR</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* Google Sign In */}
-            <Pressable
-              style={styles.googleButton}
-              onPress={() => promptAsync()}
-              disabled={loading || !request}
-              role="button"
-            >
-              {loading ? (
-                <ActivityIndicator color={CRT_COLORS.textBright} />
-              ) : (
-                <>
-                  <Text style={styles.googleIcon}>G</Text>
-                  <Text style={styles.googleText}>Continue with Google</Text>
-                </>
-              )}
-            </Pressable>
-
             {/* Toggle Mode */}
             <Pressable style={styles.toggleButton} onPress={toggleMode} role="button">
               <Text style={styles.toggleText}>
@@ -274,8 +215,8 @@ export default function LoginScreen() {
             onPress={() => router.replace('/')}
             role="button"
           >
-            <Text style={styles.skipText}>▶ PLAY AS GUEST</Text>
-            <Text style={styles.skipSubtext}>Progress saved locally only</Text>
+            <Text style={styles.skipText}>◀ BACK TO ARCADE</Text>
+            <Text style={styles.skipSubtext}>Continue as guest</Text>
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
