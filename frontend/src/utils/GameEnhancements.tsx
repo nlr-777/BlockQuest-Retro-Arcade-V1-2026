@@ -830,7 +830,7 @@ export const LevelUpFlash: React.FC<LevelUpFlashProps> = ({ trigger, level }) =>
   }));
   
   return (
-    <Animated.View style={[levelUpStyles.container, animatedStyle]} pointerEvents="none">
+    <Animated.View style={[levelUpStyles.container, animatedStyle, { pointerEvents: 'none' }]}>
       <Text style={levelUpStyles.levelText}>LEVEL {level}</Text>
       <Text style={levelUpStyles.upText}>LEVEL UP!</Text>
     </Animated.View>
