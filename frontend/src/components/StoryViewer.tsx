@@ -553,7 +553,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   chapterList: {
-    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   chapterListContent: {
     padding: 16,
