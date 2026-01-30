@@ -415,7 +415,7 @@ export const StoryBadgesSection: React.FC = () => {
             onPress={() => setSelectedBadge(badge)}
             index={index}
           />
-        ))}}
+        ))}
       </ScrollView>
 
       {/* Quiz Modal */}
