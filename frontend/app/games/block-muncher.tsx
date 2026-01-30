@@ -865,7 +865,8 @@ export default function BlockMuncherGame() {
         gameId="block-muncher"
         visible={showIntroDialogue}
         onDismiss={handleDialogueDismiss}
-      />      </ScreenShake>
+      />
+    </ScreenShake>
     </SafeAreaView>
   );
 }
