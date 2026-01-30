@@ -521,31 +521,42 @@ export default function ArcadeHub() {
         
         {/* Player Bar */}
         {profile && (
-          <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
-            <View style={[styles.avatar, { borderColor: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
-              {playerAvatarUrl ? (
-                <Image 
-                  source={{ uri: playerAvatarUrl }} 
-                  style={styles.avatarImage} 
-                  resizeMode="cover"
-                />
-              ) : (
-                <Text style={styles.avatarText}>{profile.username[0]}</Text>
-              )}
-            </View>
-            <View style={styles.playerInfo}>
-              <Text style={styles.playerName}>{profile.username}</Text>
-              <TouchableOpacity 
-                onPress={(e) => { e.stopPropagation(); router.push('/characters'); }}
-                accessibilityLabel="View character profile"
-                accessibilityRole="button"
-              >
-                <Text style={[styles.playerStats, { color: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
-                  {playerCharacter?.specialAbility.icon} {playerCharacter?.name} • LV.{profile.level} ▸
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.playerBarContainer}>
+            <TouchableOpacity style={styles.playerBar} onPress={() => router.push('/vault')}>
+              <View style={[styles.avatar, { borderColor: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
+                {playerAvatarUrl ? (
+                  <Image 
+                    source={{ uri: playerAvatarUrl }} 
+                    style={styles.avatarImage} 
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text style={styles.avatarText}>{profile.username[0]}</Text>
+                )}
+              </View>
+              <View style={styles.playerInfo}>
+                <Text style={styles.playerName}>{profile.username}</Text>
+                <TouchableOpacity 
+                  onPress={(e) => { e.stopPropagation(); router.push('/characters'); }}
+                  accessibilityLabel="View character profile"
+                  accessibilityRole="button"
+                >
+                  <Text style={[styles.playerStats, { color: playerCharacter?.colors.primary || CRT_COLORS.primary }]}>
+                    {playerCharacter?.specialAbility.icon} {playerCharacter?.name} • LV.{profile.level} ▸
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+            
+            {/* Login/Cloud Sync Button */}
+            <TouchableOpacity 
+              style={[styles.cloudSyncBtn, isLoggedIn && styles.cloudSyncBtnLoggedIn]}
+              onPress={() => router.push('/login')}
+            >
+              <Text style={styles.cloudSyncIcon}>{isLoggedIn ? '☁️' : '🔐'}</Text>
+              <Text style={styles.cloudSyncText}>{isLoggedIn ? 'SYNCED' : 'LOGIN'}</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         {/* Quick Actions Row - Daily Rewards & Progress */}
