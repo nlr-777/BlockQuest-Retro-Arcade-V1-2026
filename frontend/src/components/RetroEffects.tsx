@@ -207,7 +207,7 @@ export const Starfield: React.FC<{ count?: number }> = ({ count = 50 }) => {
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       {stars.map(star => (
         <StarParticle key={star.id} {...star} />
       ))}
