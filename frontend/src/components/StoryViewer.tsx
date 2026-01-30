@@ -430,7 +430,7 @@ export const StoryViewer: React.FC = () => {
   const progressPercent = (unlockedCount / totalChapters) * 100;
   
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -458,10 +458,7 @@ export const StoryViewer: React.FC = () => {
       </View>
       
       {/* Chapter List */}
-      <ScrollView 
-        style={styles.chapterList}
-        contentContainerStyle={styles.chapterListContent}
-      >
+      <View style={styles.chapterList}>
         {STORY_CHAPTERS.map((chapter, index) => (
           <StoryPanel
             key={chapter.id}
@@ -480,7 +477,7 @@ export const StoryViewer: React.FC = () => {
             The story of Quest Coins continues!
           </Text>
         </View>
-      </ScrollView>
+      </View>
       
       {/* Chapter Detail Modal */}
       <ChapterDetailModal
@@ -488,7 +485,7 @@ export const StoryViewer: React.FC = () => {
         visible={selectedChapter !== null}
         onClose={() => setSelectedChapter(null)}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
