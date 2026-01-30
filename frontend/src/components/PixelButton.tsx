@@ -1,11 +1,10 @@
 // Block Quest Official - Pixel Button Component
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, View, StyleSheet, ViewStyle, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 import { PixelText } from './PixelText';
@@ -21,8 +20,6 @@ interface PixelButtonProps {
   style?: ViewStyle;
   icon?: string;
 }
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export const PixelButton: React.FC<PixelButtonProps> = ({
   title,
@@ -47,6 +44,12 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
     borderOffset.value = withTiming(4, { duration: 100 });
   };
 
+  const handlePress = () => {
+    if (!disabled) {
+      onPress();
+    }
+  };
+
   const animatedContainerStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -59,9 +62,9 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
   }));
 
   const sizeStyles = {
-    sm: { paddingVertical: 8, paddingHorizontal: 16 },
-    md: { paddingVertical: 12, paddingHorizontal: 24 },
-    lg: { paddingVertical: 16, paddingHorizontal: 32 },
+    sm: { paddingVertical: 8, paddingHorizontal: 16, minHeight: 36 },
+    md: { paddingVertical: 12, paddingHorizontal: 24, minHeight: 44 },
+    lg: { paddingVertical: 16, paddingHorizontal: 32, minHeight: 52 },
   };
 
   const textSizes = {
@@ -71,38 +74,41 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
   };
 
   return (
-    <AnimatedTouchable
-      onPress={onPress}
+    <Pressable
+      onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled}
-      activeOpacity={0.9}
-      style={[styles.container, animatedContainerStyle, style]}
+      style={[styles.pressable, style]}
+      // Web-specific: ensure the button is fully clickable
+      {...(Platform.OS === 'web' ? { role: 'button' } : {})}
     >
-      <Animated.View
-        style={[
-          styles.border,
-          { backgroundColor: disabled ? COLORS.textMuted : color },
-          animatedBorderStyle,
-        ]}
-      />
-      <View
-        style={[
-          styles.button,
-          sizeStyles[size],
-          { backgroundColor: disabled ? COLORS.cardBg : color },
-        ]}
-      >
-        {icon && (
-          <PixelText size={textSizes[size]} color={textColor} style={{ marginRight: 8 }}>
-            {icon}
+      <Animated.View style={[styles.container, animatedContainerStyle]}>
+        <Animated.View
+          style={[
+            styles.border,
+            { backgroundColor: disabled ? COLORS.textMuted : color },
+            animatedBorderStyle,
+          ]}
+        />
+        <View
+          style={[
+            styles.button,
+            sizeStyles[size],
+            { backgroundColor: disabled ? COLORS.cardBg : color },
+          ]}
+        >
+          {icon && (
+            <PixelText size={textSizes[size]} color={textColor} style={{ marginRight: 8 }}>
+              {icon}
+            </PixelText>
+          )}
+          <PixelText size={textSizes[size]} color={textColor}>
+            {title}
           </PixelText>
-        )}
-        <PixelText size={textSizes[size]} color={textColor}>
-          {title}
-        </PixelText>
-      </View>
-    </AnimatedTouchable>
+        </View>
+      </Animated.View>
+    </Pressable>
   );
 };
 
