@@ -390,8 +390,8 @@ async def register(user_data: UserCreate):
     # Create token
     access_token = create_access_token(data={"sub": user_id})
     
-    # Remove password hash from response
-    user_response = {k: v for k, v in user.items() if k != "password_hash"}
+    # Remove password hash and _id from response
+    user_response = {k: v for k, v in user.items() if k not in ["password_hash", "_id"]}
     
     return TokenResponse(access_token=access_token, user=user_response)
 
