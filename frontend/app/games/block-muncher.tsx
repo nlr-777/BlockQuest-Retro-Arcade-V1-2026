@@ -412,6 +412,7 @@ export default function BlockMuncherGame() {
 
   // Start game - shows intro dialogue first
   const startGame = useCallback(() => {
+    console.log('=== startGame called! ===');
     initGame();
     // Show intro dialogue - game starts when player dismisses it
     setShowIntroDialogue(true);
