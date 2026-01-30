@@ -284,6 +284,10 @@ export default function ArcadeHub() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [canClaimDaily, setCanClaimDaily] = useState(false);
   
+  // Auth state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cloudUser, setCloudUser] = useState<any>(null);
+  
   // Combined hydration check - wait for both stores
   const isFullyHydrated = gameStoreHydrated && tutorialHydrated;
   
