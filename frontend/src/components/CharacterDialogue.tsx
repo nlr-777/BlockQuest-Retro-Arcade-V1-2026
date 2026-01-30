@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Platform,
   Text,
-  TouchableOpacity,
+  Pressable,
   Modal,
 } from 'react-native';
 import Animated, {
