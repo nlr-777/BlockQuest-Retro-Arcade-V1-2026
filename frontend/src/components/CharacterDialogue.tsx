@@ -196,10 +196,9 @@ export const CharacterDialogue: React.FC<CharacterDialogueProps> = ({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <TouchableOpacity 
+        <Pressable 
           style={styles.dismissArea} 
           onPress={onDismiss}
-          activeOpacity={1}
         />
         
         <Animated.View style={[styles.container, containerStyle]}>
