@@ -29,111 +29,111 @@ export const STORY_BADGE_IMAGES = {
   questTokenomics: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
 };
 
-// Story Badges with Mini Quizzes
+// Story Badges with Mini Quizzes - Web3 Chaos Chronicles Themed
 export const STORY_BADGES: StoryBadge[] = [
   {
     id: 'digital-identity-master',
     title: 'Digital Identity Master',
-    description: 'Understand the difference between centralized and decentralized identity',
+    description: 'Master the concept of digital identity with Zara and friends',
     bookNumber: 1,
     imageUrl: STORY_BADGE_IMAGES.digitalIdentity,
     rarity: 'Epic',
     xpReward: 250,
     quiz: {
-      question: 'What is the main difference between centralized and decentralized identity?',
+      question: 'In the Web3 Chaos Chronicles, why does Zara prefer her blockchain wallet over a regular account?',
       options: [
-        'Centralized identity is faster to use',
-        'Decentralized identity gives YOU control over your data',
-        'There is no difference between them',
-        'Centralized identity is more secure'
+        'Because it has cooler graphics',
+        'Because SHE controls her identity and data - no company can delete her account',
+        'Because it costs less money',
+        'Because her parents told her to use it'
       ],
       correctAnswer: 1,
-      explanation: 'Decentralized identity (like blockchain wallets) puts YOU in control of your personal data, unlike centralized systems where companies control your information.',
-      hint: 'Think about who holds the "keys" to your identity...'
+      explanation: 'In the story, Zara discovers that with a blockchain wallet, she truly OWNS her digital identity. Unlike regular accounts that companies can ban or delete, her wallet belongs to her forever!',
+      hint: 'Remember when Miko lost his game account? Zara\'s wallet is different...'
     }
   },
   {
     id: 'founder-nft-collector',
-    title: 'Founder NFT Collector',
-    description: 'Learn about the exclusive Founder NFT badges and their special powers',
+    title: 'Founder NFT Hero',
+    description: 'Learn about the legendary Founder NFTs with the Quest Coins crew',
     bookNumber: 4,
     imageUrl: STORY_BADGE_IMAGES.founderNfts,
     rarity: 'Legendary',
     xpReward: 500,
     quiz: {
-      question: 'What makes a Founder NFT special in the Quest Coins universe?',
+      question: 'In Book 4, what special power did Kai discover his Founder NFT badge gave him?',
       options: [
-        'It costs the most money',
-        'It has the prettiest colors',
-        'It grants special access, voting power, and proves you were an early supporter',
-        'It can be copied infinitely'
+        'The ability to fly in the game',
+        'Unlimited Quest Coins',
+        'Voting rights in the DAO and proof he was an early supporter of the arcade',
+        'Free pizza forever'
       ],
       correctAnswer: 2,
-      explanation: 'Founder NFTs are special because they prove you were an early supporter and grant exclusive access, voting rights, and benefits that can never be replicated!',
-      hint: 'Early supporters are rewarded in Web3...'
+      explanation: 'Kai\'s Founder NFT proved he believed in the arcade from the beginning! It gave him voting power in the DAO to help decide the arcade\'s future, plus special perks only early supporters receive.',
+      hint: 'Founder NFTs are about being part of the community\'s history...'
     }
   },
   {
     id: 'blockchain-ownership-guru',
-    title: 'Blockchain Ownership Guru',
-    description: 'Master the concept of true digital ownership recorded on the blockchain',
+    title: 'True Ownership Champion',
+    description: 'Understand true digital ownership like Miko learned the hard way',
     bookNumber: 2,
     imageUrl: STORY_BADGE_IMAGES.blockchainOwnership,
     rarity: 'Epic',
     xpReward: 300,
     quiz: {
-      question: 'Why is ownership on a blockchain different from owning something in a regular game?',
+      question: 'What happened to Miko that taught him about blockchain ownership?',
       options: [
-        'Blockchain items are always more expensive',
-        'Your ownership is recorded permanently and cannot be taken away by anyone',
-        'Blockchain items look better',
-        'There is no real difference'
+        'He found a rare sword in a game',
+        'He lost years of gaming progress when a company shut down, but his blockchain items stayed safe in his wallet',
+        'He learned to code',
+        'He bought new games'
       ],
       correctAnswer: 1,
-      explanation: 'When you own something on a blockchain, your ownership is recorded forever in a way that no company, hacker, or anyone else can change or take away!',
-      hint: 'The blockchain is like an permanent, unchangeable record book...'
+      explanation: 'Poor Miko lost everything when his favorite game shut down! But the items he owned on the blockchain stayed safely in his wallet. This taught him that TRUE ownership means only YOU control your stuff.',
+      hint: 'Think about what happens when a game company closes...'
     }
   },
   {
     id: 'arcade-adventurer',
-    title: 'Arcade Adventurer',
-    description: "Join Zara's adventure through the magical arcade",
+    title: 'Arcade Explorer',
+    description: 'Join Zara on her first day discovering the magical Web3 arcade',
     bookNumber: 3,
     imageUrl: STORY_BADGE_IMAGES.arcadeAdventure,
     rarity: 'Rare',
     xpReward: 150,
     quiz: {
-      question: "In Zara's Arcade Adventure, what did she discover about Quest Coins?",
+      question: 'What was special about the Quest Coins Zara earned at the arcade?',
       options: [
-        'They are just regular game tokens',
-        'They can be traded for real rewards and represent real value',
-        'They can only be used once',
-        'They only work in one game'
+        'They were just regular game tokens that disappeared when she left',
+        'They were real tokens she could trade, save, or use across different games and even redeem for real rewards',
+        'They could only be used once',
+        'They were made of chocolate'
       ],
       correctAnswer: 1,
-      explanation: 'Quest Coins are utility tokens that can be earned through gameplay and exchanged for real rewards, merchandise, and special access - they have real value!',
-      hint: 'Quest Coins bridge gaming and real-world rewards...'
+      explanation: 'Zara was amazed! Unlike regular arcade tokens, Quest Coins were REAL digital assets. She could save them, trade them with friends, use them in any game at the arcade, or even redeem them for real-world merchandise!',
+      hint: 'Quest Coins work differently than tokens at a regular arcade...'
     }
   },
   {
     id: 'tokenomics-wizard',
-    title: 'Tokenomics Wizard',
-    description: 'Understand how Quest Coins tokenomics work',
+    title: 'Tokenomics Genius',
+    description: 'Learn the secrets of Quest Coins economics with the whole crew',
     bookNumber: 5,
     imageUrl: STORY_BADGE_IMAGES.questTokenomics,
     rarity: 'Mythic',
     xpReward: 750,
     quiz: {
-      question: 'What is "tokenomics" and why does it matter for Quest Coins?',
+      question: 'In Book 5, why was the Quest Coins team working so hard on "tokenomics"?',
       options: [
-        'It\'s just a fancy word for money',
-        'It\'s the study of how tokens are created, distributed, and maintain their value',
-        'It\'s a type of cryptocurrency exchange',
-        'It only matters for adults'
+        'They wanted to make a boring spreadsheet',
+        'They were creating rules to make sure Quest Coins stay valuable and useful - like how many exist and how players earn them',
+        'They were playing video games all day',
+        'They forgot what they were doing'
       ],
       correctAnswer: 1,
-      explanation: 'Tokenomics is the science of how tokens work - how many exist, how they\'re earned and spent, and what keeps them valuable. Good tokenomics means Quest Coins stay valuable and useful!',
-      hint: 'Think of it like the rules that govern a game\'s economy...'
+      explanation: 'The team knew that good tokenomics is like the rules of a game\'s economy. They carefully planned how Quest Coins would be earned, spent, and traded to make sure they\'d always be valuable and fun to collect!',
+      hint: 'Tokenomics is like designing the money rules for a game world...'
     }
   }
 ];
