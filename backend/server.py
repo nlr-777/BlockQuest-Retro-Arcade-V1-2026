@@ -154,6 +154,47 @@ class BadgeCreate(BaseModel):
     traits: Dict[str, Any] = {}
     icon: str
 
+# ================== AUTH MODELS ==================
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    username: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class GoogleAuthRequest(BaseModel):
+    id_token: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: Dict[str, Any]
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    username: str
+    created_at: str
+    avatar_id: Optional[str] = None
+    high_scores: Dict[str, int] = {}
+    total_xp: int = 0
+    level: int = 1
+    badges: List[Dict[str, Any]] = []
+    dao_voting_power: int = 0
+    unlocked_story_badges: List[str] = []
+
+class SyncProfileRequest(BaseModel):
+    high_scores: Dict[str, int] = {}
+    total_xp: int = 0
+    level: int = 1
+    badges: List[Dict[str, Any]] = []
+    avatar_id: Optional[str] = None
+    dao_voting_power: int = 0
+    unlocked_story_badges: List[str] = []
+
 # ================== ROUTES ==================
 
 @api_router.get("/")
