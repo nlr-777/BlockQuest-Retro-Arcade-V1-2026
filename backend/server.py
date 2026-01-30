@@ -385,13 +385,15 @@ async def register(user_data: UserCreate):
         "unlocked_story_badges": [],
     }
     
-    await db.users.insert_one(user)
+    # Create a copy for insertion (MongoDB will add _id to it)
+    user_for_db = user.copy()
+    await db.users.insert_one(user_for_db)
     
     # Create token
     access_token = create_access_token(data={"sub": user_id})
     
-    # Remove password hash and _id from response
-    user_response = {k: v for k, v in user.items() if k not in ["password_hash", "_id"]}
+    # Return original user dict without _id and password_hash
+    user_response = {k: v for k, v in user.items() if k != "password_hash"}
     
     return TokenResponse(access_token=access_token, user=user_response)
 
