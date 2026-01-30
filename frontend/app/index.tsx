@@ -318,6 +318,22 @@ export default function ArcadeHub() {
     return () => clearInterval(interval);
   }, []);
 
+  // Check auth status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await authService.initialize();
+        if (user) {
+          setIsLoggedIn(true);
+          setCloudUser(user);
+        }
+      } catch (error) {
+        // Silent fail - user just isn't logged in
+      }
+    };
+    checkAuth();
+  }, []);
+
   useEffect(() => {
     // Don't do anything until hydration is complete
     if (!isFullyHydrated) return;
