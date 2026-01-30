@@ -79,7 +79,7 @@ export const XPProgressBar: React.FC<XPProgressBarProps> = ({
     <Animated.View style={[styles.container, containerStyle]}>
       {/* Scanline effect */}
       {showFlicker && (
-        <Animated.View style={[styles.scanline, scanlineStyle]} style={{ pointerEvents: 'none' }} />
+        <Animated.View style={[styles.scanline, scanlineStyle, { pointerEvents: 'none' }]} />
       )}
 
       {/* Level Badge */}
