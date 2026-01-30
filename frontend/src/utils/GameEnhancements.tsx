@@ -893,7 +893,7 @@ export const DangerWarning: React.FC<DangerWarningProps> = ({ active }) => {
   }));
   
   return (
-    <Animated.View style={[dangerStyles.overlay, animatedStyle]} pointerEvents="none" />
+    <Animated.View style={[dangerStyles.overlay, animatedStyle, { pointerEvents: 'none' }]} />
   );
 };
 
