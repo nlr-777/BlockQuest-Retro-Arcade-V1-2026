@@ -627,7 +627,7 @@ export const ParticleBurst: React.FC<ParticleBurstProps> = ({
   }, [trigger, count]);
   
   return (
-    <View style={particleStyles.container} pointerEvents="none">
+    <View style={[particleStyles.container, { pointerEvents: 'none' }]}>
       {particles.map(p => (
         <Particle
           key={p.id}
