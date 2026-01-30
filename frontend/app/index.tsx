@@ -788,16 +788,45 @@ const styles = StyleSheet.create({
   },
   
   // Player Bar
+  playerBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 12,
+    marginTop: 8,
+    gap: 8,
+  },
   playerBar: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: CRT_COLORS.bgMedium,
-    marginHorizontal: 12,
-    marginTop: 8,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.primary + '40',
     padding: 8,
+  },
+  cloudSyncBtn: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentCyan + '40',
+    padding: 8,
+    alignItems: 'center',
+    minWidth: 60,
+  },
+  cloudSyncBtnLoggedIn: {
+    borderColor: '#00FF88' + '60',
+    backgroundColor: '#00FF88' + '15',
+  },
+  cloudSyncIcon: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  cloudSyncText: {
+    fontSize: 8,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
   },
   avatar: {
     width: 32,
