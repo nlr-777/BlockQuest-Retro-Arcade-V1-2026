@@ -350,6 +350,195 @@ async def get_player_badges(player_id: str):
     
     return player.get('badges', [])
 
+# ================== AUTH ROUTES ==================
+
+@api_router.post("/auth/register", response_model=TokenResponse)
+async def register(user_data: UserCreate):
+    """Register a new user with email and password"""
+    # Check if email exists
+    existing_email = await db.users.find_one({"email": user_data.email.lower()})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Check if username exists
+    existing_username = await db.users.find_one({"username": user_data.username})
+    if existing_username:
+        raise HTTPException(status_code=400, detail="Username already taken")
+    
+    # Create user
+    user_id = str(uuid.uuid4())
+    hashed_password = get_password_hash(user_data.password)
+    
+    user = {
+        "id": user_id,
+        "email": user_data.email.lower(),
+        "username": user_data.username,
+        "password_hash": hashed_password,
+        "created_at": datetime.utcnow().isoformat(),
+        "auth_provider": "email",
+        "avatar_id": None,
+        "high_scores": {},
+        "total_xp": 0,
+        "level": 1,
+        "badges": [],
+        "dao_voting_power": 0,
+        "unlocked_story_badges": [],
+    }
+    
+    await db.users.insert_one(user)
+    
+    # Create token
+    access_token = create_access_token(data={"sub": user_id})
+    
+    # Remove password hash from response
+    user_response = {k: v for k, v in user.items() if k != "password_hash"}
+    
+    return TokenResponse(access_token=access_token, user=user_response)
+
+@api_router.post("/auth/login", response_model=TokenResponse)
+async def login(credentials: UserLogin):
+    """Login with email and password"""
+    user = await db.users.find_one({"email": credentials.email.lower()})
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    if not user.get("password_hash"):
+        raise HTTPException(status_code=401, detail="Please use Google Sign-In for this account")
+    
+    if not verify_password(credentials.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Create token
+    access_token = create_access_token(data={"sub": user["id"]})
+    
+    # Remove password hash from response
+    user_response = {k: v for k, v in user.items() if k not in ["password_hash", "_id"]}
+    
+    return TokenResponse(access_token=access_token, user=user_response)
+
+@api_router.post("/auth/google", response_model=TokenResponse)
+async def google_auth(request: GoogleAuthRequest):
+    """Authenticate with Google ID token"""
+    try:
+        # Verify the Google ID token
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"https://oauth2.googleapis.com/tokeninfo?id_token={request.id_token}"
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid Google token")
+            
+            google_user = response.json()
+            email = google_user.get("email")
+            name = google_user.get("name", email.split("@")[0])
+            
+            if not email:
+                raise HTTPException(status_code=401, detail="Email not provided by Google")
+        
+        # Check if user exists
+        existing_user = await db.users.find_one({"email": email.lower()})
+        
+        if existing_user:
+            # Update last login
+            await db.users.update_one(
+                {"id": existing_user["id"]},
+                {"$set": {"last_login": datetime.utcnow().isoformat()}}
+            )
+            user = existing_user
+        else:
+            # Create new user
+            user_id = str(uuid.uuid4())
+            user = {
+                "id": user_id,
+                "email": email.lower(),
+                "username": name,
+                "password_hash": None,  # No password for Google users
+                "created_at": datetime.utcnow().isoformat(),
+                "auth_provider": "google",
+                "google_id": google_user.get("sub"),
+                "avatar_id": None,
+                "high_scores": {},
+                "total_xp": 0,
+                "level": 1,
+                "badges": [],
+                "dao_voting_power": 0,
+                "unlocked_story_badges": [],
+            }
+            await db.users.insert_one(user)
+        
+        # Create token
+        access_token = create_access_token(data={"sub": user["id"]})
+        
+        # Remove sensitive data from response
+        user_response = {k: v for k, v in user.items() if k not in ["password_hash", "_id"]}
+        
+        return TokenResponse(access_token=access_token, user=user_response)
+        
+    except httpx.RequestError:
+        raise HTTPException(status_code=500, detail="Failed to verify Google token")
+
+@api_router.get("/auth/me", response_model=UserResponse)
+async def get_current_user_profile(user = Depends(get_current_user)):
+    """Get current logged-in user's profile"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    return UserResponse(
+        id=user["id"],
+        email=user["email"],
+        username=user["username"],
+        created_at=user.get("created_at", ""),
+        avatar_id=user.get("avatar_id"),
+        high_scores=user.get("high_scores", {}),
+        total_xp=user.get("total_xp", 0),
+        level=user.get("level", 1),
+        badges=user.get("badges", []),
+        dao_voting_power=user.get("dao_voting_power", 0),
+        unlocked_story_badges=user.get("unlocked_story_badges", [])
+    )
+
+@api_router.put("/auth/sync", response_model=UserResponse)
+async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_current_user)):
+    """Sync local profile data to cloud"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Update user profile with synced data
+    update_data = {
+        "high_scores": profile_data.high_scores,
+        "total_xp": profile_data.total_xp,
+        "level": profile_data.level,
+        "badges": profile_data.badges,
+        "avatar_id": profile_data.avatar_id,
+        "dao_voting_power": profile_data.dao_voting_power,
+        "unlocked_story_badges": profile_data.unlocked_story_badges,
+        "last_sync": datetime.utcnow().isoformat()
+    }
+    
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": update_data}
+    )
+    
+    # Get updated user
+    updated_user = await db.users.find_one({"id": user["id"]})
+    
+    return UserResponse(
+        id=updated_user["id"],
+        email=updated_user["email"],
+        username=updated_user["username"],
+        created_at=updated_user.get("created_at", ""),
+        avatar_id=updated_user.get("avatar_id"),
+        high_scores=updated_user.get("high_scores", {}),
+        total_xp=updated_user.get("total_xp", 0),
+        level=updated_user.get("level", 1),
+        badges=updated_user.get("badges", []),
+        dao_voting_power=updated_user.get("dao_voting_power", 0),
+        unlocked_story_badges=updated_user.get("unlocked_story_badges", [])
+    )
+
 # ================== GAME STATS ROUTES ==================
 
 @api_router.get("/stats/games")
