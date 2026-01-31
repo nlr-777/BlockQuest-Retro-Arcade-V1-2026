@@ -691,9 +691,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: CRT_COLORS.primaryGlow,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
+    textShadow: `0 0 15px ${CRT_COLORS.primaryGlow}`,
     letterSpacing: 3,
   },
   marqueeSubtitle: {
