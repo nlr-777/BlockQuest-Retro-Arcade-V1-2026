@@ -434,7 +434,6 @@ export const GlowCard: React.FC<{
   }, [intensity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glowOpacity.value,
     borderColor: `rgba(${parseInt(color.slice(1,3), 16)}, ${parseInt(color.slice(3,5), 16)}, ${parseInt(color.slice(5,7), 16)}, ${borderGlow.value})`,
   }));
 
@@ -443,8 +442,8 @@ export const GlowCard: React.FC<{
       style={[
         styles.glowCard,
         {
-          shadowColor: color,
           borderColor: color,
+          boxShadow: `0 0 15px ${color}80`,
         },
         animatedStyle,
         style,
