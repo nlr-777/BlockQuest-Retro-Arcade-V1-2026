@@ -570,7 +570,9 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-    flexGrow: 1,
+  },
+  contentWrapper: {
+    // This wrapper ensures all content renders
   },
   sectionHeader: {
     marginTop: 20,
