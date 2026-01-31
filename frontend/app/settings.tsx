@@ -376,7 +376,11 @@ export default function SettingsScreen() {
           <View style={styles.placeholder} />
         </View>
 
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           
           {/* Account Section */}
           <View style={styles.sectionHeader}>
