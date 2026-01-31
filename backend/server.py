@@ -194,6 +194,12 @@ class SyncProfileRequest(BaseModel):
     avatar_id: Optional[str] = None
     dao_voting_power: int = 0
     unlocked_story_badges: List[str] = []
+    # New fields for full sync
+    quest_coins: int = 0
+    knowledge_tokens: int = 0
+    completed_story_episodes: List[str] = []
+    games_played: int = 0
+    total_score: int = 0
 
 # ================== ROUTES ==================
 
