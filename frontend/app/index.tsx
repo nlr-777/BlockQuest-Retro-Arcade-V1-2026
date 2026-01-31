@@ -512,7 +512,7 @@ export default function ArcadeHub() {
       <PixelRain count={15} speed={4000} />
       <CRTScanlines opacity={0.06} />
       
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header Marquee - CRT Terminal Style */}
         <CRTGlowBorder color={CRT_COLORS.primary} hexStyle style={styles.marquee}>
           <Animated.Text style={[styles.marqueeTitle, glowStyle]}>

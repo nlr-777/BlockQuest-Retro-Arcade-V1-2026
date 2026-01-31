@@ -10,7 +10,7 @@ import { CRT_COLORS } from '../src/constants/crtTheme';
 
 export default function StoryPage() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView}>
         {/* Story Badges - Book Reader Achievements */}
         <StoryBadgesSection />

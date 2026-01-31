@@ -65,7 +65,7 @@ export default function BadgesScreen() {
   const badges = profile?.badges || [];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <VFXLayer type="ipfs-orbit" intensity={0.5} />
       <VFXLayer type="crt-breathe" intensity={0.2} />
 

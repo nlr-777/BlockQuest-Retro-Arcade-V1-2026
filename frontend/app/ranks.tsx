@@ -29,7 +29,7 @@ export default function RanksScreen() {
       <PixelRain count={10} speed={5000} />
       <CRTScanlines opacity={0.06} />
       
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>

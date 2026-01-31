@@ -15,7 +15,7 @@ export default function DailyQuestsPage() {
       <PixelRain count={10} speed={5000} />
       <CRTScanlines opacity={0.06} />
       
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         <DailyQuests onClose={() => router.back()} />
       </SafeAreaView>
     </View>

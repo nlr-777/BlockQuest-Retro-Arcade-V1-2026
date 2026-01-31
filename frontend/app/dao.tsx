@@ -19,7 +19,7 @@ export default function DAOScreen() {
   }, [router]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <PixelRain count={10} speed={5000} />
       <CRTScanlines opacity={0.06} />
       

@@ -383,7 +383,7 @@ export default function ProgressDashboard() {
       <PixelRain count={8} speed={6000} />
       <CRTScanlines opacity={0.04} />
       
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>

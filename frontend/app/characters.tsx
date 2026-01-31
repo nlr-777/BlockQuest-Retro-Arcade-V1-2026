@@ -319,7 +319,7 @@ export default function CharacterProfilePage() {
   if (!viewingCharacter) return null;
   
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 

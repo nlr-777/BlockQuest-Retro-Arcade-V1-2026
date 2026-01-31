@@ -339,7 +339,7 @@ export default function TutorialScreen() {
       <CRTScanlines opacity={0.06} />
       
       <ScreenShake active={showShake} intensity={15}>
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           {/* Header HUD */}
           <View style={styles.header}>
             <CRTGlowBorder color={CRT_COLORS.accentCyan} style={styles.hudBox}>

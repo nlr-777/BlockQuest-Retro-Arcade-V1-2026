@@ -388,7 +388,7 @@ export default function SettingsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {settings.particles && <PixelRain count={10} speed={5000} />}
       {settings.scanlines && <CRTScanlines opacity={0.06} />}
       

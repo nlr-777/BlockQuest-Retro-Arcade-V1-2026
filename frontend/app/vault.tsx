@@ -307,7 +307,7 @@ export default function VaultFlexGallery() {
       <PixelRain count={12} speed={5000} />
       <CRTScanlines opacity={0.06} />
 
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>

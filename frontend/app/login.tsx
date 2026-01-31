@@ -160,7 +160,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
       <VFXLayer type="pixel-chain-rain" intensity={0.3} />
       

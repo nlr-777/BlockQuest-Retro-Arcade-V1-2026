@@ -89,7 +89,7 @@ export default function LeaderboardScreen() {
     .sort((a, b) => b[1].weeklyXP - a[1].weeklyXP);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <VFXLayer type="holographic-scan" intensity={0.3} />
       <VFXLayer type="crt-breathe" intensity={0.2} />
 

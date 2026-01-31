@@ -151,7 +151,7 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <PixelRain count={15} speed={5000} />
       <CRTScanlines opacity={0.05} />
 
