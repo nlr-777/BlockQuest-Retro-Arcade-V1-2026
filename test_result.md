@@ -128,7 +128,7 @@ frontend:
 
   - task: "Main Hub Screen - Game Grid Display (12 playable)"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/app/index.tsx"
     stuck_count: 2
     priority: "high"
@@ -143,6 +143,9 @@ frontend:
         - working: false
         - agent: "testing"
         - comment: "❌ CRITICAL: Home screen with game grid not accessible through normal onboarding flow. After guest setup, app redirects to welcome instead of showing home screen with games. However, games work correctly when accessed via direct navigation."
+        - working: true
+        - agent: "testing"
+        - comment: "✅ GAME GRID WORKING: After onboarding fix, game grid is now accessible. Found multiple playable games (▶ indicators) and coming soon games (SOON indicators). Game cards are clickable and navigate to individual game screens properly. All games load correctly on mobile (390x844)."
 
   - task: "Game Instructions Screen"
     implemented: true
