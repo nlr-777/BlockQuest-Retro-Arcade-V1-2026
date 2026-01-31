@@ -846,9 +846,7 @@ const levelUpStyles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#00FF41',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: '#00FF41',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
+    textShadow: '0 0 20px #00FF41',
   },
   upText: {
     fontSize: 24,
