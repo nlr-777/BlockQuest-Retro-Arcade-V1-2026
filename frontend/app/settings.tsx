@@ -476,6 +476,13 @@ export default function SettingsScreen() {
                     style={{ flex: 1 }}
                   />
                 </View>
+                <PixelButton
+                  title="🚪 SIGN OUT & START FRESH"
+                  onPress={handleFullLogout}
+                  color="#666"
+                  size="sm"
+                  style={{ marginTop: 8 }}
+                />
               </View>
             ) : (
               <View style={styles.accountContent}>
@@ -490,6 +497,13 @@ export default function SettingsScreen() {
                   title="🔐 CREATE ACCOUNT / SIGN IN"
                   onPress={handleGoToLogin}
                   color={COLORS.chainGold}
+                  size="sm"
+                  style={{ marginTop: 8 }}
+                />
+                <PixelButton
+                  title="🚪 START FRESH (NEW CHARACTER)"
+                  onPress={handleFullLogout}
+                  color="#666"
                   size="sm"
                   style={{ marginTop: 8 }}
                 />
