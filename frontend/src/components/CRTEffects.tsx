@@ -662,8 +662,7 @@ const styles = StyleSheet.create({
     backgroundColor: CRT_COLORS.bgDark,
     borderWidth: 3,
     borderRadius: 8,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 15,
+    // boxShadow set dynamically via animatedStyle
     elevation: 8,
   },
   legendaryRing: {
