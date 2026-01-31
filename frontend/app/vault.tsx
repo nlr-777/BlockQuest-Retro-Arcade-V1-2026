@@ -36,6 +36,7 @@ import { useGameStore, Badge } from '../src/store/gameStore';
 import { GAMES } from '../src/constants/games';
 import { getBadgeImage } from '../src/constants/badgeImages';
 import { RARITY_COLORS } from '../src/constants/badges';
+import { STORY_BADGES, StoryBadge, RARITY_COLORS as STORY_RARITY_COLORS } from '../src/constants/storyBadges';
 import { loyaltyService } from '../src/services/LoyaltyService';
 import { getRankByXP, getRankProgress } from '../src/constants/ranks';
 import { PowerUpBar } from '../src/components/PowerUpBar';
