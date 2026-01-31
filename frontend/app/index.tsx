@@ -467,6 +467,7 @@ export default function ArcadeHub() {
     return (
       <Animated.View
         key={game.id}
+        style={styles.gameCardWrapper}
         entering={ZoomIn.delay(index * 50).springify()}
       >
         <TouchableOpacity
