@@ -695,7 +695,7 @@ const styles = StyleSheet.create({
   gameArea: { alignSelf: 'center', backgroundColor: '#1a1a2e', borderWidth: 3, borderColor: COLORS.chainGold, borderRadius: 8, marginTop: 16, overflow: 'hidden', position: 'relative' },
   brick: { position: 'absolute', borderRadius: 4, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
   brickText: { fontSize: 8, fontWeight: 'bold', color: '#fff', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
-  ball: { position: 'absolute', width: BALL_SIZE, height: BALL_SIZE, borderRadius: BALL_SIZE / 2, backgroundColor: '#fff', shadowColor: '#fff', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.8, shadowRadius: 6 },
+  ball: { position: 'absolute', width: BALL_SIZE, height: BALL_SIZE, borderRadius: BALL_SIZE / 2, backgroundColor: '#fff', boxShadow: '0 0 6px rgba(255, 255, 255, 0.8)' },
   paddle: { position: 'absolute', height: PADDLE_HEIGHT, backgroundColor: COLORS.neonCyan, borderRadius: 6 },
   powerUp: { position: 'absolute', width: 24, height: 24, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   powerUpIcon: { fontSize: 12 },
