@@ -478,6 +478,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: CRT_COLORS.primary,
   },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
   placeholder: {
     width: 40,
   },
