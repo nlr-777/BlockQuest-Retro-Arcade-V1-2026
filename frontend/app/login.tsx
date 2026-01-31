@@ -41,6 +41,7 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Handle mode from URL params
   useEffect(() => {
