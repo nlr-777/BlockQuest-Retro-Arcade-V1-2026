@@ -1,7 +1,7 @@
 // BlockQuest Official - CRT Visual Effects
 // Ultimate retro terminal aesthetic with 16-bit pixel art
-// Now respects accessibility settings (reduceMotion)
-import React, { useEffect, useCallback, useState } from 'react';
+// Optimized for performance - minimal re-renders
+import React, { useEffect, memo, useMemo } from 'react';
 import { View, StyleSheet, Dimensions, Platform, Text } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -19,14 +19,17 @@ import { useAccessibilityStore } from '../utils/accessibility';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+// Selector for reduce motion - prevents unnecessary re-renders
+const selectReduceMotion = (state: { reduceMotion: boolean }) => state.reduceMotion;
+
 // ============================================
 // CRT SCANLINES - Classic monitor effect
 // ============================================
-export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = ({ 
+export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = memo(({ 
   opacity = CRT_CONFIG.scanlineOpacity,
   animated = true 
 }) => {
-  const { reduceMotion } = useAccessibilityStore();
+  const reduceMotion = useAccessibilityStore(selectReduceMotion);
   const scrollY = useSharedValue(0);
   
   // If reduce motion is enabled, don't render scanlines at all
@@ -35,36 +38,40 @@ export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = 
   }
   
   useEffect(() => {
-    if (animated && !reduceMotion) {
+    if (animated) {
       scrollY.value = withRepeat(
         withTiming(4, { duration: CRT_CONFIG.scanlineSpeed, easing: Easing.linear }),
         -1,
         false
       );
     }
-  }, [animated, reduceMotion]);
+  }, [animated]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: scrollY.value }],
   }));
 
-  const lines = [];
-  for (let i = 0; i < Math.ceil(SCREEN_HEIGHT / 2) + 4; i++) {
-    lines.push(
-      <View
-        key={i}
-        style={{
-          position: 'absolute',
-          top: i * 2,
-          left: 0,
-          right: 0,
-          height: 1,
-          backgroundColor: '#000',
-          opacity: opacity,
-        }}
-      />
-    );
-  }
+  // Memoize scanlines to prevent recreation
+  const lines = useMemo(() => {
+    const lineArray = [];
+    for (let i = 0; i < Math.ceil(SCREEN_HEIGHT / 2) + 4; i++) {
+      lineArray.push(
+        <View
+          key={i}
+          style={{
+            position: 'absolute',
+            top: i * 2,
+            left: 0,
+            right: 0,
+            height: 1,
+            backgroundColor: '#000',
+            opacity: opacity,
+          }}
+        />
+      );
+    }
+    return lineArray;
+  }, [opacity]);
   
   return (
     <Animated.View style={[StyleSheet.absoluteFill, animatedStyle, { pointerEvents: 'none' }]}>
