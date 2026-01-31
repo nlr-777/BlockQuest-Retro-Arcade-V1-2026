@@ -38,6 +38,7 @@ type AuthType = 'guest' | 'google' | 'email';
 export default function WelcomeScreen() {
   const router = useRouter();
   const { profile, initProfile } = useGameStore();
+  const isHydrated = useGameStore((state) => state._hasHydrated);
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
   const [screen, setScreen] = useState<Screen>('welcome');
@@ -51,8 +52,10 @@ export default function WelcomeScreen() {
   const [pendingAuthUser, setPendingAuthUser] = useState<any>(null);
 
   useEffect(() => {
+    // Wait for store hydration before checking session
+    if (!isHydrated) return;
     checkExistingSession();
-  }, []);
+  }, [isHydrated]);
 
   // Check if user already has a session or profile
   const checkExistingSession = async () => {
