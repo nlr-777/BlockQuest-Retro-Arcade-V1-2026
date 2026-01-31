@@ -594,6 +594,8 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     // This wrapper ensures all content renders
+    backgroundColor: CRT_COLORS.bgDark,
+    minHeight: '100%',
   },
   sectionHeader: {
     marginTop: 20,
