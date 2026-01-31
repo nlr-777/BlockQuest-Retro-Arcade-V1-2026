@@ -40,6 +40,8 @@ export interface PlayerProfile {
   questCoins: number;
   // DAO voting history
   daoVotes: DaoVote[];
+  // Story Mode progress
+  completedStoryEpisodes: string[];
 }
 
 export interface GameScore {
