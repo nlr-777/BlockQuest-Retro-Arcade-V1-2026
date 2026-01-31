@@ -57,10 +57,8 @@ export const RainbowPulseBorder: React.FC<{
     return {
       borderColor,
       transform: [{ scale: pulseScale.value }],
-      shadowColor: borderColor,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.8 * intensity,
-      shadowRadius: 15,
+      // Use boxShadow for web compatibility
+      boxShadow: `0 0 15px ${borderColor}`,
     };
   });
 
