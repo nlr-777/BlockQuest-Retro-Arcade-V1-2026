@@ -274,6 +274,9 @@ export const useGameStore = create<GameState>()(
     // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
     
+    // Trigger cloud sync for logged-in users
+    triggerSync();
+    
     return badge;
   },
 
@@ -299,6 +302,9 @@ export const useGameStore = create<GameState>()(
     
     // Update state - persist middleware will auto-save
     set({ profile: updatedProfile });
+    
+    // Trigger cloud sync for logged-in users
+    triggerSync();
   },
   
   addVotingPower: (amount) => {
