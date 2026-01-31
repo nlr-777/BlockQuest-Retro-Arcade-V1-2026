@@ -1400,6 +1400,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 18,
   },
+  factionLinkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentMagenta + '50',
+  },
+  factionLinkIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  factionLinkInfo: {
+    flex: 1,
+  },
+  factionLinkTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.accentMagenta,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  factionLinkText: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+  },
+  factionLinkArrow: {
+    fontSize: 24,
+    color: CRT_COLORS.accentMagenta,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
 
   // NFT Learning Section
   nftLearnSection: {
