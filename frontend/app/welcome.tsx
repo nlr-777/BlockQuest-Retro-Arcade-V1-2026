@@ -226,19 +226,29 @@ export default function WelcomeScreen() {
 
                 <View style={styles.divider}>
                   <View style={styles.dividerLine} />
-                  <Text style={styles.dividerText}>OR</Text>
+                  <Text style={styles.dividerText}>OR SAVE YOUR PROGRESS</Text>
                   <View style={styles.dividerLine} />
                 </View>
 
-                <PixelButton
-                  title="📧 SIGN UP & SAVE PROGRESS"
-                  onPress={handleSignUpWithEmail}
-                  color={CRT_COLORS.bgMedium}
-                  textColor={CRT_COLORS.textBright}
-                  size="md"
-                  disabled={!isFormValid}
-                  style={styles.secondaryButton}
-                />
+                <View style={styles.authButtonsRow}>
+                  <PixelButton
+                    title="📧 SIGN UP"
+                    onPress={handleSignUpWithEmail}
+                    color={CRT_COLORS.bgMedium}
+                    textColor={CRT_COLORS.textBright}
+                    size="md"
+                    disabled={!isFormValid}
+                    style={styles.authButton}
+                  />
+                  <PixelButton
+                    title="🔑 SIGN IN"
+                    onPress={() => router.push('/login')}
+                    color={CRT_COLORS.bgMedium}
+                    textColor={CRT_COLORS.textBright}
+                    size="md"
+                    style={styles.authButton}
+                  />
+                </View>
               </>
             )}
           </Animated.View>
@@ -248,20 +258,6 @@ export default function WelcomeScreen() {
             <Text style={styles.footerText}>
               🎮 KID SAFE • NO REAL CRYPTO • AGES 5+ 🎮
             </Text>
-            <View style={styles.featureRow}>
-              <View style={styles.featureItem}>
-                <Text style={styles.featureIcon}>🏆</Text>
-                <Text style={styles.featureLabel}>15 Games</Text>
-              </View>
-              <View style={styles.featureItem}>
-                <Text style={styles.featureIcon}>📚</Text>
-                <Text style={styles.featureLabel}>Learn Web3</Text>
-              </View>
-              <View style={styles.featureItem}>
-                <Text style={styles.featureIcon}>⭐</Text>
-                <Text style={styles.featureLabel}>Earn Badges</Text>
-              </View>
-            </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
