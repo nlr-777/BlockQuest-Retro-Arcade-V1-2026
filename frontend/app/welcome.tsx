@@ -1,5 +1,6 @@
 // BlockQuest Official - Welcome Screen
 // Single screen: Character setup + Login/Guest choice combined
+// Includes Chain Builder mini-game teaser!
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -21,6 +22,7 @@ import { CRTScanlines, PixelRain } from '../src/components/CRTEffects';
 import { PixelText } from '../src/components/PixelText';
 import { PixelButton } from '../src/components/PixelButton';
 import { CharacterSelector } from '../src/components/CharacterSelector';
+import { ChainBuilderMini, ChainBuilderTeaser } from '../src/components/ChainBuilderMini';
 import { useGameStore } from '../src/store/gameStore';
 import { useCharacterStore } from '../src/store/characterStore';
 import { authService } from '../src/services/AuthService';
