@@ -173,7 +173,7 @@ const DialogueBubble: React.FC<{
           TAP TO CONTINUE ▶
         </Animated.Text>
       )}
-    </TouchuableOpacity>
+    </TouchableOpacity>
   );
 };
 
