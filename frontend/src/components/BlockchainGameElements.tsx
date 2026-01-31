@@ -621,8 +621,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
+    // boxShadow set dynamically via glowStyle
     elevation: 5,
   },
   tokenInner: {
@@ -642,9 +641,7 @@ const styles = StyleSheet.create({
   nftGem: {
     position: 'absolute',
     transform: [{ rotate: '45deg' }],
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 10,
-    shadowOpacity: 0.8,
+    // boxShadow set dynamically via inline style
     elevation: 5,
   },
   gemFacet: {
