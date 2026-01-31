@@ -683,8 +683,8 @@ export default function ArcadeHub() {
           </ScrollView>
         </CRTGlowBorder>
 
-        {/* Bottom Nav */}
-        <BottomNavBar currentRoute="/" />
+        {/* Shared Bottom Navigation */}
+        <BottomNavBar activeTab="games" />
       </SafeAreaView>
 
       {/* Loyalty Rewards Popup */}
