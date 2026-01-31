@@ -729,10 +729,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fallingBlock: {
-    shadowColor: CRT_COLORS.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    boxShadow: `0 0 10px ${CRT_COLORS.primary}CC`,
   },
   blockIcon: {
     fontSize: 18,
