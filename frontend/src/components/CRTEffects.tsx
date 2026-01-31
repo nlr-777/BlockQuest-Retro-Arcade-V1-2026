@@ -589,9 +589,7 @@ export const CRTFlickerText: React.FC<{
         {
           color,
           fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-          textShadowColor: color,
-          textShadowOffset: { width: 0, height: 0 },
-          textShadowRadius: 10,
+          textShadow: `0 0 10px ${color}`,
         },
         style,
         animatedStyle,
@@ -607,8 +605,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     backgroundColor: CRT_COLORS.bgPanel,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 15,
+    // Note: boxShadow color set dynamically via inline style
     elevation: 10,
   },
   hexBorder: {
