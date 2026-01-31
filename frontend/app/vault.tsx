@@ -50,6 +50,14 @@ import {
   HexBadge,
   ConfettiBurst,
 } from '../src/components/CRTEffects';
+import {
+  FloatingSparkles,
+  GlowCard,
+  HolographicShine,
+  AnimatedNumber,
+  RainbowPulseBorder,
+  MegaConfetti,
+} from '../src/components/ChaosEffects';
 import audioManager from '../src/utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
