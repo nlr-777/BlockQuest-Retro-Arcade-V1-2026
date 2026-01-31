@@ -3,6 +3,26 @@ import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Sync service will be imported dynamically to avoid circular deps
+let syncService: any = null;
+const getSyncService = async () => {
+  if (!syncService) {
+    const module = await import('../services/SyncService');
+    syncService = module.syncService;
+  }
+  return syncService;
+};
+
+// Trigger background sync (debounced)
+const triggerSync = async () => {
+  try {
+    const sync = await getSyncService();
+    sync?.scheduleSyncDebounced();
+  } catch (e) {
+    console.log('Sync not available:', e);
+  }
+};
+
 export interface Badge {
   id: string;
   name: string;
