@@ -396,7 +396,9 @@ const styles = StyleSheet.create({
   
   // Footer
   footer: {
-    marginTop: 24,
+    marginTop: 'auto',
+    paddingTop: 16,
+    paddingBottom: 20,
     alignItems: 'center',
   },
   footerText: {
@@ -404,20 +406,8 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
-    marginBottom: 16,
   },
-  featureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  featureItem: {
-    alignItems: 'center',
-  },
-  featureIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
+});
   featureLabel: {
     fontSize: 9,
     color: CRT_COLORS.textDim,
