@@ -526,8 +526,7 @@ export default function SettingsScreen() {
             </Text>
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </View>
+    </SafeAreaView>
   );
 }
 
