@@ -561,23 +561,15 @@ test_plan:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.1"
-  test_sequence: 2
+  version: "1.2"
+  test_sequence: 3
 
 test_plan:
   current_focus:
-    - "Block Muncher Game - Navigation & Loading"
-    - "Block Muncher Game - Gameplay Functionality"
-    - "Token Tumble Game - Navigation & Loading"
-    - "Token Tumble Game - Gameplay Functionality"
-    - "Chain Invaders Game - Navigation & Loading"
-    - "Chain Invaders Game - Gameplay Functionality"
-    - "Hash Hopper Game - Navigation & Loading"
-    - "Hash Hopper Game - Gameplay Functionality"
-    - "Seed Sprint Game - Navigation & Loading"
-    - "Seed Sprint Game - Gameplay Functionality"
-    - "Crypto Climber Game - Navigation & Loading"
-    - "Crypto Climber Game - Gameplay Functionality"
+    - "User Registration API"
+    - "User Login API"
+    - "Profile Sync API"
+    - "User Profile Retrieval API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
