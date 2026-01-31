@@ -87,6 +87,12 @@ interface GameState {
   addBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
   logout: () => Promise<void>;
   resetAllData: () => Promise<void>;
+  // New currency actions
+  addKnowledgeTokens: (amount: number) => void;
+  addQuestCoins: (amount: number) => void;
+  spendQuestCoins: (amount: number) => boolean;
+  // DAO voting
+  castDaoVote: (proposalId: string, proposalTitle: string, vote: 'yes' | 'no' | 'abstain') => void;
 }
 
 // Helper to check if we're on the client side
