@@ -30,7 +30,7 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { profile, hasSeenOnboarding, setHasSeenOnboarding } = useGameStore();
+  const { profile } = useGameStore();
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
 
