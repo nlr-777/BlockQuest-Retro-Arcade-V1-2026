@@ -509,6 +509,67 @@ export default function VaultFlexGallery() {
             </View>
           )}
 
+          {/* Story Badges Tab */}
+          {activeTab === 'story' && (
+            <View style={styles.storySection}>
+              <Text style={styles.storySectionTitle}>
+                📚 STORY BADGES
+              </Text>
+              <Text style={styles.storySectionSubtitle}>
+                Earn badges by answering Web3 Chaos Chronicles quiz questions!
+              </Text>
+
+              {/* Unlocked Story Badges */}
+              {unlockedStoryBadges.length > 0 && (
+                <View style={styles.storyBadgesSection}>
+                  <Text style={styles.storyBadgesSectionTitle}>✅ UNLOCKED ({unlockedStoryBadges.length}/{STORY_BADGES.length})</Text>
+                  <View style={styles.storyBadgesGrid}>
+                    {unlockedStoryBadges.map((badge) => (
+                      <View key={badge.id} style={[styles.storyBadgeCard, { borderColor: STORY_RARITY_COLORS[badge.rarity] }]}>
+                        <Image source={{ uri: badge.imageUrl }} style={styles.storyBadgeImage} resizeMode="contain" />
+                        <View style={[styles.storyBadgeRarity, { backgroundColor: STORY_RARITY_COLORS[badge.rarity] }]}>
+                          <Text style={styles.storyBadgeRarityText}>{badge.rarity}</Text>
+                        </View>
+                        <Text style={styles.storyBadgeTitle}>{badge.title}</Text>
+                        <Text style={styles.storyBadgeBook}>Book {badge.bookNumber}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Locked Story Badges */}
+              {lockedStoryBadges.length > 0 && (
+                <View style={styles.storyBadgesSection}>
+                  <Text style={styles.storyBadgesSectionTitle}>🔒 LOCKED ({lockedStoryBadges.length} remaining)</Text>
+                  <View style={styles.storyBadgesGrid}>
+                    {lockedStoryBadges.map((badge) => (
+                      <View key={badge.id} style={[styles.storyBadgeCard, styles.storyBadgeCardLocked]}>
+                        <View style={styles.storyBadgeImageLocked}>
+                          <Text style={styles.storyBadgeLockIcon}>🔒</Text>
+                        </View>
+                        <Text style={styles.storyBadgeTitleLocked}>{badge.title}</Text>
+                        <Text style={styles.storyBadgeBook}>Book {badge.bookNumber}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* How to unlock hint */}
+              <View style={styles.storyHint}>
+                <Text style={styles.storyHintIcon}>💡</Text>
+                <View style={styles.storyHintContent}>
+                  <Text style={styles.storyHintTitle}>HOW TO UNLOCK</Text>
+                  <Text style={styles.storyHintText}>
+                    Visit the STORY page to take quizzes and earn these special badges! 
+                    Each badge teaches you something cool about Web3.
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+
           {/* Stats Tab */}
           {activeTab === 'stats' && (
             <View style={styles.statsSection}>
