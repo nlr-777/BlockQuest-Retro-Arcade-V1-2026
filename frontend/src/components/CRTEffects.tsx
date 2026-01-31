@@ -129,31 +129,34 @@ export const CRTGlowBorder: React.FC<{
       {children}
     </Animated.View>
   );
-};
+});
 
 // ============================================
 // PIXEL RAIN - Matrix-style falling characters
 // ============================================
-export const PixelRain: React.FC<{ count?: number; speed?: number }> = ({ 
+export const PixelRain: React.FC<{ count?: number; speed?: number }> = memo(({ 
   count = 20,
   speed = 3000 
 }) => {
-  const { reduceMotion } = useAccessibilityStore();
+  const reduceMotion = useAccessibilityStore(selectReduceMotion);
   
   // If reduce motion is enabled, don't render pixel rain
   if (reduceMotion) {
     return null;
   }
   
-  const chars = '⬡◆▲▼◀▶★●○□■♦♣♠♥₿Ξ';
-  const particles = Array(count).fill(0).map((_, i) => ({
-    id: i,
-    x: Math.random() * SCREEN_WIDTH,
-    char: chars[Math.floor(Math.random() * chars.length)],
-    size: Math.random() * 8 + 10,
-    delay: Math.random() * speed,
-    duration: speed + Math.random() * 2000,
-  }));
+  // Memoize particles to prevent recreation on every render
+  const particles = useMemo(() => {
+    const chars = '⬡◆▲▼◀▶★●○□■♦♣♠♥₿Ξ';
+    return Array(count).fill(0).map((_, i) => ({
+      id: i,
+      x: Math.random() * SCREEN_WIDTH,
+      char: chars[Math.floor(Math.random() * chars.length)],
+      size: Math.random() * 8 + 10,
+      delay: Math.random() * speed,
+      duration: speed + Math.random() * 2000,
+    }));
+  }, [count, speed]);
 
   return (
     <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
@@ -162,7 +165,7 @@ export const PixelRain: React.FC<{ count?: number; speed?: number }> = ({
       ))}
     </View>
   );
-};
+});
 
 const RainParticle: React.FC<{
   x: number;
