@@ -532,7 +532,7 @@ export default function TutorialScreen() {
       {/* Intro Overlay */}
       {gameState === 'intro' && (
         <View style={styles.overlay}>
-          <PixelRain count={30} />
+          <PixelRain count={12} />
           <CRTScanlines opacity={0.08} />
           
           <Animated.View entering={FadeInDown.delay(200)} style={styles.introBox}>
