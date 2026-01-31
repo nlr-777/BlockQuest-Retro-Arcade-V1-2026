@@ -260,7 +260,7 @@ export default function SettingsScreen() {
       // Clear cloud auth
       await authService.logout();
       // Clear local profile
-      resetProfile();
+      await resetAllData();
       setIsLoggedIn(false);
       setUserEmail('');
       audioManager.playSound('powerup');
