@@ -1025,13 +1025,27 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
   scoreText: {
-    position: 'absolute',
-    bottom: 4,
-    right: 4,
-    fontSize: 8,
+    fontSize: 9,
     color: COLORS.neonYellow,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
+  },
+  scoreContainer: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  trophyBadge: {
+    position: 'absolute',
+    top: 3,
+    left: 3,
+  },
+  trophyIcon: {
+    fontSize: 12,
   },
   soonOverlay: {
     position: 'absolute',
