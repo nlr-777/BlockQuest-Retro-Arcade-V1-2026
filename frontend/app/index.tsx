@@ -458,50 +458,93 @@ export default function ArcadeHub() {
     textShadowRadius: 10 + glowOpacity.value * 10,
   }));
 
-  // Render a single game card
+  // Render a single game card with CHAOS effects
   const renderGameCard = (game: GameConfig, index: number) => {
     const IconComponent = getGameIcon(game.id);
+    const hasHighScore = highScores[game.id] > 0;
+    const isLegendary = game.difficulty === 'legendary'; // Check if legendary game
     
     return (
-      <TouchableOpacity
+      <Animated.View
         key={game.id}
-        style={[
-          styles.gameCard,
-          { borderColor: game.color },
-          !game.isPlayable && styles.cardLocked,
-        ]}
-        onPress={() => handleGamePress(game)}
-        activeOpacity={0.7}
+        entering={ZoomIn.delay(index * 50).springify()}
       >
-        <View style={[styles.cardGlow, { backgroundColor: game.color }]} />
-        
-        <View style={[styles.iconBox, { backgroundColor: `${game.color}25` }]}>
-          <IconComponent size={26} color={game.color} />
-        </View>
-        
-        <Text style={[styles.cardTitle, { color: game.color }]} numberOfLines={1}>
-          {game.title.split(' ')[0]}
-        </Text>
-        
-        <View style={[
-          styles.statusBadge,
-          { backgroundColor: game.isPlayable ? COLORS.success : COLORS.textMuted }
-        ]}>
-          <Text style={styles.statusText}>
-            {game.isPlayable ? '▶' : '◆'}
-          </Text>
-        </View>
-        
-        {highScores[game.id] > 0 && (
-          <Text style={styles.scoreText}>{highScores[game.id]}</Text>
-        )}
-        
-        {!game.isPlayable && (
-          <View style={styles.soonOverlay}>
-            <Text style={styles.soonText}>SOON</Text>
+        <TouchableOpacity
+          style={[
+            styles.gameCard,
+            { 
+              borderColor: game.color,
+              boxShadow: `0 0 ${hasHighScore ? 15 : 8}px ${game.color}40`,
+            },
+            !game.isPlayable && styles.cardLocked,
+            hasHighScore && styles.cardWithScore,
+          ]}
+          onPress={() => handleGamePress(game)}
+          activeOpacity={0.8}
+        >
+          {/* Animated glow effect */}
+          <Animated.View 
+            style={[
+              styles.cardGlow, 
+              { backgroundColor: game.color }
+            ]} 
+          />
+          
+          {/* Shine effect for played games */}
+          {hasHighScore && (
+            <View style={styles.cardShineContainer}>
+              <View style={[styles.cardShine, { backgroundColor: game.color }]} />
+            </View>
+          )}
+          
+          {/* Icon with glow */}
+          <View style={[styles.iconBox, { backgroundColor: `${game.color}30` }]}>
+            <View style={[styles.iconGlow, { backgroundColor: game.color }]} />
+            <IconComponent size={28} color={game.color} />
           </View>
-        )}
-      </TouchableOpacity>
+          
+          {/* Game title */}
+          <Text style={[styles.cardTitle, { color: game.color }]} numberOfLines={1}>
+            {game.title.split(' ')[0]}
+          </Text>
+          
+          {/* Status indicator */}
+          <View style={[
+            styles.statusBadge,
+            { 
+              backgroundColor: game.isPlayable ? '#00FF88' : COLORS.textMuted,
+              boxShadow: game.isPlayable ? '0 0 6px #00FF88' : 'none',
+            }
+          ]}>
+            <Text style={styles.statusText}>
+              {game.isPlayable ? '▶' : '◆'}
+            </Text>
+          </View>
+          
+          {/* High score with glow */}
+          {hasHighScore && (
+            <View style={styles.scoreContainer}>
+              <Text style={[styles.scoreText, { textShadow: `0 0 8px ${COLORS.neonYellow}` }]}>
+                {highScores[game.id].toLocaleString()}
+              </Text>
+            </View>
+          )}
+          
+          {/* Coming soon overlay */}
+          {!game.isPlayable && (
+            <View style={styles.soonOverlay}>
+              <Text style={styles.soonText}>SOON</Text>
+            </View>
+          )}
+          
+          {/* Trophy indicator for high scores */}
+          {hasHighScore && (
+            <View style={styles.trophyBadge}>
+              <Text style={styles.trophyIcon}>🏆</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
