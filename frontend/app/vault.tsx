@@ -686,6 +686,26 @@ export default function VaultFlexGallery() {
             </View>
           )}
         </ScrollView>
+
+        {/* Bottom Navigation Bar */}
+        <View style={styles.bottomNav}>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/')}>
+            <Text style={styles.navIcon}>🎮</Text>
+            <Text style={styles.navText}>ARCADE</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.navBtn, styles.navActive]}>
+            <Text style={styles.navIcon}>💎</Text>
+            <Text style={[styles.navText, styles.navTextActive]}>VAULT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/factions')}>
+            <Text style={styles.navIcon}>⚔️</Text>
+            <Text style={styles.navText}>FACTIONS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/settings')}>
+            <Text style={styles.navIcon}>⚙️</Text>
+            <Text style={styles.navText}>SETTINGS</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
 
       {/* Badge Detail Modal */}
