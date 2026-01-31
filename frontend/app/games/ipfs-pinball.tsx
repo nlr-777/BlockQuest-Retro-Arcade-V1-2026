@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   bumper: { position: 'absolute', width: BUMPER_SIZE, height: BUMPER_SIZE, borderRadius: BUMPER_SIZE / 2, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.5)' },
   bumperText: { fontSize: 8, fontWeight: 'bold', color: '#fff', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' },
   pin: { position: 'absolute', width: PIN_SIZE, height: PIN_SIZE, borderRadius: PIN_SIZE / 2, backgroundColor: COLORS.chainGold },
-  ball: { position: 'absolute', width: BALL_SIZE, height: BALL_SIZE, borderRadius: BALL_SIZE / 2, backgroundColor: '#fff', shadowColor: '#fff', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.8, shadowRadius: 8 },
+  ball: { position: 'absolute', width: BALL_SIZE, height: BALL_SIZE, borderRadius: BALL_SIZE / 2, backgroundColor: '#fff', boxShadow: '0 0 8px rgba(255, 255, 255, 0.8)' },
   flipper: { position: 'absolute', width: FLIPPER_WIDTH, height: FLIPPER_HEIGHT, backgroundColor: COLORS.neonCyan, borderRadius: 6 },
   leftFlipper: { transformOrigin: 'right center' },
   rightFlipper: { transformOrigin: 'left center' },
