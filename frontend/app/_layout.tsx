@@ -44,6 +44,8 @@ export default function RootLayout() {
       if (isClient) {
         await loadProfile();
       }
+      // Wait a tick to ensure stores are updated
+      await new Promise(resolve => setTimeout(resolve, 100));
       setIsReady(true);
       SplashScreen.hideAsync();
     };
