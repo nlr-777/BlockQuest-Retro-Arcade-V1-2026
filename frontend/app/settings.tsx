@@ -506,6 +506,34 @@ const styles = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'center',
   },
+  cloudStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cloudIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  cloudInfo: {
+    flex: 1,
+  },
+  guestStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  guestIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  guestInfo: {
+    flex: 1,
+  },
+  accountButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   footer: {
     alignItems: 'center',
     paddingVertical: 24,
