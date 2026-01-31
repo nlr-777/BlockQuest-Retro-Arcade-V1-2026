@@ -271,7 +271,7 @@ export const SynthwaveSun: React.FC<{ size?: number }> = ({ size = 100 }) => {
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glowPulse.value,
+    boxShadow: `0 0 50px rgba(255, 106, 213, ${glowPulse.value})`,
     transform: [{ scale: 0.95 + glowPulse.value * 0.1 }],
   }));
 
