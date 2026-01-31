@@ -9,6 +9,8 @@ import {
   Platform,
   Linking,
   ActivityIndicator,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -19,8 +21,10 @@ import { COLORS } from '../src/constants/colors';
 import { CRTScanlines, PixelRain } from '../src/components/CRTEffects';
 import { PixelText } from '../src/components/PixelText';
 import { PixelButton } from '../src/components/PixelButton';
+import { CharacterSelector } from '../src/components/CharacterSelector';
 import { useGameStore } from '../src/store/gameStore';
 import { authService } from '../src/services/AuthService';
+import { CHARACTERS, CharacterConfig } from '../src/constants/characters';
 import audioManager from '../src/utils/AudioManager';
 import VFXLayer from '../src/vfx/VFXManager';
 
@@ -28,11 +32,18 @@ import VFXLayer from '../src/vfx/VFXManager';
 const AUTH_URL = 'https://auth.emergentagent.com';
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
+type Screen = 'welcome' | 'guest-setup';
+
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { profile } = useGameStore();
+  const { profile, initProfile } = useGameStore();
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
+  const [screen, setScreen] = useState<Screen>('welcome');
+  
+  // Guest setup state
+  const [username, setUsername] = useState('');
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig | null>(CHARACTERS[0]);
 
   useEffect(() => {
     checkExistingSession();
@@ -64,7 +75,7 @@ export default function WelcomeScreen() {
       }
 
       // Check if user has a local profile (guest)
-      if (profile && hasSeenOnboarding) {
+      if (profile) {
         // Already has profile, go to home
         router.replace('/');
         return;
@@ -111,8 +122,11 @@ export default function WelcomeScreen() {
         // Store auth token
         await authService.storeAuthFromGoogle(authData.access_token, authData.user);
         
-        // Go to daily rewards then home
-        router.replace('/daily-rewards');
+        // Create profile with Google name
+        await initProfile(authData.user.username || authData.user.name, 'zara');
+        
+        // Go to home
+        router.replace('/');
       }
     } catch (error) {
       console.error('OAuth processing error:', error);
@@ -161,11 +175,25 @@ export default function WelcomeScreen() {
     router.push('/login');
   };
 
-  // Handle Play as Guest
+  // Handle Play as Guest - show character setup
   const handlePlayAsGuest = () => {
+    audioManager.playSound('click');
+    setScreen('guest-setup');
+  };
+
+  // Handle Start Game (after guest setup)
+  const handleStartGame = async () => {
+    if (username.trim().length < 3 || !selectedCharacter) return;
+    
     audioManager.playSound('powerup');
-    // Go directly to home - index will show onboarding if no profile
+    await initProfile(username.trim(), selectedCharacter.id);
     router.replace('/');
+  };
+
+  // Handle back to welcome
+  const handleBackToWelcome = () => {
+    audioManager.playSound('click');
+    setScreen('welcome');
   };
 
   if (loading || authLoading) {
@@ -180,6 +208,75 @@ export default function WelcomeScreen() {
     );
   }
 
+  // Guest Setup Screen
+  if (screen === 'guest-setup') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <VFXLayer type="crt-breathe" intensity={0.2} />
+        <PixelRain count={15} speed={5000} />
+        <CRTScanlines opacity={0.05} />
+
+        <ScrollView contentContainerStyle={styles.guestSetupContent}>
+          <Animated.View entering={FadeInDown.duration(400)} style={styles.guestHeader}>
+            <Text style={styles.logo}>🎮</Text>
+            <PixelText size="lg" color={COLORS.chainGold} glow>
+              CREATE YOUR PLAYER
+            </PixelText>
+            <Text style={styles.guestSubtitle}>Choose your hero & enter your name!</Text>
+          </Animated.View>
+
+          {/* Character Selection */}
+          <Animated.View entering={FadeIn.delay(200).duration(400)}>
+            <CharacterSelector
+              selectedId={selectedCharacter?.id || null}
+              onSelect={setSelectedCharacter}
+            />
+          </Animated.View>
+
+          {/* Name Input */}
+          <Animated.View entering={FadeInUp.delay(300).duration(400)} style={styles.nameSection}>
+            <Text style={styles.inputLabel}>PLAYER NAME</Text>
+            <TextInput
+              style={styles.nameInput}
+              placeholder="Enter your name..."
+              placeholderTextColor={CRT_COLORS.textDim}
+              value={username}
+              onChangeText={setUsername}
+              maxLength={12}
+              autoCapitalize="words"
+            />
+          </Animated.View>
+
+          {/* Start Button */}
+          <Animated.View entering={FadeInUp.delay(400).duration(400)} style={styles.startSection}>
+            <PixelButton
+              title="▶ START PLAYING"
+              onPress={handleStartGame}
+              color={selectedCharacter?.colors.primary || COLORS.chainGold}
+              size="lg"
+              disabled={username.trim().length < 3}
+              style={styles.startButton}
+            />
+            
+            <PixelButton
+              title="← BACK"
+              onPress={handleBackToWelcome}
+              color={CRT_COLORS.bgMedium}
+              textColor={CRT_COLORS.textDim}
+              size="sm"
+              style={styles.backButton}
+            />
+          </Animated.View>
+
+          <Text style={styles.guestNote}>
+            🎮 KID SAFE • NO REAL CRYPTO • AGES 5+ 🎮
+          </Text>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // Welcome Screen (default)
   return (
     <SafeAreaView style={styles.container}>
       <VFXLayer type="crt-breathe" intensity={0.2} />
@@ -354,5 +451,55 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  
+  // Guest Setup Styles
+  guestSetupContent: {
+    flexGrow: 1,
+    paddingVertical: 20,
+  },
+  guestHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  guestSubtitle: {
+    fontSize: 12,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 8,
+  },
+  nameSection: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  inputLabel: {
+    fontSize: 12,
+    color: CRT_COLORS.primary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  nameInput: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.primary + '40',
+    padding: 16,
+    fontSize: 18,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+  },
+  startSection: {
+    marginTop: 24,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  startButton: {
+    width: '100%',
+  },
+  backButton: {
+    marginTop: 12,
   },
 });
