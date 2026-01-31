@@ -564,18 +564,30 @@ export default function VaultFlexGallery() {
                         !isUnlocked && styles.storyBadgeCardLocked
                       ]}
                     >
-                      {isUnlocked ? (
-                        <>
-                          <Image source={{ uri: badge.imageUrl }} style={styles.storyBadgeImage} resizeMode="contain" />
-                          <View style={[styles.storyBadgeRarity, { backgroundColor: STORY_RARITY_COLORS[badge.rarity] }]}>
-                            <Text style={styles.storyBadgeRarityText}>{badge.rarity}</Text>
+                      {/* Always show the image, but faded if locked */}
+                      <View style={styles.storyBadgeImageContainer}>
+                        <Image 
+                          source={{ uri: badge.imageUrl }} 
+                          style={[
+                            styles.storyBadgeImage,
+                            !isUnlocked && styles.storyBadgeImageFaded
+                          ]} 
+                          resizeMode="cover" 
+                        />
+                        {!isUnlocked && (
+                          <View style={styles.storyBadgeLockOverlay}>
+                            <Text style={styles.storyBadgeLockIcon}>🔒</Text>
                           </View>
-                        </>
-                      ) : (
-                        <View style={styles.storyBadgeImageLocked}>
-                          <Text style={styles.storyBadgeLockIcon}>🔒</Text>
+                        )}
+                      </View>
+                      
+                      {/* Rarity badge for unlocked items */}
+                      {isUnlocked && (
+                        <View style={[styles.storyBadgeRarity, { backgroundColor: STORY_RARITY_COLORS[badge.rarity] }]}>
+                          <Text style={styles.storyBadgeRarityText}>{badge.rarity}</Text>
                         </View>
                       )}
+                      
                       <Text style={isUnlocked ? styles.storyBadgeTitle : styles.storyBadgeTitleLocked} numberOfLines={1}>
                         {badge.title}
                       </Text>
