@@ -1770,13 +1770,13 @@ const styles = StyleSheet.create({
   },
   storyHint: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: CRT_COLORS.primary + '15',
+    alignItems: 'center',
+    backgroundColor: CRT_COLORS.primary + '20',
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
-    borderWidth: 1,
-    borderColor: CRT_COLORS.primary + '30',
+    borderWidth: 2,
+    borderColor: CRT_COLORS.primary + '50',
   },
   storyHintIcon: {
     fontSize: 28,
@@ -1786,16 +1786,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   storyHintTitle: {
-    fontSize: 12,
+    fontSize: 13,
     color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   storyHintText: {
     fontSize: 11,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     lineHeight: 16,
+  },
+  storyHintArrow: {
+    fontSize: 24,
+    color: CRT_COLORS.primary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
