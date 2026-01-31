@@ -642,7 +642,7 @@ export default function ArcadeHub() {
             <Text style={styles.navIcon}>🏆</Text>
             <Text style={styles.navText}>RANK</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/config')}>
+          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/settings')}>
             <Text style={styles.navIcon}>⚙️</Text>
             <Text style={styles.navText}>MORE</Text>
           </TouchableOpacity>
