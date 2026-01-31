@@ -42,6 +42,13 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Handle mode from URL params
+  useEffect(() => {
+    if (params.mode === 'register') {
+      setMode('register');
+    }
+  }, [params.mode]);
+
   const handleEmailAuth = async () => {
     if (!email || !password) {
       setError('Please fill in all fields');
