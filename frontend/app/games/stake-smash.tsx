@@ -829,10 +829,7 @@ const styles = StyleSheet.create({
     height: BALL_SIZE,
     backgroundColor: '#FFF',
     borderRadius: BALL_SIZE / 2,
-    shadowColor: '#FFF',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
+    boxShadow: '0 0 4px rgba(255, 255, 255, 0.8)',
   },
   paddle: {
     position: 'absolute',
