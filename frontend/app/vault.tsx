@@ -58,6 +58,7 @@ import {
   RainbowPulseBorder,
   MegaConfetti,
 } from '../src/components/ChaosEffects';
+import { BottomNavBar } from '../src/components/BottomNavBar';
 import audioManager from '../src/utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
