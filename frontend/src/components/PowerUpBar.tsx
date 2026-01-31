@@ -315,8 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
+    // boxShadow set dynamically via glowStyle
   },
   powerUpBtnDisabled: {
     opacity: 0.4,
