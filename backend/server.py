@@ -468,7 +468,8 @@ async def google_auth(request: GoogleAuthRequest):
                 "dao_voting_power": 0,
                 "unlocked_story_badges": [],
             }
-            await db.users.insert_one(user)
+            user_for_db = user.copy()
+            await db.users.insert_one(user_for_db)
         
         # Create token
         access_token = create_access_token(data={"sub": user["id"]})
@@ -480,6 +481,61 @@ async def google_auth(request: GoogleAuthRequest):
         
     except httpx.RequestError:
         raise HTTPException(status_code=500, detail="Failed to verify Google token")
+
+# Google OAuth Session endpoint (for Emergent Auth)
+class GoogleSessionRequest(BaseModel):
+    id: str
+    email: str
+    name: str
+    picture: Optional[str] = None
+    session_token: str
+
+@api_router.post("/auth/google-session", response_model=TokenResponse)
+async def google_session_auth(session_data: GoogleSessionRequest):
+    """Authenticate with Google session from Emergent Auth"""
+    email = session_data.email.lower()
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": email})
+    
+    if existing_user:
+        # Update last login
+        await db.users.update_one(
+            {"id": existing_user["id"]},
+            {"$set": {"last_login": datetime.utcnow().isoformat()}}
+        )
+        user = existing_user
+        user_id = existing_user["id"]
+    else:
+        # Create new user
+        user_id = str(uuid.uuid4())
+        user = {
+            "id": user_id,
+            "email": email,
+            "username": session_data.name,
+            "password_hash": None,
+            "created_at": datetime.utcnow().isoformat(),
+            "auth_provider": "google",
+            "google_id": session_data.id,
+            "avatar_id": None,
+            "picture": session_data.picture,
+            "high_scores": {},
+            "total_xp": 0,
+            "level": 1,
+            "badges": [],
+            "dao_voting_power": 0,
+            "unlocked_story_badges": [],
+        }
+        user_for_db = user.copy()
+        await db.users.insert_one(user_for_db)
+    
+    # Create our own JWT token
+    access_token = create_access_token(data={"sub": user_id})
+    
+    # Build response
+    user_response = {k: v for k, v in user.items() if k not in ["password_hash", "_id"]}
+    
+    return TokenResponse(access_token=access_token, user=user_response)
 
 @api_router.get("/auth/me", response_model=UserResponse)
 async def get_current_user_profile(user = Depends(get_current_user)):
