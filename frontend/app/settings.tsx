@@ -171,7 +171,7 @@ export default function SettingsScreen() {
           text: 'Yes, Delete Everything',
           style: 'destructive',
           onPress: async () => {
-            await resetAllData();
+            resetProfile();
             setShowResetConfirm(false);
             Alert.alert('Done', 'All data has been deleted.');
             router.replace('/');
