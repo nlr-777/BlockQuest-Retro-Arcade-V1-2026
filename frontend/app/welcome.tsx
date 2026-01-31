@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   logo: {
     fontSize: 60,
@@ -327,6 +327,11 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
+  },
+  
+  // Mini-game teaser
+  teaserSection: {
+    marginBottom: 12,
   },
   
   // Name Input
