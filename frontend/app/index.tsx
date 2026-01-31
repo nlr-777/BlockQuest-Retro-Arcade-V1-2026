@@ -947,10 +947,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   
-  // Game Card - using percentage width for web compatibility
-  gameCard: {
+  // Game Card Wrapper - for Animated.View
+  gameCardWrapper: {
     width: '30%',
     aspectRatio: 1,
+    margin: '1.5%',
+  },
+  
+  // Game Card - using percentage width for web compatibility
+  gameCard: {
+    width: '100%',
+    height: '100%',
     backgroundColor: 'rgba(13, 2, 33, 0.95)',
     borderRadius: 12,
     borderWidth: 2,
@@ -958,7 +965,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
-    margin: '1.5%',
   },
   cardLocked: {
     opacity: 0.6,
