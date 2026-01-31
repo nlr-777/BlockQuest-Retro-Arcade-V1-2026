@@ -245,7 +245,7 @@ export default function VaultFlexGallery() {
   const { profile, highScores } = useGameStore();
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'badges' | 'stats'>('badges');
+  const [activeTab, setActiveTab] = useState<'badges' | 'story' | 'stats'>('badges');
   const [sortBy, setSortBy] = useState<'date' | 'rarity'>('date');
   
   // Calculate stats
