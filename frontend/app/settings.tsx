@@ -18,6 +18,7 @@ import { CRT_COLORS } from '../src/constants/crtTheme';
 import { COLORS } from '../src/constants/colors';
 import { CRTScanlines, PixelRain, CRTGlowBorder, CRTFlickerText } from '../src/components/CRTEffects';
 import { PixelButton } from '../src/components/PixelButton';
+import { BottomNavBar } from '../src/components/BottomNavBar';
 import audioManager from '../src/utils/AudioManager';
 import ttsManager from '../src/utils/TTSManager';
 import { useAccessibilityStore } from '../src/utils/accessibility';
