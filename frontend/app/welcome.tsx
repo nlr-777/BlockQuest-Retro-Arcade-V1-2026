@@ -43,18 +43,19 @@ export default function WelcomeScreen() {
 
   useEffect(() => {
     if (!isHydrated) return;
+    
+    // Profile already exists - redirect to home immediately
+    if (profile) {
+      router.replace('/');
+      return;
+    }
+    
     checkExistingSession();
-  }, [isHydrated]);
+  }, [isHydrated, profile]);
 
   const checkExistingSession = async () => {
     try {
       const user = await authService.initialize();
-      
-      // Already has profile - go to home
-      if (profile) {
-        router.replace('/');
-        return;
-      }
       
       // Logged in but no profile - pre-fill username
       if (user) {
