@@ -32,7 +32,8 @@ import VFXLayer from '../src/vfx/VFXManager';
 const AUTH_URL = 'https://auth.emergentagent.com';
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
-type Screen = 'welcome' | 'guest-setup';
+type Screen = 'welcome' | 'character-setup';
+type AuthType = 'guest' | 'google' | 'email';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -40,10 +41,14 @@ export default function WelcomeScreen() {
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
   const [screen, setScreen] = useState<Screen>('welcome');
+  const [authType, setAuthType] = useState<AuthType>('guest');
   
-  // Guest setup state
+  // Character setup state
   const [username, setUsername] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig | null>(CHARACTERS[0]);
+  
+  // For authenticated users - store their data until character setup is complete
+  const [pendingAuthUser, setPendingAuthUser] = useState<any>(null);
 
   useEffect(() => {
     checkExistingSession();
@@ -122,11 +127,12 @@ export default function WelcomeScreen() {
         // Store auth token
         await authService.storeAuthFromGoogle(authData.access_token, authData.user);
         
-        // Create profile with Google name
-        await initProfile(authData.user.username || authData.user.name, 'zara');
-        
-        // Go to home
-        router.replace('/');
+        // Set up for character selection
+        setPendingAuthUser(authData.user);
+        setUsername(authData.user.username || authData.user.name || '');
+        setAuthType('google');
+        setScreen('character-setup');
+        setAuthLoading(false);
       }
     } catch (error) {
       console.error('OAuth processing error:', error);
@@ -161,6 +167,8 @@ export default function WelcomeScreen() {
           if (sessionId) {
             await processSessionId(sessionId);
           }
+        } else {
+          setAuthLoading(false);
         }
       }
     } catch (error) {
@@ -169,24 +177,45 @@ export default function WelcomeScreen() {
     }
   };
 
-  // Handle Email Sign Up
+  // Handle Email Sign Up - go to login page, which will redirect back for character setup
   const handleEmailSignUp = () => {
     audioManager.playSound('click');
-    router.push('/login');
+    router.push('/login?returnTo=character-setup');
   };
 
   // Handle Play as Guest - show character setup
   const handlePlayAsGuest = () => {
     audioManager.playSound('click');
-    setScreen('guest-setup');
+    setAuthType('guest');
+    setScreen('character-setup');
   };
 
-  // Handle Start Game (after guest setup)
+  // Handle Start Game (after character setup - works for ALL auth types)
   const handleStartGame = async () => {
     if (username.trim().length < 3 || !selectedCharacter) return;
     
     audioManager.playSound('powerup');
+    
+    // Create profile with selected character
     await initProfile(username.trim(), selectedCharacter.id);
+    
+    // If user is authenticated, sync the character to cloud
+    if (pendingAuthUser && authType !== 'guest') {
+      try {
+        await authService.syncProgress({
+          high_scores: {},
+          total_xp: 0,
+          level: 1,
+          badges: [],
+          avatar_id: selectedCharacter.id,
+          dao_voting_power: 0,
+          unlocked_story_badges: [],
+        });
+      } catch (error) {
+        console.error('Failed to sync character to cloud:', error);
+      }
+    }
+    
     router.replace('/');
   };
 
@@ -194,6 +223,8 @@ export default function WelcomeScreen() {
   const handleBackToWelcome = () => {
     audioManager.playSound('click');
     setScreen('welcome');
+    setPendingAuthUser(null);
+    setAuthType('guest');
   };
 
   if (loading || authLoading) {
@@ -208,8 +239,8 @@ export default function WelcomeScreen() {
     );
   }
 
-  // Guest Setup Screen
-  if (screen === 'guest-setup') {
+  // Character Setup Screen - FOR ALL USERS
+  if (screen === 'character-setup') {
     return (
       <SafeAreaView style={styles.container}>
         <VFXLayer type="crt-breathe" intensity={0.2} />
@@ -222,7 +253,11 @@ export default function WelcomeScreen() {
             <PixelText size="lg" color={COLORS.chainGold} glow>
               CREATE YOUR PLAYER
             </PixelText>
-            <Text style={styles.guestSubtitle}>Choose your hero & enter your name!</Text>
+            <Text style={styles.guestSubtitle}>
+              {authType === 'google' ? '✓ Signed in with Google' : 
+               authType === 'email' ? '✓ Account created' : 
+               'Choose your hero & enter your name!'}
+            </Text>
           </Animated.View>
 
           {/* Character Selection */}
@@ -258,18 +293,20 @@ export default function WelcomeScreen() {
               style={styles.startButton}
             />
             
-            <PixelButton
-              title="← BACK"
-              onPress={handleBackToWelcome}
-              color={CRT_COLORS.bgMedium}
-              textColor={CRT_COLORS.textDim}
-              size="sm"
-              style={styles.backButton}
-            />
+            {authType === 'guest' && (
+              <PixelButton
+                title="← BACK"
+                onPress={handleBackToWelcome}
+                color={CRT_COLORS.bgMedium}
+                textColor={CRT_COLORS.textDim}
+                size="sm"
+                style={styles.backButton}
+              />
+            )}
           </Animated.View>
 
           <Text style={styles.guestNote}>
-            🎮 KID SAFE • NO REAL CRYPTO • AGES 5+ 🎮
+            {authType !== 'guest' ? '☁️ Your progress will sync to the cloud!' : '🎮 KID SAFE • NO REAL CRYPTO • AGES 5+ 🎮'}
           </Text>
         </ScrollView>
       </SafeAreaView>
