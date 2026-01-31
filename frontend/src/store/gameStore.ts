@@ -236,6 +236,9 @@ export const useGameStore = create<GameState>()(
           recentScores: [newScore, ...recentScores.slice(0, 19)],
         });
 
+        // Trigger cloud sync for logged-in users
+        triggerSync();
+
         // Award "Beginner" badge after 5 total plays
         const hasBeginnerBadge = profile.badges.some(b => b.id.includes('beginner_badge'));
         if (newGamesPlayed >= 5 && !hasBeginnerBadge) {
