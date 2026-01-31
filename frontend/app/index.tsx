@@ -448,7 +448,7 @@ export default function ArcadeHub() {
     : null;
 
   const glowStyle = useAnimatedStyle(() => ({
-    textShadowRadius: 10 + glowOpacity.value * 10,
+    opacity: 0.8 + glowOpacity.value * 0.2, // Subtle pulse effect
   }));
 
   // Render a single game card
