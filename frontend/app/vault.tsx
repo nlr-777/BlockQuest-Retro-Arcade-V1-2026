@@ -254,6 +254,20 @@ export default function VaultFlexGallery() {
   const rankProgress = getRankProgress(profile?.xp || 0);
   const loyaltyStats = loyaltyService.getStats();
 
+  // Get unlocked story badges
+  const unlockedStoryBadgeIds = (profile?.badges || [])
+    .filter(b => b.gameId === 'story-quiz')
+    .map(b => b.traits?.storyBadgeId as string)
+    .filter(Boolean);
+
+  const unlockedStoryBadges = STORY_BADGES.filter(sb => 
+    unlockedStoryBadgeIds.includes(sb.id)
+  );
+
+  const lockedStoryBadges = STORY_BADGES.filter(sb => 
+    !unlockedStoryBadgeIds.includes(sb.id)
+  );
+
   // Sort badges
   const sortedBadges = [...(profile?.badges || [])].sort((a, b) => {
     if (sortBy === 'date') {
