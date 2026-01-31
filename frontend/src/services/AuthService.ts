@@ -123,17 +123,24 @@ class AuthService {
 
   // Login with email and password
   async login(email: string, password: string): Promise<AuthResponse> {
+    const cleanEmail = email.trim().toLowerCase();
+    
+    if (!cleanEmail || !password) {
+      throw new Error('Email and password are required');
+    }
+    
     const response = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: cleanEmail, password }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.detail || 'Login failed');
+      console.error('Login error response:', error);
+      throw new Error(error.detail || 'Login failed - please check your email and password');
     }
 
     const data: AuthResponse = await response.json();
