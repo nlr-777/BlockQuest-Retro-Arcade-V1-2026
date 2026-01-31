@@ -355,7 +355,7 @@ export default function ChainBuilderGame() {
         <PixelRain count={25} speed={3000} />
         <CRTScanlines opacity={0.05} />
         
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.achievementContent}>
             <Animated.View entering={ZoomIn} style={styles.achievementCard}>
               <Text style={styles.achievementEmoji}>{currentAchievement.icon}</Text>
@@ -388,7 +388,7 @@ export default function ChainBuilderGame() {
         <PixelRain count={10} speed={5000} />
         <CRTScanlines opacity={0.05} />
         
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.gameOverContent}>
             <Animated.View entering={ZoomIn} style={styles.gameOverCard}>
               <Text style={styles.gameOverEmoji}>💔</Text>
