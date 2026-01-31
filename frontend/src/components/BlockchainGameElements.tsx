@@ -176,7 +176,7 @@ export const NFTGem: React.FC<NFTGemProps> = ({
           width: size,
           height: size,
           backgroundColor: gemColor.main,
-          shadowColor: gemColor.glow,
+          boxShadow: `0 0 10px ${gemColor.glow}`,
         },
         animatedStyle,
       ]}
