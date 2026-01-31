@@ -960,10 +960,7 @@ const styles = StyleSheet.create({
     borderColor: CRT_COLORS.accentGold,
     alignItems: 'center',
     maxWidth: 340,
-    shadowColor: CRT_COLORS.accentGold,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 30,
+    boxShadow: `0 0 30px ${CRT_COLORS.accentGold}99`,
   },
   badgeTitle: {
     fontSize: 18,
