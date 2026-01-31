@@ -601,6 +601,9 @@ export default function SettingsScreen() {
           </View>
         </View>
         </ScrollView>
+        
+        {/* Shared Bottom Navigation */}
+        <BottomNavBar activeTab="more" />
     </SafeAreaView>
   );
 }
