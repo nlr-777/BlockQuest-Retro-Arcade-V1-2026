@@ -573,6 +573,29 @@ export default function VaultFlexGallery() {
           {/* Stats Tab */}
           {activeTab === 'stats' && (
             <View style={styles.statsSection}>
+              {/* Currency Section */}
+              <View style={styles.currencySection}>
+                <Text style={styles.currencySectionTitle}>💰 YOUR CURRENCIES</Text>
+                <View style={styles.currencyRow}>
+                  <View style={[styles.currencyCard, { borderColor: '#FFD700' }]}>
+                    <Text style={styles.currencyIcon}>🪙</Text>
+                    <Text style={[styles.currencyValue, { color: '#FFD700' }]}>
+                      {profile?.questCoins || 0}
+                    </Text>
+                    <Text style={styles.currencyLabel}>QUEST COINS</Text>
+                    <Text style={styles.currencyHint}>Earned from gameplay</Text>
+                  </View>
+                  <View style={[styles.currencyCard, { borderColor: '#00CED1' }]}>
+                    <Text style={styles.currencyIcon}>📚</Text>
+                    <Text style={[styles.currencyValue, { color: '#00CED1' }]}>
+                      {profile?.knowledgeTokens || 0}
+                    </Text>
+                    <Text style={styles.currencyLabel}>KNOWLEDGE</Text>
+                    <Text style={styles.currencyHint}>Earned from learning</Text>
+                  </View>
+                </View>
+              </View>
+
               <View style={styles.statsGrid}>
                 <View style={styles.statCard}>
                   <Text style={styles.statEmoji}>🎮</Text>
@@ -605,6 +628,21 @@ export default function VaultFlexGallery() {
                   <Text style={styles.statLabel}>VOTING POWER</Text>
                 </View>
               </View>
+
+              {/* DAO/Factions Link */}
+              <TouchableOpacity 
+                style={styles.factionLinkCard}
+                onPress={() => router.push('/factions')}
+              >
+                <Text style={styles.factionLinkIcon}>⚔️</Text>
+                <View style={styles.factionLinkInfo}>
+                  <Text style={styles.factionLinkTitle}>JOIN A FACTION</Text>
+                  <Text style={styles.factionLinkText}>
+                    Vote on proposals and earn bonus XP!
+                  </Text>
+                </View>
+                <Text style={styles.factionLinkArrow}>→</Text>
+              </TouchableOpacity>
 
               {/* Dad joke */}
               <View style={styles.jokeBox}>
