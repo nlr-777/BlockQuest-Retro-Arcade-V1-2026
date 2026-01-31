@@ -224,14 +224,26 @@ export default function LoginScreen() {
             {/* Password */}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>PASSWORD</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="••••••••"
-                placeholderTextColor={CRT_COLORS.textDim}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="••••••••"
+                  placeholderTextColor={CRT_COLORS.textDim}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <Pressable 
+                  onPress={() => setShowPassword(!showPassword)} 
+                  style={styles.eyeButton}
+                  role="button"
+                >
+                  <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '🔒'}</Text>
+                </Pressable>
+              </View>
+              {mode === 'register' && (
+                <Text style={styles.passwordHint}>Min 6 characters</Text>
+              )}
             </View>
 
             {/* Submit Button */}
