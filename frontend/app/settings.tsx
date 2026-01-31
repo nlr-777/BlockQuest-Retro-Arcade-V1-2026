@@ -535,9 +535,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: CRT_COLORS.bgDark,
   },
-  safeArea: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
