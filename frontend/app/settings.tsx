@@ -218,6 +218,7 @@ export default function SettingsScreen() {
 
   // Logout handler
   const handleLogout = async () => {
+    audioManager.playSound('click');
     const confirmLogout = Platform.OS === 'web' 
       ? window.confirm('This will log out of your cloud account. Your local progress will be kept. Continue?')
       : await new Promise<boolean>((resolve) => {
@@ -237,6 +238,12 @@ export default function SettingsScreen() {
       setUserEmail('');
       audioManager.playSound('powerup');
     }
+  };
+
+  // Navigate to login page
+  const handleGoToLogin = () => {
+    audioManager.playSound('click');
+    router.push('/login');
   };
 
   // Sync handler
