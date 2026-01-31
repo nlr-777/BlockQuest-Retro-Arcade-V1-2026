@@ -462,12 +462,12 @@ export default function SettingsScreen() {
 
           {/* Gameplay Settings */}
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: CRT_COLORS.accentPink }]}>🎮 GAMEPLAY</Text>
+            <Text style={[styles.sectionTitle, { color: CRT_COLORS.accentMagenta }]}>🎮 GAMEPLAY</Text>
             <Text style={styles.sectionDesc}>Game behavior options</Text>
           </View>
           
           {GAMEPLAY_SETTINGS.map((setting, index) => 
-            renderSettingCard(setting, settings[setting.id], handleToggle, index, CRT_COLORS.accentPink)
+            renderSettingCard(setting, settings[setting.id], handleToggle, index, CRT_COLORS.accentMagenta)
           )}
 
           {/* Accessibility Section */}
