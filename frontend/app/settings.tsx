@@ -90,22 +90,55 @@ export default function SettingsScreen() {
     audioManager.playSound('click');
   };
 
-  // Logout - saves progress, returns to welcome screen
+  // Logout - clears cloud sync but keeps local progress
   const handleLogout = () => {
     Alert.alert(
       '👋 Log Out',
-      'Your progress is saved! You can log back in anytime using your backup phrase.',
+      'This will log out of your cloud account. Your local progress will be kept.',
       [
         { text: 'Stay', style: 'cancel' },
         {
           text: 'Log Out',
           onPress: async () => {
-            await logout();
-            router.replace('/');
+            await authService.logout();
+            setIsLoggedIn(false);
+            setUserEmail('');
+            audioManager.playSound('powerup');
           },
         },
       ]
     );
+  };
+
+  // Sync progress to cloud
+  const handleSync = async () => {
+    if (!isLoggedIn || !profile) return;
+    
+    setSyncing(true);
+    audioManager.playSound('click');
+    
+    try {
+      const result = await authService.syncProgress({
+        high_scores: highScores,
+        total_xp: profile.xp,
+        level: profile.level,
+        badges: profile.badges,
+        avatar_id: profile.avatarId,
+        dao_voting_power: profile.daoVotingPower,
+        unlocked_story_badges: [],
+      });
+      
+      if (result) {
+        audioManager.playSound('powerup');
+        Alert.alert('☁️ Synced!', 'Your progress has been saved to the cloud.');
+      } else {
+        Alert.alert('⚠️ Sync Failed', 'Please try again later.');
+      }
+    } catch (error) {
+      Alert.alert('⚠️ Sync Failed', 'Please check your connection.');
+    } finally {
+      setSyncing(false);
+    }
   };
 
   // Reset - requires double confirmation for kid safety
