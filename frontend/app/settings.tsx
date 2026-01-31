@@ -610,12 +610,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 120,
+    flexGrow: 1,
   },
   contentWrapper: {
     // This wrapper ensures all content renders
     backgroundColor: CRT_COLORS.bgDark,
-    minHeight: '100%',
   },
   sectionHeader: {
     marginTop: 20,
