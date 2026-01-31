@@ -1,5 +1,5 @@
 // BlockQuest Official - Login Screen
-// Email/Password and Google OAuth authentication
+// Email/Password authentication
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -15,7 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 import { CRT_COLORS } from '../src/constants/crtTheme';
@@ -24,13 +24,16 @@ import { PixelText } from '../src/components/PixelText';
 import { PixelButton } from '../src/components/PixelButton';
 import { authService } from '../src/services/AuthService';
 import { useGameStore } from '../src/store/gameStore';
+import { useCharacterStore } from '../src/store/characterStore';
 import VFXLayer from '../src/vfx/VFXManager';
 
 type AuthMode = 'login' | 'register';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { initProfile, profile } = useGameStore();
+  const { selectCharacter } = useCharacterStore();
   
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
@@ -66,8 +69,42 @@ export default function LoginScreen() {
         authResponse = await authService.login(email, password);
       }
       
-      // Redirect to welcome for character setup (all users need to pick a character)
-      router.replace('/welcome');
+      // Check if we have a pending profile from welcome screen
+      let pendingProfile = null;
+      if (Platform.OS === 'web' && typeof sessionStorage !== 'undefined') {
+        const stored = sessionStorage.getItem('pendingProfile');
+        if (stored) {
+          pendingProfile = JSON.parse(stored);
+          sessionStorage.removeItem('pendingProfile');
+        }
+      }
+      
+      // If we have pending profile data, create the profile immediately
+      if (pendingProfile && params.returnTo === 'complete-profile') {
+        await initProfile(pendingProfile.username, pendingProfile.characterId);
+        selectCharacter(pendingProfile.characterId);
+        
+        // Sync to cloud
+        try {
+          await authService.syncProgress({
+            high_scores: {},
+            total_xp: 0,
+            level: 1,
+            badges: [],
+            avatar_id: pendingProfile.characterId,
+            dao_voting_power: 0,
+            unlocked_story_badges: [],
+          });
+        } catch (syncError) {
+          console.error('Sync error:', syncError);
+        }
+        
+        // Go directly to home
+        router.replace('/');
+      } else {
+        // No pending profile - go to welcome for character setup
+        router.replace('/welcome');
+      }
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
     } finally {
@@ -211,11 +248,11 @@ export default function LoginScreen() {
           {/* Skip Login */}
           <Pressable
             style={styles.skipButton}
-            onPress={() => router.replace('/')}
+            onPress={() => router.back()}
             role="button"
           >
-            <Text style={styles.skipText}>◀ BACK TO ARCADE</Text>
-            <Text style={styles.skipSubtext}>Continue as guest</Text>
+            <Text style={styles.skipText}>◀ BACK</Text>
+            <Text style={styles.skipSubtext}>Return to previous screen</Text>
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
