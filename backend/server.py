@@ -578,6 +578,12 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
         "avatar_id": profile_data.avatar_id,
         "dao_voting_power": profile_data.dao_voting_power,
         "unlocked_story_badges": profile_data.unlocked_story_badges,
+        # New fields
+        "quest_coins": profile_data.quest_coins,
+        "knowledge_tokens": profile_data.knowledge_tokens,
+        "completed_story_episodes": profile_data.completed_story_episodes,
+        "games_played": profile_data.games_played,
+        "total_score": profile_data.total_score,
         "last_sync": datetime.utcnow().isoformat()
     }
     
