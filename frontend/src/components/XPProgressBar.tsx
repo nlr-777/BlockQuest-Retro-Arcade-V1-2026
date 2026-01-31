@@ -151,11 +151,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: CRT_COLORS.neonGreen + '60',
     overflow: 'hidden',
-    // CRT glow effect
-    shadowColor: CRT_COLORS.neonGreen,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
+    // CRT glow effect - web compatible
+    boxShadow: `0 0 10px ${CRT_COLORS.neonGreen}4D`,
     elevation: 5,
   },
   scanline: {
@@ -173,11 +170,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    // Glow
-    shadowColor: CRT_COLORS.neonGreen,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
+    // Glow - web compatible
+    boxShadow: `0 0 8px ${CRT_COLORS.neonGreen}CC`,
   },
   levelNumber: {
     marginTop: -4,
