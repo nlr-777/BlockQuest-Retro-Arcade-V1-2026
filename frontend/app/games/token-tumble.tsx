@@ -714,10 +714,7 @@ const styles = StyleSheet.create({
   },
   activeCell: {
     borderColor: 'rgba(255,255,255,0.5)',
-    shadowColor: '#FFF',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
+    boxShadow: '0 0 4px rgba(255, 255, 255, 0.5)',
   },
   previewBox: {
     backgroundColor: COLORS.cardBg,
