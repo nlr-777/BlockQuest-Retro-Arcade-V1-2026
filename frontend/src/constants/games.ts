@@ -18,6 +18,23 @@ export interface GameConfig {
 }
 
 export const GAMES: GameConfig[] = [
+  // Featured Teaser Game
+  {
+    id: 'chain-builder',
+    title: 'Chain Builder',
+    subtitle: 'Teaser Game',
+    description: 'Build your own blockchain by tapping! Learn how chains work.',
+    instructions: 'Tap anywhere to add blocks. Each block connects to the previous one. Build a 10-block chain to unlock Sam!',
+    controls: 'TAP anywhere to add blocks',
+    web3Concept: 'Blockchain Basics',
+    icon: '⛓️',
+    color: '#FFD700',
+    accentColor: '#FFA500',
+    isPlayable: true,
+    route: '/games/chain-builder',
+    difficulty: 'Easy',
+    bgm: 'chain_rain'
+  },
   // Playable Games (12)
   {
     id: 'block-muncher',
