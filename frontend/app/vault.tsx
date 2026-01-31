@@ -726,8 +726,13 @@ const styles = StyleSheet.create({
   },
 
   // Player Card
-  playerCard: {
+  playerCardWrapper: {
     marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  playerCard: {
     padding: 16,
   },
   playerInfo: {
