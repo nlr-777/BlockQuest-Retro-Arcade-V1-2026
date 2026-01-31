@@ -119,7 +119,7 @@ export const NeonBox: React.FC<{
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glowPulse.value * intensity,
+    boxShadow: `0 0 15px rgba(${parseInt(color.slice(1,3), 16)}, ${parseInt(color.slice(3,5), 16)}, ${parseInt(color.slice(5,7), 16)}, ${glowPulse.value * intensity})`,
   }));
 
   return (
@@ -128,7 +128,6 @@ export const NeonBox: React.FC<{
         styles.neonBox,
         {
           borderColor: color,
-          shadowColor: color,
         },
         animatedStyle,
         style,
