@@ -1638,6 +1638,41 @@ const styles = StyleSheet.create({
   storySection: {
     paddingBottom: 40,
   },
+  storyProgressHeader: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  storyProgressInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  storyProgressTitle: {
+    fontSize: 16,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  storyProgressCount: {
+    fontSize: 14,
+    color: CRT_COLORS.primary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  storyProgressBar: {
+    height: 8,
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  storyProgressFill: {
+    height: '100%',
+    backgroundColor: CRT_COLORS.primary,
+    borderRadius: 4,
+  },
   storySectionTitle: {
     fontSize: 18,
     color: CRT_COLORS.primary,
