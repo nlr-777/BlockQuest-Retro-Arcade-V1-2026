@@ -1,6 +1,6 @@
-// BlockQuest Official - Chain Builder Mini-Game
-// 🔗 Build a blockchain by tapping! Teaser game to learn about chains
-// Canvas-style game converted to React Native
+// BlockQuest Official - Chain Builder Full Game
+// 🐍 Snake-style blockchain building game!
+// Full standalone version (also available as mini-game on welcome screen)
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
-  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,134 +17,116 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSequence,
-  withTiming,
   withSpring,
   FadeIn,
   ZoomIn,
-  SlideInUp,
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../../src/constants/crtTheme';
 import { CRTGlowBorder, CRTScanlines, PixelRain } from '../../src/components/CRTEffects';
 import { PixelText } from '../../src/components/PixelText';
 import { useGameStore } from '../../src/store/gameStore';
-import { Mascot } from '../../src/components/Mascots';
 import audioManager from '../../src/utils/AudioManager';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const GAME_AREA_HEIGHT = SCREEN_HEIGHT * 0.55;
-const GAME_AREA_WIDTH = SCREEN_WIDTH - 32;
 
-// Block interface
-interface Block {
-  id: number;
-  x: number;
-  y: number;
-  color: string;
-  addedAt: number;
-}
+// Game configuration - larger grid for full game
+const GRID_COLS = 14;
+const GRID_ROWS = 20;
+const CELL_SIZE = Math.min((SCREEN_WIDTH - 48) / GRID_COLS, 24);
+const GAME_WIDTH = GRID_COLS * CELL_SIZE;
+const GAME_HEIGHT = GRID_ROWS * CELL_SIZE;
 
-// Colors for blocks
-const BLOCK_COLORS = [
+// Directions
+const DIRECTIONS = {
+  UP: { x: 0, y: -1 },
+  DOWN: { x: 0, y: 1 },
+  LEFT: { x: -1, y: 0 },
+  RIGHT: { x: 1, y: 0 },
+};
+
+type Direction = keyof typeof DIRECTIONS;
+type Position = { x: number; y: number };
+type GameState = 'intro' | 'playing' | 'paused' | 'gameover' | 'achievement' | 'complete';
+
+// Block colors for the chain
+const CHAIN_COLORS = [
   '#FFD700', // Gold
   '#00FF88', // Green
   '#00FFFF', // Cyan
   '#FF00FF', // Magenta
   '#FF6B6B', // Coral
   '#A855F7', // Purple
+  '#3B82F6', // Blue
+  '#F97316', // Orange
 ];
 
-// Achievement unlocks
+// Achievements
 const ACHIEVEMENTS = [
-  { blocks: 5, name: 'First Chain!', reward: 50, icon: '🔗' },
-  { blocks: 10, name: 'Sam Unlocked!', reward: 100, icon: '🛡️', hero: 'Sam' },
-  { blocks: 20, name: 'Chain Master', reward: 200, icon: '⛓️' },
-  { blocks: 30, name: 'Blockchain Pro', reward: 500, icon: '🏆' },
+  { length: 5, name: 'First Links!', icon: '🔗', xp: 25 },
+  { length: 10, name: 'Sam Unlocked!', icon: '🛡️', xp: 50, hero: 'Sam' },
+  { length: 20, name: 'Chain Master!', icon: '⛓️', xp: 100 },
+  { length: 30, name: 'Blockchain Pro!', icon: '🏆', xp: 200 },
+  { length: 50, name: 'LEGENDARY!', icon: '👑', xp: 500 },
 ];
-
-// Game states
-type GameState = 'intro' | 'playing' | 'achievement' | 'complete';
 
 export default function ChainBuilderGame() {
   const router = useRouter();
-  const { profile, submitScore, addXP, mintBadge } = useGameStore();
+  const { submitScore, addXP, mintBadge } = useGameStore();
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('intro');
-  const [chain, setChain] = useState<Block[]>([]);
+  const [chain, setChain] = useState<Position[]>([{ x: 7, y: 10 }]);
+  const [direction, setDirection] = useState<Direction>('RIGHT');
+  const [nextDirection, setNextDirection] = useState<Direction>('RIGHT');
+  const [block, setBlock] = useState<Position>({ x: 3, y: 5 });
   const [score, setScore] = useState(0);
-  const [blockCount, setBlockCount] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [speed, setSpeed] = useState(180);
   const [currentAchievement, setCurrentAchievement] = useState<typeof ACHIEVEMENTS[0] | null>(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
-  const [showTip, setShowTip] = useState(true);
   
-  // Animation refs
-  const blockIdRef = useRef(0);
+  // Refs
+  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const scoreScale = useSharedValue(1);
-  
+
   // Score animation
   const scoreAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scoreScale.value }],
   }));
-  
-  // Add a block to the chain
-  const addBlock = useCallback((x: number, y: number) => {
-    if (gameState !== 'playing') return;
+
+  // Spawn a new block to collect
+  const spawnBlock = useCallback(() => {
+    let newX, newY;
+    let attempts = 0;
+    do {
+      newX = Math.floor(Math.random() * GRID_COLS);
+      newY = Math.floor(Math.random() * GRID_ROWS);
+      attempts++;
+    } while (chain.some(seg => seg.x === newX && seg.y === newY) && attempts < 100);
     
-    const newBlockId = blockIdRef.current++;
-    const color = BLOCK_COLORS[chain.length % BLOCK_COLORS.length];
-    
-    const newBlock: Block = {
-      id: newBlockId,
-      x: Math.max(20, Math.min(x, GAME_AREA_WIDTH - 20)),
-      y: Math.max(20, Math.min(y, GAME_AREA_HEIGHT - 20)),
-      color,
-      addedAt: Date.now(),
-    };
-    
-    setChain(prev => [...prev, newBlock]);
-    
-    // Calculate score: each new block adds (chain length * 10)
-    const pointsEarned = (chain.length + 1) * 10;
-    setScore(prev => prev + pointsEarned);
-    setBlockCount(prev => prev + 1);
-    
-    // Animate score
-    scoreScale.value = withSequence(
-      withSpring(1.3),
-      withSpring(1)
-    );
-    
-    // Play sound
-    audioManager.playSound('collect');
-    
-    // Hide tip after first tap
-    if (showTip) setShowTip(false);
-    
-    // Check achievements
-    const newBlockCount = chain.length + 1;
-    checkAchievements(newBlockCount);
-  }, [chain, gameState, showTip]);
-  
-  // Check for achievements
-  const checkAchievements = (blocks: number) => {
+    setBlock({ x: newX, y: newY });
+  }, [chain]);
+
+  // Check achievements
+  const checkAchievements = useCallback((chainLength: number) => {
     for (const achievement of ACHIEVEMENTS) {
-      if (blocks >= achievement.blocks && !unlockedAchievements.includes(achievement.name)) {
+      if (chainLength >= achievement.length && !unlockedAchievements.includes(achievement.name)) {
         setUnlockedAchievements(prev => [...prev, achievement.name]);
         setCurrentAchievement(achievement);
         setGameState('achievement');
         audioManager.playSound('victory');
         
-        // Add XP for achievement
-        addXP(achievement.reward);
+        // Add XP
+        addXP(achievement.xp);
         
-        // If hero unlock, mint badge
+        // If hero unlock
         if (achievement.hero) {
           mintBadge({
             name: `${achievement.hero} - Chain Guardian`,
-            description: 'Built a 10-block chain in Chain Builder!',
+            description: `Built a ${chainLength}-block chain in Chain Builder!`,
             rarity: 'Rare',
             gameId: 'chain-builder',
-            traits: { chainLength: blocks, hero: achievement.hero },
+            traits: { chainLength, hero: achievement.hero },
             icon: achievement.icon,
           });
         }
@@ -153,110 +134,179 @@ export default function ChainBuilderGame() {
         break;
       }
     }
-    
-    // Check for game complete (30 blocks)
-    if (blocks >= 30 && !unlockedAchievements.includes('Blockchain Pro')) {
-      setTimeout(() => {
-        setGameState('complete');
+  }, [unlockedAchievements, addXP, mintBadge]);
+
+  // Game loop
+  const gameLoop = useCallback(() => {
+    if (gameState !== 'playing') return;
+
+    setChain(prevChain => {
+      setDirection(nextDirection);
+      const dir = DIRECTIONS[nextDirection];
+      
+      const head = prevChain[0];
+      let newHead = {
+        x: head.x + dir.x,
+        y: head.y + dir.y,
+      };
+
+      // Wrap around edges
+      if (newHead.x < 0) newHead.x = GRID_COLS - 1;
+      if (newHead.x >= GRID_COLS) newHead.x = 0;
+      if (newHead.y < 0) newHead.y = GRID_ROWS - 1;
+      if (newHead.y >= GRID_ROWS) newHead.y = 0;
+
+      // Check self-collision
+      if (prevChain.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+        setGameState('gameover');
+        audioManager.playSound('damage');
+        if (score > highScore) {
+          setHighScore(score);
+        }
         submitScore('chain-builder', score);
-      }, 2000);
+        return prevChain;
+      }
+
+      let newChain: Position[];
+      if (newHead.x === block.x && newHead.y === block.y) {
+        newChain = [newHead, ...prevChain];
+        
+        const points = newChain.length * 10;
+        setScore(prev => prev + points);
+        
+        scoreScale.value = withSequence(
+          withSpring(1.3),
+          withSpring(1)
+        );
+        
+        audioManager.playSound('collect');
+        setTimeout(spawnBlock, 0);
+        checkAchievements(newChain.length);
+        setSpeed(prev => Math.max(60, prev - 2));
+      } else {
+        newChain = [newHead, ...prevChain.slice(0, -1)];
+      }
+
+      return newChain;
+    });
+  }, [gameState, nextDirection, block, score, highScore, spawnBlock, checkAchievements, submitScore]);
+
+  // Start/stop game loop
+  useEffect(() => {
+    if (gameState === 'playing') {
+      gameLoopRef.current = setInterval(gameLoop, speed);
+    } else {
+      if (gameLoopRef.current) {
+        clearInterval(gameLoopRef.current);
+        gameLoopRef.current = null;
+      }
+    }
+
+    return () => {
+      if (gameLoopRef.current) {
+        clearInterval(gameLoopRef.current);
+      }
+    };
+  }, [gameState, speed, gameLoop]);
+
+  // Handle direction change
+  const handleDirectionChange = (newDir: Direction) => {
+    const opposites: Record<Direction, Direction> = {
+      UP: 'DOWN',
+      DOWN: 'UP',
+      LEFT: 'RIGHT',
+      RIGHT: 'LEFT',
+    };
+    
+    if (newDir !== opposites[direction]) {
+      setNextDirection(newDir);
+      audioManager.playSound('click');
     }
   };
-  
-  // Handle tap on game area
-  const handleTap = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
-    addBlock(locationX, locationY);
-  };
-  
+
   // Start game
   const startGame = () => {
-    setChain([]);
+    setChain([{ x: 7, y: 10 }]);
+    setDirection('RIGHT');
+    setNextDirection('RIGHT');
     setScore(0);
-    setBlockCount(0);
+    setSpeed(180);
+    spawnBlock();
     setGameState('playing');
-    setShowTip(true);
-    setUnlockedAchievements([]);
-    audioManager.playSound('click');
+    audioManager.playSound('powerup');
   };
-  
+
   // Continue after achievement
   const continueGame = () => {
     setCurrentAchievement(null);
     setGameState('playing');
-    audioManager.playSound('click');
   };
-  
-  // Reset game
-  const resetGame = () => {
-    setChain([]);
-    setScore(0);
-    setBlockCount(0);
-    setGameState('intro');
-    setCurrentAchievement(null);
+
+  // Restart
+  const restartGame = () => {
     setUnlockedAchievements([]);
+    startGame();
   };
-  
-  // Render block
-  const renderBlock = (block: Block, index: number) => {
-    const isLatest = index === chain.length - 1;
+
+  // Get color for chain segment
+  const getChainColor = (index: number) => {
+    return CHAIN_COLORS[index % CHAIN_COLORS.length];
+  };
+
+  // Render game grid
+  const renderGrid = () => {
+    const cells = [];
     
-    return (
+    chain.forEach((segment, index) => {
+      const isHead = index === 0;
+      cells.push(
+        <View
+          key={`chain-${index}`}
+          style={[
+            styles.chainSegment,
+            {
+              left: segment.x * CELL_SIZE,
+              top: segment.y * CELL_SIZE,
+              width: CELL_SIZE - 2,
+              height: CELL_SIZE - 2,
+              backgroundColor: getChainColor(index),
+              borderRadius: isHead ? CELL_SIZE / 4 : 4,
+              borderWidth: isHead ? 2 : 1,
+              borderColor: isHead ? '#FFF' : getChainColor(index),
+            },
+          ]}
+        >
+          {isHead && <Text style={styles.headEmoji}>◆</Text>}
+        </View>
+      );
+    });
+
+    cells.push(
       <Animated.View
-        key={block.id}
-        entering={ZoomIn.springify()}
+        key="block"
+        entering={ZoomIn}
         style={[
-          styles.block,
+          styles.collectBlock,
           {
-            left: block.x - 15,
-            top: block.y - 15,
-            backgroundColor: block.color,
-            borderColor: isLatest ? '#FFF' : block.color,
-            zIndex: index,
+            left: block.x * CELL_SIZE,
+            top: block.y * CELL_SIZE,
+            width: CELL_SIZE - 2,
+            height: CELL_SIZE - 2,
           },
         ]}
       >
-        <Text style={styles.blockNumber}>{index + 1}</Text>
+        <Text style={styles.blockEmoji}>💎</Text>
       </Animated.View>
     );
+
+    return cells;
   };
-  
-  // Render chain lines (connecting blocks)
-  const renderChainLines = () => {
-    if (chain.length < 2) return null;
-    
-    return chain.slice(1).map((block, index) => {
-      const prevBlock = chain[index];
-      
-      // Calculate line properties
-      const dx = block.x - prevBlock.x;
-      const dy = block.y - prevBlock.y;
-      const length = Math.sqrt(dx * dx + dy * dy);
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-      
-      return (
-        <View
-          key={`line-${block.id}`}
-          style={[
-            styles.chainLine,
-            {
-              left: prevBlock.x,
-              top: prevBlock.y,
-              width: length,
-              transform: [{ rotate: `${angle}deg` }],
-              backgroundColor: '#00FF88',
-            },
-          ]}
-        />
-      );
-    });
-  };
-  
+
   // Intro screen
   if (gameState === 'intro') {
     return (
       <View style={styles.container}>
-        <PixelRain count={10} speed={5000} />
+        <PixelRain count={15} speed={4000} />
         <CRTScanlines opacity={0.05} />
         
         <SafeAreaView style={styles.safeArea}>
@@ -264,60 +314,45 @@ export default function ChainBuilderGame() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
               <Text style={styles.backText}>←</Text>
             </TouchableOpacity>
-            <PixelText size="md" color={CRT_COLORS.accentGold} glow>
-              ⛓️ CHAIN BUILDER ⛓️
+            <PixelText size="lg" color={CRT_COLORS.accentGold} glow>
+              ⛓️ CHAIN BUILDER
             </PixelText>
             <View style={styles.placeholder} />
           </View>
-          
+
           <View style={styles.introContent}>
             <Animated.View entering={FadeIn.delay(200)}>
-              <Mascot 
-                type="blocky" 
-                size="lg" 
-                message="Build your own blockchain! Tap to add blocks! 🔗"
-                mood="excited"
-              />
+              <Text style={styles.introIcon}>🐍</Text>
+              <Text style={styles.introTitle}>BUILD THE CHAIN!</Text>
+              <Text style={styles.introSubtitle}>Snake meets Blockchain</Text>
             </Animated.View>
             
-            <Animated.View entering={SlideInUp.delay(400)} style={styles.howToPlay}>
-              <CRTGlowBorder color={CRT_COLORS.accentCyan} style={styles.howToPlayCard}>
-                <Text style={styles.howToTitle}>📖 HOW TO PLAY</Text>
-                <View style={styles.instructionRow}>
-                  <Text style={styles.instructionEmoji}>👆</Text>
-                  <Text style={styles.instructionText}>TAP anywhere to add blocks</Text>
-                </View>
-                <View style={styles.instructionRow}>
-                  <Text style={styles.instructionEmoji}>🔗</Text>
-                  <Text style={styles.instructionText}>Blocks connect automatically</Text>
-                </View>
-                <View style={styles.instructionRow}>
-                  <Text style={styles.instructionEmoji}>📈</Text>
-                  <Text style={styles.instructionText}>Longer chains = more points!</Text>
-                </View>
-                <View style={styles.instructionRow}>
-                  <Text style={styles.instructionEmoji}>🛡️</Text>
-                  <Text style={styles.instructionText}>Reach 10 blocks to unlock Sam!</Text>
-                </View>
-              </CRTGlowBorder>
-            </Animated.View>
+            <View style={styles.instructionsBox}>
+              <Text style={styles.instructionItem}>🎮 Use D-PAD to move your chain</Text>
+              <Text style={styles.instructionItem}>💎 Collect gems to grow longer</Text>
+              <Text style={styles.instructionItem}>🔗 Build an unbreakable chain!</Text>
+              <Text style={styles.instructionItem}>⚠️ Don't crash into yourself!</Text>
+              <Text style={styles.instructionItem}>🛡️ Get 10 blocks to unlock SAM!</Text>
+            </View>
             
-            <Animated.View entering={FadeIn.delay(600)}>
-              <TouchableOpacity style={styles.playBtn} onPress={startGame}>
-                <Text style={styles.playBtnText}>▶ START BUILDING</Text>
-              </TouchableOpacity>
-            </Animated.View>
+            {highScore > 0 && (
+              <Text style={styles.highScoreText}>🏆 High Score: {highScore}</Text>
+            )}
+            
+            <TouchableOpacity style={styles.playBtn} onPress={startGame}>
+              <Text style={styles.playBtnText}>▶ START BUILDING</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>
     );
   }
-  
+
   // Achievement popup
   if (gameState === 'achievement' && currentAchievement) {
     return (
       <View style={styles.container}>
-        <PixelRain count={20} speed={3000} />
+        <PixelRain count={25} speed={3000} />
         <CRTScanlines opacity={0.05} />
         
         <SafeAreaView style={styles.safeArea}>
@@ -334,7 +369,7 @@ export default function ChainBuilderGame() {
                   <Text style={styles.heroDesc}>Protects from hacks!</Text>
                 </View>
               )}
-              <Text style={styles.achievementReward}>+{currentAchievement.reward} XP</Text>
+              <Text style={styles.achievementReward}>+{currentAchievement.xp} XP</Text>
               
               <TouchableOpacity style={styles.continueBtn} onPress={continueGame}>
                 <Text style={styles.continueBtnText}>▶ CONTINUE</Text>
@@ -345,36 +380,48 @@ export default function ChainBuilderGame() {
       </View>
     );
   }
-  
-  // Game complete screen
-  if (gameState === 'complete') {
+
+  // Game over screen
+  if (gameState === 'gameover') {
     return (
       <View style={styles.container}>
-        <PixelRain count={25} speed={2500} />
+        <PixelRain count={10} speed={5000} />
         <CRTScanlines opacity={0.05} />
         
         <SafeAreaView style={styles.safeArea}>
-          <View style={styles.completeContent}>
-            <Animated.View entering={ZoomIn} style={styles.completeCard}>
-              <Text style={styles.completeEmoji}>🏆</Text>
-              <Text style={styles.completeTitle}>CHAIN COMPLETE!</Text>
-              <Text style={styles.completeScore}>SCORE: {score}</Text>
-              <Text style={styles.completeBlocks}>{blockCount} Blocks Built</Text>
+          <View style={styles.gameOverContent}>
+            <Animated.View entering={ZoomIn} style={styles.gameOverCard}>
+              <Text style={styles.gameOverEmoji}>💔</Text>
+              <Text style={styles.gameOverTitle}>CHAIN BROKEN!</Text>
+              <Text style={styles.finalScore}>SCORE: {score}</Text>
+              <Text style={styles.chainLength}>{chain.length} Blocks Built</Text>
+              
+              {score === highScore && score > 0 && (
+                <Text style={styles.newHighScore}>🎉 NEW HIGH SCORE!</Text>
+              )}
+              
+              <View style={styles.earnedBadges}>
+                {ACHIEVEMENTS.filter(a => unlockedAchievements.includes(a.name)).map(a => (
+                  <View key={a.name} style={styles.earnedBadge}>
+                    <Text style={styles.earnedIcon}>{a.icon}</Text>
+                  </View>
+                ))}
+              </View>
               
               <View style={styles.lessonBox}>
-                <Text style={styles.lessonTitle}>💡 What You Learned:</Text>
+                <Text style={styles.lessonTitle}>💡 Blockchain Fact:</Text>
                 <Text style={styles.lessonText}>
-                  Blockchains are made of connected blocks, just like your chain!
-                  Each block links to the previous one, creating a secure record.
+                  Like your chain, real blockchains are unbreakable because each block is 
+                  cryptographically linked to the previous one!
                 </Text>
               </View>
               
-              <View style={styles.completeBtns}>
-                <TouchableOpacity style={styles.playAgainBtn} onPress={resetGame}>
-                  <Text style={styles.playAgainText}>🔄 PLAY AGAIN</Text>
+              <View style={styles.gameOverBtns}>
+                <TouchableOpacity style={styles.retryBtn} onPress={restartGame}>
+                  <Text style={styles.retryBtnText}>🔄 RETRY</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.exitBtn} onPress={() => router.back()}>
-                  <Text style={styles.exitText}>🏠 EXIT</Text>
+                  <Text style={styles.exitBtnText}>🏠 EXIT</Text>
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -383,7 +430,7 @@ export default function ChainBuilderGame() {
       </View>
     );
   }
-  
+
   // Main game screen
   return (
     <View style={styles.container}>
@@ -398,90 +445,77 @@ export default function ChainBuilderGame() {
           <PixelText size="md" color={CRT_COLORS.accentGold} glow>
             ⛓️ CHAIN BUILDER
           </PixelText>
-          <Animated.View style={scoreAnimStyle}>
-            <View style={styles.scoreBox}>
-              <Text style={styles.scoreLabel}>SCORE</Text>
-              <Text style={styles.scoreValue}>{score}</Text>
-            </View>
+          <Animated.View style={[styles.scoreBox, scoreAnimStyle]}>
+            <Text style={styles.scoreLabel}>SCORE</Text>
+            <Text style={styles.scoreValue}>{score}</Text>
           </Animated.View>
         </View>
         
-        {/* Block counter */}
+        {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
-            <Text style={styles.statLabel}>BLOCKS</Text>
+            <Text style={styles.statLabel}>CHAIN</Text>
             <Text style={styles.statValue}>{chain.length}</Text>
+          </View>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${Math.min(100, (chain.length / 50) * 100)}%` }]} />
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>GOAL</Text>
-            <Text style={styles.statValue}>30</Text>
-          </View>
-          <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { width: `${Math.min(100, (chain.length / 30) * 100)}%` }
-              ]} 
-            />
+            <Text style={styles.statValue}>50</Text>
           </View>
         </View>
-        
+
         {/* Game Area */}
         <CRTGlowBorder color={CRT_COLORS.primary} style={styles.gameAreaBorder}>
-          <Pressable 
-            style={styles.gameArea}
-            onPress={handleTap}
-          >
-            {/* Chain lines */}
-            {renderChainLines()}
-            
-            {/* Blocks */}
-            {chain.map((block, index) => renderBlock(block, index))}
-            
-            {/* Tap tip */}
-            {showTip && chain.length === 0 && (
-              <Animated.View entering={FadeIn} style={styles.tapTip}>
-                <Text style={styles.tapTipText}>👆 TAP TO ADD BLOCKS!</Text>
-              </Animated.View>
-            )}
-            
-            {/* Next achievement hint */}
-            {chain.length > 0 && chain.length < 30 && (
-              <View style={styles.nextGoal}>
-                <Text style={styles.nextGoalText}>
-                  {chain.length < 5 
-                    ? `${5 - chain.length} more for First Chain!`
-                    : chain.length < 10 
-                    ? `${10 - chain.length} more to unlock Sam!`
-                    : chain.length < 20
-                    ? `${20 - chain.length} more for Chain Master!`
-                    : `${30 - chain.length} more to complete!`}
-                </Text>
-              </View>
-            )}
-          </Pressable>
+          <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
+            {renderGrid()}
+          </View>
         </CRTGlowBorder>
-        
-        {/* Controls */}
-        <View style={styles.controls}>
-          <TouchableOpacity style={styles.resetBtn} onPress={resetGame}>
-            <Text style={styles.resetBtnText}>🔄 RESET</Text>
-          </TouchableOpacity>
-        </View>
-        
-        {/* Achievements earned */}
-        {unlockedAchievements.length > 0 && (
-          <View style={styles.earnedBadges}>
-            <Text style={styles.earnedTitle}>EARNED:</Text>
-            <View style={styles.badgeRow}>
+
+        {/* D-Pad Controls */}
+        <View style={styles.controlsContainer}>
+          <View style={styles.dpad}>
+            <TouchableOpacity
+              style={[styles.dpadButton, styles.dpadUp]}
+              onPress={() => handleDirectionChange('UP')}
+            >
+              <Text style={styles.dpadText}>▲</Text>
+            </TouchableOpacity>
+            <View style={styles.dpadMiddle}>
+              <TouchableOpacity
+                style={[styles.dpadButton, styles.dpadLeft]}
+                onPress={() => handleDirectionChange('LEFT')}
+              >
+                <Text style={styles.dpadText}>◀</Text>
+              </TouchableOpacity>
+              <View style={styles.dpadCenter} />
+              <TouchableOpacity
+                style={[styles.dpadButton, styles.dpadRight]}
+                onPress={() => handleDirectionChange('RIGHT')}
+              >
+                <Text style={styles.dpadText}>▶</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={[styles.dpadButton, styles.dpadDown]}
+              onPress={() => handleDirectionChange('DOWN')}
+            >
+              <Text style={styles.dpadText}>▼</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Earned badges */}
+          {unlockedAchievements.length > 0 && (
+            <View style={styles.liveBadges}>
               {ACHIEVEMENTS.filter(a => unlockedAchievements.includes(a.name)).map(a => (
-                <View key={a.name} style={styles.earnedBadge}>
-                  <Text style={styles.earnedIcon}>{a.icon}</Text>
+                <View key={a.name} style={styles.liveBadge}>
+                  <Text style={styles.liveBadgeIcon}>{a.icon}</Text>
                 </View>
               ))}
             </View>
-          </View>
-        )}
+          )}
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -500,7 +534,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   backBtn: {
     width: 40,
@@ -542,12 +576,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 8,
-    gap: 12,
+    gap: 10,
   },
   statBox: {
     alignItems: 'center',
     backgroundColor: CRT_COLORS.bgMedium,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
   },
@@ -577,174 +611,164 @@ const styles = StyleSheet.create({
   
   // Game area
   gameAreaBorder: {
-    marginHorizontal: 16,
-    flex: 1,
+    alignSelf: 'center',
   },
   gameArea: {
-    flex: 1,
     backgroundColor: CRT_COLORS.bgDark,
-    borderRadius: 8,
-    position: 'relative',
+    borderRadius: 4,
     overflow: 'hidden',
+    position: 'relative',
   },
   
-  // Block
-  block: {
+  // Chain segment
+  chainSegment: {
     position: 'absolute',
-    width: 30,
-    height: 30,
-    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
   },
-  blockNumber: {
+  headEmoji: {
     fontSize: 10,
     color: '#000',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
   },
   
-  // Chain line
-  chainLine: {
+  // Block to collect
+  collectBlock: {
     position: 'absolute',
-    height: 4,
-    borderRadius: 2,
-    transformOrigin: 'left center',
-  },
-  
-  // Tap tip
-  tapTip: {
-    position: 'absolute',
-    top: '40%',
-    left: 0,
-    right: 0,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
-  tapTipText: {
-    fontSize: 16,
-    color: CRT_COLORS.accentCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-    textShadowColor: CRT_COLORS.accentCyan,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-  },
-  
-  // Next goal
-  nextGoal: {
-    position: 'absolute',
-    bottom: 10,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  nextGoalText: {
-    fontSize: 10,
-    color: CRT_COLORS.accentGold,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    backgroundColor: CRT_COLORS.bgMedium + 'DD',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 4,
+  blockEmoji: {
+    fontSize: CELL_SIZE - 4,
   },
   
   // Controls
-  controls: {
+  controlsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingVertical: 12,
-  },
-  resetBtn: {
-    backgroundColor: CRT_COLORS.bgMedium,
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: CRT_COLORS.textDim + '60',
+    paddingVertical: 12,
+    flex: 1,
   },
-  resetBtnText: {
-    fontSize: 12,
-    color: CRT_COLORS.textDim,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  dpad: {
+    alignItems: 'center',
+  },
+  dpadMiddle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dpadButton: {
+    width: 52,
+    height: 52,
+    backgroundColor: CRT_COLORS.bgMedium,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.primary + '60',
+  },
+  dpadUp: {
+    marginBottom: 4,
+  },
+  dpadDown: {
+    marginTop: 4,
+  },
+  dpadLeft: {
+    marginRight: 4,
+  },
+  dpadRight: {
+    marginLeft: 4,
+  },
+  dpadCenter: {
+    width: 24,
+    height: 24,
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 4,
+  },
+  dpadText: {
+    fontSize: 20,
+    color: CRT_COLORS.primary,
     fontWeight: 'bold',
   },
   
-  // Earned badges
-  earnedBadges: {
+  // Live badges
+  liveBadges: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 10,
-    gap: 8,
-  },
-  earnedTitle: {
-    fontSize: 10,
-    color: CRT_COLORS.textDim,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  badgeRow: {
-    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
     gap: 6,
+    maxWidth: 120,
   },
-  earnedBadge: {
+  liveBadge: {
+    width: 36,
+    height: 36,
     backgroundColor: CRT_COLORS.bgMedium,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
     borderColor: CRT_COLORS.accentGold,
   },
-  earnedIcon: {
-    fontSize: 14,
+  liveBadgeIcon: {
+    fontSize: 16,
   },
   
   // Intro screen
   introContent: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    gap: 24,
+    alignItems: 'center',
+    paddingHorizontal: 24,
   },
-  howToPlay: {
-    marginTop: 16,
-  },
-  howToPlayCard: {
-    padding: 16,
-  },
-  howToTitle: {
-    fontSize: 14,
-    color: CRT_COLORS.accentCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
+  introIcon: {
+    fontSize: 60,
     textAlign: 'center',
     marginBottom: 12,
   },
-  instructionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+  introTitle: {
+    fontSize: 22,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 4,
   },
-  instructionEmoji: {
-    fontSize: 18,
-    marginRight: 12,
+  introSubtitle: {
+    fontSize: 14,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  instructionText: {
+  instructionsBox: {
+    backgroundColor: CRT_COLORS.bgMedium,
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 16,
+    width: '100%',
+    maxWidth: 300,
+  },
+  instructionItem: {
     fontSize: 12,
     color: CRT_COLORS.textPrimary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginVertical: 4,
+  },
+  highScoreText: {
+    fontSize: 14,
+    color: CRT_COLORS.accentGold,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginBottom: 16,
   },
   playBtn: {
     backgroundColor: CRT_COLORS.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginHorizontal: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 10,
   },
   playBtnText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#000',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
@@ -823,80 +847,106 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   
-  // Complete screen
-  completeContent: {
+  // Game over screen
+  gameOverContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  completeCard: {
+  gameOverCard: {
     backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 20,
-    padding: 30,
+    padding: 24,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: CRT_COLORS.primary,
+    borderColor: '#FF6B6B',
     width: '100%',
     maxWidth: 340,
   },
-  completeEmoji: {
-    fontSize: 60,
-    marginBottom: 12,
+  gameOverEmoji: {
+    fontSize: 50,
+    marginBottom: 8,
   },
-  completeTitle: {
-    fontSize: 22,
-    color: CRT_COLORS.primary,
+  gameOverTitle: {
+    fontSize: 20,
+    color: '#FF6B6B',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  completeScore: {
+  finalScore: {
     fontSize: 28,
     color: CRT_COLORS.accentGold,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     marginBottom: 4,
   },
-  completeBlocks: {
+  chainLength: {
     fontSize: 14,
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginBottom: 16,
+    marginBottom: 8,
+  },
+  newHighScore: {
+    fontSize: 14,
+    color: '#FFD700',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  earnedBadges: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
+  earnedBadge: {
+    width: 36,
+    height: 36,
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: CRT_COLORS.accentGold,
+  },
+  earnedIcon: {
+    fontSize: 16,
   },
   lessonBox: {
     backgroundColor: CRT_COLORS.bgDark,
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 20,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
     borderLeftWidth: 3,
     borderLeftColor: CRT_COLORS.accentCyan,
+    width: '100%',
   },
   lessonTitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: CRT_COLORS.accentCyan,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   lessonText: {
-    fontSize: 11,
+    fontSize: 10,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    lineHeight: 16,
+    lineHeight: 14,
   },
-  completeBtns: {
+  gameOverBtns: {
     flexDirection: 'row',
     gap: 12,
   },
-  playAgainBtn: {
+  retryBtn: {
     backgroundColor: CRT_COLORS.primary,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     borderRadius: 8,
   },
-  playAgainText: {
-    fontSize: 12,
+  retryBtnText: {
+    fontSize: 14,
     color: '#000',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
@@ -904,13 +954,13 @@ const styles = StyleSheet.create({
   exitBtn: {
     backgroundColor: CRT_COLORS.bgDark,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: CRT_COLORS.textDim,
   },
-  exitText: {
-    fontSize: 12,
+  exitBtnText: {
+    fontSize: 14,
     color: CRT_COLORS.textDim,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
