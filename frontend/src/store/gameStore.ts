@@ -115,6 +115,8 @@ interface GameState {
   spendQuestCoins: (amount: number) => boolean;
   // DAO voting
   castDaoVote: (proposalId: string, proposalTitle: string, vote: 'yes' | 'no' | 'abstain') => void;
+  // Story Mode
+  completeStoryEpisode: (episodeId: string, rewards: { xp: number; coins?: number; badgeId?: string }) => Promise<void>;
 }
 
 // Helper to check if we're on the client side
