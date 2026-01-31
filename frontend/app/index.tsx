@@ -559,8 +559,10 @@ export default function ArcadeHub() {
 
   return (
     <View style={styles.container}>
-      <PixelRain count={15} speed={4000} />
-      <CRTScanlines opacity={0.06} />
+      {/* Background effects layer */}
+      <PixelRain count={18} speed={4000} />
+      <FloatingSparkles count={12} colors={['#00FF88', '#FFD700', '#FF00FF', '#00D4FF']} />
+      <CRTScanlines opacity={0.05} />
       
       <SafeAreaView style={styles.safeArea}>
         {/* Header Marquee - CRT Terminal Style */}
