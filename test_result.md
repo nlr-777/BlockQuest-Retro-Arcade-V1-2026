@@ -127,7 +127,7 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/app/index.tsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -137,6 +137,9 @@ frontend:
         - working: false
         - agent: "testing"
         - comment: "❌ CRITICAL ISSUE: Game grid not accessible due to onboarding modal blocking access. Found 13 playable game indicators (▶) and 3 coming soon indicators (SOON) but no clickable game cards detected. Cannot test game navigation until onboarding flow is fixed."
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL: Home screen with game grid not accessible through normal onboarding flow. After guest setup, app redirects to welcome instead of showing home screen with games. However, games work correctly when accessed via direct navigation."
 
   - task: "Game Instructions Screen"
     implemented: true
