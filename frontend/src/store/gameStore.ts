@@ -12,6 +12,16 @@ export interface Badge {
   mintedAt: number;
   traits: Record<string, string | number>;
   icon: string;
+  category?: 'token' | 'nft' | 'web3' | 'meta' | 'game' | 'story';
+}
+
+export interface DaoVote {
+  id: string;
+  proposalId: string;
+  proposalTitle: string;
+  vote: 'yes' | 'no' | 'abstain';
+  votedAt: number;
+  votingPower: number;
 }
 
 export interface PlayerProfile {
