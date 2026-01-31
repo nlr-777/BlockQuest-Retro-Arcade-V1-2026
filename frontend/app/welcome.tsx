@@ -41,22 +41,37 @@ export default function WelcomeScreen() {
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig>(CHARACTERS[0]);
   
   // For returning authenticated users
-  const [pendingAuthUser, setPendingAuthUser] = useState<any>(null);
+  const [pendingAuthUser, setPendingAuthUser] = useState<{ email?: string; username?: string } | null>(null);
   
   // Mini-game state
   const [showMiniGame, setShowMiniGame] = useState(false);
 
   useEffect(() => {
-    if (!isHydrated) return;
+    const initSession = async () => {
+      if (!isHydrated) return;
+      
+      // Profile already exists - redirect to home immediately
+      if (profile) {
+        router.replace('/');
+        return;
+      }
+      
+      // Check for existing auth session
+      try {
+        const user = await authService.initialize();
+        if (user) {
+          setPendingAuthUser(user);
+          setUsername(user.username || user.email?.split('@')[0] || '');
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    // Profile already exists - redirect to home immediately
-    if (profile) {
-      router.replace('/');
-      return;
-    }
-    
-    checkExistingSession();
-  }, [isHydrated, profile]);
+    initSession();
+  }, [isHydrated, profile, router]);
 
   const checkExistingSession = async () => {
     try {
