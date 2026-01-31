@@ -143,11 +143,11 @@ frontend:
 
   - task: "Game Instructions Screen"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/app/games/block-muncher.tsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
@@ -155,6 +155,9 @@ frontend:
         - working: "NA"
         - agent: "testing"
         - comment: "⚠️ CANNOT TEST: Unable to access game instructions due to onboarding modal blocking main hub access. Need to fix onboarding flow first before testing individual games."
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED VIA DIRECT NAVIGATION: Game instructions screen works perfectly. Block Muncher shows HOW TO PLAY section, CONTROLS (D-PAD to move), difficulty rating (Easy ★☆☆), and PLAY button. All game elements load correctly when accessed directly."
 
   - task: "Audio System - Trance Music & SFX"
     implemented: true
