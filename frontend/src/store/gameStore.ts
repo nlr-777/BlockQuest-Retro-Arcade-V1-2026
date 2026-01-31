@@ -163,6 +163,7 @@ export const useGameStore = create<GameState>()(
           knowledgeTokens: 0,
           questCoins: 100, // Starting coins
           daoVotes: [],
+          completedStoryEpisodes: [],
         };
         set({ profile: newProfile, isLoading: false });
       },
