@@ -345,7 +345,12 @@ const styles = StyleSheet.create({
   primaryButton: {
     marginBottom: 8,
   },
-  secondaryButton: {
+  authButtonsRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  authButton: {
+    flex: 1,
     borderWidth: 2,
     borderColor: CRT_COLORS.textDim + '40',
   },
@@ -361,9 +366,9 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     color: CRT_COLORS.textDim,
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    marginHorizontal: 12,
+    marginHorizontal: 8,
   },
   
   // Logged in state
