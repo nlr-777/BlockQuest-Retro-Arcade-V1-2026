@@ -51,6 +51,11 @@ class AuthService {
     }
   }
 
+  // Store auth data from Google OAuth
+  async storeAuthFromGoogle(token: string, user: User) {
+    await this.storeAuth(token, user);
+  }
+
   // Store auth data
   private async storeAuth(token: string, user: User) {
     try {
