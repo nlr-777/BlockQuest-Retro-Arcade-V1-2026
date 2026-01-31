@@ -66,9 +66,8 @@ export default function LoginScreen() {
         authResponse = await authService.login(email, password);
       }
       
-      // Sync local profile with cloud data
-      await syncWithCloudProfile(authResponse.user);
-      router.replace('/');
+      // Redirect to welcome for character setup (all users need to pick a character)
+      router.replace('/welcome');
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
     } finally {
