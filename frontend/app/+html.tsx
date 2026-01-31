@@ -24,12 +24,16 @@ export default function Root({ children }: { children: React.ReactNode }) {
 
 const responsiveBackground = `
 html, body, #root {
-  background-color: #0A0E14;
+  background-color: #0A0E14 !important;
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
 }
 
 * {
@@ -40,5 +44,18 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+/* Force dark background on all RN views */
+[data-rnw-view] {
+  background-color: transparent;
+}
+
+/* Remove safe area bottom padding on web */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: 0 !important;
+  }
 }
 `;
