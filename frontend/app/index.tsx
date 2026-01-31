@@ -1076,9 +1076,7 @@ const styles = StyleSheet.create({
     color: COLORS.neonPink,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 3,
-    textShadowColor: COLORS.neonPink,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
+    textShadow: `0 0 15px ${COLORS.neonPink}`,
   },
   modalSubtitle: {
     fontSize: 12,
