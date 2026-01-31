@@ -311,8 +311,9 @@ export default function VaultFlexGallery() {
 
   return (
     <View style={styles.container}>
-      <PixelRain count={12} speed={5000} />
-      <CRTScanlines opacity={0.06} />
+      <PixelRain count={15} speed={5000} />
+      <FloatingSparkles count={15} colors={['#FFD700', '#00FF88', '#FF00FF', '#00D4FF', '#FF0080']} />
+      <CRTScanlines opacity={0.05} />
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
@@ -326,44 +327,55 @@ export default function VaultFlexGallery() {
           <View style={styles.placeholder} />
         </View>
 
-        {/* Player Card */}
-        <CRTGlowBorder color={currentRank.color} style={styles.playerCard}>
-          <View style={styles.playerInfo}>
-            <View style={styles.playerAvatar}>
-              <Text style={styles.avatarText}>{currentRank.icon}</Text>
+        {/* Player Card with Rainbow Border for high level */}
+        <HolographicShine style={styles.playerCardWrapper}>
+          <CRTGlowBorder color={currentRank.color} style={styles.playerCard}>
+            <View style={styles.playerInfo}>
+              <View style={[styles.playerAvatar, { boxShadow: `0 0 15px ${currentRank.color}` }]}>
+                <Text style={styles.avatarText}>{currentRank.icon}</Text>
+              </View>
+              <View style={styles.playerDetails}>
+                <Text style={styles.playerName}>{profile?.username || 'Player'}</Text>
+                <Text style={[styles.playerRank, { color: currentRank.color, textShadow: `0 0 10px ${currentRank.color}` }]}>
+                  {currentRank.name} • {currentRank.title}
+                </Text>
+              </View>
             </View>
-            <View style={styles.playerDetails}>
-              <Text style={styles.playerName}>{profile?.username || 'Player'}</Text>
-              <Text style={[styles.playerRank, { color: currentRank.color }]}>
-                {currentRank.name} • {currentRank.title}
-              </Text>
+            
+            {/* XP Progress with glow */}
+            <View style={styles.xpSection}>
+              <View style={styles.xpBar}>
+                <Animated.View 
+                  style={[
+                    styles.xpFill, 
+                    { 
+                      width: `${rankProgress}%`, 
+                      backgroundColor: currentRank.color,
+                      boxShadow: `0 0 8px ${currentRank.color}`,
+                    }
+                  ]} 
+                />
+              </View>
+              <Text style={styles.xpText}>{profile?.xp || 0} XP • Level {profile?.level || 1}</Text>
             </View>
-          </View>
-          
-          {/* XP Progress */}
-          <View style={styles.xpSection}>
-            <View style={styles.xpBar}>
-              <View style={[styles.xpFill, { width: `${rankProgress}%`, backgroundColor: currentRank.color }]} />
-            </View>
-            <Text style={styles.xpText}>{profile?.xp || 0} XP • Level {profile?.level || 1}</Text>
-          </View>
 
-          {/* Quick Stats */}
-          <View style={styles.quickStats}>
-            <View style={styles.quickStat}>
-              <Text style={styles.quickStatValue}>{profile?.badges?.length || 0}</Text>
-              <Text style={styles.quickStatLabel}>BADGES</Text>
+            {/* Quick Stats with glow */}
+            <View style={styles.quickStats}>
+              <View style={styles.quickStat}>
+                <Text style={[styles.quickStatValue, { textShadow: '0 0 8px #FFD700' }]}>{profile?.badges?.length || 0}</Text>
+                <Text style={styles.quickStatLabel}>BADGES</Text>
+              </View>
+              <View style={styles.quickStat}>
+                <Text style={[styles.quickStatValue, { textShadow: '0 0 8px #00FF88' }]}>{totalScore.toLocaleString()}</Text>
+                <Text style={styles.quickStatLabel}>SCORE</Text>
+              </View>
+              <View style={styles.quickStat}>
+                <Text style={[styles.quickStatValue, { textShadow: '0 0 8px #FF00FF' }]}>{loyaltyStats.currentStreak}</Text>
+                <Text style={styles.quickStatLabel}>STREAK</Text>
+              </View>
             </View>
-            <View style={styles.quickStat}>
-              <Text style={styles.quickStatValue}>{totalScore.toLocaleString()}</Text>
-              <Text style={styles.quickStatLabel}>SCORE</Text>
-            </View>
-            <View style={styles.quickStat}>
-              <Text style={styles.quickStatValue}>{loyaltyStats.currentStreak}</Text>
-              <Text style={styles.quickStatLabel}>STREAK</Text>
-            </View>
-          </View>
-        </CRTGlowBorder>
+          </CRTGlowBorder>
+        </HolographicShine>
 
         {/* Tab Navigation */}
         <View style={styles.tabs}>
