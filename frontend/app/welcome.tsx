@@ -408,9 +408,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-  featureLabel: {
-    fontSize: 9,
-    color: CRT_COLORS.textDim,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-});
