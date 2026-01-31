@@ -73,22 +73,6 @@ export default function WelcomeScreen() {
     initSession();
   }, [isHydrated, profile, router]);
 
-  const checkExistingSession = async () => {
-    try {
-      const user = await authService.initialize();
-      
-      // Logged in but no profile - pre-fill username
-      if (user) {
-        setPendingAuthUser(user);
-        setUsername(user.username || user.email?.split('@')[0] || '');
-      }
-    } catch (error) {
-      console.error('Session check error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Create profile and start game (for Guest)
   const handlePlayAsGuest = async () => {
     if (username.trim().length < 3 || !selectedCharacter) return;
