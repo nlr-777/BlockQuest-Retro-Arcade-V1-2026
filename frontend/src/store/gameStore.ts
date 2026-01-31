@@ -25,6 +25,11 @@ export interface PlayerProfile {
   daoVotingPower: number;
   level: number;
   xp: number;
+  // New currencies
+  knowledgeTokens: number;
+  questCoins: number;
+  // DAO voting history
+  daoVotes: DaoVote[];
 }
 
 export interface GameScore {
