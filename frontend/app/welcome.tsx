@@ -311,6 +311,12 @@ const styles = StyleSheet.create({
     fontSize: 60,
     marginBottom: 8,
   },
+  titleText: {
+    fontSize: 28,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
   subtitle: {
     fontSize: 12,
     color: CRT_COLORS.textDim,
