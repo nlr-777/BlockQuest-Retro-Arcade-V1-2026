@@ -242,7 +242,7 @@ export default function WelcomeScreen() {
                   />
                   <PixelButton
                     title="🔑 SIGN IN"
-                    onPress={() => router.push('/login')}
+                    onPress={handleSignIn}
                     color={CRT_COLORS.bgMedium}
                     textColor={CRT_COLORS.textBright}
                     size="md"
