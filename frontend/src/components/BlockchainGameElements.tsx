@@ -359,8 +359,9 @@ export const WalletPowerup: React.FC<WalletPowerupProps> = ({
     ],
   }));
 
+  const powerupColor = colors[type];
   const glowStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glow.value,
+    boxShadow: `0 0 8px rgba(${parseInt(powerupColor.slice(1,3), 16)}, ${parseInt(powerupColor.slice(3,5), 16)}, ${parseInt(powerupColor.slice(5,7), 16)}, ${glow.value})`,
   }));
 
   return (
@@ -370,7 +371,6 @@ export const WalletPowerup: React.FC<WalletPowerupProps> = ({
         {
           backgroundColor: colors[type] + '30',
           borderColor: colors[type],
-          shadowColor: colors[type],
         },
         animatedStyle,
         glowStyle,
