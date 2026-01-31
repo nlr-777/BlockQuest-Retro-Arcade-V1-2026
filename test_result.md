@@ -273,11 +273,9 @@ test_plan:
   current_focus:
     - "Main Hub Screen - Onboarding with Avatar Selection"
     - "Main Hub Screen - Game Grid Display (12 playable)"
-    - "Vault Screen - Backup/Restore System"
   stuck_tasks:
     - "Main Hub Screen - Onboarding with Avatar Selection"
     - "Main Hub Screen - Game Grid Display (12 playable)"
-    - "Vault Screen - Backup/Restore System"
   test_all: false
   test_priority: "stuck_first"
 
