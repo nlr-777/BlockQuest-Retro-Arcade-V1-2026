@@ -149,8 +149,9 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <PixelRain count={15} speed={5000} />
-      <CRTScanlines opacity={0.05} />
+      <PixelRain count={18} speed={4500} />
+      <FloatingSparkles count={15} colors={['#FFD700', '#00FF88', '#FF00FF', '#00D4FF', '#FF6B6B']} />
+      <CRTScanlines opacity={0.04} />
 
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -161,13 +162,13 @@ export default function WelcomeScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header */}
+          {/* Header with glow */}
           <Animated.View entering={FadeInDown.duration(500)} style={styles.header}>
-            <Text style={styles.logo}>🎮</Text>
-            <PixelText size="lg" color={COLORS.chainGold} glow>
+            <Text style={[styles.logo, { textShadow: '0 0 20px #FFD700' }]}>🎮</Text>
+            <CRTFlickerText style={styles.titleText} color={COLORS.chainGold} glitch>
               BLOCK QUEST
-            </PixelText>
-            <Text style={styles.subtitle}>Web3 Chaos Chronicles</Text>
+            </CRTFlickerText>
+            <Text style={[styles.subtitle, { textShadow: '0 0 10px #00FF88' }]}>Web3 Chaos Chronicles</Text>
           </Animated.View>
 
           {/* Character Selection */}
@@ -178,13 +179,16 @@ export default function WelcomeScreen() {
             />
           </Animated.View>
 
-          {/* Name Input */}
+          {/* Name Input with glow */}
           <Animated.View entering={FadeInUp.delay(300).duration(400)} style={styles.nameSection}>
             <Text style={styles.inputLabel}>YOUR NAME</Text>
             <TextInput
               style={[
                 styles.nameInput,
-                { borderColor: selectedCharacter?.colors.primary || CRT_COLORS.primary }
+                { 
+                  borderColor: selectedCharacter?.colors.primary || CRT_COLORS.primary,
+                  boxShadow: `0 0 10px ${selectedCharacter?.colors.primary || CRT_COLORS.primary}40`,
+                }
               ]}
               placeholder="Enter your name..."
               placeholderTextColor={CRT_COLORS.textDim}
