@@ -44,6 +44,7 @@ import {
   HolographicShine,
   EnergyBar,
 } from '../src/components/ChaosEffects';
+import { BottomNavBar } from '../src/components/BottomNavBar';
 import { CharacterSelector } from '../src/components/CharacterSelector';
 import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
 import { XPProgressBar } from '../src/components/XPProgressBar';
