@@ -129,7 +129,7 @@ export const CRTGlowBorder: React.FC<{
       {children}
     </Animated.View>
   );
-});
+};
 
 // ============================================
 // PIXEL RAIN - Matrix-style falling characters
