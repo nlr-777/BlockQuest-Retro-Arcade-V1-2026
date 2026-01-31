@@ -147,7 +147,11 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
       // Check self-collision (game over)
       if (prevChain.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
         setGameState('gameover');
-        audioManager.playSound('damage');
+        try {
+          audioManager.playSound('damage');
+        } catch (e) {
+          console.log('Audio error:', e);
+        }
         if (score > highScore) {
           setHighScore(score);
         }
