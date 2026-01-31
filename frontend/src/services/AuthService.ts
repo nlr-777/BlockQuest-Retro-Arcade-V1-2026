@@ -101,6 +101,11 @@ class AuthService {
     return this.token !== null && this.user !== null;
   }
 
+  // Alias for isLoggedIn
+  isAuthenticated(): boolean {
+    return this.isLoggedIn();
+  }
+
   // Register with email and password
   async register(email: string, password: string, username: string): Promise<AuthResponse> {
     const response = await fetch(`${API_BASE}/api/auth/register`, {
