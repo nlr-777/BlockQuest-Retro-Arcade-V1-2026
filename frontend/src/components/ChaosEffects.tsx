@@ -730,8 +730,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 12,
     backgroundColor: CRT_COLORS.bgMedium,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 15,
     elevation: 10,
     overflow: 'hidden',
   },
