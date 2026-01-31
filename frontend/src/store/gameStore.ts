@@ -149,9 +149,12 @@ export const useGameStore = create<GameState>()(
           totalScore: 0,
           gamesPlayed: 0,
           badges: [],
-          daoVotingPower: 0,
+          daoVotingPower: 10, // Starting voting power
           level: 1,
           xp: 0,
+          knowledgeTokens: 0,
+          questCoins: 100, // Starting coins
+          daoVotes: [],
         };
         set({ profile: newProfile, isLoading: false });
       },
