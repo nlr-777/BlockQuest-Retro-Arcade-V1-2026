@@ -287,9 +287,7 @@ const comboStyles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadowColor: '#000',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    textShadow: '2px 2px 4px #000',
   },
   comboText: {
     fontSize: 16,
