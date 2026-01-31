@@ -76,7 +76,7 @@ const PowerUpButton: React.FC<{
   }));
   
   const glowStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glow.value * 0.8,
+    boxShadow: `0 0 8px rgba(${parseInt(powerUp.color.slice(1,3), 16)}, ${parseInt(powerUp.color.slice(3,5), 16)}, ${parseInt(powerUp.color.slice(5,7), 16)}, ${glow.value * 0.8})`,
     borderColor: isActive 
       ? powerUp.color 
       : canUse 
@@ -97,7 +97,6 @@ const PowerUpButton: React.FC<{
           glowStyle,
           !canUse && styles.powerUpBtnDisabled,
           isActive && styles.powerUpBtnActive,
-          { shadowColor: powerUp.color },
         ]}
       >
         <Text style={styles.powerUpIcon}>{powerUp.icon}</Text>
