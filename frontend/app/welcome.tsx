@@ -174,6 +174,11 @@ export default function WelcomeScreen() {
             <Text style={styles.subtitle}>Web3 Chaos Chronicles</Text>
           </Animated.View>
 
+          {/* Chain Builder Mini-Game Teaser */}
+          <Animated.View entering={FadeIn.delay(100).duration(400)} style={styles.teaserSection}>
+            <ChainBuilderTeaser onPress={() => setShowMiniGame(true)} />
+          </Animated.View>
+
           {/* Character Selection */}
           <Animated.View entering={FadeIn.delay(200).duration(400)}>
             <CharacterSelector
