@@ -259,35 +259,53 @@ export default function SettingsScreen() {
       
       if (result) {
         audioManager.playSound('powerup');
-        Alert.alert('☁️ Synced!', 'Your progress has been saved to the cloud.');
+        if (Platform.OS === 'web') {
+          window.alert('☁️ Synced! Your progress has been saved to the cloud.');
+        } else {
+          Alert.alert('☁️ Synced!', 'Your progress has been saved to the cloud.');
+        }
       } else {
-        Alert.alert('⚠️ Sync Failed', 'Please try again later.');
+        if (Platform.OS === 'web') {
+          window.alert('⚠️ Sync Failed - Please try again later.');
+        } else {
+          Alert.alert('⚠️ Sync Failed', 'Please try again later.');
+        }
       }
     } catch (error) {
-      Alert.alert('⚠️ Sync Failed', 'Please check your connection.');
+      if (Platform.OS === 'web') {
+        window.alert('⚠️ Sync Failed - Please check your connection.');
+      } else {
+        Alert.alert('⚠️ Sync Failed', 'Please check your connection.');
+      }
     } finally {
       setSyncing(false);
     }
   };
 
   // Reset handler
-  const handleReset = () => {
-    Alert.alert(
-      '⚠️ Reset Progress',
-      'This will DELETE all your progress, badges, and high scores. This cannot be undone!',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Everything',
-          style: 'destructive',
-          onPress: () => {
-            resetProfile();
-            Alert.alert('🗑️ Reset Complete', 'All progress has been cleared.');
-            router.replace('/');
-          },
-        },
-      ]
-    );
+  const handleReset = async () => {
+    const confirmReset = Platform.OS === 'web'
+      ? window.confirm('⚠️ This will DELETE all your progress, badges, and high scores. This cannot be undone! Continue?')
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            '⚠️ Reset Progress',
+            'This will DELETE all your progress, badges, and high scores. This cannot be undone!',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Delete Everything', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+    
+    if (confirmReset) {
+      resetProfile();
+      if (Platform.OS === 'web') {
+        window.alert('🗑️ Reset Complete - All progress has been cleared.');
+      } else {
+        Alert.alert('🗑️ Reset Complete', 'All progress has been cleared.');
+      }
+      router.replace('/');
+    }
   };
 
   // Reset all settings to default
