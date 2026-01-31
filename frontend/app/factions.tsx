@@ -447,6 +447,9 @@ export default function FactionsPage() {
             </Animated.View>
           </View>
         </Modal>
+        
+        {/* Shared Bottom Navigation */}
+        <BottomNavBar activeTab="more" />
       </SafeAreaView>
     </View>
   );
