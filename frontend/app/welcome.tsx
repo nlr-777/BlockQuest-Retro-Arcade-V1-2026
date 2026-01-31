@@ -282,8 +282,8 @@ export default function WelcomeScreen() {
             <Text style={styles.featureText}>Learn Web3</Text>
           </View>
           <View style={styles.featureItem}>
-            <Text style={styles.featureIcon}>☁️</Text>
-            <Text style={styles.featureText}>Cloud Save</Text>
+            <Text style={styles.featureIcon}>🎮</Text>
+            <Text style={styles.featureText}>15 Games</Text>
           </View>
         </View>
       </Animated.View>
