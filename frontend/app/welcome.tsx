@@ -97,7 +97,13 @@ export default function WelcomeScreen() {
       }));
     }
     
-    router.push('/login?returnTo=complete-profile');
+    router.push('/login?mode=register&returnTo=complete-profile');
+  };
+
+  // Go to sign in page (no character needed)
+  const handleSignIn = () => {
+    audioManager.playSound('click');
+    router.push('/login');
   };
 
   // For users who already have auth but need to create profile
