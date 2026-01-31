@@ -507,7 +507,7 @@ export const HexBadge: React.FC<{
   }, [animated, rarity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glow.value,
+    boxShadow: `0 0 10px rgba(${parseInt(badgeColor.slice(1,3), 16)}, ${parseInt(badgeColor.slice(3,5), 16)}, ${parseInt(badgeColor.slice(5,7), 16)}, ${glow.value})`,
   }));
   
   const rainbowStyle = useAnimatedStyle(() => ({
@@ -522,7 +522,6 @@ export const HexBadge: React.FC<{
           width: size,
           height: size * 1.15,
           borderColor: badgeColor,
-          shadowColor: badgeColor,
         },
         animatedStyle,
       ]}
