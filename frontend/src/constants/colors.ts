@@ -39,10 +39,10 @@ export const COLORS = {
   cardBorder: '#FF00FF',
   cardGlow: 'rgba(255, 0, 255, 0.3)',
   
-  // Text colors
+  // Text colors - all brightened for better visibility
   textPrimary: '#FFFFFF',
-  textSecondary: '#C4B5FD',
-  textMuted: '#8B7FD4',
+  textSecondary: '#E0D4FF',  // Brightened from #C4B5FD
+  textMuted: '#B8A8E8',      // Brightened from #8B7FD4
   textGlow: '#00FFFF',
   
   // Game-specific (keeping original names for compatibility)
