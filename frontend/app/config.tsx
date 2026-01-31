@@ -9,7 +9,7 @@ export default function ConfigRedirect() {
   useEffect(() => {
     // Redirect to settings page
     router.replace('/settings');
-  }, []);
+  }, [router]);
   
   return null;
 }
