@@ -269,9 +269,9 @@ export default function ArcadeHub() {
   const { selectCharacter, selectedCharacterId, getSelectedCharacter } = useCharacterStore();
   const { hasCompletedTutorial, hasCompletedOnboarding, setOnboardingComplete } = useTutorialStore();
   const tutorialHydrated = useTutorialHydrated();
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
   const [username, setUsername] = useState('');
+  // Character selection state (now handled in welcome screen)
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterConfig | null>(CHARACTERS[0]);
   const [currentPun, setCurrentPun] = useState('');
   
