@@ -1064,38 +1064,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   
-  // Bottom Nav
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-    backgroundColor: CRT_COLORS.bgDark,
-    borderTopWidth: 2,
-    borderTopColor: CRT_COLORS.primary + '40',
-  },
-  navBtn: {
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  navActive: {
-    backgroundColor: CRT_COLORS.primary + '20',
-  },
-  navIcon: {
-    fontSize: 18,
-  },
-  navText: {
-    color: CRT_COLORS.textDim,
-    fontSize: 8,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
-  navTextActive: {
-    color: CRT_COLORS.primary,
-  },
-  
   // Modal - Bold Arcade Style
   modalOverlay: {
     flex: 1,
