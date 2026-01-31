@@ -216,7 +216,7 @@ export default function SettingsScreen() {
     }
   };
 
-  // Logout handler
+  // Logout handler - keeps local progress
   const handleLogout = async () => {
     audioManager.playSound('click');
     const confirmLogout = Platform.OS === 'web' 
@@ -237,6 +237,35 @@ export default function SettingsScreen() {
       setIsLoggedIn(false);
       setUserEmail('');
       audioManager.playSound('powerup');
+    }
+  };
+
+  // Full logout - clears everything and goes back to welcome/character screen
+  const handleFullLogout = async () => {
+    audioManager.playSound('click');
+    const confirmLogout = Platform.OS === 'web' 
+      ? window.confirm('⚠️ This will log you out AND reset your local profile. You will start fresh on the character screen. Continue?')
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            '🚪 Full Sign Out',
+            'This will log you out AND reset your local profile. You will start fresh on the character screen.',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Sign Out & Reset', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+    
+    if (confirmLogout) {
+      // Clear cloud auth
+      await authService.logout();
+      // Clear local profile
+      resetProfile();
+      setIsLoggedIn(false);
+      setUserEmail('');
+      audioManager.playSound('powerup');
+      // Redirect to welcome screen
+      router.replace('/welcome');
     }
   };
 
