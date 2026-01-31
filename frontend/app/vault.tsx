@@ -1302,6 +1302,52 @@ const styles = StyleSheet.create({
   statsSection: {
     paddingBottom: 20,
   },
+  currencySection: {
+    marginBottom: 16,
+  },
+  currencySectionTitle: {
+    fontSize: 14,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  currencyRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  currencyCard: {
+    flex: 1,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 12,
+    borderWidth: 2,
+    padding: 16,
+    alignItems: 'center',
+  },
+  currencyIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  currencyValue: {
+    fontSize: 28,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  currencyLabel: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+    fontWeight: 'bold',
+  },
+  currencyHint: {
+    fontSize: 8,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 2,
+    opacity: 0.7,
+  },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
