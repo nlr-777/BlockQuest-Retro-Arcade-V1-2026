@@ -7,14 +7,12 @@ import {
   StyleSheet,
   Text,
   Platform,
-  Linking,
   ActivityIndicator,
   TextInput,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { CRT_COLORS } from '../src/constants/crtTheme';
 import { COLORS } from '../src/constants/colors';
@@ -28,12 +26,8 @@ import { CHARACTERS, CharacterConfig } from '../src/constants/characters';
 import audioManager from '../src/utils/AudioManager';
 import VFXLayer from '../src/vfx/VFXManager';
 
-// Emergent Auth URL
-const AUTH_URL = 'https://auth.emergentagent.com';
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
-
 type Screen = 'welcome' | 'character-setup';
-type AuthType = 'guest' | 'google' | 'email';
+type AuthType = 'guest' | 'email';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -60,20 +54,6 @@ export default function WelcomeScreen() {
   // Check if user already has a session or profile
   const checkExistingSession = async () => {
     try {
-      // Check for session_id in URL (returning from OAuth)
-      if (Platform.OS === 'web') {
-        const hash = window.location.hash;
-        const params = new URLSearchParams(hash.replace('#', ''));
-        const sessionId = params.get('session_id');
-        
-        if (sessionId) {
-          await processSessionId(sessionId);
-          // Clean URL
-          window.history.replaceState({}, document.title, window.location.pathname);
-          return;
-        }
-      }
-
       // Check existing auth
       const user = await authService.initialize();
       
@@ -100,91 +80,6 @@ export default function WelcomeScreen() {
     }
   };
 
-  // Process OAuth session_id
-  const processSessionId = async (sessionId: string) => {
-    setAuthLoading(true);
-    try {
-      // Exchange session_id for session data
-      const response = await fetch(
-        'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data',
-        {
-          method: 'GET',
-          headers: {
-            'X-Session-ID': sessionId,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to get session data');
-      }
-
-      const userData = await response.json();
-      
-      // Save to our backend
-      const backendResponse = await fetch(`${BACKEND_URL}/api/auth/google-session`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (backendResponse.ok) {
-        const authData = await backendResponse.json();
-        // Store auth token
-        await authService.storeAuthFromGoogle(authData.access_token, authData.user);
-        
-        // Set up for character selection
-        setPendingAuthUser(authData.user);
-        setUsername(authData.user.username || authData.user.name || '');
-        setAuthType('google');
-        setScreen('character-setup');
-        setAuthLoading(false);
-      }
-    } catch (error) {
-      console.error('OAuth processing error:', error);
-      setAuthLoading(false);
-    }
-  };
-
-  // Handle Google Sign In
-  const handleGoogleSignIn = async () => {
-    audioManager.playSound('click');
-    setAuthLoading(true);
-    
-    try {
-      const redirectUrl = Platform.OS === 'web'
-        ? `${window.location.origin}/welcome`
-        : Linking.createURL('/welcome');
-      
-      const authUrl = `${AUTH_URL}/?redirect=${encodeURIComponent(redirectUrl)}`;
-      
-      if (Platform.OS === 'web') {
-        // Web: Direct redirect
-        window.location.href = authUrl;
-      } else {
-        // Mobile: Use WebBrowser
-        const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
-        
-        if (result.type === 'success' && result.url) {
-          const url = new URL(result.url);
-          const sessionId = url.hash.replace('#session_id=', '') || 
-                           url.searchParams.get('session_id');
-          
-          if (sessionId) {
-            await processSessionId(sessionId);
-          }
-        } else {
-          setAuthLoading(false);
-        }
-      }
-    } catch (error) {
-      console.error('Google sign in error:', error);
-      setAuthLoading(false);
-    }
-  };
-
   // Handle Email Sign Up - go to login page, which will redirect back for character setup
   const handleEmailSignUp = () => {
     audioManager.playSound('click');
@@ -207,8 +102,8 @@ export default function WelcomeScreen() {
     // Create profile with selected character
     await initProfile(username.trim(), selectedCharacter.id);
     
-    // If user is authenticated, sync the character to cloud
-    if (pendingAuthUser && authType !== 'guest') {
+    // If user is authenticated (email), sync the character to cloud
+    if (pendingAuthUser && authType === 'email') {
       try {
         await authService.syncProgress({
           high_scores: {},
@@ -265,8 +160,7 @@ export default function WelcomeScreen() {
               CREATE YOUR PLAYER
             </PixelText>
             <Text style={styles.guestSubtitle}>
-              {authType === 'google' ? '✓ Signed in with Google' : 
-               authType === 'email' ? '✓ Account created' : 
+              {authType === 'email' ? '✓ Account created' : 
                'Choose your hero & enter your name!'}
             </Text>
           </Animated.View>
@@ -344,16 +238,6 @@ export default function WelcomeScreen() {
       {/* Auth Options */}
       <Animated.View entering={FadeInUp.delay(300).duration(600)} style={styles.authContainer}>
         
-        {/* Google Sign In */}
-        <PixelButton
-          title="🔐 SIGN IN WITH GOOGLE"
-          onPress={handleGoogleSignIn}
-          color="#4285F4"
-          textColor="#FFFFFF"
-          size="lg"
-          style={styles.authButton}
-        />
-
         {/* Email Sign Up */}
         <PixelButton
           title="📧 SIGN UP WITH EMAIL"
