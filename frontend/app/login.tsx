@@ -72,9 +72,9 @@ export default function LoginScreen() {
     try {
       let authResponse;
       if (mode === 'register') {
-        authResponse = await authService.register(email, password, username);
+        authResponse = await authService.register(email.trim(), password, username.trim());
       } else {
-        authResponse = await authService.login(email, password);
+        authResponse = await authService.login(email.trim(), password);
       }
       
       // Check if we have a pending profile from welcome screen
@@ -114,7 +114,15 @@ export default function LoginScreen() {
         router.replace('/welcome');
       }
     } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+      console.error('Auth error:', err);
+      // Show more specific error messages
+      if (err.message?.includes('401') || err.message?.includes('Invalid')) {
+        setError('Invalid email or password. Please check and try again.');
+      } else if (err.message?.includes('already')) {
+        setError('This email is already registered. Try signing in instead.');
+      } else {
+        setError(err.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
