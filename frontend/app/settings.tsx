@@ -299,23 +299,66 @@ export default function SettingsScreen() {
           </View>
         </Animated.View>
 
-        {/* Account Section - Logout here (safe, separate from reset) */}
+        {/* Account Section - Cloud Sync & Logout */}
         <Animated.View entering={FadeIn.delay(400)} style={styles.section}>
           <PixelText size="md" color={COLORS.blockCyan} style={styles.sectionTitle}>
             ACCOUNT
           </PixelText>
           <View style={styles.card}>
-            <PixelText size="xs" color={COLORS.textMuted} style={styles.helpText}>
-              Log out to switch accounts. Your progress is saved automatically.
-            </PixelText>
-            <PixelButton
-              title="👋 LOG OUT"
-              onPress={handleLogout}
-              color={COLORS.neonYellow}
-              textColor={COLORS.bgDark}
-              size="md"
-              style={{ marginTop: 12 }}
-            />
+            {isLoggedIn ? (
+              <>
+                <View style={styles.cloudStatusRow}>
+                  <Text style={styles.cloudIcon}>☁️</Text>
+                  <View style={styles.cloudInfo}>
+                    <PixelText size="sm" color="#00FF88">CLOUD SYNC ACTIVE</PixelText>
+                    <PixelText size="xs" color={COLORS.textMuted}>{userEmail}</PixelText>
+                  </View>
+                </View>
+                <View style={styles.accountButtons}>
+                  <PixelButton
+                    title={syncing ? "SYNCING..." : "☁️ SYNC NOW"}
+                    onPress={handleSync}
+                    color="#00FF88"
+                    textColor={COLORS.bgDark}
+                    size="sm"
+                    disabled={syncing}
+                    style={{ flex: 1 }}
+                  />
+                  <PixelButton
+                    title="👋 LOG OUT"
+                    onPress={handleLogout}
+                    color={COLORS.neonYellow}
+                    textColor={COLORS.bgDark}
+                    size="sm"
+                    style={{ flex: 1 }}
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.guestStatusRow}>
+                  <Text style={styles.guestIcon}>🎮</Text>
+                  <View style={styles.guestInfo}>
+                    <PixelText size="sm" color={COLORS.chainGold}>PLAYING AS GUEST</PixelText>
+                    <PixelText size="xs" color={COLORS.textMuted}>Progress saved locally only</PixelText>
+                  </View>
+                </View>
+                <PixelText size="xs" color={COLORS.textMuted} style={styles.helpText}>
+                  Create an account to save your progress to the cloud and play on any device!
+                </PixelText>
+                <PixelButton
+                  title="🔐 CREATE ACCOUNT / SIGN IN"
+                  onPress={() => router.push('/login')}
+                  color={COLORS.chainGold}
+                  textColor={COLORS.bgDark}
+                  size="md"
+                  style={{ marginTop: 12 }}
+                />
+                <PixelText size="xs" color={COLORS.textMuted} style={[styles.helpText, { fontStyle: 'italic', marginTop: 8 }]}>
+                  ℹ️ Creating an account is optional!
+                </PixelText>
+              </>
+            )}
           </View>
         </Animated.View>
 
