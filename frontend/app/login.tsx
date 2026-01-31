@@ -363,6 +363,35 @@ const styles = StyleSheet.create({
     color: CRT_COLORS.textBright,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: CRT_COLORS.bgDark,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: CRT_COLORS.bgMedium,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 14,
+    fontSize: 14,
+    color: CRT_COLORS.textBright,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  eyeButton: {
+    padding: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  eyeIcon: {
+    fontSize: 18,
+  },
+  passwordHint: {
+    fontSize: 10,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 4,
+  },
   submitButton: {
     marginTop: 8,
   },
