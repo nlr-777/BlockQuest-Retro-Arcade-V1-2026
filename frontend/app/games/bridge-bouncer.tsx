@@ -369,7 +369,7 @@ export default function BridgeBouncerGame() {
         <FloatingScoresComponent />
         <ComboDisplay combo={combo} visible={showCombo} />
         <ParticleBurst x={particleBurst.x} y={particleBurst.y} trigger={particleBurst.trigger} color="#00CED1" />
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>

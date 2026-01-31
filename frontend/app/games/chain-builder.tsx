@@ -436,7 +436,7 @@ export default function ChainBuilderGame() {
     <View style={styles.container}>
       <CRTScanlines opacity={0.04} />
       
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>

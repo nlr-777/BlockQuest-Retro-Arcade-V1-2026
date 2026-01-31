@@ -441,7 +441,7 @@ export default function ContractCrusherGame() {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
 
         {/* Game Enhancements */}
         <FloatingScoresComponent />

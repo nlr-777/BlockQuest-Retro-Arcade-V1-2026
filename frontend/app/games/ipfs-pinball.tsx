@@ -365,7 +365,7 @@ export default function IPFSPinballGame() {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
 
         {/* Game Enhancements */}
         <FloatingScoresComponent />
