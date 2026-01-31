@@ -334,13 +334,13 @@ export default function SettingsScreen() {
         });
     
     if (confirmReset) {
-      resetProfile();
+      await resetAllData();
       if (Platform.OS === 'web') {
         window.alert('🗑️ Reset Complete - All progress has been cleared.');
       } else {
         Alert.alert('🗑️ Reset Complete', 'All progress has been cleared.');
       }
-      router.replace('/');
+      router.replace('/welcome');
     }
   };
 
