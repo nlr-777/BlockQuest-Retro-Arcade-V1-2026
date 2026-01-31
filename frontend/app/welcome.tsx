@@ -42,6 +42,9 @@ export default function WelcomeScreen() {
   
   // For returning authenticated users
   const [pendingAuthUser, setPendingAuthUser] = useState<any>(null);
+  
+  // Mini-game state
+  const [showMiniGame, setShowMiniGame] = useState(false);
 
   useEffect(() => {
     if (!isHydrated) return;
