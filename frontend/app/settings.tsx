@@ -127,7 +127,7 @@ const ACCESSIBILITY_SETTINGS: SettingToggle[] = [
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { profile, highScores, resetProfile } = useGameStore();
+  const { profile, highScores, resetAllData } = useGameStore();
   const { 
     highContrastMode, 
     largeTextMode, 
