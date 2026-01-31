@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
 import { PixelText } from '../src/components/PixelText';
+import { BottomNavBar } from '../src/components/BottomNavBar';
 import VFXLayer from '../src/vfx/VFXManager';
 import { COLORS } from '../src/constants/colors';
 import { CRT_COLORS } from '../src/constants/crtTheme';
