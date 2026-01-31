@@ -294,15 +294,20 @@ export default function FactionsPage() {
   
   return (
     <View style={styles.container}>
+      {/* Chaos Mode Background Effects */}
+      <PixelRain count={12} speed={6000} />
+      <FloatingSparkles count={10} colors={['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#F38181']} />
+      <CRTScanlines opacity={0.04} />
+      
       <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
+        {/* Header with glow */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
             <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
-          <PixelText size="lg" color={CRT_COLORS.primary} glow>
+          <CRTFlickerText style={styles.headerTitle} color={CRT_COLORS.primary} glitch>
             ⚔️ FACTIONS ⚔️
-          </PixelText>
+          </CRTFlickerText>
           <View style={styles.placeholder} />
         </View>
         
