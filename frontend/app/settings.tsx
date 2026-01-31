@@ -196,22 +196,35 @@ export default function SettingsScreen() {
         ttsManager.setEnabled(value);
         if (value) ttsManager.speak('Voice enabled!');
         break;
+      case 'particles':
+      case 'scanlines':
+        // These are now controlled by reduceMotion in accessibility
+        // But we keep individual toggles for fine control
+        break;
     }
   };
   
   const handleAccessibilityToggle = (id: string, value: boolean) => {
     setAccessibilitySettings(prev => ({ ...prev, [id]: value }));
     
-    // Apply accessibility settings
+    // Apply accessibility settings immediately
     switch (id) {
       case 'highContrast':
         setHighContrastMode(value);
+        // Play feedback sound
+        audioManager.playSound('click');
         break;
       case 'largeText':
         setLargeTextMode(value);
+        audioManager.playSound('click');
         break;
       case 'reduceMotion':
         setReduceMotion(value);
+        // When reduce motion is enabled, also disable visual effects
+        if (value) {
+          setSettings(prev => ({ ...prev, particles: false, scanlines: false }));
+        }
+        audioManager.playSound('click');
         break;
     }
   };
