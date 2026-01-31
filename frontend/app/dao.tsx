@@ -36,57 +36,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: CRT_COLORS.bgDark,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backText: {
-    fontSize: 24,
-    color: CRT_COLORS.primary,
-  },
-  title: {
-    fontSize: 16,
-    color: CRT_COLORS.primary,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-  },
-  placeholder: {
-    width: 40,
-  },
   content: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
-  comingSoonCard: {
-    padding: 30,
-    alignItems: 'center',
-  },
-  comingSoonIcon: {
-    fontSize: 60,
-    marginBottom: 20,
-  },
-  comingSoonTitle: {
-    fontSize: 20,
-    color: CRT_COLORS.primary,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  comingSoonText: {
+  loadingText: {
     fontSize: 14,
     color: CRT_COLORS.textDim,
     fontFamily: 'monospace',
-    textAlign: 'center',
-    lineHeight: 20,
+    marginTop: 16,
   },
 });
