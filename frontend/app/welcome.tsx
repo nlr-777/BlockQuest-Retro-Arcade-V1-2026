@@ -277,6 +277,12 @@ export default function WelcomeScreen() {
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      {/* Chain Builder Mini-Game Modal */}
+      <ChainBuilderMini
+        visible={showMiniGame}
+        onClose={() => setShowMiniGame(false)}
+      />
     </SafeAreaView>
   );
 }
