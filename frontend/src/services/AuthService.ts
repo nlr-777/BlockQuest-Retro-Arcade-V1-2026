@@ -33,12 +33,18 @@ class AuthService {
   private user: User | null = null;
 
   constructor() {
-    this.loadStoredAuth();
+    // Only load stored auth in browser environment
+    if (typeof window !== 'undefined') {
+      this.loadStoredAuth();
+    }
   }
 
   // Load auth from storage on startup
   private async loadStoredAuth() {
     try {
+      // Ensure we're in browser environment
+      if (typeof window === 'undefined') return;
+      
       const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
       const userData = await AsyncStorage.getItem(USER_DATA_KEY);
       
