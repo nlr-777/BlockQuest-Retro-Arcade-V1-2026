@@ -300,7 +300,14 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 8,
+  },
+  formSubtext: {
+    fontSize: 11,
+    color: CRT_COLORS.textDim,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   errorBox: {
     backgroundColor: '#FF4444' + '20',
