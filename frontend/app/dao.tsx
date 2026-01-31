@@ -1,36 +1,31 @@
-// BlockQuest Official - DAO Governance (Coming Soon)
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+// BlockQuest Official - DAO Governance
+// Factions ARE the DAO - this page redirects to factions
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { CRT_COLORS } from '../src/constants/crtTheme';
-import { CRTScanlines, PixelRain, CRTGlowBorder } from '../src/components/CRTEffects';
+import { CRTScanlines, PixelRain } from '../src/components/CRTEffects';
 
 export default function DAOScreen() {
   const router = useRouter();
+
+  // Redirect to factions page - Factions = DAO in disguise!
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      router.replace('/factions');
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <PixelRain count={10} speed={5000} />
       <CRTScanlines opacity={0.06} />
       
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>🗳️ DAO GOVERNANCE</Text>
-        <View style={styles.placeholder} />
-      </View>
-
       <View style={styles.content}>
-        <CRTGlowBorder color={CRT_COLORS.primary} style={styles.comingSoonCard}>
-          <Text style={styles.comingSoonIcon}>🚧</Text>
-          <Text style={styles.comingSoonTitle}>COMING SOON</Text>
-          <Text style={styles.comingSoonText}>
-            DAO governance features are under development.
-            Soon you'll be able to vote on game updates and community decisions!
-          </Text>
-        </CRTGlowBorder>
+        <ActivityIndicator size="large" color={CRT_COLORS.primary} />
+        <Text style={styles.loadingText}>Loading Factions...</Text>
       </View>
     </SafeAreaView>
   );
