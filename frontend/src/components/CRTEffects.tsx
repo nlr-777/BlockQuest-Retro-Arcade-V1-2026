@@ -189,9 +189,7 @@ const RainParticle: React.FC<{
           fontSize: size,
           color: CRT_COLORS.primary,
           fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-          textShadowColor: CRT_COLORS.primaryGlow,
-          textShadowOffset: { width: 0, height: 0 },
-          textShadowRadius: 8,
+          textShadow: `0 0 8px ${CRT_COLORS.primaryGlow}`,
         },
         animatedStyle,
       ]}
