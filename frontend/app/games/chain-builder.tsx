@@ -309,7 +309,7 @@ export default function ChainBuilderGame() {
         <PixelRain count={15} speed={4000} />
         <CRTScanlines opacity={0.05} />
         
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
               <Text style={styles.backText}>←</Text>
