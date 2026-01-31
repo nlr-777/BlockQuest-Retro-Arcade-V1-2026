@@ -368,6 +368,14 @@ export default function VaultFlexGallery() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            style={[styles.tab, activeTab === 'story' && styles.tabActive]}
+            onPress={() => setActiveTab('story')}
+          >
+            <Text style={[styles.tabText, activeTab === 'story' && styles.tabTextActive]}>
+              📚 STORY
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={[styles.tab, activeTab === 'stats' && styles.tabActive]}
             onPress={() => setActiveTab('stats')}
           >
