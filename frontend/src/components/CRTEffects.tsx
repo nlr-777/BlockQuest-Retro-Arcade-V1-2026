@@ -1,5 +1,6 @@
 // BlockQuest Official - CRT Visual Effects
 // Ultimate retro terminal aesthetic with 16-bit pixel art
+// Now respects accessibility settings (reduceMotion)
 import React, { useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet, Dimensions, Platform, Text } from 'react-native';
 import Animated, {
@@ -14,6 +15,7 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 import { CRT_COLORS, CRT_CONFIG } from '../constants/crtTheme';
+import { useAccessibilityStore } from '../utils/accessibility';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -24,17 +26,23 @@ export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = 
   opacity = CRT_CONFIG.scanlineOpacity,
   animated = true 
 }) => {
+  const { reduceMotion } = useAccessibilityStore();
   const scrollY = useSharedValue(0);
   
+  // If reduce motion is enabled, don't render scanlines at all
+  if (reduceMotion) {
+    return null;
+  }
+  
   useEffect(() => {
-    if (animated) {
+    if (animated && !reduceMotion) {
       scrollY.value = withRepeat(
         withTiming(4, { duration: CRT_CONFIG.scanlineSpeed, easing: Easing.linear }),
         -1,
         false
       );
     }
-  }, [animated]);
+  }, [animated, reduceMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: scrollY.value }],
