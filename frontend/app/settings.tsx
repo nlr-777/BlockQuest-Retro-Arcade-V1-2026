@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -21,7 +21,9 @@ import { PixelText } from '../src/components/PixelText';
 import { PixelButton } from '../src/components/PixelButton';
 import VFXLayer from '../src/vfx/VFXManager';
 import { COLORS } from '../src/constants/colors';
+import { CRT_COLORS } from '../src/constants/crtTheme';
 import { useGameStore } from '../src/store/gameStore';
+import { authService } from '../src/services/AuthService';
 import audioManager from '../src/utils/AudioManager';
 
 export default function SettingsScreen() {
@@ -38,11 +40,31 @@ export default function SettingsScreen() {
     setMusicVolume,
     sfxVolume,
     setSfxVolume,
-    logout,
-    resetAllData,
+    highScores,
+    resetProfile,
   } = useGameStore();
 
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [syncing, setSyncing] = useState(false);
+
+  // Check auth status on mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const user = await authService.initialize();
+      if (user) {
+        setIsLoggedIn(true);
+        setUserEmail(user.email);
+      }
+    } catch (error) {
+      // Not logged in
+    }
+  };
 
   // Sync audio settings whenever they change
   useEffect(() => {
