@@ -164,7 +164,7 @@ export default function WelcomeScreen() {
   // Handle Play as Guest
   const handlePlayAsGuest = () => {
     audioManager.playSound('powerup');
-    setHasSeenOnboarding(false); // Will trigger onboarding
+    // Go directly to home - index will show onboarding if no profile
     router.replace('/');
   };
 
