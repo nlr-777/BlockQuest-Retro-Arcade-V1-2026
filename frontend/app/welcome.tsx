@@ -224,6 +224,9 @@ export default function WelcomeScreen() {
       }
     }
     
+    // Small delay to ensure profile is persisted before navigation
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     router.replace('/');
   };
 
