@@ -320,6 +320,76 @@ export const useGameStore = create<GameState>()(
       recentScores: [],
     });
   },
+
+  // Add Knowledge Tokens (earned from educational activities)
+  addKnowledgeTokens: (amount: number) => {
+    const { profile } = get();
+    if (!profile) return;
+    
+    const currentTokens = profile.knowledgeTokens || 0;
+    const updatedProfile = {
+      ...profile,
+      knowledgeTokens: currentTokens + amount,
+    };
+    set({ profile: updatedProfile });
+  },
+
+  // Add Quest Coins (earned from gameplay)
+  addQuestCoins: (amount: number) => {
+    const { profile } = get();
+    if (!profile) return;
+    
+    const currentCoins = profile.questCoins || 0;
+    const updatedProfile = {
+      ...profile,
+      questCoins: currentCoins + amount,
+    };
+    set({ profile: updatedProfile });
+  },
+
+  // Spend Quest Coins (returns false if not enough)
+  spendQuestCoins: (amount: number) => {
+    const { profile } = get();
+    if (!profile) return false;
+    
+    const currentCoins = profile.questCoins || 0;
+    if (currentCoins < amount) return false;
+    
+    const updatedProfile = {
+      ...profile,
+      questCoins: currentCoins - amount,
+    };
+    set({ profile: updatedProfile });
+    return true;
+  },
+
+  // Cast a DAO vote on a proposal
+  castDaoVote: (proposalId: string, proposalTitle: string, vote: 'yes' | 'no' | 'abstain') => {
+    const { profile } = get();
+    if (!profile) return;
+    
+    // Check if already voted on this proposal
+    const existingVotes = profile.daoVotes || [];
+    if (existingVotes.some(v => v.proposalId === proposalId)) {
+      console.warn('Already voted on this proposal');
+      return;
+    }
+    
+    const newVote: DaoVote = {
+      id: `vote_${Date.now()}`,
+      proposalId,
+      proposalTitle,
+      vote,
+      votedAt: Date.now(),
+      votingPower: profile.daoVotingPower,
+    };
+    
+    const updatedProfile = {
+      ...profile,
+      daoVotes: [...existingVotes, newVote],
+    };
+    set({ profile: updatedProfile });
+  },
 }),
     {
       name: 'blockquest-game-storage',
