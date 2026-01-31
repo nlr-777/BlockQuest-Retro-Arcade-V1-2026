@@ -373,10 +373,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: 3,
     backgroundColor: COLORS.vfxScan,
-    shadowColor: COLORS.vfxScan,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    boxShadow: `0 0 10px ${COLORS.vfxScan}CC`,
   },
   scanlines: {
     ...StyleSheet.absoluteFillObject,
