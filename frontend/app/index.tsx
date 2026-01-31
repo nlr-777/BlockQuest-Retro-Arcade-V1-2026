@@ -37,6 +37,13 @@ import { useTutorialStore, useTutorialHydrated } from '../src/store/tutorialStor
 import { useFactionStore, FACTIONS } from '../src/store/factionStore';
 import { Scanlines, Starfield } from '../src/components/RetroEffects';
 import { CRTScanlines, CRTGlowBorder, PixelRain, CRTFlickerText, HexBadge } from '../src/components/CRTEffects';
+import {
+  FloatingSparkles,
+  GlowCard,
+  MegaConfetti,
+  HolographicShine,
+  EnergyBar,
+} from '../src/components/ChaosEffects';
 import { CharacterSelector } from '../src/components/CharacterSelector';
 import { LoyaltyRewardsPopup } from '../src/components/LoyaltyRewardsPopup';
 import { XPProgressBar } from '../src/components/XPProgressBar';
