@@ -131,6 +131,13 @@ export const PixelRain: React.FC<{ count?: number; speed?: number }> = ({
   count = 20,
   speed = 3000 
 }) => {
+  const { reduceMotion } = useAccessibilityStore();
+  
+  // If reduce motion is enabled, don't render pixel rain
+  if (reduceMotion) {
+    return null;
+  }
+  
   const chars = '⬡◆▲▼◀▶★●○□■♦♣♠♥₿Ξ';
   const particles = Array(count).fill(0).map((_, i) => ({
     id: i,
