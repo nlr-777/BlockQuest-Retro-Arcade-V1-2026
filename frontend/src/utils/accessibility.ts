@@ -106,7 +106,7 @@ export const initAccessibility = () => {
 // HIGH CONTRAST COLOR SYSTEM
 // ============================================
 
-// Standard colors (default)
+// Standard colors (default) - All text colors brightened
 export const STANDARD_COLORS = {
   bgDark: '#0A0E14',
   bgMedium: '#151C28',
@@ -115,10 +115,10 @@ export const STANDARD_COLORS = {
   primaryGlow: 'rgba(57, 255, 20, 0.4)',
   secondary: '#00FFFF',
   textBright: '#FFFFFF',
-  textPrimary: '#E0E8F0',
-  textSecondary: '#A0B0C0',
-  textDim: '#607080',
-  textMuted: '#405060',
+  textPrimary: '#F0F4F8',      // Brightened from #E0E8F0
+  textSecondary: '#C8D4E0',    // Brightened from #A0B0C0
+  textDim: '#90A8C0',          // Brightened from #607080
+  textMuted: '#7090B0',        // Brightened from #405060
   accentGold: '#FFD700',
   accentCyan: '#00FFFF',
   accentMagenta: '#FF00FF',
