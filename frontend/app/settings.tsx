@@ -360,27 +360,26 @@ export default function SettingsScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {settings.particles && <PixelRain count={10} speed={5000} />}
       {settings.scanlines && <CRTScanlines opacity={0.06} />}
       
-      <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={styles.backText}>←</Text>
-          </TouchableOpacity>
-          <CRTFlickerText style={styles.title} color={CRT_COLORS.primary} glitch>
-            ⚙️ SETTINGS ⚙️
-          </CRTFlickerText>
-          <View style={styles.placeholder} />
-        </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>←</Text>
+        </TouchableOpacity>
+        <CRTFlickerText style={styles.title} color={CRT_COLORS.primary} glitch>
+          ⚙️ SETTINGS ⚙️
+        </CRTFlickerText>
+        <View style={styles.placeholder} />
+      </View>
 
-        <ScrollView 
-          style={styles.scrollView} 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
           
           {/* Account Section */}
           <View style={styles.sectionHeader}>
