@@ -84,7 +84,7 @@ export const BQOToken: React.FC<BQOTokenProps> = ({
   }));
 
   const glowStyle = useAnimatedStyle(() => ({
-    shadowOpacity: glow.value,
+    boxShadow: `0 0 8px rgba(${parseInt(tokenColor.main.slice(1,3), 16)}, ${parseInt(tokenColor.main.slice(3,5), 16)}, ${parseInt(tokenColor.main.slice(5,7), 16)}, ${glow.value})`,
   }));
 
   return (
@@ -97,7 +97,6 @@ export const BQOToken: React.FC<BQOTokenProps> = ({
           borderRadius: size / 2,
           backgroundColor: tokenColor.main,
           borderColor: tokenColor.accent,
-          shadowColor: tokenColor.main,
         },
         animatedStyle,
         glowStyle,
