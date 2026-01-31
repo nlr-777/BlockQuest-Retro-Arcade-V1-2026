@@ -338,6 +338,9 @@ export default function LeaderboardScreen() {
           )}
         </ScrollView>
       )}
+      
+      {/* Shared Bottom Navigation */}
+      <BottomNavBar activeTab="rank" />
     </SafeAreaView>
   );
 }
