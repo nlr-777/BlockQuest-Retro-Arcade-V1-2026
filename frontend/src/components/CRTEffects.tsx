@@ -167,13 +167,14 @@ export const PixelRain: React.FC<{ count?: number; speed?: number }> = memo(({
   );
 });
 
-const RainParticle: React.FC<{
+// Memoized rain particle for better performance
+const RainParticle = memo<{
   x: number;
   char: string;
   size: number;
   delay: number;
   duration: number;
-}> = ({ x, char, size, delay, duration }) => {
+}>(({ x, char, size, delay, duration }) => {
   const translateY = useSharedValue(-50);
   const opacity = useSharedValue(0);
 
@@ -186,8 +187,8 @@ const RainParticle: React.FC<{
       );
       opacity.value = withRepeat(
         withSequence(
-          withTiming(0.6, { duration: 500 }),
-          withTiming(0.2, { duration: duration - 1000 }),
+          withTiming(0.5, { duration: 500 }),
+          withTiming(0.15, { duration: duration - 1000 }),
           withTiming(0, { duration: 500 })
         ),
         -1,
@@ -195,7 +196,7 @@ const RainParticle: React.FC<{
       );
     }, delay);
     return () => clearTimeout(timer);
-  }, []);
+  }, [delay, duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
