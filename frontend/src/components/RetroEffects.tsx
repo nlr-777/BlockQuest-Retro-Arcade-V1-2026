@@ -325,8 +325,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 15,
+    // boxShadow set dynamically via animatedStyle
     elevation: 10,
   },
   chromaticContainer: {
@@ -350,9 +349,7 @@ const styles = StyleSheet.create({
   },
   sun: {
     backgroundColor: '#FF6AD5',
-    shadowColor: '#FF6AD5',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 50,
+    // boxShadow set dynamically via animatedStyle
     overflow: 'hidden',
   },
 });
