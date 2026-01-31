@@ -338,8 +338,13 @@ export default function ArcadeHub() {
     // Don't do anything until hydration is complete
     if (!isFullyHydrated) return;
     
+    // If no profile exists, redirect to welcome screen for account creation / guest choice
     if (!profile) {
-      setShowOnboarding(true);
+      // Redirect to welcome screen
+      const navTimer = setTimeout(() => {
+        router.replace('/welcome');
+      }, 100);
+      return () => clearTimeout(navTimer);
     } else {
       // Sync audio settings from store (music already started in _layout)
       const { isMuted, musicVolume, sfxVolume } = useGameStore.getState();
