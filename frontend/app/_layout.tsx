@@ -58,23 +58,25 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.container}>
       <StatusBar style="light" />
       
-      {(!hasHydrated || !isReady) && (
+      {/* HYDRATION GATE: Block ALL navigation until store is ready */}
+      {(!hasHydrated || !isReady) ? (
         <View style={styles.loadingOverlay}>
           <PixelText size="xl" color={COLORS.chainGold} glow>
             LOADING...
           </PixelText>
         </View>
+      ) : (
+        <>
+          {showGenesis && <VFXLayer type="genesis-birth" />}
+              <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: COLORS.bgDark },
+              animation: 'slide_from_right',
+            }}
+          />
+        </>
       )}
-      
-      {showGenesis && hasHydrated && isReady && <VFXLayer type="genesis-birth" />}
-      
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: COLORS.bgDark },
-          animation: 'slide_from_right',
-        }}
-      />
     </GestureHandlerRootView>
   );
 }
