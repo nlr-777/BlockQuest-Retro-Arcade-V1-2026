@@ -424,6 +424,63 @@ export const useGameStore = create<GameState>()(
     };
     set({ profile: updatedProfile });
   },
+
+  // Complete a story episode and award rewards
+  completeStoryEpisode: async (episodeId: string, rewards: { xp: number; coins?: number; badgeId?: string }) => {
+    const { profile, mintBadge } = get();
+    if (!profile) return;
+
+    // Check if already completed
+    const completedEpisodes = profile.completedStoryEpisodes || [];
+    if (completedEpisodes.includes(episodeId)) {
+      console.log('Episode already completed:', episodeId);
+      return;
+    }
+
+    // Add to completed episodes
+    const newCompletedEpisodes = [...completedEpisodes, episodeId];
+
+    // Calculate new XP and level
+    const newXP = (profile.xp || 0) + rewards.xp;
+    const xpPerLevel = 100;
+    const newLevel = Math.floor(newXP / xpPerLevel) + 1;
+
+    // Add coins if any
+    const newCoins = (profile.questCoins || 0) + (rewards.coins || 0);
+
+    // Update profile
+    const updatedProfile = {
+      ...profile,
+      completedStoryEpisodes: newCompletedEpisodes,
+      xp: newXP,
+      level: newLevel,
+      questCoins: newCoins,
+      knowledgeTokens: (profile.knowledgeTokens || 0) + Math.floor(rewards.xp / 10), // Earn knowledge tokens too
+    };
+
+    set({ profile: updatedProfile });
+
+    // Mint badge if provided
+    if (rewards.badgeId) {
+      try {
+        await mintBadge({
+          name: `Story: ${rewards.badgeId}`,
+          description: `Completed story episode: ${episodeId}`,
+          imageUrl: '',
+          rarity: 'Rare',
+          category: 'story',
+          traits: { episodeId },
+        });
+      } catch (e) {
+        console.warn('Failed to mint story badge:', e);
+      }
+    }
+
+    // Trigger cloud sync
+    triggerSync();
+
+    console.log('✅ Story episode completed:', episodeId, 'Rewards:', rewards);
+  },
 }),
     {
       name: 'blockquest-game-storage',
