@@ -217,23 +217,26 @@ export default function SettingsScreen() {
   };
 
   // Logout handler
-  const handleLogout = () => {
-    Alert.alert(
-      '👋 Log Out',
-      'This will log out of your cloud account. Your local progress will be kept.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          onPress: async () => {
-            await authService.logout();
-            setIsLoggedIn(false);
-            setUserEmail('');
-            audioManager.playSound('powerup');
-          },
-        },
-      ]
-    );
+  const handleLogout = async () => {
+    const confirmLogout = Platform.OS === 'web' 
+      ? window.confirm('This will log out of your cloud account. Your local progress will be kept. Continue?')
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            '👋 Log Out',
+            'This will log out of your cloud account. Your local progress will be kept.',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Log Out', onPress: () => resolve(true) },
+            ]
+          );
+        });
+    
+    if (confirmLogout) {
+      await authService.logout();
+      setIsLoggedIn(false);
+      setUserEmail('');
+      audioManager.playSound('powerup');
+    }
   };
 
   // Sync handler
