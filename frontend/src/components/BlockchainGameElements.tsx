@@ -691,8 +691,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
+    // boxShadow set dynamically via glowStyle
     elevation: 5,
   },
   powerupIcon: {
