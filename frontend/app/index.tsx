@@ -684,28 +684,7 @@ export default function ArcadeHub() {
         </CRTGlowBorder>
 
         {/* Bottom Nav */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={[styles.navBtn, styles.navActive]}>
-            <IconBlockChain size={18} color={CRT_COLORS.primary} />
-            <Text style={[styles.navText, styles.navTextActive]}>GAMES</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/story')}>
-            <Text style={styles.navIcon}>📚</Text>
-            <Text style={styles.navText}>STORY</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/vault')}>
-            <IconVault size={18} color={CRT_COLORS.textDim} />
-            <Text style={styles.navText}>VAULT</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/leaderboard')}>
-            <Text style={styles.navIcon}>🏆</Text>
-            <Text style={styles.navText}>RANK</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/settings')}>
-            <Text style={styles.navIcon}>⚙️</Text>
-            <Text style={styles.navText}>MORE</Text>
-          </TouchableOpacity>
-        </View>
+        <BottomNavBar currentRoute="/" />
       </SafeAreaView>
 
       {/* Loyalty Rewards Popup */}
