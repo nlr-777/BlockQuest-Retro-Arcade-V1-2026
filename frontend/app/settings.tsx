@@ -379,7 +379,9 @@ export default function SettingsScreen() {
         style={styles.scrollView} 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        nestedScrollEnabled
       >
+        <View style={styles.contentWrapper}>
           
           {/* Account Section */}
           <View style={styles.sectionHeader}>
