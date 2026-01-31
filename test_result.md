@@ -109,7 +109,7 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/app/index.tsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -118,7 +118,10 @@ frontend:
         - comment: "Updated onboarding with 6 avatar selection (3x2 grid), avatar stories/timeline, bold arcade styling"
         - working: false
         - agent: "testing"
-        - comment: "❌ CRITICAL ISSUE: Onboarding modal appears but avatar selection not working properly. Found 'SELECT HERO' section but no clickable avatar elements detected. Username input works but INSERT COIN button doesn't complete onboarding flow properly. Modal remains visible after clicking INSERT COIN."
+        - comment: "❌ CRITICAL ISSUE: Onboarding modal appears but avatar selection not working properly. Found 'SELECT HERO' section but no clickable avatar elements detected. Username input works but INSERT COIN button doesn't complete onboarding flow properly. Modal remains visible after clicking COIN."
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL ONBOARDING FLOW BROKEN: Welcome → Guest → Home flow fails. Character setup works (name input, START PLAYING button), but after completion, app redirects back to welcome screen instead of home screen. Navigation logic in onboarding completion needs fixing."
 
   - task: "Main Hub Screen - Game Grid Display (12 playable)"
     implemented: true
