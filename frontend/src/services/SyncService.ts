@@ -147,7 +147,7 @@ class SyncService {
       const syncData = this.prepareSyncData();
 
       const response = await fetch(`${API_BASE}/api/auth/sync`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
