@@ -16,7 +16,7 @@ export default function DAOScreen() {
       router.replace('/factions');
     }, 100);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [router]);
 
   return (
     <SafeAreaView style={styles.container}>
