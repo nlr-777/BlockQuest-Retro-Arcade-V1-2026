@@ -452,7 +452,7 @@ export default function SettingsScreen() {
                 </View>
                 <PixelButton
                   title="🔐 CREATE ACCOUNT / SIGN IN"
-                  onPress={() => router.push('/login')}
+                  onPress={handleGoToLogin}
                   color={COLORS.chainGold}
                   size="sm"
                   style={{ marginTop: 8 }}
