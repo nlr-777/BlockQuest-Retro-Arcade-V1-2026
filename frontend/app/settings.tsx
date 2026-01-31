@@ -138,10 +138,6 @@ export default function SettingsScreen() {
     setReduceMotion,
   } = useAccessibilityStore();
   
-  // Sync status
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
-  const [syncing, setSyncing] = useState(false);
-  
   // Audio & Visual settings state
   const [settings, setSettings] = useState<Record<string, boolean>>({
     sound: true,
