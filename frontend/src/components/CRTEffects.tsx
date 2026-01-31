@@ -270,10 +270,7 @@ const BurstParticle: React.FC<{
           height: size,
           backgroundColor: color,
           borderRadius: size / 2,
-          shadowColor: color,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.8,
-          shadowRadius: 4,
+          boxShadow: `0 0 4px ${color}CC`,
         },
         animatedStyle,
       ]}
