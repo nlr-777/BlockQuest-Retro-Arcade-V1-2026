@@ -272,10 +272,7 @@ const styles = StyleSheet.create({
     borderColor: CRT_COLORS.primary,
     width: Math.min(SCREEN_WIDTH - 32, 340),
     maxHeight: SCREEN_HEIGHT * 0.75,
-    shadowColor: CRT_COLORS.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
+    boxShadow: `0 0 20px ${CRT_COLORS.primary}80`,
     overflow: 'hidden',
   },
   scrollView: {
