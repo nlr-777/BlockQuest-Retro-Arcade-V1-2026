@@ -250,17 +250,12 @@ const StoryMascot: React.FC = () => {
 // Main Story Page
 export default function StoryPage() {
   const router = useRouter();
-  const { profile, addXP, addBadge } = useGameStore();
+  const { profile, completeStoryEpisode } = useGameStore();
   const [selectedEpisode, setSelectedEpisode] = useState<StoryEpisode | null>(null);
-  const [completedEpisodes, setCompletedEpisodes] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Load completed episodes from profile
-  useEffect(() => {
-    if (profile?.completedStoryEpisodes) {
-      setCompletedEpisodes(profile.completedStoryEpisodes);
-    }
-  }, [profile]);
+  // Get completed episodes directly from profile
+  const completedEpisodes = profile?.completedStoryEpisodes || [];
 
   const isEpisodeLocked = (index: number): boolean => {
     if (index === 0) return false; // First episode always unlocked
@@ -276,19 +271,14 @@ export default function StoryPage() {
     }
   };
 
-  const handleEpisodeComplete = (rewards: { xp: number; coins?: number; badge?: string }) => {
+  const handleEpisodeComplete = async (rewards: { xp: number; coins?: number; badge?: string }) => {
     if (selectedEpisode && !completedEpisodes.includes(selectedEpisode.id)) {
-      // Add to completed
-      const newCompleted = [...completedEpisodes, selectedEpisode.id];
-      setCompletedEpisodes(newCompleted);
-
-      // Award XP
-      addXP(rewards.xp);
-
-      // Award badge if any
-      if (rewards.badge) {
-        addBadge(rewards.badge);
-      }
+      // Use the new completeStoryEpisode function from the store
+      await completeStoryEpisode(selectedEpisode.id, {
+        xp: rewards.xp,
+        coins: rewards.coins,
+        badgeId: rewards.badge,
+      });
 
       // Show celebration
       setShowConfetti(true);
