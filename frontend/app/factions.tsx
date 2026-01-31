@@ -17,6 +17,7 @@ import Animated, { FadeInDown, FadeIn, ZoomIn, FadeInUp } from 'react-native-rea
 import { CRT_COLORS } from '../src/constants/crtTheme';
 import { CRTGlowBorder, PixelRain, CRTScanlines, CRTFlickerText } from '../src/components/CRTEffects';
 import { FloatingSparkles, EnergyBar, GlowCard } from '../src/components/ChaosEffects';
+import { BottomNavBar } from '../src/components/BottomNavBar';
 import { PixelText } from '../src/components/PixelText';
 import { useFactionStore, FACTIONS, FactionId, FactionProposal } from '../src/store/factionStore';
 import { useGameStore } from '../src/store/gameStore';
