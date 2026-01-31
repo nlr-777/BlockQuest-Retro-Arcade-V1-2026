@@ -73,16 +73,21 @@ export default function WelcomeScreen() {
 
       // Check existing auth
       const user = await authService.initialize();
-      if (user) {
-        // User is logged in, go to home
-        router.replace('/');
-        return;
-      }
-
-      // Check if user has a local profile (guest)
+      
+      // Check if user has a local profile
       if (profile) {
         // Already has profile, go to home
         router.replace('/');
+        return;
+      }
+      
+      // If user is logged in but no profile, go to character setup
+      if (user) {
+        setPendingAuthUser(user);
+        setUsername(user.username || user.email?.split('@')[0] || '');
+        setAuthType('email');
+        setScreen('character-setup');
+        setLoading(false);
         return;
       }
     } catch (error) {
