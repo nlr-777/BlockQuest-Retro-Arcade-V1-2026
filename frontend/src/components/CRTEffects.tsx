@@ -78,7 +78,7 @@ export const CRTScanlines: React.FC<{ opacity?: number; animated?: boolean }> = 
       {lines}
     </Animated.View>
   );
-};
+});
 
 // ============================================
 // CRT GLOW BORDER - Neon hex-style border
