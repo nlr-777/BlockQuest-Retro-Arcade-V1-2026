@@ -8,6 +8,7 @@ import { useGameStore, useGameStoreHydrated } from '../src/store/gameStore';
 import { COLORS } from '../src/constants/colors';
 import VFXLayer from '../src/vfx/VFXManager';
 import PixelText from '../src/components/PixelText';
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import audioManager from '../src/utils/AudioManager';
 
 // Prevent auto-hide of splash screen
