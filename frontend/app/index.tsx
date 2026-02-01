@@ -673,30 +673,32 @@ export default function ArcadeHub() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CRT_COLORS.bgDark,
+    backgroundColor: '#0D0015',  // Deep purple-black for Games
   },
   safeArea: {
     flex: 1,
   },
   
-  // Marquee
+  // Marquee - Rainbow Retro Header
   marquee: {
     marginHorizontal: 12,
     marginTop: 8,
     paddingVertical: 10,
     alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF00FF40',
   },
   marqueeTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: CRT_COLORS.primary,
+    color: '#FF00FF',  // Magenta title
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textShadow: `0 0 15px ${CRT_COLORS.primaryGlow}`,
+    textShadow: '0 0 15px #FF00FF, 0 0 30px #FF00FF',
     letterSpacing: 3,
   },
   marqueeSubtitle: {
     fontSize: 11,
-    color: CRT_COLORS.accentCyan,
+    color: '#00FFFF',  // Cyan subtitle
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 6,
     marginTop: 2,
