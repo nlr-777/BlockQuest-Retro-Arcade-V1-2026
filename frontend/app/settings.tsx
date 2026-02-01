@@ -23,6 +23,7 @@ import ttsManager from '../src/utils/TTSManager';
 import { useAccessibilityStore } from '../src/utils/accessibility';
 import { useGameStore } from '../src/store/gameStore';
 import { authService } from '../src/services/AuthService';
+import { showToast } from '../src/components/Toast';
 
 interface SettingToggle {
   id: string;
