@@ -546,7 +546,7 @@ async def login(credentials: UserLogin, request: Request):
 async def google_auth(auth_request: GoogleAuthRequest, request: Request):
     """Authenticate with Google ID token"""
     # Rate limiting
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
     
