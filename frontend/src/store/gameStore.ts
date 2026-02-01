@@ -319,7 +319,7 @@ export const useGameStore = create<GameState>()(
       isLoading: false,
     });
     
-    console.log('Cloud profile loaded:', updatedProfile.username, 'XP:', updatedProfile.xp, 'Level:', updatedProfile.level);
+    // Cloud profile loaded successfully
   },
 
   // Logout - save progress but clear session (user can restore later)
