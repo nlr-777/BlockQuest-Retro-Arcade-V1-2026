@@ -632,24 +632,24 @@ export default function ArcadeHub() {
         {/* Bottom Nav */}
         <View style={styles.bottomNav}>
           <TouchableOpacity style={[styles.navBtn, styles.navActive]}>
-            <IconBlockChain size={18} color={CRT_COLORS.primary} />
-            <Text style={[styles.navText, styles.navTextActive]}>GAMES</Text>
+            <IconBlockChain size={18} color="#FF00FF" />
+            <Text style={[styles.navText, styles.navTextActive, { color: '#FF00FF' }]}>GAMES</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/story')}>
             <Text style={styles.navIcon}>📚</Text>
-            <Text style={styles.navText}>STORY</Text>
+            <Text style={[styles.navText, { color: '#00FFFF' }]}>STORY</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/vault')}>
-            <IconVault size={18} color={CRT_COLORS.textDim} />
-            <Text style={styles.navText}>VAULT</Text>
+            <IconVault size={18} color="#FFD700" />
+            <Text style={[styles.navText, { color: '#FFD700' }]}>VAULT</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/leaderboard')}>
             <Text style={styles.navIcon}>🏆</Text>
-            <Text style={styles.navText}>RANK</Text>
+            <Text style={[styles.navText, { color: '#FF6B6B' }]}>RANK</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} onPress={() => router.push('/settings')}>
             <Text style={styles.navIcon}>⚙️</Text>
-            <Text style={styles.navText}>MORE</Text>
+            <Text style={[styles.navText, { color: '#00FF88' }]}>MORE</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
