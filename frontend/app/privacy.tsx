@@ -397,14 +397,14 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontStyle: 'italic',
     marginBottom: 8,
   },
   copyright: {
     fontSize: 11,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
