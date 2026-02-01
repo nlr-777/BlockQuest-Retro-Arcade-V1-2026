@@ -166,9 +166,33 @@ export default function LoginScreen() {
       }
     });
     
-    // Take the higher XP and level
+    // Take the higher XP, level, and other numeric values
     const mergedXP = Math.max(store.profile?.xp || 0, cloudUser.total_xp || 0);
     const mergedLevel = Math.max(store.profile?.level || 1, cloudUser.level || 1);
+    const mergedGamesPlayed = Math.max(store.profile?.gamesPlayed || 0, cloudUser.games_played || 0);
+    const mergedTotalScore = Math.max(store.profile?.totalScore || 0, cloudUser.total_score || 0);
+    const mergedVotingPower = Math.max(store.profile?.daoVotingPower || 0, cloudUser.dao_voting_power || 0);
+    
+    // Merge story badges and achievements
+    const mergedStoryBadges = [...new Set([
+      ...(store.profile?.unlockedStoryBadges || []),
+      ...(cloudUser.unlocked_story_badges || [])
+    ])];
+    const mergedAchievements = [...new Set([
+      ...(store.profile?.achievements || []),
+      ...(cloudUser.achievements || [])
+    ])];
+    
+    // Merge recent scores - keep newest 20
+    const localRecent = store.recentScores || [];
+    const cloudRecent = cloudUser.recent_scores || [];
+    const allRecent = [...localRecent, ...cloudRecent];
+    const seenTimes = new Set();
+    const uniqueRecent = allRecent.filter((s: any) => {
+      if (seenTimes.has(s.playedAt)) return false;
+      seenTimes.add(s.playedAt);
+      return true;
+    }).sort((a: any, b: any) => b.playedAt - a.playedAt).slice(0, 20);
     
     // Update the store with merged data
     store.loadCloudProfile({
@@ -178,10 +202,12 @@ export default function LoginScreen() {
       level: mergedLevel,
       highScores: mergedHighScores,
       badges: mergedBadges,
-      unlockedStoryBadges: [...new Set([
-        ...(store.profile?.unlockedStoryBadges || []),
-        ...(cloudUser.unlocked_story_badges || [])
-      ])],
+      unlockedStoryBadges: mergedStoryBadges,
+      gamesPlayed: mergedGamesPlayed,
+      totalScore: mergedTotalScore,
+      daoVotingPower: mergedVotingPower,
+      achievements: mergedAchievements,
+      recentScores: uniqueRecent,
     });
     
     // Also sync the merged data back to cloud to keep it updated
@@ -192,11 +218,12 @@ export default function LoginScreen() {
         level: mergedLevel,
         badges: mergedBadges,
         avatar_id: cloudUser.avatar_id || store.profile?.avatarId || 'zara',
-        dao_voting_power: store.profile?.daoVotingPower || 0,
-        unlocked_story_badges: [...new Set([
-          ...(store.profile?.unlockedStoryBadges || []),
-          ...(cloudUser.unlocked_story_badges || [])
-        ])],
+        dao_voting_power: mergedVotingPower,
+        unlocked_story_badges: mergedStoryBadges,
+        games_played: mergedGamesPlayed,
+        total_score: mergedTotalScore,
+        achievements: mergedAchievements,
+        recent_scores: uniqueRecent,
       });
     } catch (syncError) {
       // Sync back failed, but local merge succeeded
