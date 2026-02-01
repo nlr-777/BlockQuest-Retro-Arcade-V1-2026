@@ -41,8 +41,8 @@ export const COLORS = {
   
   // Text colors - all brightened for better visibility
   textPrimary: '#FFFFFF',
-  textSecondary: '#E0D4FF',  // Brightened from #C4B5FD
-  textMuted: '#B8A8E8',      // Brightened from #8B7FD4
+  textSecondary: '#F0E8FF',  // EXTRA BRIGHT for kids
+  textMuted: '#DDD0FF',      // EXTRA BRIGHT for kids - easy to read!
   textGlow: '#00FFFF',
   
   // Game-specific (keeping original names for compatibility)
