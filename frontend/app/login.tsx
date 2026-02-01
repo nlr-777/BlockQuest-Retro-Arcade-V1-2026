@@ -25,6 +25,7 @@ import { PixelButton } from '../src/components/PixelButton';
 import { authService } from '../src/services/AuthService';
 import { useGameStore } from '../src/store/gameStore';
 import { useCharacterStore } from '../src/store/characterStore';
+import { showToast } from '../src/components/Toast';
 import VFXLayer from '../src/vfx/VFXManager';
 
 type AuthMode = 'login' | 'register';
