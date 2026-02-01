@@ -82,6 +82,16 @@ rate_limit_storage: Dict[str, List[float]] = defaultdict(list)
 RATE_LIMIT_REQUESTS = 30  # requests per window (lowered for better protection)
 RATE_LIMIT_WINDOW = 60  # seconds
 
+def get_client_ip(request: Request) -> str:
+    """Get the real client IP, considering proxies"""
+    # Check for forwarded header (from load balancers/proxies)
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        # Take the first IP in the chain (original client)
+        return forwarded.split(",")[0].strip()
+    # Fallback to direct client
+    return request.client.host if request.client else "unknown"
+
 def check_rate_limit(client_ip: str) -> bool:
     """Check if client has exceeded rate limit"""
     now = time.time()
