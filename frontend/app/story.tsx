@@ -25,7 +25,7 @@ export default function StoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CRT_COLORS.bgDark,
+    backgroundColor: '#000A0F',  // Deep cyan-black for Story
   },
   scrollView: {
     flex: 1,
