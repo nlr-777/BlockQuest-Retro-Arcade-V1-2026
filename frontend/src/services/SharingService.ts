@@ -76,7 +76,7 @@ class SharingService {
       const canShare = await this.canShare();
       
       if (!canShare) {
-        console.log('Sharing not available on this platform');
+        // Sharing not available on this platform
         return false;
       }
 
@@ -98,7 +98,7 @@ class SharingService {
       
       return true;
     } catch (error) {
-      console.log('Share cancelled or failed:', error);
+      // Share cancelled or failed
       return false;
     }
   }
