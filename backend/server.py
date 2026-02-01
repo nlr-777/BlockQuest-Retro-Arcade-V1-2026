@@ -384,15 +384,21 @@ async def get_player(player_id: str):
     )
 
 @api_router.post("/badges", response_model=Badge)
-async def mint_badge(badge_data: BadgeCreate):
+async def mint_badge(badge_data: BadgeCreate, request: Request):
     """Mint a new badge for a player (off-chain NFT simulation)"""
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests")
+    
+    # Sanitize badge data to prevent XSS
     badge = Badge(
-        name=badge_data.name,
-        description=badge_data.description,
-        rarity=badge_data.rarity,
-        game_id=badge_data.game_id,
-        traits=badge_data.traits,
-        icon=badge_data.icon
+        name=sanitize_string(badge_data.name, 50),
+        description=sanitize_string(badge_data.description, 200),
+        rarity=sanitize_string(badge_data.rarity, 20),
+        game_id=sanitize_string(badge_data.game_id, 50),
+        traits=badge_data.traits,  # JSON data is less vulnerable
+        icon=sanitize_string(badge_data.icon, 50)
     )
     
     # Update player's badges
