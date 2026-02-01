@@ -150,7 +150,7 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
         try {
           audioManager.playSound('damage');
         } catch (e) {
-          console.log('Audio error:', e);
+          // Audio error - silently ignore
         }
         if (score > highScore) {
           setHighScore(score);
