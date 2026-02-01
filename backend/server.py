@@ -505,13 +505,18 @@ async def login(credentials: UserLogin, request: Request):
     return TokenResponse(access_token=access_token, user=user_response)
 
 @api_router.post("/auth/google", response_model=TokenResponse)
-async def google_auth(request: GoogleAuthRequest):
+async def google_auth(auth_request: GoogleAuthRequest, request: Request):
     """Authenticate with Google ID token"""
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+    
     try:
         # Verify the Google ID token
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"https://oauth2.googleapis.com/tokeninfo?id_token={request.id_token}"
+                f"https://oauth2.googleapis.com/tokeninfo?id_token={auth_request.id_token}"
             )
             
             if response.status_code != 200:
@@ -519,7 +524,9 @@ async def google_auth(request: GoogleAuthRequest):
             
             google_user = response.json()
             email = google_user.get("email")
-            name = google_user.get("name", email.split("@")[0])
+            # Sanitize the username from Google
+            raw_name = google_user.get("name", email.split("@")[0])
+            name = sanitize_string(raw_name, 50)
             
             if not email:
                 raise HTTPException(status_code=401, detail="Email not provided by Google")
