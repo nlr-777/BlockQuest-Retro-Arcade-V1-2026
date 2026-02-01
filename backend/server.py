@@ -265,6 +265,10 @@ class UserResponse(BaseModel):
     badges: List[Dict[str, Any]] = []
     dao_voting_power: int = 0
     unlocked_story_badges: List[str] = []
+    achievements: List[str] = []
+    games_played: int = 0
+    total_score: int = 0
+    recent_scores: List[Dict[str, Any]] = []
 
 class SyncProfileRequest(BaseModel):
     high_scores: Dict[str, int] = {}
