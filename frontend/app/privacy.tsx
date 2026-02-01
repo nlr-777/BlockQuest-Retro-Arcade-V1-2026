@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
   contactText: {
     fontSize: 13,
-    color: CRT_COLORS.textMedium,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   contactLink: {
