@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 8,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   scoreValue: {
