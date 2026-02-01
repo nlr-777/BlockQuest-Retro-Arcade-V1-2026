@@ -5,6 +5,10 @@
 
 import { Platform } from 'react-native';
 
+// Set to true for audio debugging in development
+const AUDIO_DEBUG = false;
+const debugLog = (...args: any[]) => AUDIO_DEBUG && console.log('[Audio]', ...args);
+
 // Sound effect types - expanded for better variety
 export type SoundEffect = 
   | 'jump'
