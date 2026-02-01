@@ -280,22 +280,14 @@ export default function SettingsScreen() {
         badges: profile.badges,
         avatar_id: profile.avatarId,
         dao_voting_power: profile.daoVotingPower,
-        unlocked_story_badges: [],
+        unlocked_story_badges: profile.unlockedStoryBadges || [],
       });
       
       if (result) {
         audioManager.playSound('powerup');
-        if (Platform.OS === 'web') {
-          window.alert('☁️ Synced! Your progress has been saved to the cloud.');
-        } else {
-          Alert.alert('☁️ Synced!', 'Your progress has been saved to the cloud.');
-        }
+        showToast('☁️ Progress synced to cloud!', 'success');
       } else {
-        if (Platform.OS === 'web') {
-          window.alert('⚠️ Sync Failed - Please try again later.');
-        } else {
-          Alert.alert('⚠️ Sync Failed', 'Please try again later.');
-        }
+        showToast('⚠️ Sync failed - try again later', 'warning');
       }
     } catch (error) {
       if (Platform.OS === 'web') {
