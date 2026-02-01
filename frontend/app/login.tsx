@@ -84,6 +84,7 @@ export default function LoginScreen() {
       if (cloudProfile) {
         // Load cloud data into local store
         await loadCloudDataToStore(cloudProfile);
+        showToast('☁️ Progress synced from cloud!', 'success');
       }
       
       // Check if we have a pending profile from welcome screen
