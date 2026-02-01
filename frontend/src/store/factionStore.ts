@@ -436,6 +436,40 @@ export const useFactionStore = create<FactionState>()(
         const { xpContributed, votesParticipated } = get();
         return calculateMemberRank(xpContributed, votesParticipated);
       },
+      
+      // Load faction data from cloud (after login sync)
+      loadFromCloud: (cloudData) => {
+        const { playerFaction, xpContributed, votesParticipated, playerVotes } = get();
+        
+        // If cloud has faction data and local doesn't, use cloud
+        // If both have faction data, keep the one with more progress
+        const cloudHasFaction = cloudData.faction_id && cloudData.faction_id !== null;
+        const localHasFaction = playerFaction !== null;
+        
+        if (cloudHasFaction) {
+          const cloudXP = cloudData.faction_xp_contributed || 0;
+          const localXP = xpContributed || 0;
+          
+          // Use cloud if no local faction OR cloud has more progress
+          if (!localHasFaction || cloudXP > localXP) {
+            set({
+              playerFaction: cloudData.faction_id as FactionId,
+              joinedAt: cloudData.faction_joined_at || Date.now(),
+              xpContributed: Math.max(cloudXP, localXP),
+              votesParticipated: Math.max(cloudData.faction_votes_participated || 0, votesParticipated),
+              memberRank: cloudData.faction_member_rank || 'Rookie',
+              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+            });
+          } else {
+            // Keep local but merge votes
+            set({
+              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+              xpContributed: Math.max(cloudXP, localXP),
+              votesParticipated: Math.max(cloudData.faction_votes_participated || 0, votesParticipated),
+            });
+          }
+        }
+      },
     }),
     {
       name: 'blockquest-faction-storage',
