@@ -36,14 +36,36 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 # SECURITY: Input Sanitization & Rate Limiting
 # ===========================================
 
+# SQL injection patterns to remove
+SQL_INJECTION_PATTERNS = [
+    r"--",           # SQL comment
+    r";",            # Statement terminator
+    r"'",            # Single quote
+    r'"',            # Double quote
+    r"\\",           # Backslash
+    r"\bOR\b",       # OR keyword
+    r"\bAND\b",      # AND keyword
+    r"\bUNION\b",    # UNION keyword
+    r"\bSELECT\b",   # SELECT keyword
+    r"\bINSERT\b",   # INSERT keyword
+    r"\bUPDATE\b",   # UPDATE keyword
+    r"\bDELETE\b",   # DELETE keyword
+    r"\bDROP\b",     # DROP keyword
+    r"\bEXEC\b",     # EXEC keyword
+    r"\bTRUNCATE\b", # TRUNCATE keyword
+    r"=",            # Equals sign (used in SQL injection)
+    r"\b1=1\b",      # Classic SQL injection
+]
+
 def sanitize_string(value: str, max_length: int = 100) -> str:
     """Sanitize user input to prevent XSS and SQL injection"""
     if not value:
         return value
     # HTML escape to prevent XSS
     sanitized = html.escape(value.strip())
-    # Remove potential SQL injection patterns
-    sanitized = re.sub(r"['\";\\]", "", sanitized)
+    # Remove potential SQL injection patterns (case-insensitive)
+    for pattern in SQL_INJECTION_PATTERNS:
+        sanitized = re.sub(pattern, "", sanitized, flags=re.IGNORECASE)
     # Truncate to max length
     return sanitized[:max_length]
 
@@ -57,7 +79,7 @@ def sanitize_username(value: str) -> str:
 
 # Rate limiting storage (in production, use Redis)
 rate_limit_storage: Dict[str, List[float]] = defaultdict(list)
-RATE_LIMIT_REQUESTS = 60  # requests per window
+RATE_LIMIT_REQUESTS = 30  # requests per window (lowered for better protection)
 RATE_LIMIT_WINDOW = 60  # seconds
 
 def check_rate_limit(client_ip: str) -> bool:
