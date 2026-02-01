@@ -736,7 +736,7 @@ const styles = StyleSheet.create({
   },
   introSubtitle: {
     fontSize: 14,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
     marginBottom: 20,
@@ -823,7 +823,7 @@ const styles = StyleSheet.create({
   },
   heroDesc: {
     fontSize: 10,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
   },
@@ -931,7 +931,7 @@ const styles = StyleSheet.create({
   },
   lessonText: {
     fontSize: 10,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     lineHeight: 14,
   },
@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
   },
   exitBtnText: {
     fontSize: 14,
-    color: CRT_COLORS.textDim,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: 'bold',
   },
