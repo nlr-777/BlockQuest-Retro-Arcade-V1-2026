@@ -59,6 +59,15 @@ interface GameState {
   // Actions
   initProfile: (username: string, avatarId?: string) => Promise<void>;
   loadProfile: () => Promise<void>;
+  loadCloudProfile: (cloudData: {
+    username: string;
+    characterId: string;
+    xp: number;
+    level: number;
+    highScores: Record<string, number>;
+    badges: any[];
+    unlockedStoryBadges: string[];
+  }) => void;
   updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
   mintBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
   toggleMute: () => void;
