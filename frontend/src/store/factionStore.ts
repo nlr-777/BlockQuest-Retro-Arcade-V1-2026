@@ -130,6 +130,16 @@ interface FactionState {
   donateToTreasury: (amount: number) => void;
   getMemberRank: () => string;
   
+  // Cloud sync
+  loadFromCloud: (cloudData: {
+    faction_id?: string | null;
+    faction_joined_at?: number | null;
+    faction_xp_contributed?: number;
+    faction_votes_participated?: number;
+    faction_member_rank?: string;
+    faction_votes?: Record<string, string>;
+  }) => void;
+  
   // Hydration
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
