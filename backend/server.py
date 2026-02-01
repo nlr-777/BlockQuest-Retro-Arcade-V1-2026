@@ -339,14 +339,24 @@ async def get_player_scores(player_id: str, limit: int = 20):
 # ================== PLAYER PROFILE ROUTES ==================
 
 @api_router.post("/players", response_model=PlayerProfileResponse)
-async def create_player(player: PlayerProfileCreate):
+async def create_player(player: PlayerProfileCreate, request: Request):
     """Create a new player profile"""
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests")
+    
+    # Sanitize username
+    clean_username = sanitize_username(player.username)
+    if not clean_username or len(clean_username) < 2:
+        raise HTTPException(status_code=400, detail="Invalid username")
+    
     # Check if username exists
-    existing = await db.players.find_one({"username": player.username})
+    existing = await db.players.find_one({"username": clean_username})
     if existing:
         raise HTTPException(status_code=400, detail="Username already taken")
     
-    profile = PlayerProfile(username=player.username)
+    profile = PlayerProfile(username=clean_username)
     profile_dict = profile.dict()
     profile_dict['created_at'] = profile_dict['created_at'].isoformat()
     
