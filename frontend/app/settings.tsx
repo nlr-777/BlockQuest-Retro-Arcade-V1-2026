@@ -561,8 +561,18 @@ export default function SettingsScreen() {
 
           {/* Footer */}
           <View style={styles.footer}>
+            {/* Privacy & Legal Links */}
+            <TouchableOpacity 
+              style={styles.linkBtn} 
+              onPress={() => router.push('/privacy')}
+            >
+              <Text style={styles.linkText}>📜 Privacy Policy</Text>
+            </TouchableOpacity>
+            
+            <View style={styles.footerDivider} />
+            
             <Text style={styles.footerText}>🎮 BlockQuest v1.0</Text>
-            <Text style={styles.footerSubtext}>Web3 Chaos Chronicles</Text>
+            <Text style={styles.footerSubtext}>Retro Arcade Hub</Text>
             <Text style={styles.footerJoke}>
               Why did the settings go to school?{"\n"}
               To get a better CONFIG-uration! 😄
