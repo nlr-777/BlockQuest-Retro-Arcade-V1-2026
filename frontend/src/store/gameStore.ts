@@ -310,8 +310,13 @@ export const useGameStore = create<GameState>()(
     highScores: Record<string, number>;
     badges: any[];
     unlockedStoryBadges: string[];
+    gamesPlayed?: number;
+    totalScore?: number;
+    daoVotingPower?: number;
+    achievements?: string[];
+    recentScores?: any[];
   }) => {
-    const { profile, highScores: localHighScores } = get();
+    const { profile, highScores: localHighScores, recentScores: localRecent } = get();
     
     // Merge high scores - keep the higher of local vs cloud for each game
     const mergedHighScores: Record<string, number> = { ...localHighScores };
@@ -321,28 +326,41 @@ export const useGameStore = create<GameState>()(
       }
     });
     
+    // Merge recent scores
+    const mergedRecent = [...(cloudData.recentScores || []), ...(localRecent || [])];
+    const seenTimes = new Set();
+    const uniqueRecent = mergedRecent.filter((s: any) => {
+      if (seenTimes.has(s.playedAt)) return false;
+      seenTimes.add(s.playedAt);
+      return true;
+    }).sort((a: any, b: any) => b.playedAt - a.playedAt).slice(0, 20);
+    
     // Create or update profile with cloud data
     const updatedProfile: PlayerProfile = {
       id: profile?.id || `player_${Date.now()}`,
       username: cloudData.username,
       avatarId: cloudData.characterId,
       createdAt: profile?.createdAt || Date.now(),
-      totalScore: Object.values(mergedHighScores).reduce((sum, score) => sum + score, 0),
-      gamesPlayed: profile?.gamesPlayed || 0,
+      totalScore: Math.max(cloudData.totalScore || 0, profile?.totalScore || 0),
+      gamesPlayed: Math.max(cloudData.gamesPlayed || 0, profile?.gamesPlayed || 0),
       badges: cloudData.badges || profile?.badges || [],
-      daoVotingPower: profile?.daoVotingPower || 0,
-      level: Math.max(cloudData.level, profile?.level || 1),  // Keep higher level
-      xp: Math.max(cloudData.xp, profile?.xp || 0),           // Keep higher XP
+      daoVotingPower: Math.max(cloudData.daoVotingPower || 0, profile?.daoVotingPower || 0),
+      level: Math.max(cloudData.level, profile?.level || 1),
+      xp: Math.max(cloudData.xp, profile?.xp || 0),
       unlockedStoryBadges: [...new Set([
         ...(cloudData.unlockedStoryBadges || []),
         ...(profile?.unlockedStoryBadges || [])
-      ])],  // Merge and dedupe story badges
-      achievements: profile?.achievements || [],
+      ])],
+      achievements: [...new Set([
+        ...(cloudData.achievements || []),
+        ...(profile?.achievements || [])
+      ])],
     };
     
     set({
       profile: updatedProfile,
       highScores: mergedHighScores,
+      recentScores: uniqueRecent,
       isLoading: false,
     });
   },
