@@ -17,6 +17,10 @@ export default function PrivacyPolicy() {
     Linking.openURL(`mailto:${COMPANY_EMAIL}`);
   };
 
+  const handleWebsitePress = () => {
+    Linking.openURL(COMPANY_WEBSITE);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
