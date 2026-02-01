@@ -773,6 +773,27 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
             unique_recent.append(score)
     merged_recent_scores = sorted(unique_recent, key=lambda x: x.get('playedAt', 0), reverse=True)[:20]
     
+    # Merge faction data - keep the faction if user has one
+    existing_faction = user.get("faction_id")
+    merged_faction_id = profile_data.faction_id or existing_faction
+    merged_faction_joined = profile_data.faction_joined_at or user.get("faction_joined_at")
+    merged_faction_xp = max(user.get("faction_xp_contributed", 0), profile_data.faction_xp_contributed)
+    merged_faction_votes = max(user.get("faction_votes_participated", 0), profile_data.faction_votes_participated)
+    
+    # Merge faction votes (proposals voted on)
+    existing_faction_votes = user.get("faction_votes", {})
+    merged_faction_vote_records = {**existing_faction_votes, **profile_data.faction_votes}
+    
+    # Determine member rank based on XP contributed
+    def get_member_rank(xp: int) -> str:
+        if xp >= 10000: return "Legend"
+        if xp >= 5000: return "Champion"
+        if xp >= 2000: return "Elder"
+        if xp >= 500: return "Member"
+        return "Rookie"
+    
+    merged_faction_rank = get_member_rank(merged_faction_xp)
+    
     # Update user profile with merged data
     update_data = {
         "high_scores": merged_high_scores,
@@ -786,6 +807,12 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
         "games_played": merged_games_played,
         "total_score": merged_total_score,
         "recent_scores": merged_recent_scores,
+        "faction_id": merged_faction_id,
+        "faction_joined_at": merged_faction_joined,
+        "faction_xp_contributed": merged_faction_xp,
+        "faction_votes_participated": merged_faction_votes,
+        "faction_member_rank": merged_faction_rank,
+        "faction_votes": merged_faction_vote_records,
         "last_sync": datetime.utcnow().isoformat()
     }
     
