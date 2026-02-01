@@ -304,7 +304,7 @@ async def get_status_checks():
 async def submit_score(entry: LeaderboardEntryCreate, request: Request):
     """Submit a new score to the leaderboard"""
     # Rate limiting
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many requests")
     
