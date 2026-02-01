@@ -1345,14 +1345,16 @@ class SecurityAuditTester:
         print("\n" + "=" * 60)
 
 def main():
-    """Main test execution"""
+    """Main test execution - Security Audit Focus"""
     # Get backend URL from environment
     backend_url = "https://launch-prep-39.preview.emergentagent.com"
     
-    print(f"Testing backend at: {backend_url}")
+    print(f"🔒 Security Audit Testing backend at: {backend_url}")
     
-    tester = BlockQuestAPITester(backend_url)
-    tester.run_all_tests()
+    tester = SecurityAuditTester(backend_url)
+    
+    # Run comprehensive security audit as requested
+    tester.run_security_audit()
 
 if __name__ == "__main__":
     main()
