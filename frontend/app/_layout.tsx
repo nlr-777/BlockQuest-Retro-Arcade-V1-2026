@@ -9,6 +9,7 @@ import { COLORS } from '../src/constants/colors';
 import VFXLayer from '../src/vfx/VFXManager';
 import PixelText from '../src/components/PixelText';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import { ToastContainer } from '../src/components/Toast';
 import audioManager from '../src/utils/AudioManager';
 
 // Prevent auto-hide of splash screen
