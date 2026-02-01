@@ -41,7 +41,7 @@ class BlockQuestAPITester:
         print("\n=== TEST 1: User Registration & Profile Creation ===")
         
         # Generate unique test user
-        test_email = f"testuser_{int(time.time())}@blockquest.test"
+        test_email = f"testuser_{int(time.time())}@example.com"
         test_username = f"testuser_{int(time.time())}"
         
         payload = {
