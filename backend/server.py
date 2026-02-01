@@ -274,6 +274,10 @@ class SyncProfileRequest(BaseModel):
     avatar_id: Optional[str] = None
     dao_voting_power: int = 0
     unlocked_story_badges: List[str] = []
+    games_played: int = 0
+    total_score: int = 0
+    achievements: List[str] = []
+    recent_scores: List[Dict[str, Any]] = []
 
 # ================== ROUTES ==================
 
