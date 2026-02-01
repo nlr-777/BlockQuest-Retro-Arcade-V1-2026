@@ -58,29 +58,31 @@ export default function RootLayout() {
   }, [loadProfile]);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* HYDRATION GATE: Block ALL navigation until store is ready */}
-      {(!hasHydrated || !isReady) ? (
-        <View style={styles.loadingOverlay}>
-          <PixelText size="xl" color={COLORS.chainGold} glow>
-            LOADING...
-          </PixelText>
-        </View>
-      ) : (
-        <>
-          {showGenesis && <VFXLayer type="genesis-birth" />}
-              <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: COLORS.bgDark },
-              animation: 'slide_from_right',
-            }}
-          />
-        </>
-      )}
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={styles.container}>
+        <StatusBar style="light" />
+        
+        {/* HYDRATION GATE: Block ALL navigation until store is ready */}
+        {(!hasHydrated || !isReady) ? (
+          <View style={styles.loadingOverlay}>
+            <PixelText size="xl" color={COLORS.chainGold} glow>
+              LOADING...
+            </PixelText>
+          </View>
+        ) : (
+          <>
+            {showGenesis && <VFXLayer type="genesis-birth" />}
+                <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: COLORS.bgDark },
+                animation: 'slide_from_right',
+              }}
+            />
+          </>
+        )}
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
 
