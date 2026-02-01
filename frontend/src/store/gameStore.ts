@@ -201,6 +201,16 @@ export const useGameStore = create<GameState>()(
           recentScores: [newScore, ...recentScores.slice(0, 19)],
         });
 
+        // Show toast for new high score
+        if (isNewHighScore) {
+          showToast(`🏆 New High Score: ${score}!`, 'success');
+        }
+        
+        // Show toast for level up
+        if (newLevel > profile.level) {
+          showToast(`🎉 Level Up! You're now Level ${newLevel}!`, 'success');
+        }
+
         // Award "Beginner" badge after 5 total plays
         const hasBeginnerBadge = profile.badges.some(b => b.id.includes('beginner_badge'));
         if (newGamesPlayed >= 5 && !hasBeginnerBadge) {
@@ -226,6 +236,9 @@ export const useGameStore = create<GameState>()(
       id: `badge_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       mintedAt: Date.now(),
     };
+
+    // Show toast for new badge
+    showToast(`🏅 Badge Earned: ${badgeData.name}!`, 'success');
 
     const updatedProfile = {
       ...profile,
