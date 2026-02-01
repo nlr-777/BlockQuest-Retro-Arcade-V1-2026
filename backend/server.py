@@ -401,15 +401,28 @@ async def get_player_badges(player_id: str):
 # ================== AUTH ROUTES ==================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate, request: Request):
     """Register a new user with email and password"""
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+    
+    # Sanitize inputs
+    clean_username = sanitize_username(user_data.username)
+    clean_email = user_data.email.lower().strip()
+    
+    # Validate username
+    if not clean_username or len(clean_username) < 2:
+        raise HTTPException(status_code=400, detail="Username must be at least 2 alphanumeric characters")
+    
     # Check if email exists
-    existing_email = await db.users.find_one({"email": user_data.email.lower()})
+    existing_email = await db.users.find_one({"email": clean_email})
     if existing_email:
         raise HTTPException(status_code=400, detail="Email already registered")
     
     # Check if username exists
-    existing_username = await db.users.find_one({"username": user_data.username})
+    existing_username = await db.users.find_one({"username": clean_username})
     if existing_username:
         raise HTTPException(status_code=400, detail="Username already taken")
     
@@ -419,8 +432,8 @@ async def register(user_data: UserCreate):
     
     user = {
         "id": user_id,
-        "email": user_data.email.lower(),
-        "username": user_data.username,
+        "email": clean_email,
+        "username": clean_username,
         "password_hash": hashed_password,
         "created_at": datetime.utcnow().isoformat(),
         "auth_provider": "email",
