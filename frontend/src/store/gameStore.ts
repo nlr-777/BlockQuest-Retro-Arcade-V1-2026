@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showToast } from '../components/Toast';
 
 export interface Badge {
   id: string;
