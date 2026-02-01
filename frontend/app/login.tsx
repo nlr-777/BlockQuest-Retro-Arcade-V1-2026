@@ -77,6 +77,14 @@ export default function LoginScreen() {
         authResponse = await authService.login(email.trim(), password);
       }
       
+      // After successful login, fetch the full profile from server
+      const cloudProfile = await authService.fetchProfile();
+      
+      if (cloudProfile) {
+        // Load cloud data into local store
+        await loadCloudDataToStore(cloudProfile);
+      }
+      
       // Check if we have a pending profile from welcome screen
       let pendingProfile = null;
       if (Platform.OS === 'web' && typeof sessionStorage !== 'undefined') {
