@@ -235,13 +235,15 @@ class AuthService {
     }
   }
 
-  // Logout - clear stored auth
+  // Logout - clear auth token only, keep user game data locally
   async logout(): Promise<void> {
     try {
       this.token = null;
       this.user = null;
+      // Only clear auth token - user's game progress stays in local storage
       await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
-      await AsyncStorage.removeItem(USER_DATA_KEY);
+      // DO NOT clear USER_DATA_KEY - that contains profile info needed for display
+      // Game progress is stored separately in gameStore via Zustand persist
     } catch (error) {
       console.error('Failed to logout:', error);
     }
