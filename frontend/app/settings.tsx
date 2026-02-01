@@ -230,15 +230,15 @@ export default function SettingsScreen() {
     }
   };
 
-  // Logout handler
+  // Logout handler - only clears auth, keeps local game data
   const handleLogout = async () => {
     audioManager.playSound('click');
     const confirmLogout = Platform.OS === 'web' 
-      ? window.confirm('This will log out of your cloud account. Your local progress will be kept. Continue?')
+      ? window.confirm('Log out of cloud sync? Your local progress will be kept.')
       : await new Promise<boolean>((resolve) => {
           Alert.alert(
             '👋 Log Out',
-            'This will log out of your cloud account. Your local progress will be kept.',
+            'Log out of cloud sync? Your local progress will be kept.',
             [
               { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
               { text: 'Log Out', onPress: () => resolve(true) },
@@ -251,7 +251,7 @@ export default function SettingsScreen() {
         await authService.logout();
         setIsLoggedIn(false);
         setUserEmail('');
-        showToast('👋 Logged out successfully!', 'success');
+        showToast('👋 Logged out - local progress saved!', 'success');
         audioManager.playSound('powerup');
       } catch (error) {
         showToast('Failed to log out', 'error');
