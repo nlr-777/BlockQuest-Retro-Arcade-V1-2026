@@ -269,11 +269,20 @@ async def get_status_checks():
 # ================== LEADERBOARD ROUTES ==================
 
 @api_router.post("/leaderboard", response_model=LeaderboardEntryResponse)
-async def submit_score(entry: LeaderboardEntryCreate):
+async def submit_score(entry: LeaderboardEntryCreate, request: Request):
     """Submit a new score to the leaderboard"""
-    entry_obj = LeaderboardEntry(**entry.dict())
-    entry_dict = entry_obj.dict()
-    entry_dict['played_at'] = entry_dict['played_at'].isoformat()
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests")
+    
+    # Sanitize player name to prevent XSS
+    sanitized_player_name = sanitize_string(entry.player_name, 50)
+    
+    entry_dict = entry.dict()
+    entry_dict['player_name'] = sanitized_player_name
+    entry_dict['id'] = str(uuid.uuid4())
+    entry_dict['played_at'] = datetime.utcnow().isoformat()
     
     await db.leaderboard.insert_one(entry_dict)
     
