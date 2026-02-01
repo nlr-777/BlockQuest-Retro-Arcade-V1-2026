@@ -282,6 +282,13 @@ class SyncProfileRequest(BaseModel):
     total_score: int = 0
     achievements: List[str] = []
     recent_scores: List[Dict[str, Any]] = []
+    # Faction/DAO data
+    faction_id: Optional[str] = None
+    faction_joined_at: Optional[int] = None
+    faction_xp_contributed: int = 0
+    faction_votes_participated: int = 0
+    faction_member_rank: str = "Rookie"
+    faction_votes: Dict[str, str] = {}
 
 # ================== ROUTES ==================
 
