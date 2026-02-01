@@ -519,7 +519,7 @@ async def register(user_data: UserCreate, request: Request):
 async def login(credentials: UserLogin, request: Request):
     """Login with email and password"""
     # Rate limiting to prevent brute force attacks
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many login attempts. Please try again later.")
     
