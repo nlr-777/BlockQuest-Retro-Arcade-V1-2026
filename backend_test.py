@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-BlockQuest Game Hub - Backend API Comprehensive Test Suite
-Tests all endpoints for security, functionality, and edge cases
+Backend Security Audit Test Suite - BlockQuest Official
+Comprehensive security testing focusing on XSS, SQL injection, rate limiting, and authentication
 """
 
 import requests
 import json
 import uuid
 import time
+import concurrent.futures
 from datetime import datetime
 from typing import Dict, Any, Optional
 
