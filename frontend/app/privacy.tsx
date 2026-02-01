@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     fontSize: 14,
-    color: CRT_COLORS.textMedium,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     flex: 1,
     lineHeight: 20,
