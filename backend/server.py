@@ -559,19 +559,47 @@ async def get_current_user_profile(user = Depends(get_current_user)):
 
 @api_router.put("/auth/sync", response_model=UserResponse)
 async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_current_user)):
-    """Sync local profile data to cloud"""
+    """Sync local profile data to cloud - MERGES data, keeping best values"""
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # Update user profile with synced data
+    # Get existing user data for merging
+    existing_high_scores = user.get("high_scores", {})
+    existing_badges = user.get("badges", [])
+    existing_story_badges = user.get("unlocked_story_badges", [])
+    
+    # Merge high scores - keep the HIGHER score for each game
+    merged_high_scores = {**existing_high_scores}
+    for game_id, score in profile_data.high_scores.items():
+        if score > merged_high_scores.get(game_id, 0):
+            merged_high_scores[game_id] = score
+    
+    # Merge badges - keep all unique badges
+    existing_badge_ids = {b.get('id') or b.get('name') for b in existing_badges}
+    merged_badges = existing_badges.copy()
+    for badge in profile_data.badges:
+        badge_id = badge.get('id') or badge.get('name')
+        if badge_id and badge_id not in existing_badge_ids:
+            merged_badges.append(badge)
+            existing_badge_ids.add(badge_id)
+    
+    # Merge story badges - keep all unique
+    merged_story_badges = list(set(existing_story_badges + profile_data.unlocked_story_badges))
+    
+    # Take the HIGHER XP and level
+    merged_xp = max(user.get("total_xp", 0), profile_data.total_xp)
+    merged_level = max(user.get("level", 1), profile_data.level)
+    merged_voting_power = max(user.get("dao_voting_power", 0), profile_data.dao_voting_power)
+    
+    # Update user profile with merged data
     update_data = {
-        "high_scores": profile_data.high_scores,
-        "total_xp": profile_data.total_xp,
-        "level": profile_data.level,
-        "badges": profile_data.badges,
-        "avatar_id": profile_data.avatar_id,
-        "dao_voting_power": profile_data.dao_voting_power,
-        "unlocked_story_badges": profile_data.unlocked_story_badges,
+        "high_scores": merged_high_scores,
+        "total_xp": merged_xp,
+        "level": merged_level,
+        "badges": merged_badges,
+        "avatar_id": profile_data.avatar_id or user.get("avatar_id"),
+        "dao_voting_power": merged_voting_power,
+        "unlocked_story_badges": merged_story_badges,
         "last_sync": datetime.utcnow().isoformat()
     }
     
