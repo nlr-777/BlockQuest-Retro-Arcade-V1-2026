@@ -290,11 +290,7 @@ export default function SettingsScreen() {
         showToast('⚠️ Sync failed - try again later', 'warning');
       }
     } catch (error) {
-      if (Platform.OS === 'web') {
-        window.alert('⚠️ Sync Failed - Please check your connection.');
-      } else {
-        Alert.alert('⚠️ Sync Failed', 'Please check your connection.');
-      }
+      showToast('❌ Sync error - check connection', 'error');
     } finally {
       setSyncing(false);
     }
