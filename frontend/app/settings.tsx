@@ -273,6 +273,9 @@ export default function SettingsScreen() {
     setSyncing(true);
     audioManager.playSound('click');
     
+    // Get faction data
+    const factionState = useFactionStore.getState();
+    
     try {
       const result = await authService.syncProgress({
         high_scores: highScores,
@@ -286,6 +289,13 @@ export default function SettingsScreen() {
         total_score: profile.totalScore,
         achievements: profile.achievements || [],
         recent_scores: recentScores || [],
+        // Faction data
+        faction_id: factionState.playerFaction,
+        faction_joined_at: factionState.joinedAt,
+        faction_xp_contributed: factionState.xpContributed,
+        faction_votes_participated: factionState.votesParticipated,
+        faction_member_rank: factionState.memberRank,
+        faction_votes: factionState.playerVotes,
       });
       
       if (result) {
