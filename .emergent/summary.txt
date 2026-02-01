@@ -1,0 +1,503 @@
+<analysis>
+**original_problem_statement**: The user wants to perform a final, comprehensive pre-export audit and enhancement of the application. The goal is to conduct a full review of the codebase (frontend, backend, DB) for bugs, security vulnerabilities, performance issues, and UI/UX flaws. All identified issues should be fixed, and polish should be added to make the app launch ready. This includes preparing the app for deployment on Vercel and export to GitHub with a proper README.md, Privacy Policy, and Terms & Conditions. The user also requested several specific UI/UX enhancements, including making text more readable, adding color variety to the UI, and ensuring all user progress (scores, XP, badges, faction data, etc.) is fully synchronized across devices and sessions.
+
+PRODUCT REQUIREMENTS:
+- A fully audited, secure, and polished retro game arcade application.
+- All backend vulnerabilities (XSS, rate-limiting) must be patched.
+- A comprehensive data synchronization system must be in place for all player progress.
+- The UI must be polished, with improved text readability and vibrant, varied colors.
+- The app must be ready for App Store submission, with necessary  and  configurations.
+- Legal pages (Privacy Policy, Terms & Conditions) must be created, be accessible in the app, and tailored for an Australian context.
+- The project must be configured for static web deployment on Vercel.
+- A comprehensive  must be generated.
+
+**User's preferred language**: English
+
+**what currently exists?**
+The application is a fully-featured, polished retro game arcade hub. The backend security has been significantly hardened with input sanitization and robust rate-limiting. A comprehensive, full-stack data synchronization system is in place, persisting all aspects of a player's profile (scores, XP, level, badges, faction/DAO status, recent game activity) to the MongoDB backend. The UI has undergone a major visual overhaul with unique color themes for each page, brighter text for readability, and a magenta XP progress bar. Key UX improvements like toast notifications have been added. The project has been prepared for App Store submission (, ) and Vercel deployment (, build scripts in , updated ).
+
+**Last working item**:
+-   Last item agent was working: Preparing the application for Vercel deployment. This involved creating a  for static export configuration, adding an  file, updating  with  and declare -x DEBIAN_FRONTEND="noninteractive"
+declare -x ENABLE_RELOAD="true"
+declare -x GPG_KEY="A035C8C19219BA821ECEA86B64E628F8D684696D"
+declare -x HOME="/root"
+declare -x HOSTNAME="agent-env-25ace009-1c61-46f2-a6ab-2763f20c05c6"
+declare -x KUBERNETES_PORT="tcp://34.118.224.1:443"
+declare -x KUBERNETES_PORT_443_TCP="tcp://34.118.224.1:443"
+declare -x KUBERNETES_PORT_443_TCP_ADDR="34.118.224.1"
+declare -x KUBERNETES_PORT_443_TCP_PORT="443"
+declare -x KUBERNETES_PORT_443_TCP_PROTO="tcp"
+declare -x KUBERNETES_SERVICE_HOST="34.118.224.1"
+declare -x KUBERNETES_SERVICE_PORT="443"
+declare -x KUBERNETES_SERVICE_PORT_HTTPS="443"
+declare -x LANG="C.UTF-8"
+declare -x NEXT_TELEMETRY_DISABLED="1"
+declare -x NODE_VERSION="20"
+declare -x OLDPWD="/app"
+declare -x PATH="/root/.venv/bin:/opt/plugins-venv/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+declare -x PIP_NO_INPUT="1"
+declare -x PLAYWRIGHT_BROWSERS_PATH="/pw-browsers"
+declare -x PLUGIN_VENV_PATH="/opt/plugins-venv"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT="tcp://34.118.232.80:80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP="tcp://34.118.232.80:80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_ADDR="34.118.232.80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PORT="80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PROTO="tcp"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_HOST="34.118.232.80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT="80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT_HTTP="80"
+declare -x PREVIEW_PROXY_SERVICE_PORT="tcp://34.118.225.58:80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP="tcp://34.118.225.58:80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_ADDR="34.118.225.58"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PORT="80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PROTO="tcp"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_HOST="34.118.225.58"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT="80"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT_HTTP="80"
+declare -x PWD="/app/frontend"
+declare -x PYTHONUNBUFFERED="1"
+declare -x PYTHON_SHA256="8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b78"
+declare -x PYTHON_VERSION="3.11.14"
+declare -x SHLVL="1"
+declare -x STRIPE_API_KEY="sk_test_emergent"
+declare -x UV_COMPILE_BYTECODE="1"
+declare -x VIRTUAL_ENV="/root/.venv"
+declare -x base_url="https://demobackend.emergentagent.com"
+declare -x code_server_password="cf92d522"
+declare -x integration_proxy_url="https://integrations.emergentagent.com"
+declare -x monitor_polling_interval="1"
+declare -x preview_endpoint="https://pixelpolishup.preview.emergentagent.com"
+declare -x run_id="25ace009-1c61-46f2-a6ab-2763f20c05c6" scripts, and adding deployment instructions to the .
+-   Status: IN PROGRESS
+-   Agent Testing Done: N (The agent configured the files but did not run a local build/export to verify the process.)
+-   Which testing method agent to use? The main agent must run env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Fast resolver is enabled.
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% ( 21/140)
+λ node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  5.7% ( 18/160)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% ( 37/199)
+λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░ 11.7% (113/331)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (128/321)
+λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░ 11.7% (113/331)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (138/330)
+λ node_modules/expo-router/node/render.js ▓▓░░░░░░░░░░░░░░ 16.3% (154/381)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (214/425)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 40.3% (329/518)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (333/554)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 40.3% (356/615)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 43.8% (407/615)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 54.5% (490/664)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 44.7% (411/615)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 56.0% (518/692)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 44.7% (411/615)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 56.0% (520/696)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 51.1% (571/821)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.8% (621/862)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 62.0% (711/903)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.9% (694/904)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.2% (811/989)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 62.8% (766/967)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 78.7% ( 952/1073)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.4% ( 902/1053)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 84.5% (1024/1120)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 83.5% (1039/1145)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94.3% (1210/1246)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 90.8% (1237/1298)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1378/1378)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1473/1473)
+λ Bundled 52420ms node_modules/expo-router/node/render.js (1473 modules)
+Web Bundled 52720ms node_modules/expo-router/entry.js (1378 modules)
+
+› web bundles (1):
+_expo/static/js/web/entry-7e854e24ed4e3c339a467f3698de1fac.js (3.39 MB)
+
+› Static routes (37):
+/dao (23 kB)
+/daily (23 kB)
+/ (index) (23 kB)
+/login (23 kB)
+/ranks (23 kB)
+/story (23 kB)
+/terms (23 kB)
+/vault (23 kB)
+/badges (23 kB)
+/config (23 kB)
+/privacy (23 kB)
+/welcome (23 kB)
+/factions (23 kB)
+/progress (23 kB)
+/settings (23 kB)
+/tutorial (23 kB)
+/_sitemap (22.7 kB)
+/characters (23 kB)
+/+not-found (22.7 kB)
+/leaderboard (23 kB)
+/games/dao-duel (23 kB)
+/games/coming-soon (23 kB)
+/games/hash-hopper (23 kB)
+/games/ledger-leap (23 kB)
+/games/quest-vault (23 kB)
+/games/seed-sprint (23 kB)
+/games/stake-smash (23 kB)
+/games/ipfs-pinball (23 kB)
+/games/mine-blaster (23 kB)
+/games/token-tumble (23 kB)
+/games/block-muncher (23 kB)
+/games/chain-builder (23 kB)
+/games/bridge-bouncer (23 kB)
+/games/chain-invaders (23 kB)
+/games/crypto-climber (23 kB)
+/games/lightning-dash (23 kB)
+/games/contract-crusher (23 kB)
+
+Exported: dist from the  directory to test the static build process locally.
+-   User Testing Done: N
+
+**All Pending/In progress Issue list**:
+  Issue 1: (P0) Vercel Deployment Build Verification
+  Issue 2: (P1) Potential Unhandled Crash in Chain Builder Mini-Game
+  Issue 3: (P2) Settings Page Scroll Behavior
+  Issue 4: (P3) Linter Configuration for TypeScript
+
+  Issues Detail:
+  - Issue 1: 
+     - Attempted fixes: The agent created , updated  with build scripts, and created . However, it did not attempt to run the build process itself.
+     - Next debug checklist:
+        1. Navigate to the  directory.
+        2. Run the command: env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Fast resolver is enabled.
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+λ Bundled 1119ms node_modules/expo-router/node/render.js (1431 modules)
+Web Bundled 1462ms node_modules/expo-router/entry.js (1378 modules)
+
+› web bundles (1):
+_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
+
+› Static routes (37):
+/dao (23 kB)
+/daily (23 kB)
+/ (index) (23 kB)
+/login (23 kB)
+/ranks (23 kB)
+/story (23 kB)
+/terms (23 kB)
+/vault (23 kB)
+/badges (23 kB)
+/config (23 kB)
+/privacy (23 kB)
+/welcome (23 kB)
+/factions (23 kB)
+/progress (23 kB)
+/settings (23 kB)
+/tutorial (23 kB)
+/_sitemap (22.7 kB)
+/characters (23 kB)
+/+not-found (22.7 kB)
+/leaderboard (23 kB)
+/games/dao-duel (23 kB)
+/games/coming-soon (23 kB)
+/games/hash-hopper (23 kB)
+/games/ledger-leap (23 kB)
+/games/quest-vault (23 kB)
+/games/seed-sprint (23 kB)
+/games/stake-smash (23 kB)
+/games/ipfs-pinball (23 kB)
+/games/mine-blaster (23 kB)
+/games/token-tumble (23 kB)
+/games/block-muncher (23 kB)
+/games/chain-builder (23 kB)
+/games/bridge-bouncer (23 kB)
+/games/chain-invaders (23 kB)
+/games/crypto-climber (23 kB)
+/games/lightning-dash (23 kB)
+/games/contract-crusher (23 kB)
+
+Exported: dist.
+        3. Observe the output for any build errors (e.g., dependency issues, path problems, configuration errors).
+        4. If the build fails, debug the errors. If it succeeds, the task is complete.
+     - Why fix this issue and what will be achieved with the fix? This is a critical verification step to ensure the Vercel deployment preparation was successful and the app can actually be deployed as intended.
+     - Status:  IN PROGRESS
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: None
+
+  - Issue 2: 
+     - Attempted fixes: An early  block was added, but the user was not convinced this fixed the root cause of a crash on self-collision. This issue was then forgotten during subsequent tasks.
+     - Next debug checklist:
+        1. Review the  and game-over state logic in .
+        2. Specifically, check the collision detection logic to ensure no race conditions or invalid state access occur on self-collision.
+        3. Purposefully trigger a self-collision multiple times to confirm the game-over state is handled gracefully without crashing.
+     - Why fix this issue and what will be achieved with the fix? Ensures the new mini-game is stable and provides a good user experience.
+     - Status:  NOT STARTED
+     - Is recurring issue? Y
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: None
+
+  - Issue 3: 
+     - Attempted fixes: None in this session. This issue was noted in the initial summary but was not re-verified.
+     - Next debug checklist:
+        1. Navigate to the  page in the app.
+        2. Attempt to scroll to the very bottom to view the Logout and Delete Data buttons.
+        3. If scrolling fails or bounces back, investigate the  implementation in .
+     - Why fix this issue and what will be achieved with the fix? Fixes a broken user experience, allowing users to access all available settings.
+     - Status:  NOT STARTED
+     - Is recurring issue? Y
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on other issue: None
+
+  - Issue 4: 
+     - Attempted fixes: The agent encountered ESLint parsing errors for TypeScript syntax (, ) multiple times. It correctly identified them as configuration issues and ignored them to proceed with the task.
+     - Next debug checklist:
+        1. Review the ESLint configuration file ( or similar) in the  directory.
+        2. Ensure the parser and plugins are correctly set up for TypeScript (e.g., , ).
+        3. Run the linter again to confirm the parsing errors are resolved.
+     - Why fix this issue and what will be achieved with the fix? This is a low-priority developer experience improvement. Fixing it will provide accurate linting feedback and prevent future confusion.
+     - Status:  NOT STARTED
+     - Is recurring issue? Y
+     - Should Test frontend/backend/both after fix? NA
+     - Blocked on other issue: None
+
+**In progress Task List**:
+- Task 1: Complete Vercel Deployment Preparation
+     - Where to resume: The agent needs to run a local build test to verify the configuration.
+     - What will be achieved with this? A project that is confirmed to be ready for one-click deployment to Vercel.
+     - Status: IN PROGRESS
+     - Should Test frontend/backend/both after fix? frontend
+     - Blocked on something: None
+
+**Upcoming and Future Tasks**
+- (P1) Add Analytics Tracking: The backend now has analytics endpoints, but a dedicated UI or dashboard to view these stats could be built.
+- (P2) Implement Root Error Boundary: This was completed, but could be enhanced with a report issue button.
+
+**Completed work in this session**
+-   **Security Hardening**: Fully patched backend vulnerabilities in  by adding comprehensive input sanitization and robust, IP-aware rate-limiting to all relevant endpoints. Verified with the backend testing agent.
+-   **COMPLETE Profile Sync**: Implemented a full-stack data synchronization system. All player data (High Scores, Total XP, Level, Games Played, Total Score, Recent Scores, Unlocked Badges, Faction/DAO membership) is now synced between the client and backend on login and via a manual sync button.
+-   **UI/UX Overhaul**:
+    -   **Retro Color Themes**: Applied unique, vibrant background colors to each main page (, , , , , ).
+    -   **Text Readability**: Brightened all dim/muted text colors across the app to be more vibrant and kid-friendly.
+    -   **XP Bar Color**: Changed the XP progress bar color to magenta as requested.
+-   **Bug Fixes & Polish**:
+    -   **Logout Functionality**: Fixed a critical bug where the logout button was non-functional and incorrectly cleared user data. Logout now correctly clears the session while preserving local progress.
+    -   **Stats Sync Bug**: Fixed a bug where stats were not syncing on login due to an incorrect state reference in .
+    -   **Toast Notifications**: Implemented a new  component and added non-intrusive feedback for actions like login, score submission, badge unlocking, and data sync.
+-   **Pre-Export & Deployment Prep**:
+    -   ****: Generated a comprehensive README file with setup instructions, tech stack overview, and deployment guide.
+    -   **Legal Pages**: Created  and  pages, along with static HTML versions (, ), tailored for an Australian context.
+    -   **App Store Readiness**: Configured  and  for future App Store/Play Store submissions.
+    -   **Vercel Prep**: Created  and , and added build scripts to .
+    -   **Code Cleanup**: Removed numerous  statements, replacing some with a production-safe debug utility.
+    -   **Error Handling**: Implemented a global  to prevent the entire app from crashing on unexpected errors.
+
+**Code Architecture**
+loadFromCloud
+
+**Key Technical Concepts**
+-   **Full-Stack Data Sync**: A comprehensive merge-on-sync strategy implemented on the backend ( endpoint in ) that compares local and server data and returns a merged profile. The frontend now sends the complete player state (scores, xp, level, badges, faction data, etc.) on login and manual sync.
+-   **Backend Security**: Hardened the FastAPI backend by implementing rate-limiting that correctly handles  headers in a containerized environment, and applied  for input sanitization.
+-   **Static Web Export (Expo)**: Configured the project for Vercel deployment by setting up  for the metro bundler, adding build scripts to , and creating a  file.
+-   **Global State Management (Zustand)**: Heavily modified  and  to manage a complex state, including profile data, game progress, and faction details, and to handle loading this data from a cloud source.
+-   **Global Components (React)**: Implemented an  and a  at the root layout () to provide app-wide error handling and user feedback, improving robustness and UX.
+
+**All files of reference**
+-   **/app/frontend/package.json**: Key file for the next step, contains the new declare -x DEBIAN_FRONTEND="noninteractive"
+declare -x ENABLE_RELOAD="true"
+declare -x GPG_KEY="A035C8C19219BA821ECEA86B64E628F8D684696D"
+declare -x HOME="/root"
+declare -x HOSTNAME="agent-env-25ace009-1c61-46f2-a6ab-2763f20c05c6"
+declare -x KUBERNETES_PORT="tcp://34.118.224.1:443"
+declare -x KUBERNETES_PORT_443_TCP="tcp://34.118.224.1:443"
+declare -x KUBERNETES_PORT_443_TCP_ADDR="34.118.224.1"
+declare -x KUBERNETES_PORT_443_TCP_PORT="443"
+declare -x KUBERNETES_PORT_443_TCP_PROTO="tcp"
+declare -x KUBERNETES_SERVICE_HOST="34.118.224.1"
+declare -x KUBERNETES_SERVICE_PORT="443"
+declare -x KUBERNETES_SERVICE_PORT_HTTPS="443"
+declare -x LANG="C.UTF-8"
+declare -x NEXT_TELEMETRY_DISABLED="1"
+declare -x NODE_VERSION="20"
+declare -x OLDPWD="/app"
+declare -x PATH="/root/.venv/bin:/opt/plugins-venv/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+declare -x PIP_NO_INPUT="1"
+declare -x PLAYWRIGHT_BROWSERS_PATH="/pw-browsers"
+declare -x PLUGIN_VENV_PATH="/opt/plugins-venv"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT="tcp://34.118.232.80:80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP="tcp://34.118.232.80:80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_ADDR="34.118.232.80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PORT="80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PROTO="tcp"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_HOST="34.118.232.80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT="80"
+declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT_HTTP="80"
+declare -x PREVIEW_PROXY_SERVICE_PORT="tcp://34.118.225.58:80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP="tcp://34.118.225.58:80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_ADDR="34.118.225.58"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PORT="80"
+declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PROTO="tcp"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_HOST="34.118.225.58"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT="80"
+declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT_HTTP="80"
+declare -x PWD="/app/frontend"
+declare -x PYTHONUNBUFFERED="1"
+declare -x PYTHON_SHA256="8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b78"
+declare -x PYTHON_VERSION="3.11.14"
+declare -x SHLVL="1"
+declare -x STRIPE_API_KEY="sk_test_emergent"
+declare -x UV_COMPILE_BYTECODE="1"
+declare -x VIRTUAL_ENV="/root/.venv"
+declare -x base_url="https://demobackend.emergentagent.com"
+declare -x code_server_password="cf92d522"
+declare -x integration_proxy_url="https://integrations.emergentagent.com"
+declare -x monitor_polling_interval="1"
+declare -x preview_endpoint="https://pixelpolishup.preview.emergentagent.com"
+declare -x run_id="25ace009-1c61-46f2-a6ab-2763f20c05c6" script.
+-   **/app/frontend/vercel.json**: Configuration for the Vercel build.
+-   **/app/backend/server.py**: Contains all the final security and data sync logic.
+-   **/app/frontend/app/login.tsx**: Contains the primary logic for triggering the full profile sync upon user login.
+-   **/app/frontend/app/settings.tsx**: Contains the manual sync trigger and the fixed logout logic.
+-   **/app/frontend/src/store/gameStore.ts**: The heart of the frontend state, contains the logic for loading and managing the complete synced player profile.
+-   **/app/frontend/src/store/factionStore.ts**: Contains the logic for syncing faction-related data.
+-   **/app/README.md**: The new, comprehensive documentation file.
+
+**Critical Info for New Agent**
+-   **Your immediate priority is to verify the Vercel build.** The configuration has been set up, but you must run env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Fast resolver is enabled.
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+λ Bundled 1090ms node_modules/expo-router/node/render.js (1403 modules)
+Web Bundled 1424ms node_modules/expo-router/entry.js (1378 modules)
+
+› web bundles (1):
+_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
+
+› Static routes (37):
+/dao (23 kB)
+/daily (23 kB)
+/ (index) (23 kB)
+/login (23 kB)
+/ranks (23 kB)
+/story (23 kB)
+/terms (23 kB)
+/vault (23 kB)
+/badges (23 kB)
+/config (23 kB)
+/privacy (23 kB)
+/welcome (23 kB)
+/factions (23 kB)
+/progress (23 kB)
+/settings (23 kB)
+/tutorial (23 kB)
+/_sitemap (22.7 kB)
+/characters (23 kB)
+/+not-found (22.7 kB)
+/leaderboard (23 kB)
+/games/dao-duel (23 kB)
+/games/coming-soon (23 kB)
+/games/hash-hopper (23 kB)
+/games/ledger-leap (23 kB)
+/games/quest-vault (23 kB)
+/games/seed-sprint (23 kB)
+/games/stake-smash (23 kB)
+/games/ipfs-pinball (23 kB)
+/games/mine-blaster (23 kB)
+/games/token-tumble (23 kB)
+/games/block-muncher (23 kB)
+/games/chain-builder (23 kB)
+/games/bridge-bouncer (23 kB)
+/games/chain-invaders (23 kB)
+/games/crypto-climber (23 kB)
+/games/lightning-dash (23 kB)
+/games/contract-crusher (23 kB)
+
+Exported: dist inside  to ensure the app can be statically exported without errors.
+-   The user's core requirement is a **complete and robust data sync**. The system is now designed to sync everything, but you should be mindful of this if any further changes are made.
+-   Several older, minor bugs (Chain Builder crash, Settings scroll) were mentioned in the initial audit but were not addressed in this session. Be prepared to investigate them if the user brings them up again.
+-   The project has separate in-app pages () and static HTML files () for the legal documents. If you update one, remember to update the other for consistency.
+-   The ESLint configuration has issues with TypeScript syntax. This has been ignored so far but could be fixed for a better development experience.
+
+**Last 10 User Messages and any pending HUMAN messages**
+10.  - (COMPLETED) Agent implemented full-stack sync for faction/DAO data.
+9.   - (COMPLETED) Agent performed a major overhaul to sync all player profile aspects (XP, scores, badges, etc.).
+8.   - (COMPLETED) Agent fixed a bug in  preventing high scores from syncing correctly.
+7.   - (COMPLETED) Agent corrected the logout logic to preserve user game data.
+6.   - (COMPLETED) Agent found and implemented the missing  method in .
+5.   - (COMPLETED) Agent added toast notifications and fixed sync-related type definitions.
+4.   - (COMPLETED) Agent ran backend tests and confirmed analytics endpoints were working.
+3.   - (COMPLETED) Agent performed a final UI check and fixed remaining text readability issues.
+2.   - (COMPLETED) Agent created and integrated T&C pages (React & HTML).
+1.   - (COMPLETED) Agent updated the XP bar and added varied colors to UI tabs and page backgrounds.
+
+**Project Health Check:**
+-   **Broken**: No. Core functionality is stable. The Vercel build process is the only unverified component.
+-   **Mocked**: No. All features are using the live backend and database.
+
+**3rd Party Integrations**
+-   **DiceBear**: Used for generating placeholder pixel art avatars.
+-   **Zustand**: For frontend state management.
+-   **React Native Reanimated**: For animations.
+-   **Expo AV**: For the audio engine.
+
+**Testing status**
+-   Testing agent used after significant changes: YES. The backend testing agent was used to verify security fixes and again to verify analytics endpoints.
+-   Troubleshoot agent used after agent stuck in loop: NO.
+-   Test files created: []
+-   Known regressions: None.
+
+**What agent forgot to execute**
+- The agent forgot to run a local build test (env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Fast resolver is enabled.
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+λ Bundled 1081ms node_modules/expo-router/node/render.js (1437 modules)
+Web Bundled 1405ms node_modules/expo-router/entry.js (1378 modules)
+
+› web bundles (1):
+_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
+
+› Static routes (37):
+/dao (23 kB)
+/daily (23 kB)
+/ (index) (23 kB)
+/login (23 kB)
+/ranks (23 kB)
+/story (23 kB)
+/terms (23 kB)
+/vault (23 kB)
+/badges (23 kB)
+/config (23 kB)
+/privacy (23 kB)
+/welcome (23 kB)
+/factions (23 kB)
+/progress (23 kB)
+/settings (23 kB)
+/tutorial (23 kB)
+/_sitemap (22.7 kB)
+/characters (23 kB)
+/+not-found (22.7 kB)
+/leaderboard (23 kB)
+/games/dao-duel (23 kB)
+/games/coming-soon (23 kB)
+/games/hash-hopper (23 kB)
+/games/ledger-leap (23 kB)
+/games/quest-vault (23 kB)
+/games/seed-sprint (23 kB)
+/games/stake-smash (23 kB)
+/games/ipfs-pinball (23 kB)
+/games/mine-blaster (23 kB)
+/games/token-tumble (23 kB)
+/games/block-muncher (23 kB)
+/games/chain-builder (23 kB)
+/games/bridge-bouncer (23 kB)
+/games/chain-invaders (23 kB)
+/games/crypto-climber (23 kB)
+/games/lightning-dash (23 kB)
+/games/contract-crusher (23 kB)
+
+Exported: dist) after setting up the Vercel deployment configuration.
+- The agent did not re-investigate or verify fixes for the Chain Builder mini-game crash and Settings page scroll behavior issues mentioned in the very first handover summary. They were superseded by other user requests.
+</analysis>
