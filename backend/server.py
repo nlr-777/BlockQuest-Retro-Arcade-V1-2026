@@ -583,9 +583,16 @@ class GoogleSessionRequest(BaseModel):
     session_token: str
 
 @api_router.post("/auth/google-session", response_model=TokenResponse)
-async def google_session_auth(session_data: GoogleSessionRequest):
+async def google_session_auth(session_data: GoogleSessionRequest, request: Request):
     """Authenticate with Google session from Emergent Auth"""
+    # Rate limiting
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+    
     email = session_data.email.lower()
+    # Sanitize username from Google session
+    sanitized_name = sanitize_string(session_data.name, 50)
     
     # Check if user exists
     existing_user = await db.users.find_one({"email": email})
