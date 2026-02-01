@@ -74,9 +74,9 @@ class SoundManager {
         shouldDuckAndroid: true,
       });
       this.isInitialized = true;
-      console.log('SoundManager initialized');
+      // SoundManager initialized successfully
     } catch (error) {
-      console.warn('Failed to initialize audio:', error);
+      // Audio initialization failed - non-critical
     }
   }
 
@@ -101,7 +101,6 @@ class SoundManager {
       });
     } catch (error) {
       // Silently fail - audio is non-critical
-      console.debug('SFX play failed:', type);
     }
   }
 
@@ -122,8 +121,7 @@ class SoundManager {
     this.currentTrack = track;
     
     // In production, load actual music files
-    // For now, music is placeholder
-    console.log('Playing music track:', track);
+    // Music track playing: track
   }
 
   async stopMusic(): Promise<void> {
