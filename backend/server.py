@@ -624,7 +624,7 @@ class GoogleSessionRequest(BaseModel):
 async def google_session_auth(session_data: GoogleSessionRequest, request: Request):
     """Authenticate with Google session from Emergent Auth"""
     # Rate limiting
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
     
