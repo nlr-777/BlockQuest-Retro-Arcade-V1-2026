@@ -1,18 +1,22 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import re
+import html
 from pathlib import Path
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, validator
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 import jwt
 import httpx
+from collections import defaultdict
+import time
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -27,6 +31,50 @@ SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'blockquest-super-secret-key-chang
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
+# ===========================================
+# SECURITY: Input Sanitization & Rate Limiting
+# ===========================================
+
+def sanitize_string(value: str, max_length: int = 100) -> str:
+    """Sanitize user input to prevent XSS and SQL injection"""
+    if not value:
+        return value
+    # HTML escape to prevent XSS
+    sanitized = html.escape(value.strip())
+    # Remove potential SQL injection patterns
+    sanitized = re.sub(r"['\";\\]", "", sanitized)
+    # Truncate to max length
+    return sanitized[:max_length]
+
+def sanitize_username(value: str) -> str:
+    """Sanitize username - only allow alphanumeric, underscore, dash"""
+    if not value:
+        return value
+    # Remove any non-alphanumeric except underscore and dash
+    sanitized = re.sub(r'[^a-zA-Z0-9_\-]', '', value.strip())
+    return sanitized[:30]
+
+# Rate limiting storage (in production, use Redis)
+rate_limit_storage: Dict[str, List[float]] = defaultdict(list)
+RATE_LIMIT_REQUESTS = 60  # requests per window
+RATE_LIMIT_WINDOW = 60  # seconds
+
+def check_rate_limit(client_ip: str) -> bool:
+    """Check if client has exceeded rate limit"""
+    now = time.time()
+    # Clean old entries
+    rate_limit_storage[client_ip] = [
+        t for t in rate_limit_storage[client_ip] 
+        if now - t < RATE_LIMIT_WINDOW
+    ]
+    # Check limit
+    if len(rate_limit_storage[client_ip]) >= RATE_LIMIT_REQUESTS:
+        return False
+    # Add current request
+    rate_limit_storage[client_ip].append(now)
+    return True
+
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
