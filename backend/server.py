@@ -461,7 +461,7 @@ async def get_player_badges(player_id: str):
 async def register(user_data: UserCreate, request: Request):
     """Register a new user with email and password"""
     # Rate limiting
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
     
