@@ -708,6 +708,7 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
     existing_high_scores = user.get("high_scores", {})
     existing_badges = user.get("badges", [])
     existing_story_badges = user.get("unlocked_story_badges", [])
+    existing_achievements = user.get("achievements", [])
     
     # Merge high scores - keep the HIGHER score for each game
     merged_high_scores = {**existing_high_scores}
@@ -727,10 +728,28 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
     # Merge story badges - keep all unique
     merged_story_badges = list(set(existing_story_badges + profile_data.unlocked_story_badges))
     
-    # Take the HIGHER XP and level
+    # Merge achievements - keep all unique
+    merged_achievements = list(set(existing_achievements + profile_data.achievements))
+    
+    # Take the HIGHER values for numeric fields
     merged_xp = max(user.get("total_xp", 0), profile_data.total_xp)
     merged_level = max(user.get("level", 1), profile_data.level)
     merged_voting_power = max(user.get("dao_voting_power", 0), profile_data.dao_voting_power)
+    merged_games_played = max(user.get("games_played", 0), profile_data.games_played)
+    merged_total_score = max(user.get("total_score", 0), profile_data.total_score)
+    
+    # Merge recent scores - keep last 20, newest first
+    existing_recent = user.get("recent_scores", [])
+    merged_recent = profile_data.recent_scores + existing_recent
+    # Remove duplicates by keeping unique timestamps
+    seen_times = set()
+    unique_recent = []
+    for score in merged_recent:
+        score_time = score.get('playedAt', 0)
+        if score_time not in seen_times:
+            seen_times.add(score_time)
+            unique_recent.append(score)
+    merged_recent_scores = sorted(unique_recent, key=lambda x: x.get('playedAt', 0), reverse=True)[:20]
     
     # Update user profile with merged data
     update_data = {
@@ -741,6 +760,10 @@ async def sync_profile(profile_data: SyncProfileRequest, user = Depends(get_curr
         "avatar_id": profile_data.avatar_id or user.get("avatar_id"),
         "dao_voting_power": merged_voting_power,
         "unlocked_story_badges": merged_story_badges,
+        "achievements": merged_achievements,
+        "games_played": merged_games_played,
+        "total_score": merged_total_score,
+        "recent_scores": merged_recent_scores,
         "last_sync": datetime.utcnow().isoformat()
     }
     
