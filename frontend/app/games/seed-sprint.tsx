@@ -474,7 +474,7 @@ export default function SeedSprintGame() {
       {/* Power-Up HUD - Shows available power-ups */}
       {gameState === 'playing' && powerUps.availablePowerUps.length > 0 && (
         <View style={styles.powerUpContainer}>
-          <PowerUpHUD onActivate={(p) => console.log('Activated:', p.name)} />
+          <PowerUpHUD onActivate={(p) => { /* Power-up activated */ }} />
         </View>
       )}
       
