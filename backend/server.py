@@ -374,7 +374,7 @@ async def get_player_scores(player_id: str, limit: int = 20):
 async def create_player(player: PlayerProfileCreate, request: Request):
     """Create a new player profile"""
     # Rate limiting
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     if not check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many requests")
     
