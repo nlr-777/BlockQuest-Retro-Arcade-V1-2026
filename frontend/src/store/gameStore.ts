@@ -297,7 +297,15 @@ export const useGameStore = create<GameState>()(
     badges: any[];
     unlockedStoryBadges: string[];
   }) => {
-    const { profile } = get();
+    const { profile, highScores: localHighScores } = get();
+    
+    // Merge high scores - keep the higher of local vs cloud for each game
+    const mergedHighScores: Record<string, number> = { ...localHighScores };
+    Object.entries(cloudData.highScores || {}).forEach(([gameId, cloudScore]) => {
+      if (!mergedHighScores[gameId] || cloudScore > mergedHighScores[gameId]) {
+        mergedHighScores[gameId] = cloudScore;
+      }
+    });
     
     // Create or update profile with cloud data
     const updatedProfile: PlayerProfile = {
@@ -305,23 +313,24 @@ export const useGameStore = create<GameState>()(
       username: cloudData.username,
       avatarId: cloudData.characterId,
       createdAt: profile?.createdAt || Date.now(),
-      totalScore: Object.values(cloudData.highScores).reduce((sum, score) => sum + score, 0),
+      totalScore: Object.values(mergedHighScores).reduce((sum, score) => sum + score, 0),
       gamesPlayed: profile?.gamesPlayed || 0,
-      badges: cloudData.badges || [],
+      badges: cloudData.badges || profile?.badges || [],
       daoVotingPower: profile?.daoVotingPower || 0,
-      level: cloudData.level,
-      xp: cloudData.xp,
-      highScores: cloudData.highScores,
-      unlockedStoryBadges: cloudData.unlockedStoryBadges,
+      level: Math.max(cloudData.level, profile?.level || 1),  // Keep higher level
+      xp: Math.max(cloudData.xp, profile?.xp || 0),           // Keep higher XP
+      unlockedStoryBadges: [...new Set([
+        ...(cloudData.unlockedStoryBadges || []),
+        ...(profile?.unlockedStoryBadges || [])
+      ])],  // Merge and dedupe story badges
+      achievements: profile?.achievements || [],
     };
     
     set({
       profile: updatedProfile,
-      highScores: cloudData.highScores,
+      highScores: mergedHighScores,
       isLoading: false,
     });
-    
-    // Cloud profile loaded successfully
   },
 
   // Logout - save progress but clear session (user can restore later)
