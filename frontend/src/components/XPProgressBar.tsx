@@ -191,17 +191,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: CRT_COLORS.neonGreen + '40',
+    borderColor: '#FF00FF40',  // Magenta border
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: CRT_COLORS.neonGreen,
+    backgroundColor: '#FF00FF',  // Magenta fill
     borderRadius: 5,
     position: 'relative',
   },
   progressGlow: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: CRT_COLORS.neonGreen,
+    backgroundColor: '#FF00FF',  // Magenta glow
     opacity: 0.5,
     // Blur effect for glow
     ...(Platform.OS === 'web' ? { filter: 'blur(4px)' } : {}),
