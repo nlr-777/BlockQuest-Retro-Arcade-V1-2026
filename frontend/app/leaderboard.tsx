@@ -110,7 +110,7 @@ export default function LeaderboardScreen() {
           style={[styles.tab, activeTab === 'players' && styles.tabActive]}
           onPress={() => setActiveTab('players')}
         >
-          <Text style={[styles.tabText, activeTab === 'players' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, activeTab === 'players' && { color: '#00FFFF' }]}>
             👤 PLAYERS
           </Text>
         </TouchableOpacity>
@@ -118,7 +118,7 @@ export default function LeaderboardScreen() {
           style={[styles.tab, activeTab === 'factions' && styles.tabActive]}
           onPress={() => setActiveTab('factions')}
         >
-          <Text style={[styles.tabText, activeTab === 'factions' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, activeTab === 'factions' && { color: '#FF6B6B' }]}>
             ⚔️ FACTION WARS
           </Text>
         </TouchableOpacity>
