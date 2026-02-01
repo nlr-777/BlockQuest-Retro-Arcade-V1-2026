@@ -364,7 +364,7 @@ export default function VaultFlexGallery() {
             style={[styles.tab, activeTab === 'badges' && styles.tabActive]}
             onPress={() => setActiveTab('badges')}
           >
-            <Text style={[styles.tabText, activeTab === 'badges' && styles.tabTextActive]}>
+            <Text style={[styles.tabText, activeTab === 'badges' && { color: '#FFD700' }]}>
               🏆 BADGES
             </Text>
           </TouchableOpacity>
@@ -372,7 +372,7 @@ export default function VaultFlexGallery() {
             style={[styles.tab, activeTab === 'story' && styles.tabActive]}
             onPress={() => setActiveTab('story')}
           >
-            <Text style={[styles.tabText, activeTab === 'story' && styles.tabTextActive]}>
+            <Text style={[styles.tabText, activeTab === 'story' && { color: '#00FFFF' }]}>
               📚 STORY
             </Text>
           </TouchableOpacity>
@@ -380,7 +380,7 @@ export default function VaultFlexGallery() {
             style={[styles.tab, activeTab === 'stats' && styles.tabActive]}
             onPress={() => setActiveTab('stats')}
           >
-            <Text style={[styles.tabText, activeTab === 'stats' && styles.tabTextActive]}>
+            <Text style={[styles.tabText, activeTab === 'stats' && { color: '#FF00FF' }]}>
               📊 STATS
             </Text>
           </TouchableOpacity>
