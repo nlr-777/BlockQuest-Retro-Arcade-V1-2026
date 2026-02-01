@@ -235,6 +235,28 @@ class AuthService {
     }
   }
 
+  // Logout - clear stored auth
+  async logout(): Promise<void> {
+    try {
+      this.token = null;
+      this.user = null;
+      await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+      await AsyncStorage.removeItem(USER_DATA_KEY);
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  }
+
+  // Check if user is logged in
+  isLoggedIn(): boolean {
+    return !!this.token;
+  }
+
+  // Get current user without fetching
+  getUser(): User | null {
+    return this.user;
+  }
+
   // Initialize on app start - check stored auth and fetch fresh profile
   async initialize(): Promise<User | null> {
     await this.loadStoredAuth();
