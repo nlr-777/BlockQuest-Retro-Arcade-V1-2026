@@ -957,7 +957,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: CRT_COLORS.textDim,
+    borderColor: CRT_COLORS.textSecondary,  // Brightened border
   },
   exitBtnText: {
     fontSize: 14,
