@@ -285,4 +285,112 @@ const styles = StyleSheet.create({
   },
 });
 
+// ============================================
+// CRT FLICKER TEXT - Glowing terminal text
+// ============================================
+interface FlickerTextProps {
+  children: React.ReactNode;
+  color?: string;
+  size?: number;
+  style?: any;
+}
+
+export const CRTFlickerText: React.FC<FlickerTextProps> = ({ 
+  children, 
+  color = CRT_COLORS.primary, 
+  size = 14,
+  style 
+}) => {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.7, { duration: 100 }),
+        withTiming(1, { duration: 100 }),
+        withTiming(0.9, { duration: 50 }),
+        withTiming(1, { duration: 2000 })
+      ),
+      -1,
+      false
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.Text
+      style={[
+        {
+          color,
+          fontSize: size,
+          fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+          fontWeight: 'bold',
+          textShadow: `0 0 10px ${color}`,
+        },
+        animatedStyle,
+        style,
+      ]}
+    >
+      {children}
+    </Animated.Text>
+  );
+};
+
+// ============================================
+// HEX BADGE - Hexagonal achievement badge
+// ============================================
+interface HexBadgeProps {
+  icon: string;
+  color?: string;
+  size?: number;
+  unlocked?: boolean;
+  onPress?: () => void;
+}
+
+export const HexBadge: React.FC<HexBadgeProps> = ({ 
+  icon, 
+  color = CRT_COLORS.primary, 
+  size = 60,
+  unlocked = true,
+  onPress 
+}) => {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    scale.value = withSequence(
+      withSpring(1.2),
+      withSpring(1)
+    );
+    onPress?.();
+  };
+
+  return (
+    <Animated.View
+      style={[
+        {
+          width: size,
+          height: size,
+          backgroundColor: unlocked ? CRT_COLORS.bgMedium : CRT_COLORS.bgDark,
+          borderRadius: size / 4,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderWidth: 2,
+          borderColor: unlocked ? color : CRT_COLORS.textDim,
+          opacity: unlocked ? 1 : 0.5,
+        },
+        animatedStyle,
+      ]}
+    >
+      <Text style={{ fontSize: size * 0.5 }}>{icon}</Text>
+    </Animated.View>
+  );
+};
+
 export { CRT_COLORS };
