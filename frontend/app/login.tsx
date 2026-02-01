@@ -85,7 +85,19 @@ export default function LoginScreen() {
       if (cloudProfile) {
         // Load cloud data into local store
         await loadCloudDataToStore(cloudProfile);
-        showToast('☁️ Progress synced from cloud!', 'success');
+        
+        // Load faction data from cloud
+        const factionStore = useFactionStore.getState();
+        factionStore.loadFromCloud({
+          faction_id: cloudProfile.faction_id,
+          faction_joined_at: cloudProfile.faction_joined_at,
+          faction_xp_contributed: cloudProfile.faction_xp_contributed,
+          faction_votes_participated: cloudProfile.faction_votes_participated,
+          faction_member_rank: cloudProfile.faction_member_rank,
+          faction_votes: cloudProfile.faction_votes,
+        });
+        
+        showToast('☁️ ALL progress synced from cloud!', 'success');
       }
       
       // Check if we have a pending profile from welcome screen
