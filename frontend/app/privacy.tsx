@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     fontSize: 14,
-    color: CRT_COLORS.textMedium,
+    color: CRT_COLORS.textSecondary,  // Brightened for kids
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     lineHeight: 22,
     marginBottom: 12,
