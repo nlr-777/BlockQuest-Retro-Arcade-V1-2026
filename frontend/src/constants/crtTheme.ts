@@ -22,9 +22,9 @@ export const CRT_COLORS = {
   
   // Text colors - all made brighter for better readability
   textBright: '#00FF41',
-  textDim: '#66FF99',      // Brightened from #00AA33 for better readability
-  textMuted: '#44DD77',    // Brightened from #006622 for better readability  
-  textSecondary: '#88FFBB', // New bright secondary text color
+  textDim: '#88FFAA',      // EXTRA BRIGHT for kids - was #66FF99
+  textMuted: '#77EEAA',    // EXTRA BRIGHT for kids - was #44DD77  
+  textSecondary: '#AAFFCC', // EXTRA BRIGHT for kids - was #88FFBB
   textWhite: '#FFFFFF',
   
   // Rarity colors (hex badge borders)
