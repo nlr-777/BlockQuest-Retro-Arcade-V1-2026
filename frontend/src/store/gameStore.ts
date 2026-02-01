@@ -276,6 +276,43 @@ export const useGameStore = create<GameState>()(
     return mintBadge(badgeData);
   },
 
+  // Load profile data from cloud (after login on new device)
+  loadCloudProfile: (cloudData: {
+    username: string;
+    characterId: string;
+    xp: number;
+    level: number;
+    highScores: Record<string, number>;
+    badges: any[];
+    unlockedStoryBadges: string[];
+  }) => {
+    const { profile } = get();
+    
+    // Create or update profile with cloud data
+    const updatedProfile: PlayerProfile = {
+      id: profile?.id || `player_${Date.now()}`,
+      username: cloudData.username,
+      avatarId: cloudData.characterId,
+      createdAt: profile?.createdAt || Date.now(),
+      totalScore: Object.values(cloudData.highScores).reduce((sum, score) => sum + score, 0),
+      gamesPlayed: profile?.gamesPlayed || 0,
+      badges: cloudData.badges || [],
+      daoVotingPower: profile?.daoVotingPower || 0,
+      level: cloudData.level,
+      xp: cloudData.xp,
+      highScores: cloudData.highScores,
+      unlockedStoryBadges: cloudData.unlockedStoryBadges,
+    };
+    
+    set({
+      profile: updatedProfile,
+      highScores: cloudData.highScores,
+      isLoading: false,
+    });
+    
+    console.log('Cloud profile loaded:', updatedProfile.username, 'XP:', updatedProfile.xp, 'Level:', updatedProfile.level);
+  },
+
   // Logout - save progress but clear session (user can restore later)
   logout: async () => {
     // Progress is already saved in AsyncStorage - we just clear the active session
