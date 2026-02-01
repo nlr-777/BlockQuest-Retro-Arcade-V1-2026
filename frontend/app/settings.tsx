@@ -247,10 +247,15 @@ export default function SettingsScreen() {
         });
     
     if (confirmLogout) {
-      await authService.logout();
-      setIsLoggedIn(false);
-      setUserEmail('');
-      audioManager.playSound('powerup');
+      try {
+        await authService.logout();
+        setIsLoggedIn(false);
+        setUserEmail('');
+        showToast('👋 Logged out successfully!', 'success');
+        audioManager.playSound('powerup');
+      } catch (error) {
+        showToast('Failed to log out', 'error');
+      }
     }
   };
 
