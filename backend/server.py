@@ -611,7 +611,7 @@ async def google_session_auth(session_data: GoogleSessionRequest, request: Reque
         user = {
             "id": user_id,
             "email": email,
-            "username": session_data.name,
+            "username": sanitized_name,  # Use sanitized name
             "password_hash": None,
             "created_at": datetime.utcnow().isoformat(),
             "auth_provider": "google",
