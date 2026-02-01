@@ -62,6 +62,7 @@ export default function RootLayout() {
     <ErrorBoundary>
       <GestureHandlerRootView style={styles.container}>
         <StatusBar style="light" />
+        <ToastContainer />
         
         {/* HYDRATION GATE: Block ALL navigation until store is ready */}
         {(!hasHydrated || !isReady) ? (
