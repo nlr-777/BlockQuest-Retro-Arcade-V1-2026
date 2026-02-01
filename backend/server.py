@@ -717,7 +717,13 @@ async def get_current_user_profile(user = Depends(get_current_user)):
         achievements=user.get("achievements", []),
         games_played=user.get("games_played", 0),
         total_score=user.get("total_score", 0),
-        recent_scores=user.get("recent_scores", [])
+        recent_scores=user.get("recent_scores", []),
+        faction_id=user.get("faction_id"),
+        faction_joined_at=user.get("faction_joined_at"),
+        faction_xp_contributed=user.get("faction_xp_contributed", 0),
+        faction_votes_participated=user.get("faction_votes_participated", 0),
+        faction_member_rank=user.get("faction_member_rank", "Rookie"),
+        faction_votes=user.get("faction_votes", {})
     )
 
 @api_router.put("/auth/sync", response_model=UserResponse)
