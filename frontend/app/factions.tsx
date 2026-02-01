@@ -448,7 +448,7 @@ export default function FactionsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CRT_COLORS.bgDark,
+    backgroundColor: '#0F0005',  // Deep red-black for Factions
   },
   safeArea: {
     flex: 1,
@@ -459,8 +459,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: CRT_COLORS.primary + '30',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF6B6B40',
   },
   backBtn: {
     width: 40,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 24,
-    color: CRT_COLORS.primary,
+    color: '#FF6B6B',  // Coral back button
   },
   placeholder: {
     width: 40,
