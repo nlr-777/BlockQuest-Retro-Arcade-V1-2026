@@ -606,7 +606,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CRT_COLORS.bgDark,
+    backgroundColor: '#000F08',  // Deep green-black for Settings
   },
   header: {
     flexDirection: 'row',
@@ -614,6 +614,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#00FF8840',
   },
   backBtn: {
     width: 40,
@@ -623,13 +625,15 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 24,
-    color: CRT_COLORS.primary,
+    color: '#00FF88',  // Green back button
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     letterSpacing: 2,
+    color: '#00FF88',  // Green title
+    textShadow: '0 0 10px #00FF88',
   },
   placeholder: {
     width: 40,
