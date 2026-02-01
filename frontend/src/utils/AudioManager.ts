@@ -263,24 +263,24 @@ class AudioManager {
         this.compressor.connect(this.masterGain);
         this.masterGain.connect(this.audioContext.destination);
       } catch (e) {
-        console.log('Web Audio API not available');
+        debugLog('Web Audio API not available');
       }
     }
   }
 
   resumeAudioContext() {
     if (this.audioContext) {
-      console.log('Audio context state:', this.audioContext.state);
+      debugLog('Audio context state:', this.audioContext.state);
       if (this.audioContext.state === 'suspended') {
-        console.log('Resuming suspended audio context...');
+        debugLog('Resuming suspended audio context...');
         this.audioContext.resume().then(() => {
-          console.log('Audio context resumed successfully, state:', this.audioContext?.state);
+          debugLog('Audio context resumed successfully, state:', this.audioContext?.state);
         }).catch(e => {
-          console.log('Failed to resume audio context:', e);
+          debugLog('Failed to resume audio context:', e);
         });
       }
     } else {
-      console.log('No audio context to resume');
+      debugLog('No audio context to resume');
     }
   }
 
@@ -387,38 +387,38 @@ class AudioManager {
   
   startMusic(track: MusicTrack = 'menu') {
     // Debug: log music start attempt
-    console.log('Starting music track:', track, 'musicEnabled:', this.musicEnabled, 'platform:', Platform.OS);
+    debugLog('Starting music track:', track, 'musicEnabled:', this.musicEnabled, 'platform:', Platform.OS);
     
     if (!this.musicEnabled || Platform.OS !== 'web') {
-      console.log('Music disabled or not on web');
+      debugLog('Music disabled or not on web');
       return;
     }
     
     // Ensure audio context is initialized and resumed
     if (!this.audioContext || !this.masterGain) {
-      console.log('Initializing audio context for music...');
+      debugLog('Initializing audio context for music...');
       this.initAudioContext();
     }
     
     if (!this.audioContext || !this.masterGain) {
-      console.log('Audio context still not available');
+      debugLog('Audio context still not available');
       return;
     }
     
     // Resume if suspended (browser autoplay policy) - THIS IS CRITICAL
     if (this.audioContext.state === 'suspended') {
-      console.log('Audio context is SUSPENDED - attempting to resume...');
+      debugLog('Audio context is SUSPENDED - attempting to resume...');
       this.audioContext.resume().then(() => {
-        console.log('Audio context resumed! State now:', this.audioContext?.state);
+        debugLog('Audio context resumed! State now:', this.audioContext?.state);
         // Continue with music start after resume
         this._startMusicInternal(track);
       }).catch(e => {
-        console.log('Failed to resume:', e);
+        debugLog('Failed to resume:', e);
       });
       return;
     }
     
-    console.log('Audio context state:', this.audioContext.state);
+    debugLog('Audio context state:', this.audioContext.state);
     this._startMusicInternal(track);
   }
   
@@ -436,7 +436,7 @@ class AudioManager {
     const msPerBeat = (60 / config.bpm) * 1000;
     const progression = CHORD_PROGRESSIONS[config.progression];
     
-    console.log('Starting music:', track, config.bpm, 'BPM');
+    debugLog('Starting music:', track, config.bpm, 'BPM');
     
     // Track musical sections for drops and builds
     let sectionBeat = 0;
@@ -564,7 +564,7 @@ class AudioManager {
       this.musicLoops.push(arpLoop);
     }
     
-    console.log('Music started with clean sync');
+    debugLog('Music started with clean sync');
   }
   
   // === NEW DYNAMIC SYNTH FUNCTIONS ===
