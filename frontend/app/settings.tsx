@@ -781,16 +781,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 30,
   },
+  legalLinksRow: {
+    flexDirection: 'row',
+    gap: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
   linkBtn: {
     paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: CRT_COLORS.primary + '40',
   },
   linkText: {
-    fontSize: 14,
+    fontSize: 13,
     color: CRT_COLORS.primary,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     fontWeight: '600',
@@ -800,6 +806,13 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: CRT_COLORS.textDim + '30',
     marginVertical: 20,
+  },
+  australianBadge: {
+    fontSize: 12,
+    color: '#FFD700',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginTop: 8,
+    fontWeight: 'bold',
   },
   footerText: {
     fontSize: 12,
