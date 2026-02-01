@@ -637,7 +637,7 @@ export default function VaultFlexGallery() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CRT_COLORS.bgDark,
+    backgroundColor: '#0F0A00',  // Deep gold-black for Vault
   },
   safeArea: {
     flex: 1,
@@ -648,6 +648,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#FFD70040',
   },
   backBtn: {
     width: 40,
@@ -657,12 +659,14 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 24,
-    color: CRT_COLORS.primary,
+    color: '#FFD700',  // Gold back button
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    color: '#FFD700',  // Gold title
+    textShadow: '0 0 10px #FFD700',
   },
   placeholder: {
     width: 40,
