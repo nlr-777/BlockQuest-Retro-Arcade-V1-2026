@@ -7,7 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { CRT_COLORS } from '../src/constants/crtTheme';
 
 const LAST_UPDATED = 'February 1, 2025';
-const COMPANY_EMAIL = 'privacy@blockquest.game';
+const COMPANY_EMAIL = 'blockquestofficial@gmail.com';
+const COMPANY_WEBSITE = 'https://blockquestofficial.com';
 
 export default function PrivacyPolicy() {
   const router = useRouter();
