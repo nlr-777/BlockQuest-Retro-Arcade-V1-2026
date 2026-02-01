@@ -12,7 +12,7 @@ import concurrent.futures
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-class BlockQuestAPITester:
+class SecurityAuditTester:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip('/')
         self.api_url = f"{self.base_url}/api"
@@ -30,6 +30,15 @@ class BlockQuestAPITester:
             "security_issues": [],
             "edge_case_failures": [],
             "endpoint_results": {}
+        }
+        
+        # Security audit specific tracking
+        self.security_audit = {
+            "xss_prevention": [],
+            "sql_injection": [],
+            "rate_limiting": [],
+            "authentication": [],
+            "functional": []
         }
     
     def log_result(self, test_name: str, success: bool, details: str = "", severity: str = "normal"):
