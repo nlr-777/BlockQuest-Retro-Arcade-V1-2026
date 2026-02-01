@@ -140,59 +140,64 @@ export default function LoginScreen() {
   const loadCloudDataToStore = async (cloudUser: any) => {
     const store = useGameStore.getState();
     
-    // If user already has a local profile, merge the data
-    if (store.profile) {
-      // Merge high scores - keep the higher score
-      const localHighScores = store.profile.highScores || {};
-      const cloudHighScores = cloudUser.high_scores || {};
-      const mergedHighScores: Record<string, number> = { ...cloudHighScores };
-      
-      Object.entries(localHighScores).forEach(([game, score]) => {
-        if ((score as number) > (mergedHighScores[game] || 0)) {
-          mergedHighScores[game] = score;
-        }
-      });
-      
-      // Merge badges
-      const localBadges = store.profile.badges || [];
-      const cloudBadges = cloudUser.badges || [];
-      const badgeIds = new Set(cloudBadges.map((b: any) => b.id || b.name));
-      const mergedBadges = [...cloudBadges];
-      localBadges.forEach((badge: any) => {
-        const badgeId = badge.id || badge.name;
-        if (!badgeIds.has(badgeId)) {
-          mergedBadges.push(badge);
-        }
-      });
-      
-      // Take the higher XP and level
-      const mergedXP = Math.max(store.profile.xp || 0, cloudUser.total_xp || 0);
-      const mergedLevel = Math.max(store.profile.level || 1, cloudUser.level || 1);
-      
-      // Update the store with merged data
-      store.loadCloudProfile({
-        username: cloudUser.username || store.profile.username,
-        characterId: cloudUser.avatar_id || store.profile.characterId,
-        xp: mergedXP,
+    // Get local high scores from the store (not from profile)
+    const localHighScores = store.highScores || {};
+    const cloudHighScores = cloudUser.high_scores || {};
+    
+    // Merge high scores - keep the higher score
+    const mergedHighScores: Record<string, number> = { ...cloudHighScores };
+    Object.entries(localHighScores).forEach(([game, score]) => {
+      if ((score as number) > (mergedHighScores[game] || 0)) {
+        mergedHighScores[game] = score as number;
+      }
+    });
+    
+    // Merge badges
+    const localBadges = store.profile?.badges || [];
+    const cloudBadges = cloudUser.badges || [];
+    const badgeIds = new Set(cloudBadges.map((b: any) => b.id || b.name));
+    const mergedBadges = [...cloudBadges];
+    localBadges.forEach((badge: any) => {
+      const badgeId = badge.id || badge.name;
+      if (!badgeIds.has(badgeId)) {
+        mergedBadges.push(badge);
+      }
+    });
+    
+    // Take the higher XP and level
+    const mergedXP = Math.max(store.profile?.xp || 0, cloudUser.total_xp || 0);
+    const mergedLevel = Math.max(store.profile?.level || 1, cloudUser.level || 1);
+    
+    // Update the store with merged data
+    store.loadCloudProfile({
+      username: cloudUser.username || store.profile?.username || 'Player',
+      characterId: cloudUser.avatar_id || store.profile?.avatarId || 'zara',
+      xp: mergedXP,
+      level: mergedLevel,
+      highScores: mergedHighScores,
+      badges: mergedBadges,
+      unlockedStoryBadges: [...new Set([
+        ...(store.profile?.unlockedStoryBadges || []),
+        ...(cloudUser.unlocked_story_badges || [])
+      ])],
+    });
+    
+    // Also sync the merged data back to cloud to keep it updated
+    try {
+      await authService.syncProgress({
+        high_scores: mergedHighScores,
+        total_xp: mergedXP,
         level: mergedLevel,
-        highScores: mergedHighScores,
         badges: mergedBadges,
-        unlockedStoryBadges: [...new Set([
-          ...(store.profile.unlockedStoryBadges || []),
+        avatar_id: cloudUser.avatar_id || store.profile?.avatarId || 'zara',
+        dao_voting_power: store.profile?.daoVotingPower || 0,
+        unlocked_story_badges: [...new Set([
+          ...(store.profile?.unlockedStoryBadges || []),
           ...(cloudUser.unlocked_story_badges || [])
         ])],
       });
-    } else {
-      // No local profile - just load cloud data
-      store.loadCloudProfile({
-        username: cloudUser.username,
-        characterId: cloudUser.avatar_id || 'zara',
-        xp: cloudUser.total_xp || 0,
-        level: cloudUser.level || 1,
-        highScores: cloudUser.high_scores || {},
-        badges: cloudUser.badges || [],
-        unlockedStoryBadges: cloudUser.unlocked_story_badges || [],
-      });
+    } catch (syncError) {
+      // Sync back failed, but local merge succeeded
     }
   };
 
