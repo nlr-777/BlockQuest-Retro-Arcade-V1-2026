@@ -281,11 +281,15 @@ export default function SettingsScreen() {
         avatar_id: profile.avatarId,
         dao_voting_power: profile.daoVotingPower,
         unlocked_story_badges: profile.unlockedStoryBadges || [],
+        games_played: profile.gamesPlayed,
+        total_score: profile.totalScore,
+        achievements: profile.achievements || [],
+        recent_scores: recentScores || [],
       });
       
       if (result) {
         audioManager.playSound('powerup');
-        showToast('☁️ Progress synced to cloud!', 'success');
+        showToast('☁️ ALL progress synced to cloud!', 'success');
       } else {
         showToast('⚠️ Sync failed - try again later', 'warning');
       }
