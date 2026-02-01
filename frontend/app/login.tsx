@@ -136,29 +136,63 @@ export default function LoginScreen() {
     }
   };
 
-  // Sync cloud profile with local game store
-  const syncWithCloudProfile = async (cloudUser: any) => {
-    // If cloud user has progress, load it
-    if (cloudUser.total_xp > 0 || Object.keys(cloudUser.high_scores || {}).length > 0) {
-      // Cloud has data - use it
-      const store = useGameStore.getState();
-      if (store.profile) {
-        // Merge: take higher scores
-        const mergedHighScores = { ...cloudUser.high_scores };
-        Object.entries(store.profile.highScores || {}).forEach(([game, score]) => {
-          if ((score as number) > (mergedHighScores[game] || 0)) {
-            mergedHighScores[game] = score;
-          }
-        });
-        
-        // Update with merged data
-        // This will be handled by the game store sync
-      }
-    }
+  // Load cloud data into local game store
+  const loadCloudDataToStore = async (cloudUser: any) => {
+    const store = useGameStore.getState();
     
-    // Initialize profile if not exists
-    if (!profile) {
-      await initProfile(cloudUser.username, cloudUser.avatar_id || 'zara');
+    // If user already has a local profile, merge the data
+    if (store.profile) {
+      // Merge high scores - keep the higher score
+      const localHighScores = store.profile.highScores || {};
+      const cloudHighScores = cloudUser.high_scores || {};
+      const mergedHighScores: Record<string, number> = { ...cloudHighScores };
+      
+      Object.entries(localHighScores).forEach(([game, score]) => {
+        if ((score as number) > (mergedHighScores[game] || 0)) {
+          mergedHighScores[game] = score;
+        }
+      });
+      
+      // Merge badges
+      const localBadges = store.profile.badges || [];
+      const cloudBadges = cloudUser.badges || [];
+      const badgeIds = new Set(cloudBadges.map((b: any) => b.id || b.name));
+      const mergedBadges = [...cloudBadges];
+      localBadges.forEach((badge: any) => {
+        const badgeId = badge.id || badge.name;
+        if (!badgeIds.has(badgeId)) {
+          mergedBadges.push(badge);
+        }
+      });
+      
+      // Take the higher XP and level
+      const mergedXP = Math.max(store.profile.xp || 0, cloudUser.total_xp || 0);
+      const mergedLevel = Math.max(store.profile.level || 1, cloudUser.level || 1);
+      
+      // Update the store with merged data
+      store.loadCloudProfile({
+        username: cloudUser.username || store.profile.username,
+        characterId: cloudUser.avatar_id || store.profile.characterId,
+        xp: mergedXP,
+        level: mergedLevel,
+        highScores: mergedHighScores,
+        badges: mergedBadges,
+        unlockedStoryBadges: [...new Set([
+          ...(store.profile.unlockedStoryBadges || []),
+          ...(cloudUser.unlocked_story_badges || [])
+        ])],
+      });
+    } else {
+      // No local profile - just load cloud data
+      store.loadCloudProfile({
+        username: cloudUser.username,
+        characterId: cloudUser.avatar_id || 'zara',
+        xp: cloudUser.total_xp || 0,
+        level: cloudUser.level || 1,
+        highScores: cloudUser.high_scores || {},
+        badges: cloudUser.badges || [],
+        unlockedStoryBadges: cloudUser.unlocked_story_badges || [],
+      });
     }
   };
 
