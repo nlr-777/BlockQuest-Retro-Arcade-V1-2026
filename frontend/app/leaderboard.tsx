@@ -344,7 +344,7 @@ export default function LeaderboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgDark,
+    backgroundColor: '#000A0F',  // Deep cyan-black for Leaderboard
   },
   header: {
     flexDirection: 'row',
@@ -352,6 +352,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#00FFFF40',
   },
   backButton: {
     width: 40,
