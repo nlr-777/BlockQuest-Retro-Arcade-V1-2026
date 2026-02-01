@@ -555,11 +555,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
         - agent: "testing"
         - comment: "❌ CRITICAL SECURITY ISSUES: Backend API has multiple security vulnerabilities. Auth endpoints work functionally (register, login, /me, sync all return 200), but SQL injection and XSS vulnerabilities detected. Registration endpoint vulnerable to SQL injection payloads like 'admin'--'. XSS payloads like <script>alert('xss')</script> are stored unescaped in player creation and leaderboard endpoints. No rate limiting implemented - 20 concurrent requests all succeeded. Authentication bypass protection works correctly (401 for invalid tokens)."
+        - working: "NA"
+        - agent: "main"
+        - comment: "Applied security fixes: Added rate limiting to all auth endpoints (login, register, google, google-session). Added input sanitization using html.escape() and SQL injection pattern removal. Login endpoint now has Request parameter for rate limiting."
 
   - task: "Backend API Leaderboard System"
     implemented: true
@@ -567,11 +570,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
         - agent: "testing"
         - comment: "❌ CRITICAL XSS VULNERABILITY: Leaderboard endpoints (POST /api/leaderboard, GET /api/leaderboard, GET /api/leaderboard/{game_id}) function correctly and return proper responses. However, XSS payloads in player_name field are stored unescaped and returned in API responses. All XSS test payloads (<script>, <img onerror>, javascript:, <svg onload>, etc.) are stored without sanitization. Core functionality works but security is compromised."
+        - working: "NA"
+        - agent: "main"
+        - comment: "Security fix applied: submit_score endpoint now sanitizes player_name using sanitize_string() which applies html.escape() and removes SQL injection patterns. Rate limiting already in place."
 
   - task: "Backend API Player Management"
     implemented: true
@@ -579,11 +585,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
         - agent: "testing"
         - comment: "❌ CRITICAL XSS VULNERABILITY: Player endpoints (POST /api/players, GET /api/players/{id}) work functionally - can create players and retrieve profiles correctly. However, username field is vulnerable to XSS attacks. All tested XSS payloads are stored unescaped in the database and returned in API responses without sanitization. Player creation and retrieval logic works but input validation is insufficient."
+        - working: "NA"
+        - agent: "main"
+        - comment: "Security fix applied: create_player endpoint now uses sanitize_username() which only allows alphanumeric, underscore, and dash characters. Rate limiting also added."
 
   - task: "Backend API Badge System"
     implemented: true
@@ -591,11 +600,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
         - agent: "testing"
         - comment: "✅ Badge endpoints (POST /api/badges, GET /api/badges/{player_id}) work correctly. Can mint badges for players and retrieve player badges successfully. Badge creation updates player DAO voting power correctly based on rarity. No security issues detected in badge-specific functionality."
+        - working: "NA"
+        - agent: "main"
+        - comment: "Added security hardening: Rate limiting and input sanitization now applied to badge creation endpoint."
 
   - task: "Backend API Statistics System"
     implemented: true
