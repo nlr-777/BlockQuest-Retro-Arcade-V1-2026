@@ -699,7 +699,11 @@ async def get_current_user_profile(user = Depends(get_current_user)):
         level=user.get("level", 1),
         badges=user.get("badges", []),
         dao_voting_power=user.get("dao_voting_power", 0),
-        unlocked_story_badges=user.get("unlocked_story_badges", [])
+        unlocked_story_badges=user.get("unlocked_story_badges", []),
+        achievements=user.get("achievements", []),
+        games_played=user.get("games_played", 0),
+        total_score=user.get("total_score", 0),
+        recent_scores=user.get("recent_scores", [])
     )
 
 @api_router.put("/auth/sync", response_model=UserResponse)
