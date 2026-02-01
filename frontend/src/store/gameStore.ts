@@ -25,6 +25,8 @@ export interface PlayerProfile {
   daoVotingPower: number;
   level: number;
   xp: number;
+  unlockedStoryBadges?: string[];  // Story/achievement badges unlocked
+  achievements?: string[];          // General achievements
 }
 
 export interface GameScore {
