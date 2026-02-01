@@ -671,7 +671,7 @@ class BlockQuestAPITester:
 def main():
     """Main test execution"""
     # Get backend URL from environment
-    backend_url = "https://gamehub-revamp-2.preview.emergentagent.com"
+    backend_url = "https://launch-prep-39.preview.emergentagent.com"
     
     print(f"Testing backend at: {backend_url}")
     

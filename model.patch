@@ -18,7 +18,7 @@ index 00000000..e176e384
 +    """Test rate limiting on endpoints"""
 +    print("\n=== Testing Rate Limiting ===")
 +    
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    # Test rapid requests to registration endpoint
 +    def make_register_request(i):
@@ -62,7 +62,7 @@ index 00000000..e176e384
 +    """Test CORS preflight requests"""
 +    print("\n=== Testing CORS Preflight ===")
 +    
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    # Test OPTIONS request
 +    headers = {
@@ -107,7 +107,7 @@ index 00000000..e176e384
 +    """Detailed SQL injection testing"""
 +    print("\n=== Detailed SQL Injection Testing ===")
 +    
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    # More sophisticated SQL injection payloads
 +    sql_payloads = [
@@ -171,7 +171,7 @@ index 00000000..e176e384
 +    """Detailed XSS testing"""
 +    print("\n=== Detailed XSS Testing ===")
 +    
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    xss_payloads = [
 +        "<script>alert('xss')</script>",
@@ -235,7 +235,7 @@ index 00000000..e176e384
 +    """Test for authentication bypass vulnerabilities"""
 +    print("\n=== Testing Authentication Bypass ===")
 +    
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    # Test accessing protected endpoints without authentication
 +    protected_endpoints = [
@@ -331,7 +331,7 @@ index 00000000..96447628
 +
 +def test_endpoint_discovery():
 +    """Test for additional endpoints"""
-+    base_url = "https://gamehub-revamp-2.preview.emergentagent.com/api"
++    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
 +    
 +    # Common endpoint patterns to test
 +    endpoints_to_test = [
