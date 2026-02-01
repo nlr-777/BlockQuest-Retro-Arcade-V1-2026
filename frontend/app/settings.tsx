@@ -771,6 +771,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 30,
   },
+  linkBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: CRT_COLORS.bgMedium,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: CRT_COLORS.primary + '40',
+  },
+  linkText: {
+    fontSize: 14,
+    color: CRT_COLORS.primary,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: '600',
+  },
+  footerDivider: {
+    width: 50,
+    height: 1,
+    backgroundColor: CRT_COLORS.textDim + '30',
+    marginVertical: 20,
+  },
   footerText: {
     fontSize: 12,
     color: CRT_COLORS.textDim,
