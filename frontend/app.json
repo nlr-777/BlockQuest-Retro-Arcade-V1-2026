@@ -72,19 +72,6 @@
           "resizeMode": "contain",
           "backgroundColor": "#0A0E14"
         }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "minSdkVersion": 24
-          },
-          "ios": {
-            "deploymentTarget": "14.0"
-          }
-        }
       ]
     ],
     
