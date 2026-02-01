@@ -277,13 +277,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Main Hub Screen - Onboarding with Avatar Selection"
-    - "Main Hub Screen - Game Grid Display (12 playable)"
+    - "Backend API Security Vulnerabilities"
   stuck_tasks:
-    - "Main Hub Screen - Onboarding with Avatar Selection"
-    - "Main Hub Screen - Game Grid Display (12 playable)"
+    - "Backend API Security Vulnerabilities"
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
   - task: "Block Muncher Game - Navigation & Loading"
     implemented: true
