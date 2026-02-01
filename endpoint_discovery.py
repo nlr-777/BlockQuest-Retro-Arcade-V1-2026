@@ -7,7 +7,7 @@ import requests
 
 def test_endpoint_discovery():
     """Test for additional endpoints"""
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     # Common endpoint patterns to test
     endpoints_to_test = [

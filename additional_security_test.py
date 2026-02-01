@@ -12,7 +12,7 @@ def test_rate_limiting():
     """Test rate limiting on endpoints"""
     print("\n=== Testing Rate Limiting ===")
     
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     # Test rapid requests to registration endpoint
     def make_register_request(i):
@@ -56,7 +56,7 @@ def test_cors_preflight():
     """Test CORS preflight requests"""
     print("\n=== Testing CORS Preflight ===")
     
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     # Test OPTIONS request
     headers = {
@@ -101,7 +101,7 @@ def test_sql_injection_detailed():
     """Detailed SQL injection testing"""
     print("\n=== Detailed SQL Injection Testing ===")
     
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     # More sophisticated SQL injection payloads
     sql_payloads = [
@@ -165,7 +165,7 @@ def test_xss_detailed():
     """Detailed XSS testing"""
     print("\n=== Detailed XSS Testing ===")
     
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     xss_payloads = [
         "<script>alert('xss')</script>",
@@ -229,7 +229,7 @@ def test_authentication_bypass():
     """Test for authentication bypass vulnerabilities"""
     print("\n=== Testing Authentication Bypass ===")
     
-    base_url = "https://launch-prep-39.preview.emergentagent.com/api"
+    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
     
     # Test accessing protected endpoints without authentication
     protected_endpoints = [
