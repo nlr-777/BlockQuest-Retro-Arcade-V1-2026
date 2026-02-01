@@ -329,7 +329,7 @@ class NFTBadgeService {
       await AsyncStorage.setItem(UNLOCKED_BADGES_KEY, JSON.stringify(this.unlockedBadges));
       await AsyncStorage.setItem(ACTIVE_REWARDS_KEY, JSON.stringify(this.activeRewards));
     } catch (error) {
-      console.log('Failed to save badge state:', error);
+      // Badge state save failed - will retry on next save
     }
   }
 
