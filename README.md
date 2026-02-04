@@ -61,9 +61,29 @@ A feature-rich, kid-friendly retro arcade game hub built with Expo (React Native
 
 ### Backend
 - **Framework**: FastAPI (Python 3.11)
-- **Database**: MongoDB with Motor (async driver)
+- **Database**: Supabase (PostgreSQL)
 - **Authentication**: JWT tokens with bcrypt password hashing
 - **Security**: XSS sanitization, SQL injection prevention, rate limiting
+
+### Database Schema (Supabase)
+
+#### `game_stats` Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary Key |
+| user_id | UUID | User identifier |
+| score | Integer | Current high score |
+| inventory | JSONB | All player data (badges, XP, faction, etc.) |
+| last_played | Timestamptz | Last activity timestamp |
+
+#### `site_content` Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | Serial | Primary Key |
+| title | Text | Content title |
+| type | Text | 'video', 'book', or 'game' |
+| url | Text | Link URL |
+| thumbnail_url | Text | Preview image URL |
 
 ## 📁 Project Structure
 
@@ -104,7 +124,7 @@ A feature-rich, kid-friendly retro arcade game hub built with Expo (React Native
 ### Prerequisites
 - Node.js 18+ 
 - Python 3.11+
-- MongoDB instance
+- Supabase account (free tier available)
 - Yarn package manager
 
 ### Backend Setup
@@ -122,7 +142,7 @@ pip install -r requirements.txt
 
 # Set up environment variables
 cp .env.example .env
-# Edit .env with your MongoDB URL and JWT secret
+# Edit .env with your Supabase URL and anon key
 
 # Start the server
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
@@ -150,16 +170,52 @@ yarn android  # Android emulator
 
 #### Backend (.env)
 ```env
-MONGO_URL=mongodb://localhost:27017
-DB_NAME=blockquest
+# Supabase Configuration (Required)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# JWT Secret (Change in production!)
 JWT_SECRET_KEY=your-secret-key-here
-GOOGLE_CLIENT_ID=your-google-client-id  # Optional
+
+# Google OAuth (Optional)
+GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
 #### Frontend (.env)
 ```env
 EXPO_PUBLIC_BACKEND_URL=http://localhost:8001
 ```
+
+### Supabase Setup
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Create the required tables:
+
+```sql
+-- Game Stats Table
+CREATE TABLE game_stats (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL,
+    score INTEGER DEFAULT 0,
+    inventory JSONB DEFAULT '{}',
+    last_played TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Site Content Table
+CREATE TABLE site_content (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('video', 'book', 'game')),
+    url TEXT NOT NULL,
+    thumbnail_url TEXT
+);
+
+-- Create indexes for better performance
+CREATE INDEX idx_game_stats_user_id ON game_stats(user_id);
+CREATE INDEX idx_site_content_type ON site_content(type);
+```
+
+3. Copy your project URL and anon key from Settings > API
 
 ## 🔒 API Endpoints
 
@@ -171,6 +227,14 @@ EXPO_PUBLIC_BACKEND_URL=http://localhost:8001
 | POST | `/api/auth/google` | Google OAuth login |
 | GET | `/api/auth/me` | Get current user profile |
 | PUT | `/api/auth/sync` | Sync progress to cloud |
+
+### Site Content (NEW)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/content` | Get all site content |
+| GET | `/api/content/videos` | Get YouTube videos |
+| GET | `/api/content/books` | Get book links |
+| GET | `/api/content/games` | Get game content |
 
 ### Game Data
 | Method | Endpoint | Description |
@@ -233,6 +297,25 @@ export default function YourGame() {
 | iOS | ✅ Supported | Via Expo Go or build |
 | Android | ✅ Supported | Via Expo Go or build |
 
+## 🚀 Deployment
+
+### Vercel (Frontend Static Export)
+```bash
+cd frontend
+yarn build
+yarn export
+# Deploy the 'dist' folder to Vercel
+```
+
+### Backend Deployment
+The backend can be deployed to any Python hosting service:
+- Railway
+- Render
+- Fly.io
+- AWS Lambda (with Mangum)
+
+Make sure to set your Supabase environment variables in your hosting dashboard.
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -249,6 +332,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Inspired by classic arcade games and Web3 concepts
 - Built with [Expo](https://expo.dev/) and [FastAPI](https://fastapi.tiangolo.com/)
+- Powered by [Supabase](https://supabase.com/)
 - Retro aesthetic inspired by synthwave and vaporwave culture
 
 ---
