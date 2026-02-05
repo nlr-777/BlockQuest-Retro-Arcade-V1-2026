@@ -72,16 +72,9 @@ Check out the live demo here:
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License** – see [LICENSE](LICENSE) for details.
-
----
-
 ## 🙏 Acknowledgments
 
 - Inspired by classic arcade games and Web3 concepts  
-- Built with [Expo](https://expo.dev/) and [FastAPI](https://fastapi.tiangolo.com/)  
 - Retro aesthetic inspired by synthwave and vaporwave culture  
 
 ---
