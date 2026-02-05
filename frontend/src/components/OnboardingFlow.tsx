@@ -1,4 +1,4 @@
-// BlockQuest - Onboarding Flow with Guest/Login
+// BlockQuest - Onboarding Flow with Guest/Login & Supabase
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -6,6 +6,9 @@ import {
   Modal,
   TouchableOpacity,
   Dimensions,
+  TextInput,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -86,6 +89,11 @@ interface OnboardingFlowProps {
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [visible, setVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const progress = useSharedValue(0);
   const emojiScale = useSharedValue(1);
 
@@ -104,23 +112,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   const checkOnboardingStatus = async () => {
     try {
       const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-      if (!completed) {
-        setVisible(true);
-      } else {
-        onComplete();
-      }
-    } catch (error) {
-      setVisible(true);
-    }
+      if (!completed) setVisible(true);
+      else onComplete();
+    } catch { setVisible(true); }
   };
 
   const handleNext = () => {
     audioManager.playSound('confirm');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    if (currentStep < ONBOARDING_STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (currentStep < ONBOARDING_STEPS.length - 1) setCurrentStep(currentStep + 1);
   };
 
   const handleSkip = () => {
@@ -130,133 +131,165 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   };
 
   const completeOnboarding = async () => {
-    try {
-      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    } catch {}
+    try { await AsyncStorage.setItem(ONBOARDING_KEY, 'true'); } catch {}
     setVisible(false);
     onComplete();
   };
 
   // --- Auth Handlers ---
   const handleGuest = async () => {
-    // Mark as guest in AsyncStorage
     await AsyncStorage.setItem('guest_mode', 'true');
     completeOnboarding();
   };
 
-  const handleSignUp = async () => {
-    // Example: redirect to a sign-up/login screen or open a modal
-    // You could use your existing auth component here
-    completeOnboarding();
-    // Optionally, after this you would open the Supabase login flow
+  const handleSignUpLogin = async () => {
+    setAuthModalVisible(true);
   };
 
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progress.value * 100}%`,
-  }));
+  const handleAuthSubmit = async () => {
+    if (!email || !password) return Alert.alert('Error', 'Please fill both fields');
 
-  const emojiStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: emojiScale.value }],
-  }));
+    setLoading(true);
 
+    // Try to sign up first
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+    if (signUpError && signUpError.message.includes('User already registered')) {
+      // User exists → log in
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+      if (loginError) {
+        Alert.alert('Login Failed', loginError.message);
+        setLoading(false);
+        return;
+      }
+    } else if (signUpError) {
+      Alert.alert('Sign Up Failed', signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    // Success
+    await AsyncStorage.setItem('guest_mode', 'false');
+    setLoading(false);
+    setAuthModalVisible(false);
+    completeOnboarding();
+  };
+
+  const progressStyle = useAnimatedStyle(() => ({ width: `${progress.value * 100}%` }));
+  const emojiStyle = useAnimatedStyle(() => ({ transform: [{ scale: emojiScale.value }] }));
   const step = ONBOARDING_STEPS[currentStep];
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          {/* Progress Bar */}
-          <View style={styles.progressContainer}>
-            <Animated.View style={[styles.progressBar, progressStyle]} />
-          </View>
+    <>
+      <Modal visible={visible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.progressContainer}>
+              <Animated.View style={[styles.progressBar, progressStyle]} />
+            </View>
 
-          {/* Skip Button */}
-          {currentStep < ONBOARDING_STEPS.length - 1 && (
-            <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-              <PixelText size="xs" color={CRT_COLORS.textDim}>SKIP</PixelText>
-            </TouchableOpacity>
-          )}
+            {currentStep < ONBOARDING_STEPS.length - 1 && (
+              <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                <PixelText size="xs" color={CRT_COLORS.textDim}>SKIP</PixelText>
+              </TouchableOpacity>
+            )}
 
-          {/* Step Content */}
-          <Animated.View key={step.id} entering={SlideInRight.duration(300)} style={styles.content}>
-            <Animated.View style={[styles.emojiContainer, emojiStyle]}>
-              <PixelText size="xxl">{step.emoji}</PixelText>
+            <Animated.View key={step.id} entering={SlideInRight.duration(300)} style={styles.content}>
+              <Animated.View style={[styles.emojiContainer, emojiStyle]}>
+                <PixelText size="xxl">{step.emoji}</PixelText>
+              </Animated.View>
+
+              <PixelText size="lg" color={CRT_COLORS.primary} style={styles.title}>
+                {step.title}
+              </PixelText>
+
+              <PixelText size="sm" color={CRT_COLORS.textBright} style={styles.description}>
+                {step.description}
+              </PixelText>
+
+              {step.id === 'auth' ? (
+                <View style={{ marginTop: 20, width: '100%' }}>
+                  <TouchableOpacity onPress={handleGuest} style={styles.authButton}>
+                    <PixelText size="md">Play as Guest</PixelText>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={handleSignUpLogin} style={styles.authButton}>
+                    <PixelText size="md">Sign Up / Login</PixelText>
+                  </TouchableOpacity>
+                </View>
+              ) : step.highlight ? (
+                <View style={styles.highlightBox}>
+                  <PixelText size="xs" color={CRT_COLORS.accentGold}>{step.highlight}</PixelText>
+                </View>
+              ) : null}
             </Animated.View>
 
-            <PixelText size="lg" color={CRT_COLORS.primary} style={styles.title}>
-              {step.title}
-            </PixelText>
+            <View style={styles.dotsContainer}>
+              {ONBOARDING_STEPS.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    index === currentStep && styles.dotActive,
+                    index < currentStep && styles.dotCompleted,
+                  ]}
+                />
+              ))}
+            </View>
 
-            <PixelText size="sm" color={CRT_COLORS.textBright} style={styles.description}>
-              {step.description}
-            </PixelText>
-
-            {step.id === 'auth' ? (
-              <View style={{ marginTop: 20, width: '100%' }}>
-                <TouchableOpacity onPress={handleGuest} style={styles.authButton}>
-                  <PixelText size="md">Play as Guest</PixelText>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={handleSignUp} style={styles.authButton}>
-                  <PixelText size="md">Sign Up / Login</PixelText>
-                </TouchableOpacity>
-              </View>
-            ) : step.highlight ? (
-              <View style={styles.highlightBox}>
-                <PixelText size="xs" color={CRT_COLORS.accentGold}>{step.highlight}</PixelText>
-              </View>
-            ) : null}
-          </Animated.View>
-
-          {/* Dots Indicator */}
-          <View style={styles.dotsContainer}>
-            {ONBOARDING_STEPS.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  index === currentStep && styles.dotActive,
-                  index < currentStep && styles.dotCompleted,
-                ]}
-              />
-            ))}
+            {step.id !== 'auth' && (
+              <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+                <PixelText size="md" color="#000">
+                  {currentStep === ONBOARDING_STEPS.length - 2 ? "🗝️ Next →" : "NEXT →"}
+                </PixelText>
+              </TouchableOpacity>
+            )}
           </View>
-
-          {/* Next Button */}
-          {step.id !== 'auth' && (
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-              <PixelText size="md" color="#000">
-                {currentStep === ONBOARDING_STEPS.length - 2 ? "🗝️ Next →" : "NEXT →"}
-              </PixelText>
-            </TouchableOpacity>
-          )}
         </View>
-      </View>
-    </Modal>
+      </Modal>
+
+      {/* Auth Modal */}
+      <Modal visible={authModalVisible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={[styles.container, { maxWidth: 360 }]}>
+            <PixelText size="lg" color={CRT_COLORS.primary} style={{ marginBottom: 12 }}>
+              Sign Up / Login
+            </PixelText>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor={CRT_COLORS.textDim}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor={CRT_COLORS.textDim}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TouchableOpacity style={styles.authButton} onPress={handleAuthSubmit} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <PixelText size="md">Submit</PixelText>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setAuthModalVisible(false)}>
+              <PixelText size="xs" color={CRT_COLORS.textDim}>Cancel</PixelText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
-};
-
-export const useOnboardingStatus = () => {
-  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-        setNeedsOnboarding(!completed);
-      } catch (error) {
-        setNeedsOnboarding(true);
-      }
-    };
-    check();
-  }, []);
-
-  const resetOnboarding = async () => {
-    await AsyncStorage.removeItem(ONBOARDING_KEY);
-    setNeedsOnboarding(true);
-  };
-
-  return { needsOnboarding, resetOnboarding };
 };
 
 const styles = StyleSheet.create({
@@ -285,6 +318,7 @@ const styles = StyleSheet.create({
   dotCompleted: { backgroundColor: CRT_COLORS.textDim },
   nextButton: { backgroundColor: CRT_COLORS.primary, paddingVertical: 16, paddingHorizontal: 40, borderRadius: 12, width: '100%', alignItems: 'center' },
   authButton: { backgroundColor: CRT_COLORS.primary, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, marginVertical: 8, alignItems: 'center' },
+  input: { width: '100%', padding: 12, marginVertical: 8, borderWidth: 1, borderColor: CRT_COLORS.bgMedium, borderRadius: 8, color: CRT_COLORS.textBright },
 });
 
 export default OnboardingFlow;
