@@ -4,16 +4,12 @@ import { supabase } from '../lib/supabase';
 export default function TestSupabase() {
   useEffect(() => {
     async function test() {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .limit(1);
+      const { data, error } = await supabase
+        .from('game_stats')
+        .select('*')
+        .limit(1);
 
-        console.log('SUPABASE HANDSHAKE:', { data, error });
-      } catch (err) {
-        console.log('SUPABASE NOT READY:', err);
-      }
+      console.log('SUPABASE HANDSHAKE:', { data, error });
     }
 
     test();
