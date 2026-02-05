@@ -1,5 +1,5 @@
 // BlockQuest Official - Retro Arcade - Root Layout
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Stack, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
@@ -11,6 +11,9 @@ import PixelText from '../src/components/PixelText';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { ToastContainer } from '../src/components/Toast';
 import audioManager from '../src/utils/AudioManager';
+
+// Add this import for Supabase test
+import TestSupabase from '../src/components/TestSupabase';
 
 // Prevent auto-hide of splash screen
 SplashScreen.preventAutoHideAsync();
@@ -61,6 +64,10 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={styles.container}>
+
+        {/* --- ADD TESTSUPABASE AT THE TOP --- */}
+        <TestSupabase />
+
         <StatusBar style="light" />
         <ToastContainer />
         
@@ -74,7 +81,7 @@ export default function RootLayout() {
         ) : (
           <>
             {showGenesis && <VFXLayer type="genesis-birth" />}
-                <Stack
+            <Stack
               screenOptions={{
                 headerShown: false,
                 contentStyle: { backgroundColor: COLORS.bgDark },
