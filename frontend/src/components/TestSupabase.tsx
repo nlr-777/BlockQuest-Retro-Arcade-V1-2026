@@ -10,5 +10,5 @@ export default function TestSupabase() {
     test();
   }, []);
 
-  return null;
+  return null; // renders nothing
 }
