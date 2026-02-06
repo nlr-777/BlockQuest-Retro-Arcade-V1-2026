@@ -249,7 +249,7 @@ const ChainSegment: React.FC<{ position: Position; index: number }> = ({ positio
 };
 export default function BlockMuncherGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores, xp, level, badges } = useGameStore();  // NEW: Added highScores, xp, level, badges for saving
+  const { profile, updateScore, mintBadge, addXP, highScores, xp, badges } = useGameStore();  // NEW: Added highScores, xp, badges for saving
   
   // Audio hook for game sounds and music
   const {
