@@ -1,6 +1,4 @@
-// BlockQuest - Onboarding Flow Component
-// First-time user experience and tutorial
-
+// BlockQuest - Onboarding Flow with Guest/Login & Supabase
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -8,7 +6,9 @@ import {
   Modal,
   TouchableOpacity,
   Dimensions,
-  Platform,
+  TextInput,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -16,10 +16,7 @@ import Animated, {
   withSpring,
   withTiming,
   withSequence,
-  FadeIn,
-  FadeOut,
   SlideInRight,
-  SlideOutLeft,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CRT_COLORS } from '../constants/crtTheme';
@@ -27,8 +24,9 @@ import { COLORS } from '../constants/colors';
 import PixelText from './PixelText';
 import * as Haptics from 'expo-haptics';
 import audioManager from '../utils/AudioManager';
+import { supabase } from '../lib/supabase';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ONBOARDING_KEY = 'blockquest_onboarding_complete';
 
 interface OnboardingStep {
@@ -76,11 +74,11 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     highlight: 'Streak bonuses up to 70%',
   },
   {
-    id: 'ready',
-    title: "You're Ready!",
-    description: 'Start your blockchain education adventure. Have fun and learn something new!',
-    emoji: '🚀',
-    highlight: 'Let\'s go!',
+    id: 'auth',
+    title: 'Save Your Progress',
+    description: 'Play as Guest or Sign Up to save your progress across devices!',
+    emoji: '🗝️',
+    highlight: 'Guest mode or Email login',
   },
 ];
 
@@ -91,6 +89,11 @@ interface OnboardingFlowProps {
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [visible, setVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const progress = useSharedValue(0);
   const emojiScale = useSharedValue(1);
 
@@ -109,28 +112,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   const checkOnboardingStatus = async () => {
     try {
       const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-      if (!completed) {
-        setVisible(true);
-      } else {
-        onComplete();
-      }
-    } catch (error) {
-      setVisible(true);
-    }
+      if (!completed) setVisible(true);
+      else onComplete();
+    } catch { setVisible(true); }
   };
 
   const handleNext = () => {
-    // Play confirm sound for navigation
     audioManager.playSound('confirm');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
-    if (currentStep < ONBOARDING_STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Play unlock sound when completing onboarding
-      audioManager.playSound('unlock');
-      completeOnboarding();
-    }
+
+    if (currentStep < ONBOARDING_STEPS.length - 1) setCurrentStep(currentStep + 1);
   };
 
   const handleSkip = () => {
@@ -140,123 +131,169 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   };
 
   const completeOnboarding = async () => {
-    try {
-      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    } catch (error) {}
+    try { await AsyncStorage.setItem(ONBOARDING_KEY, 'true'); } catch {}
     setVisible(false);
     onComplete();
   };
 
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progress.value * 100}%`,
-  }));
+  // --- Auth Handlers ---
+  const handleGuest = async () => {
+    await AsyncStorage.setItem('guest_mode', 'true');
+    completeOnboarding();
+  };
 
-  const emojiStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: emojiScale.value }],
-  }));
+  const handleSignUpLogin = async () => {
+    setAuthModalVisible(true);
+  };
 
+  const handleAuthSubmit = async () => {
+    if (!email || !password) return Alert.alert('Error', 'Please fill both fields');
+
+    setLoading(true);
+
+    // Try to sign up first
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+    if (signUpError && signUpError.message.includes('User already registered')) {
+      // User exists → log in
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+      if (loginError) {
+        Alert.alert('Login Failed', loginError.message);
+        setLoading(false);
+        return;
+      }
+    } else if (signUpError) {
+      Alert.alert('Sign Up Failed', signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    // Success
+    await AsyncStorage.setItem('guest_mode', 'false');
+    setLoading(false);
+    setAuthModalVisible(false);
+    completeOnboarding();
+  };
+
+  const progressStyle = useAnimatedStyle(() => ({ width: `${progress.value * 100}%` }));
+  const emojiStyle = useAnimatedStyle(() => ({ transform: [{ scale: emojiScale.value }] }));
   const step = ONBOARDING_STEPS[currentStep];
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          {/* Progress bar */}
-          <View style={styles.progressContainer}>
-            <Animated.View style={[styles.progressBar, progressStyle]} />
-          </View>
+    <>
+      <Modal visible={visible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.progressContainer}>
+              <Animated.View style={[styles.progressBar, progressStyle]} />
+            </View>
 
-          {/* Skip button */}
-          {currentStep < ONBOARDING_STEPS.length - 1 && (
-            <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-              <PixelText size="xs" color={CRT_COLORS.textDim}>SKIP</PixelText>
-            </TouchableOpacity>
-          )}
+            {currentStep < ONBOARDING_STEPS.length - 1 && (
+              <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                <PixelText size="xs" color={CRT_COLORS.textDim}>SKIP</PixelText>
+              </TouchableOpacity>
+            )}
 
-          {/* Content */}
-          <Animated.View 
-            key={step.id}
-            entering={SlideInRight.duration(300)}
-            style={styles.content}
-          >
-            <Animated.View style={[styles.emojiContainer, emojiStyle]}>
-              <PixelText size="xxl">{step.emoji}</PixelText>
+            <Animated.View key={step.id} entering={SlideInRight.duration(300)} style={styles.content}>
+              <Animated.View style={[styles.emojiContainer, emojiStyle]}>
+                <PixelText size="xxl">{step.emoji}</PixelText>
+              </Animated.View>
+
+              <PixelText size="lg" color={CRT_COLORS.primary} style={styles.title}>
+                {step.title}
+              </PixelText>
+
+              <PixelText size="sm" color={CRT_COLORS.textBright} style={styles.description}>
+                {step.description}
+              </PixelText>
+
+              {step.id === 'auth' ? (
+                <View style={{ marginTop: 20, width: '100%' }}>
+                  <TouchableOpacity onPress={handleGuest} style={styles.authButton}>
+                    <PixelText size="md">Play as Guest</PixelText>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={handleSignUpLogin} style={styles.authButton}>
+                    <PixelText size="md">Sign Up / Login</PixelText>
+                  </TouchableOpacity>
+                </View>
+              ) : step.highlight ? (
+                <View style={styles.highlightBox}>
+                  <PixelText size="xs" color={CRT_COLORS.accentGold}>{step.highlight}</PixelText>
+                </View>
+              ) : null}
             </Animated.View>
 
-            <PixelText size="lg" color={CRT_COLORS.primary} style={styles.title}>
-              {step.title}
-            </PixelText>
+            <View style={styles.dotsContainer}>
+              {ONBOARDING_STEPS.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    index === currentStep && styles.dotActive,
+                    index < currentStep && styles.dotCompleted,
+                  ]}
+                />
+              ))}
+            </View>
 
-            <PixelText size="sm" color={CRT_COLORS.textBright} style={styles.description}>
-              {step.description}
-            </PixelText>
-
-            {step.highlight && (
-              <View style={styles.highlightBox}>
-                <PixelText size="xs" color={CRT_COLORS.accentGold}>
-                  {step.highlight}
+            {step.id !== 'auth' && (
+              <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+                <PixelText size="md" color="#000">
+                  {currentStep === ONBOARDING_STEPS.length - 2 ? "🗝️ Next →" : "NEXT →"}
                 </PixelText>
-              </View>
+              </TouchableOpacity>
             )}
-          </Animated.View>
-
-          {/* Dots indicator */}
-          <View style={styles.dotsContainer}>
-            {ONBOARDING_STEPS.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  index === currentStep && styles.dotActive,
-                  index < currentStep && styles.dotCompleted,
-                ]}
-              />
-            ))}
           </View>
-
-          {/* Next button */}
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-            <PixelText size="md" color="#000">
-              {currentStep === ONBOARDING_STEPS.length - 1 ? "🚀 START PLAYING" : "NEXT →"}
-            </PixelText>
-          </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+
+      {/* Auth Modal */}
+      <Modal visible={authModalVisible} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={[styles.container, { maxWidth: 360 }]}>
+            <PixelText size="lg" color={CRT_COLORS.primary} style={{ marginBottom: 12 }}>
+              Sign Up / Login
+            </PixelText>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor={CRT_COLORS.textDim}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor={CRT_COLORS.textDim}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TouchableOpacity style={styles.authButton} onPress={handleAuthSubmit} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <PixelText size="md">Submit</PixelText>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ marginTop: 10 }} onPress={() => setAuthModalVisible(false)}>
+              <PixelText size="xs" color={CRT_COLORS.textDim}>Cancel</PixelText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
-// Hook to check if onboarding is needed
-export const useOnboardingStatus = () => {
-  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-        setNeedsOnboarding(!completed);
-      } catch (error) {
-        setNeedsOnboarding(true);
-      }
-    };
-    check();
-  }, []);
-
-  const resetOnboarding = async () => {
-    await AsyncStorage.removeItem(ONBOARDING_KEY);
-    setNeedsOnboarding(true);
-  };
-
-  return { needsOnboarding, resetOnboarding };
-};
-
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: COLORS.bgDark,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  overlay: { flex: 1, backgroundColor: COLORS.bgDark, justifyContent: 'center', alignItems: 'center' },
   container: {
     width: SCREEN_WIDTH * 0.9,
     maxWidth: 400,
@@ -267,85 +304,21 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
   },
-  progressContainer: {
-    width: '100%',
-    height: 4,
-    backgroundColor: CRT_COLORS.bgMedium,
-    borderRadius: 2,
-    marginBottom: 20,
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: CRT_COLORS.primary,
-    borderRadius: 2,
-  },
-  skipButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    padding: 8,
-  },
-  content: {
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  emojiContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: CRT_COLORS.bgMedium,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    borderWidth: 3,
-    borderColor: CRT_COLORS.primary,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  description: {
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 10,
-  },
-  highlightBox: {
-    marginTop: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: CRT_COLORS.bgMedium,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: CRT_COLORS.accentGold,
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 24,
-    gap: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: CRT_COLORS.bgMedium,
-  },
-  dotActive: {
-    backgroundColor: CRT_COLORS.primary,
-    width: 24,
-  },
-  dotCompleted: {
-    backgroundColor: CRT_COLORS.textDim,
-  },
-  nextButton: {
-    backgroundColor: CRT_COLORS.primary,
-    paddingVertical: 16,
-    paddingHorizontal: 40,
-    borderRadius: 12,
-    width: '100%',
-    alignItems: 'center',
-  },
+  progressContainer: { width: '100%', height: 4, backgroundColor: CRT_COLORS.bgMedium, borderRadius: 2, marginBottom: 20, overflow: 'hidden' },
+  progressBar: { height: '100%', backgroundColor: CRT_COLORS.primary, borderRadius: 2 },
+  skipButton: { position: 'absolute', top: 16, right: 16, padding: 8 },
+  content: { alignItems: 'center', paddingVertical: 20 },
+  emojiContainer: { width: 100, height: 100, borderRadius: 50, backgroundColor: CRT_COLORS.bgMedium, justifyContent: 'center', alignItems: 'center', marginBottom: 24, borderWidth: 3, borderColor: CRT_COLORS.primary },
+  title: { textAlign: 'center', marginBottom: 12 },
+  description: { textAlign: 'center', lineHeight: 22, paddingHorizontal: 10 },
+  highlightBox: { marginTop: 16, paddingVertical: 8, paddingHorizontal: 16, backgroundColor: CRT_COLORS.bgMedium, borderRadius: 20, borderWidth: 1, borderColor: CRT_COLORS.accentGold },
+  dotsContainer: { flexDirection: 'row', justifyContent: 'center', marginVertical: 24, gap: 8 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: CRT_COLORS.bgMedium },
+  dotActive: { backgroundColor: CRT_COLORS.primary, width: 24 },
+  dotCompleted: { backgroundColor: CRT_COLORS.textDim },
+  nextButton: { backgroundColor: CRT_COLORS.primary, paddingVertical: 16, paddingHorizontal: 40, borderRadius: 12, width: '100%', alignItems: 'center' },
+  authButton: { backgroundColor: CRT_COLORS.primary, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, marginVertical: 8, alignItems: 'center' },
+  input: { width: '100%', padding: 12, marginVertical: 8, borderWidth: 1, borderColor: CRT_COLORS.bgMedium, borderRadius: 8, color: CRT_COLORS.textBright },
 });
 
 export default OnboardingFlow;
