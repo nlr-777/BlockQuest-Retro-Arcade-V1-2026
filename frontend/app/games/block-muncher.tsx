@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   Vibration,
-  Text,  // Added for button text
+  Text,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -61,17 +61,19 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
-import { authService } from '../../src/services/AuthService';  // NEW: Added for cloud save
+import { authService } from '../../src/services/AuthService';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
 const GAME_MECHANICS = getGameMechanics('block-muncher')!;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+
 // Game constants
 const GRID_SIZE = 15;
 const CELL_SIZE = Math.min((SCREEN_WIDTH - 32) / GRID_SIZE, 24);
 const GAME_WIDTH = GRID_SIZE * CELL_SIZE;
 const GAME_HEIGHT = GRID_SIZE * CELL_SIZE;
+
 // Directions
 const DIRECTIONS = {
   UP: { x: 0, y: -1 },
@@ -82,12 +84,12 @@ const DIRECTIONS = {
 type Direction = keyof typeof DIRECTIONS;
 type Position = { x: number; y: number };
 type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
+
 // Generate maze/blocks
 const generateBlocks = () => {
   const blocks: Position[] = [];
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
-      // Skip center area and some paths
       if (
         (y === Math.floor(GRID_SIZE / 2) && x > 2 && x < GRID_SIZE - 3) ||
         (x === Math.floor(GRID_SIZE / 2) && y > 2 && y < GRID_SIZE - 3) ||
@@ -95,14 +97,12 @@ const generateBlocks = () => {
       ) {
         continue;
       }
-      // Create some walls
       if (
         ((x === 3 || x === GRID_SIZE - 4) && y > 2 && y < GRID_SIZE - 3 && y !== Math.floor(GRID_SIZE / 2)) ||
         ((y === 3 || y === GRID_SIZE - 4) && x > 2 && x < GRID_SIZE - 3 && x !== Math.floor(GRID_SIZE / 2))
       ) {
-        continue; // walls
+        continue;
       }
-      // Add block (collectible)
       if (Math.random() > 0.2) {
         blocks.push({ x, y });
       }
@@ -110,6 +110,7 @@ const generateBlocks = () => {
   }
   return blocks;
 };
+
 // Ghost AI - simple chase
 const moveGhost = (ghost: Position, player: Position, walls: Position[]): Position => {
   const possibleMoves = [
@@ -123,7 +124,6 @@ const moveGhost = (ghost: Position, player: Position, walls: Position[]): Positi
     !walls.some(w => w.x === pos.x && w.y === pos.y)
   );
   if (possibleMoves.length === 0) return ghost;
-  // Chase player with some randomness
   if (Math.random() > 0.3) {
     possibleMoves.sort((a, b) => {
       const distA = Math.abs(a.x - player.x) + Math.abs(a.y - player.y);
@@ -134,6 +134,7 @@ const moveGhost = (ghost: Position, player: Position, walls: Position[]): Positi
   }
   return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
 };
+
 // Player component
 const Player: React.FC<{ position: Position; direction: Direction }> = ({ position, direction }) => {
   const mouthOpen = useSharedValue(0);
@@ -165,6 +166,7 @@ const Player: React.FC<{ position: Position; direction: Direction }> = ({ positi
     </Animated.View>
   );
 };
+
 // Ghost component
 const Ghost: React.FC<{ position: Position; color: string; index: number }> = ({ position, color, index }) => {
   const wobble = useSharedValue(0);
@@ -198,6 +200,7 @@ const Ghost: React.FC<{ position: Position; color: string; index: number }> = ({
     </Animated.View>
   );
 };
+
 // Block (collectible)
 const Block: React.FC<{ position: Position; isChain?: boolean }> = ({ position, isChain }) => {
   const pulse = useSharedValue(1);
@@ -230,6 +233,7 @@ const Block: React.FC<{ position: Position; isChain?: boolean }> = ({ position, 
     />
   );
 };
+
 // Chain Trail
 const ChainSegment: React.FC<{ position: Position; index: number }> = ({ position, index }) => {
   return (
@@ -247,18 +251,20 @@ const ChainSegment: React.FC<{ position: Position; index: number }> = ({ positio
     />
   );
 };
+
 export default function BlockMuncherGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores, xp, badges } = useGameStore();  // NEW: Added highScores, xp, badges for saving
-  
+  const { profile, updateScore, mintBadge, addXP, highScores, xp, badges } = useGameStore();
+
   // Audio hook for game sounds and music
   const {
     playCollect, playHit, playMove, playGameStart, playGameOver,
     playLevelUp, playPowerup
   } = useGameAudio({ musicTrack: 'action' });
+
   // Power-up effects hook
   const powerUps = usePowerUpEffects();
- 
+
   // Character bonus hook - for score multipliers
   const {
     hasBonus,
@@ -269,12 +275,12 @@ export default function BlockMuncherGame() {
     abilityIcon,
     abilityName
   } = useCharacterBonus('block-muncher');
- 
+
   // Character dialogue state
   const [showIntroDialogue, setShowIntroDialogue] = useState(false);
   const { getSelectedCharacter } = useCharacterStore();
   const selectedCharacter = getSelectedCharacter();
- 
+
   // Function to actually start gameplay (called after dialogue)
   const beginGameplay = useCallback(() => {
     setGameState('playing');
@@ -282,19 +288,20 @@ export default function BlockMuncherGame() {
     startTimeRef.current = Date.now();
     playGameStart();
   }, [playGameStart]);
+
   // Game state
   const [gameState, setGameState] = useState<GameState>('menu');
- 
+
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
   const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
   const [level, setLevel] = useState(1);
   const [levelUpTrigger, setLevelUpTrigger] = useState(0);
- 
+
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
- 
+
   const [score, setScore] = useState(0);
   const difficulty = useDifficultyScaling(score);
   const [lives, setLives] = useState(3);
@@ -308,13 +315,12 @@ export default function BlockMuncherGame() {
     { x: 1, y: GRID_SIZE - 2 },
   ]);
   const [walls] = useState<Position[]>([
-    // Create some walls
     ...Array(GRID_SIZE).fill(0).flatMap((_, i) => [
       { x: 3, y: i > 2 && i < GRID_SIZE - 3 && i !== 7 ? i : -1 },
       { x: GRID_SIZE - 4, y: i > 2 && i < GRID_SIZE - 3 && i !== 7 ? i : -1 },
     ]).filter(w => w.y !== -1),
   ]);
- 
+
   // Blockchain collectibles
   const [bqoTokens, setBqoTokens] = useState<Position[]>([]);
   const [nftGems, setNftGems] = useState<{pos: Position; rarity: 'common' | 'rare' | 'epic' | 'legendary'}[]>([]);
@@ -325,9 +331,9 @@ export default function BlockMuncherGame() {
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const previousHighScore = useRef<number>(0);
+
   // Generate blockchain collectibles
   const generateBlockchainItems = useCallback(() => {
-    // Spawn BQO tokens randomly
     const tokens: Position[] = [];
     for (let i = 0; i < 5; i++) {
       tokens.push({
@@ -336,8 +342,7 @@ export default function BlockMuncherGame() {
       });
     }
     setBqoTokens(tokens);
-   
-    // Spawn NFT gems (rare items)
+
     const gems: {pos: Position; rarity: 'common' | 'rare' | 'epic' | 'legendary'}[] = [];
     const rarities: ('common' | 'rare' | 'epic' | 'legendary')[] = ['common', 'rare', 'epic', 'legendary'];
     for (let i = 0; i < 3; i++) {
@@ -350,8 +355,7 @@ export default function BlockMuncherGame() {
       });
     }
     setNftGems(gems);
-   
-    // Spawn powerups
+
     const powerupTypes: ('shield' | 'speed' | 'magnet' | 'multiplier')[] = ['shield', 'speed', 'magnet', 'multiplier'];
     const pups: {pos: Position; type: 'shield' | 'speed' | 'magnet' | 'multiplier'}[] = [];
     for (let i = 0; i < 2; i++) {
@@ -365,6 +369,7 @@ export default function BlockMuncherGame() {
     }
     setGamePowerups(pups);
   }, []);
+
   // Initialize game
   const initGame = useCallback(() => {
     setPlayerPos({ x: 7, y: 7 });
@@ -382,42 +387,42 @@ export default function BlockMuncherGame() {
     setBqoCollected(0);
     generateBlockchainItems();
   }, [generateBlockchainItems]);
+
   // Start game - shows intro dialogue first
   const startGame = useCallback(() => {
     initGame();
-    // Show intro dialogue - game starts when player dismisses it
     setShowIntroDialogue(true);
   }, [initGame]);
- 
+
   // Handle dialogue dismiss - actually start gameplay
   const handleDialogueDismiss = useCallback(() => {
     setShowIntroDialogue(false);
     beginGameplay();
   }, [beginGameplay]);
+
   // Move player
   const movePlayer = useCallback((dir: Direction) => {
     if (gameState !== 'playing') return;
     setPlayerDir(dir);
     playMove();
     const delta = DIRECTIONS[dir];
-   
+
     setPlayerPos(prev => {
       const newX = prev.x + delta.x;
       const newY = prev.y + delta.y;
-     
-      // Bounds check
+
       if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) {
         return prev;
       }
-     
-      // Wall check
+
       if (walls.some(w => w.x === newX && w.y === newY)) {
         return prev;
       }
-     
+
       return { x: newX, y: newY };
     });
   }, [gameState, walls, playMove]);
+
   // Game loop
   useEffect(() => {
     if (gameState !== 'playing') return;
@@ -434,7 +439,7 @@ export default function BlockMuncherGame() {
         }
         return prev;
       });
-     
+
       // Check BQO token collection
       setBqoTokens(prev => {
         const collected = prev.find(t => t.x === playerPos.x && t.y === playerPos.y);
@@ -449,7 +454,7 @@ export default function BlockMuncherGame() {
         }
         return prev;
       });
-     
+
       // Check NFT gem collection
       setNftGems(prev => {
         const collected = prev.find(g => g.pos.x === playerPos.x && g.pos.y === playerPos.y);
@@ -464,14 +469,13 @@ export default function BlockMuncherGame() {
         }
         return prev;
       });
-     
+
       // Check powerup collection
       setGamePowerups(prev => {
         const collected = prev.find(p => p.pos.x === playerPos.x && p.pos.y === playerPos.y);
         if (collected) {
           playPowerup();
           if (Platform.OS !== 'web') Vibration.vibrate(40);
-          // Apply powerup effect based on type
           if (collected.type === 'multiplier') {
             setScore(s => s + 100);
           } else if (collected.type === 'shield') {
@@ -481,8 +485,10 @@ export default function BlockMuncherGame() {
         }
         return prev;
       });
+
       // Move ghosts
       setGhosts(prev => prev.map(ghost => moveGhost(ghost, playerPos, walls)));
+
       // Check ghost collision
       const hitGhost = ghosts.some(g => g.x === playerPos.x && g.y === playerPos.y);
       if (hitGhost) {
@@ -490,48 +496,42 @@ export default function BlockMuncherGame() {
         setLives(l => {
           if (l <= 1) {
             playGameOver();
-            // Check if high score was beaten
             const currentHighScore = profile?.highScores?.['block-muncher'] || 0;
             previousHighScore.current = currentHighScore;
             if (score > currentHighScore) {
               setHighScoreBeaten(true);
             }
-            setGameState('rewards'); // Show rewards first!
+            setGameState('rewards');
             return 0;
           }
-          // Reset player position
           setPlayerPos({ x: 7, y: 7 });
           if (Platform.OS !== 'web') GameHaptics.error();
           return l - 1;
         });
       }
+
       // Check victory
       if (blocks.length === 0) {
         playLevelUp();
         setLevel(l => l + 1);
         setBlocks(generateBlocks());
-        setScore(s => s + 100); // Level bonus
+        setScore(s => s + 100);
       }
     }, 200 - level * 10);
+
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
   }, [gameState, playerPos, ghosts, blocks.length, level, walls]);
+
   // Handle rewards -> gameover transition
   useEffect(() => {
     if (gameState === 'gameover' && profile) {
       const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
-     
-      // Apply character bonus to score
       const finalScore = applyBonus(score);
       const bonusPoints = getBonusPoints(score);
-     
-      // Record character game progress
       recordGame(score);
-     
-      // Update score with bonus applied
       updateScore('block-muncher', finalScore, duration);
-      // Submit to leaderboard with final score
       axios.post(`${BACKEND_URL}/api/leaderboard`, {
         player_id: profile.id,
         player_name: profile.username,
@@ -539,7 +539,6 @@ export default function BlockMuncherGame() {
         score: finalScore,
         duration,
       }).catch(console.error);
-      // Award badge for high score (based on final score)
       if (finalScore >= 500) {
         mintBadge({
           name: finalScore >= 1000 ? 'Chain Master' : 'Block Collector',
@@ -554,12 +553,13 @@ export default function BlockMuncherGame() {
       }
     }
   }, [gameState]);
- 
+
   // Handle continue from rewards modal
   const handleRewardsContinue = () => {
     setGameState('gameover');
     setHighScoreBeaten(false);
   };
+
   // Control buttons
   const ControlButton: React.FC<{ direction: Direction; icon: string }> = ({ direction, icon }) => (
     <TouchableOpacity
@@ -570,12 +570,12 @@ export default function BlockMuncherGame() {
       <Ionicons name={icon as any} size={32} color={COLORS.chainGold} />
     </TouchableOpacity>
   );
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* NEW: BACK & SAVE BUTTON - top-left corner */}
+      {/* BACK & SAVE BUTTON */}
       <TouchableOpacity
         onPress={async () => {
-          // Save progress if logged in
           if (authService.isLoggedIn()) {
             try {
               await authService.syncProgress({
@@ -583,31 +583,27 @@ export default function BlockMuncherGame() {
                 total_xp: xp,
                 level: level,
                 badges: badges,
-                // You can add more if you want, like avatar_id: profile?.avatarId
               });
               console.log('✅ Cloud save done!');
             } catch (err) {
               console.error('Cloud save failed:', err);
-              // Game still saves locally via Zustand - no big deal
             }
           } else {
             console.log('Guest mode - local save only');
           }
-
-          // Go back to menu
           router.back();
         }}
         style={{
           position: 'absolute',
-          top: 50,           // A bit lower so it doesn't overlap header
+          top: 50,
           left: 20,
           backgroundColor: 'rgba(0,0,0,0.7)',
           paddingHorizontal: 16,
           paddingVertical: 10,
           borderRadius: 12,
           borderWidth: 2,
-          borderColor: '#00FFFF',  // Retro cyan
-          zIndex: 9999,      // Always on top
+          borderColor: '#00FFFF',
+          zIndex: 9999,
         }}
       >
         <Text style={{ color: '#FF00FF', fontSize: 18, fontWeight: 'bold' }}>
@@ -617,255 +613,227 @@ export default function BlockMuncherGame() {
 
       <ScreenShake intensity={8} trigger={shakeCount}>
         <VFXLayer type="crt-breathe" intensity={0.2} />
-       
-        {/* Floating Scores */}
+
         <FloatingScoresComponent />
-       
-        {/* Combo Display */}
         <ComboDisplay combo={combo} visible={showCombo} />
-       
-        {/* Level Up Flash */}
         <LevelUpFlash trigger={levelUpTrigger} level={level} />
-       
-        {/* Danger Warning when low health */}
         <DangerWarning active={lives === 1 && gameState === 'playing'} />
-       
-        {/* Particle Burst */}
         <ParticleBurst
           x={particleBurst.x}
           y={particleBurst.y}
           trigger={particleBurst.trigger}
           color="#00FF41"
         />
-       
-        {/* Roast HUD - Shows during gameplay */}
-      {gameState === 'playing' && (
-        <RoastHUD
-          score={score}
-          lives={lives}
-          goal={`Build a ${10 + level * 5} block chain!`}
+
+        {gameState === 'playing' && (
+          <RoastHUD
+            score={score}
+            lives={lives}
+            goal={`Build a ${10 + level * 5} block chain!`}
+            gameId="block-muncher"
+            showPuns={true}
+          />
+        )}
+
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+          </TouchableOpacity>
+
+          <View style={styles.scoreContainer}>
+            <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
+            <PixelText size="lg" color={COLORS.chainGold} glow>{score}</PixelText>
+            {hasBonus && (
+              <Text style={styles.bonusIndicator}>
+                {abilityIcon} +{bonusPercent}%
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.livesContainer}>
+            {Array(lives).fill(0).map((_, i) => (
+              <PixelText key={i} size="md">💛</PixelText>
+            ))}
+          </View>
+
+          <View style={styles.levelContainer}>
+            <PixelText size="xs" color={COLORS.textSecondary}>LVL</PixelText>
+            <PixelText size="md" color={COLORS.blockCyan}>{level}</PixelText>
+          </View>
+        </View>
+
+        {/* Game Area */}
+        <View style={styles.gameContainer}>
+          <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
+            {chain.map((pos, i) => (
+              <ChainLink key={`chain-${i}`} x={pos.x} y={pos.y} cellSize={CELL_SIZE} index={i} />
+            ))}
+            {walls.map((wall, i) => (
+              <View
+                key={`wall-${i}`}
+                style={[
+                  styles.cell,
+                  styles.wall,
+                  { left: wall.x * CELL_SIZE, top: wall.y * CELL_SIZE },
+                ]}
+              />
+            ))}
+            {blocks.map((block, i) => (
+              <Block key={`block-${i}`} position={block} />
+            ))}
+            {bqoTokens.map((token, i) => (
+              <BQOToken
+                key={`bqo-${i}`}
+                x={token.x}
+                y={token.y}
+                cellSize={CELL_SIZE}
+                size={CELL_SIZE * 0.7}
+                variant={i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}
+              />
+            ))}
+            {nftGems.map((gem, i) => (
+              <NFTGem
+                key={`gem-${i}`}
+                x={gem.pos.x}
+                y={gem.pos.y}
+                cellSize={CELL_SIZE}
+                size={CELL_SIZE * 0.6}
+                rarity={gem.rarity}
+              />
+            ))}
+            {gamePowerups.map((pup, i) => (
+              <WalletPowerup
+                key={`pup-${i}`}
+                x={pup.pos.x}
+                y={pup.pos.y}
+                cellSize={CELL_SIZE}
+                type={pup.type}
+              />
+            ))}
+            {showTokenEffect && (
+              <TokenCollectEffect
+                x={showTokenEffect.x}
+                y={showTokenEffect.y}
+                cellSize={CELL_SIZE}
+                amount={showTokenEffect.amount}
+              />
+            )}
+            {ghosts.map((ghost, i) => (
+              <Ghost
+                key={`ghost-${i}`}
+                position={ghost}
+                color={['#FF0000', '#00FFFF', '#FFB8FF'][i]}
+                index={i}
+              />
+            ))}
+            <Player position={playerPos} direction={playerDir} />
+          </View>
+
+          <View style={styles.bqoCounter}>
+            <PixelText size="xs" color={COLORS.neonYellow}>BQO TOKENS</PixelText>
+            <PixelText size="lg" color={COLORS.neonPink} glow>{bqoCollected}</PixelText>
+          </View>
+
+          <View style={styles.infoBox}>
+            <PixelText size="xs" color={COLORS.blockCyan}>
+              🔗 {GAME_MECHANICS.concept.toUpperCase()}:
+            </PixelText>
+            <PixelText size="xs" color={COLORS.textMuted}>
+              {getRandomTip('block-muncher')}
+            </PixelText>
+            <PixelText size="xs" color={COLORS.chainGold}>
+              Chain Length: {chain.length} blocks 🔗
+            </PixelText>
+          </View>
+        </View>
+
+        {/* Controls */}
+        <View style={styles.controlsContainer}>
+          <View style={styles.controlRow}>
+            <ControlButton direction="UP" icon="arrow-up" />
+          </View>
+          <View style={styles.controlRow}>
+            <ControlButton direction="LEFT" icon="arrow-back" />
+            <View style={styles.controlSpacer} />
+            <ControlButton direction="RIGHT" icon="arrow-forward" />
+          </View>
+          <View style={styles.controlRow}>
+            <ControlButton direction="DOWN" icon="arrow-down" />
+          </View>
+        </View>
+
+        {/* Menu Overlay */}
+        {gameState === 'menu' && (
+          <View style={styles.overlay}>
+            <VFXLayer type="pixel-chain-rain" intensity={0.6} />
+            <Animated.View entering={FadeInDown.delay(200)} style={styles.menuContent}>
+              <PixelText size="xxl" color={COLORS.chainGold} glow style={styles.menuTitle}>
+                {GAME_CONFIG.title.toUpperCase()}
+              </PixelText>
+              <PixelText size="md" style={styles.menuIcon}>{GAME_CONFIG.icon}</PixelText>
+
+              <View style={styles.instructionBox}>
+                <PixelText size="xs" color={COLORS.neonCyan}>HOW TO PLAY</PixelText>
+                <PixelText size="xs" color={COLORS.textSecondary} style={styles.instructionText}>
+                  {GAME_CONFIG.instructions}
+                </PixelText>
+              </View>
+
+              <View style={styles.controlsInfo}>
+                <PixelText size="xs" color={COLORS.neonYellow}>CONTROLS</PixelText>
+                <PixelText size="sm" color={COLORS.chainGold} glow>
+                  {GAME_CONFIG.controls}
+                </PixelText>
+              </View>
+
+              <PixelText size="xs" color={
+                GAME_CONFIG.difficulty === 'Easy' ? '#32CD32' :
+                GAME_CONFIG.difficulty === 'Medium' ? '#FFD700' : '#FF4500'
+              }>
+                {GAME_CONFIG.difficulty === 'Easy' ? '★☆☆' :
+                 GAME_CONFIG.difficulty === 'Medium' ? '★★☆' : '★★★'} {GAME_CONFIG.difficulty}
+              </PixelText>
+
+              <PixelButton
+                title="▶ PLAY"
+                onPress={startGame}
+                color={COLORS.chainGold}
+                size="lg"
+                style={{ marginTop: 20 }}
+              />
+            </Animated.View>
+          </View>
+        )}
+
+        <GameRewardsModal
+          visible={gameState === 'rewards'}
           gameId="block-muncher"
-          showPuns={true}
+          gameName="Block Muncher"
+          score={score}
+          baseXP={Math.floor(score / 10)}
+          isNewHighScore={highScoreBeaten}
+          onContinue={handleRewardsContinue}
         />
-      )}
-     
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
-        </TouchableOpacity>
-       
-        <View style={styles.scoreContainer}>
-          <PixelText size="xs" color={COLORS.textSecondary}>SCORE</PixelText>
-          <PixelText size="lg" color={COLORS.chainGold} glow>{score}</PixelText>
-          {hasBonus && (
-            <Text style={styles.bonusIndicator}>
-              {abilityIcon} +{bonusPercent}%
-            </Text>
-          )}
-        </View>
-       
-        <View style={styles.livesContainer}>
-          {Array(lives).fill(0).map((_, i) => (
-            <PixelText key={i} size="md">💛</PixelText>
-          ))}
-        </View>
-       
-        <View style={styles.levelContainer}>
-          <PixelText size="xs" color={COLORS.textSecondary}>LVL</PixelText>
-          <PixelText size="md" color={COLORS.blockCyan}>{level}</PixelText>
-        </View>
-      </View>
-      {/* Game Area */}
-      <View style={styles.gameContainer}>
-        <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
-          {/* Chain trail */}
-          {chain.map((pos, i) => (
-            <ChainLink key={`chain-${i}`} x={pos.x} y={pos.y} cellSize={CELL_SIZE} index={i} />
-          ))}
-         
-          {/* Walls */}
-          {walls.map((wall, i) => (
-            <View
-              key={`wall-${i}`}
-              style={[
-                styles.cell,
-                styles.wall,
-                { left: wall.x * CELL_SIZE, top: wall.y * CELL_SIZE },
-              ]}
-            />
-          ))}
-         
-          {/* Blocks */}
-          {blocks.map((block, i) => (
-            <Block key={`block-${i}`} position={block} />
-          ))}
-         
-          {/* BQO Tokens */}
-          {bqoTokens.map((token, i) => (
-            <BQOToken
-              key={`bqo-${i}`}
-              x={token.x}
-              y={token.y}
-              cellSize={CELL_SIZE}
-              size={CELL_SIZE * 0.7}
-              variant={i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}
-            />
-          ))}
-         
-          {/* NFT Gems */}
-          {nftGems.map((gem, i) => (
-            <NFTGem
-              key={`gem-${i}`}
-              x={gem.pos.x}
-              y={gem.pos.y}
-              cellSize={CELL_SIZE}
-              size={CELL_SIZE * 0.6}
-              rarity={gem.rarity}
-            />
-          ))}
-         
-          {/* Powerups */}
-          {gamePowerups.map((pup, i) => (
-            <WalletPowerup
-              key={`pup-${i}`}
-              x={pup.pos.x}
-              y={pup.pos.y}
-              cellSize={CELL_SIZE}
-              type={pup.type}
-            />
-          ))}
-         
-          {/* Token collect effect */}
-          {showTokenEffect && (
-            <TokenCollectEffect
-              x={showTokenEffect.x}
-              y={showTokenEffect.y}
-              cellSize={CELL_SIZE}
-              amount={showTokenEffect.amount}
-            />
-          )}
-         
-          {/* Ghosts */}
-          {ghosts.map((ghost, i) => (
-            <Ghost
-              key={`ghost-${i}`}
-              position={ghost}
-              color={['#FF0000', '#00FFFF', '#FFB8FF'][i]}
-              index={i}
-            />
-          ))}
-         
-          {/* Player */}
-          <Player position={playerPos} direction={playerDir} />
-        </View>
-       
-        {/* BQO Counter */}
-        <View style={styles.bqoCounter}>
-          <PixelText size="xs" color={COLORS.neonYellow}>BQO TOKENS</PixelText>
-          <PixelText size="lg" color={COLORS.neonPink} glow>{bqoCollected}</PixelText>
-        </View>
-        {/* Web3 Info */}
-        <View style={styles.infoBox}>
-          <PixelText size="xs" color={COLORS.blockCyan}>
-            🔗 {GAME_MECHANICS.concept.toUpperCase()}:
-          </PixelText>
-          <PixelText size="xs" color={COLORS.textMuted}>
-            {getRandomTip('block-muncher')}
-          </PixelText>
-          <PixelText size="xs" color={COLORS.chainGold}>
-            Chain Length: {chain.length} blocks 🔗
-          </PixelText>
-        </View>
-      </View>
-      {/* Controls */}
-      <View style={styles.controlsContainer}>
-        <View style={styles.controlRow}>
-          <ControlButton direction="UP" icon="arrow-up" />
-        </View>
-        <View style={styles.controlRow}>
-          <ControlButton direction="LEFT" icon="arrow-back" />
-          <View style={styles.controlSpacer} />
-          <ControlButton direction="RIGHT" icon="arrow-forward" />
-        </View>
-        <View style={styles.controlRow}>
-          <ControlButton direction="DOWN" icon="arrow-down" />
-        </View>
-      </View>
-      {/* Menu Overlay */}
-      {gameState === 'menu' && (
-        <View style={styles.overlay}>
-          <VFXLayer type="pixel-chain-rain" intensity={0.6} />
-          <Animated.View entering={FadeInDown.delay(200)} style={styles.menuContent}>
-            <PixelText size="xxl" color={COLORS.chainGold} glow style={styles.menuTitle}>
-              {GAME_CONFIG.title.toUpperCase()}
-            </PixelText>
-            <PixelText size="md" style={styles.menuIcon}>{GAME_CONFIG.icon}</PixelText>
-           
-            {/* Instructions */}
-            <View style={styles.instructionBox}>
-              <PixelText size="xs" color={COLORS.neonCyan}>HOW TO PLAY</PixelText>
-              <PixelText size="xs" color={COLORS.textSecondary} style={styles.instructionText}>
-                {GAME_CONFIG.instructions}
-              </PixelText>
-            </View>
-           
-            {/* Controls */}
-            <View style={styles.controlsInfo}>
-              <PixelText size="xs" color={COLORS.neonYellow}>CONTROLS</PixelText>
-              <PixelText size="sm" color={COLORS.chainGold} glow>
-                {GAME_CONFIG.controls}
-              </PixelText>
-            </View>
-           
-            {/* Difficulty */}
-            <PixelText size="xs" color={
-              GAME_CONFIG.difficulty === 'Easy' ? '#32CD32' :
-              GAME_CONFIG.difficulty === 'Medium' ? '#FFD700' : '#FF4500'
-            }>
-              {GAME_CONFIG.difficulty === 'Easy' ? '★☆☆' :
-               GAME_CONFIG.difficulty === 'Medium' ? '★★☆' : '★★★'} {GAME_CONFIG.difficulty}
-            </PixelText>
-           
-            <PixelButton
-              title="▶ PLAY"
-              onPress={startGame}
-              color={COLORS.chainGold}
-              size="lg"
-              style={{ marginTop: 20 }}
-            />
-          </Animated.View>
-        </View>
-      )}
-      {/* Game Rewards Modal - Shows XP with faction bonus! */}
-      <GameRewardsModal
-        visible={gameState === 'rewards'}
-        gameId="block-muncher"
-        gameName="Block Muncher"
-        score={score}
-        baseXP={Math.floor(score / 10)}
-        isNewHighScore={highScoreBeaten}
-        onContinue={handleRewardsContinue}
-      />
-      {/* Game Over - Using RektScreen */}
-      <RektScreen
-        visible={gameState === 'gameover'}
-        score={score}
-        reason={`Chain: ${chain.length} blocks | Level: ${level}`}
-        onRetry={startGame}
-        onQuit={() => router.push('/')}
-      />
-     
-      {/* Character Story Dialogue - Shows before game starts */}
-      <CharacterDialogue
-        gameId="block-muncher"
-        visible={showIntroDialogue}
-        onDismiss={handleDialogueDismiss}
-      />
-    </ScreenShake>
+
+        <RektScreen
+          visible={gameState === 'gameover'}
+          score={score}
+          reason={`Chain: ${chain.length} blocks | Level: ${level}`}
+          onRetry={startGame}
+          onQuit={() => router.push('/')}
+        />
+
+        <CharacterDialogue
+          gameId="block-muncher"
+          visible={showIntroDialogue}
+          onDismiss={handleDialogueDismiss}
+        />
+      </ScreenShake>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
