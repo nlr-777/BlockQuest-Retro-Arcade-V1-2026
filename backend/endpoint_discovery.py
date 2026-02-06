@@ -7,7 +7,7 @@ import requests
 
 def test_endpoint_discovery():
     """Test for additional endpoints"""
-    base_url = "https://pixelpolishup.preview.emergentagent.com/api"
+    base_url = "https://https://block-quest-retro-arcade-v1-2026.vercel.app/"
     
     # Common endpoint patterns to test
     endpoints_to_test = [
