@@ -2,7 +2,6 @@
 // Shows XP earned with faction bonus breakdown
 // Teaches: Community benefits, shared rewards, contribution
 // Integrated with Story Achievements system
-
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Platform, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Animated, {
@@ -54,18 +53,18 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
   const [unlockedAchievements, setUnlockedAchievements] = useState<StoryAchievement[]>([]);
   const [showAchievementToast, setShowAchievementToast] = useState(false);
   const [currentAchievementIndex, setCurrentAchievementIndex] = useState(0);
-  
+
   // Calculate faction bonus
   const factionBonusPercent = playerFaction ? getFactionBonus(gameId) : 0;
   const bonusXP = Math.floor(baseXP * (factionBonusPercent / 100));
   const totalXP = baseXP + bonusXP;
-  
+
   // Animation values
   const counterValue = useSharedValue(0);
   const bonusScale = useSharedValue(0);
-  
+
   const faction = playerFaction ? FACTIONS[playerFaction] : null;
-  
+
   useEffect(() => {
     if (visible && !xpAwarded) {
       // Trigger confetti for high scores
@@ -73,23 +72,23 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 3000);
       }
-      
+
       // Animate XP counter
       counterValue.value = withTiming(totalXP, { duration: 1500 });
-      
+
       // Bounce in bonus indicator if there's a faction bonus
       if (bonusXP > 0) {
         bonusScale.value = withDelay(800, withSpring(1, { damping: 8 }));
       }
-      
+
       // Award XP to player
       addXP(totalXP);
-      
+
       // Contribute to faction
       if (playerFaction) {
         contributeXP(totalXP);
       }
-      
+
       // Process story progression and achievements
       processGameCompletion(gameId, score).then(({ achievements, chaptersUnlocked }) => {
         if (achievements.length > 0) {
@@ -102,11 +101,11 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
       }).catch(err => {
         console.warn('Failed to process game completion:', err);
       });
-      
+
       setXpAwarded(true);
     }
-  }, [visible]);
-  
+  }, [visible, gameId, score, baseXP, isNewHighScore, playerFaction, addXP, contributeXP]);
+
   // Reset when modal closes
   useEffect(() => {
     if (!visible) {
@@ -118,18 +117,16 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
       setCurrentAchievementIndex(0);
     }
   }, [visible]);
-  
+
   // Handle achievement toast dismiss
   const handleAchievementDismiss = () => {
     if (currentAchievementIndex < unlockedAchievements.length - 1) {
-      // Show next achievement
       setCurrentAchievementIndex(prev => prev + 1);
     } else {
-      // All achievements shown
       setShowAchievementToast(false);
     }
   };
-  
+
   const bonusStyle = useAnimatedStyle(() => ({
     transform: [{ scale: bonusScale.value }],
   }));
@@ -142,9 +139,9 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
     <View style={styles.container}>
       <CRTScanlines opacity={0.06} />
       <ConfettiBurst active={showConfetti} />
-      
+
       <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -152,14 +149,14 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
         >
           {/* Header */}
           <View style={styles.header}>
-            <CRTFlickerText 
-              style={styles.headerText} 
+            <CRTFlickerText
+              style={styles.headerText}
               color={isNewHighScore ? CRT_COLORS.accentGold : CRT_COLORS.primary}
             >
               {isNewHighScore ? '🏆 HIGH SCORE! 🏆' : '✨ COMPLETE! ✨'}
             </CRTFlickerText>
           </View>
-          
+
           {/* Game & Score */}
           <Animated.View entering={FadeIn.delay(200)} style={styles.gameInfo}>
             <Text style={styles.gameName}>{gameName}</Text>
@@ -168,21 +165,21 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
               <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
             </View>
           </Animated.View>
-          
+
           {/* XP Breakdown */}
           <View style={styles.xpSection}>
             <Text style={styles.xpTitle}>⚡ XP EARNED ⚡</Text>
-            
+
             {/* Base XP */}
             <Animated.View entering={SlideInRight.delay(400)} style={styles.xpRow}>
               <Text style={styles.xpRowLabel}>Base XP</Text>
               <Text style={styles.xpRowValue}>+{baseXP}</Text>
             </Animated.View>
-            
+
             {/* Faction Bonus */}
             {faction && bonusXP > 0 && (
-              <Animated.View 
-                entering={SlideInRight.delay(600)} 
+              <Animated.View
+                entering={SlideInRight.delay(600)}
                 style={[styles.xpRow, styles.bonusRow]}
               >
                 <View style={styles.bonusLabelRow}>
@@ -198,7 +195,7 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
                 </Animated.View>
               </Animated.View>
             )}
-            
+
             {/* No faction message */}
             {!playerFaction && (
               <Animated.View entering={FadeIn.delay(600)} style={styles.noFactionHint}>
@@ -207,7 +204,7 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
                 </Text>
               </Animated.View>
             )}
-            
+
             {/* Total */}
             <Animated.View entering={FadeInUp.delay(800)} style={styles.totalRow}>
               <Text style={styles.totalLabel}>TOTAL</Text>
@@ -216,8 +213,8 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
               </CRTFlickerText>
             </Animated.View>
           </View>
-          
-          {/* Faction Contribution - shortened */}
+
+          {/* Faction Contribution */}
           {faction && (
             <Animated.View entering={FadeIn.delay(1000)} style={styles.contributionBox}>
               <Text style={styles.contributionIcon}>{faction.icon}</Text>
@@ -227,13 +224,13 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
             </Animated.View>
           )}
         </ScrollView>
-        
-        {/* Button - Always visible at bottom */}
+
+        {/* Buttons */}
         <View style={styles.buttonContainer}>
           <View style={styles.buttonRow}>
-            <ShareButton 
+            <ShareButton
               type={isNewHighScore ? 'score' : 'achievement'}
-              data={{ 
+              data={{
                 score: isNewHighScore ? score : undefined,
                 gameName,
                 badgeName: `${gameName} Master`,
@@ -245,18 +242,21 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
           </View>
         </View>
       </Animated.View>
-      
-      {/* Achievement Toast */}
-      <AchievementToast
-        achievement={currentAchievement}
-        visible={showAchievementToast}
-        onDismiss={handleAchievementDismiss}
-        autoDismiss={5000}
-      />
+
+      {/* Achievement Toast - only render when we have a real achievement */}
+      {showAchievementToast && currentAchievement && (
+        <AchievementToast
+          achievement={currentAchievement}
+          visible={showAchievementToast}
+          onDismiss={handleAchievementDismiss}
+          autoDismiss={5000}
+        />
+      )}
     </View>
   );
 };
 
+// Styles remain exactly the same
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
