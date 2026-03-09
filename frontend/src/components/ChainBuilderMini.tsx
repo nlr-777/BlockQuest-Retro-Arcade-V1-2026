@@ -157,6 +157,8 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
         if (score > highScore) {
           setHighScore(score);
         }
+        // Call game complete callback
+        onGameComplete?.(score, prevChain.length);
         return prevChain;
       }
 
