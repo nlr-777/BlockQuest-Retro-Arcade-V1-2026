@@ -200,7 +200,7 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
 
       return newChain;
     });
-  }, [gameState, nextDirection, block, score, highScore, spawnBlock, checkAchievements, onScoreUpdate]);
+  }, [gameState, nextDirection, block, score, highScore, spawnBlock, checkAchievements, onScoreUpdate, onGameComplete]);
 
   // Start/stop game loop
   useEffect(() => {
