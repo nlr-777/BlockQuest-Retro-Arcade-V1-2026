@@ -77,6 +77,7 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
   visible,
   onClose,
   onScoreUpdate,
+  onGameComplete,
 }) => {
   // Game state
   const [gameState, setGameState] = useState<GameState>('intro');
