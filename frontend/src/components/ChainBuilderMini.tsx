@@ -70,6 +70,7 @@ interface ChainBuilderMiniProps {
   visible: boolean;
   onClose: () => void;
   onScoreUpdate?: (score: number) => void;
+  onGameComplete?: (score: number, chainLength: number) => void;
 }
 
 export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
