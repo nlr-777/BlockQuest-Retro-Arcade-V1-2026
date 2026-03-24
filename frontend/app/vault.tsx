@@ -49,7 +49,7 @@ import {
   PixelRain,
   CRTFlickerText,
   HexBadge,
-  ConfettiBurst,
+  ConfettiEffect,
 } from '../src/components/CRTEffects';
 import audioManager from '../src/utils/AudioManager';
 

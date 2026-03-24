@@ -12,7 +12,7 @@ import Animated, {
   FadeIn,
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../constants/crtTheme';
-import { CRTFlickerText, ConfettiBurst, HexBadge } from './CRTEffects';
+import { ConfettiEffect } from './ConfettiEffect';
 import { LoginReward, loyaltyService } from '../services/LoyaltyService';
 import { useGameStore } from '../store/gameStore';
 import audioManager from '../utils/AudioManager';
@@ -81,7 +81,7 @@ export const LoyaltyRewardsPopup: React.FC<LoyaltyRewardsProps> = ({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <ConfettiBurst active={showConfetti} />
+        <ConfettiEffect visible={showConfetti} />
         
         <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
           {/* Header */}

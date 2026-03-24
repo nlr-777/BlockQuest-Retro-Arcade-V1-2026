@@ -6,7 +6,7 @@ import Animated, { FadeInDown, ZoomIn, BounceIn } from 'react-native-reanimated'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
-import { CRTGlowBorder, CRTFlickerText, ConfettiBurst } from './CRTEffects';
+import { ConfettiEffect } from './ConfettiEffect';
 import { useGameStore } from '../store/gameStore';
 
 interface Quest {
@@ -269,7 +269,7 @@ export const DailyQuests: React.FC<DailyQuestsProps> = ({ onClose }) => {
 
   return (
     <View style={styles.container}>
-      <ConfettiBurst active={showConfetti} />
+      <ConfettiEffect visible={showConfetti} />
       
       {/* Header */}
       <View style={styles.header}>

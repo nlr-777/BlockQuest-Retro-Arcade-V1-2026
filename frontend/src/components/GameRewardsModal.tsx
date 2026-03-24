@@ -17,7 +17,7 @@ import Animated, {
   SlideInRight,
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../constants/crtTheme';
-import { CRTFlickerText, CRTScanlines, ConfettiBurst } from './CRTEffects';
+import { ConfettiEffect } from './ConfettiEffect';
 import { useFactionStore, FACTIONS } from '../store/factionStore';
 import { useGameStore } from '../store/gameStore';
 import { useCharacterStore } from '../store/characterStore';
@@ -141,7 +141,7 @@ export const GameRewardsModal: React.FC<GameRewardsModalProps> = ({
   return (
     <View style={styles.container}>
       <CRTScanlines opacity={0.06} />
-      <ConfettiBurst active={showConfetti} />
+      <ConfettiEffect visible={showConfetti} />
       
       <Animated.View entering={ZoomIn.springify()} style={styles.modal}>
         <ScrollView 
