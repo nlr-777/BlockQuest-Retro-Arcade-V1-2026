@@ -102,7 +102,8 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
 
   // Spawn a new block to collect
   const spawnBlock = useCallback(() => {
-    let newX, newY;
+    let newX: number = 0;
+    let newY: number = 0;
     do {
       newX = Math.floor(Math.random() * GRID_COLS);
       newY = Math.floor(Math.random() * GRID_ROWS);
