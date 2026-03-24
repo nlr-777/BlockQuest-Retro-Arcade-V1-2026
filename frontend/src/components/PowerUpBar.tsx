@@ -218,7 +218,8 @@ export const PowerUpBar: React.FC<PowerUpBarProps> = ({
 export const PowerUpHUD: React.FC<{
   onActivate?: (powerUp: PowerUp) => void;
 }> = ({ onActivate }) => {
-  const { badges } = useGameStore();
+  const { profile } = useGameStore();
+  const badges = profile?.badges || [];
   const { 
     unlockedPowerUps, 
     activatePowerUp, 
