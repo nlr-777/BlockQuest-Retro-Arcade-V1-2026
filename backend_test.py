@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 # Get backend URL from environment
-BACKEND_URL = "https://pixelpolishup.preview.emergentagent.com/api"
+BACKEND_URL = "https://arcade-cleanup.preview.emergentagent.com/api"
 
 class BlockQuestAPITester:
     def __init__(self):

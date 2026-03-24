@@ -40,6 +40,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'contract-crusher')!;
 
@@ -438,6 +439,16 @@ export default function ContractCrusherGame() {
       default: return '?';
     }
   };
+
+  // Keyboard controls for web (Left/Right paddle movement)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') setPaddleX(prev => Math.max(0, prev - 30));
+    if (dir === 'right') setPaddleX(prev => Math.min(GAME_WIDTH - PADDLE_WIDTH, prev + 30));
+    if (dir === 'action') launchBall();
+  }, [gameState, launchBall]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

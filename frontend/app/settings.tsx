@@ -290,8 +290,8 @@ export default function SettingsScreen() {
         achievements: profile.achievements || [],
         recent_scores: recentScores || [],
         // Faction data
-        faction_id: factionState.playerFaction,
-        faction_joined_at: factionState.joinedAt,
+        faction_id: factionState.playerFaction ?? undefined,
+        faction_joined_at: factionState.joinedAt ?? undefined,
         faction_xp_contributed: factionState.xpContributed,
         faction_votes_participated: factionState.votesParticipated,
         faction_member_rank: factionState.memberRank,

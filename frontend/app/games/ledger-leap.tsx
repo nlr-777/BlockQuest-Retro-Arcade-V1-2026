@@ -38,6 +38,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -457,6 +458,16 @@ export default function LedgerLeapGame() {
   const stopMove = () => {
     moveDirectionRef.current = null;
   };
+
+  // Keyboard controls for web (Left/Right move, Up/Space to jump)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') startMove('left');
+    if (dir === 'right') startMove('right');
+    if (dir === 'up' || dir === 'action') handleJump();
+  }, [gameState, startMove, handleJump]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

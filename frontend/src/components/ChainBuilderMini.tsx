@@ -92,7 +92,7 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
   
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scoreScale = useSharedValue(1);
 
   // Score animation

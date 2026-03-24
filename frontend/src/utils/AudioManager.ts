@@ -189,7 +189,7 @@ class AudioManager {
   private compressor: DynamicsCompressorNode | null = null;
   
   // Music state
-  private musicLoops: NodeJS.Timeout[] = [];
+  private musicLoops: ReturnType<typeof setInterval>[] = [];
   private currentTrack: MusicTrack | null = null;
   private beatCount: number = 0;
   private barCount: number = 0;
@@ -234,7 +234,7 @@ class AudioManager {
   
   // Track currently playing priority sounds
   private currentPriority: number = 0;
-  private priorityTimeout: NodeJS.Timeout | null = null;
+  private priorityTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private constructor() {
     this.initAudioContext();

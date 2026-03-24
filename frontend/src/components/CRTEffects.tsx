@@ -350,6 +350,9 @@ interface HexBadgeProps {
   size?: number;
   unlocked?: boolean;
   onPress?: () => void;
+  rarity?: string;
+  label?: string;
+  animated?: boolean;
 }
 
 export const HexBadge: React.FC<HexBadgeProps> = ({ 

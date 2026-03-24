@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
@@ -61,6 +62,13 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  EnhancedDPad,
+  NeonText,
+  ScoreDisplay,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
 const GAME_MECHANICS = getGameMechanics('block-muncher')!;
@@ -600,16 +608,16 @@ export default function BlockMuncherGame() {
     setHighScoreBeaten(false);
   };
 
-  // Control buttons
-  const ControlButton: React.FC<{ direction: Direction; icon: string }> = ({ direction, icon }) => (
-    <TouchableOpacity
-      style={styles.controlButton}
-      onPress={() => movePlayer(direction)}
-      activeOpacity={0.7}
-    >
-      <Ionicons name={icon as any} size={32} color={COLORS.chainGold} />
-    </TouchableOpacity>
-  );
+  // Control buttons - Enhanced with keyboard support
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    const keyMap: Record<string, Direction> = {
+      up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT',
+    };
+    if (keyMap[dir]) movePlayer(keyMap[dir]);
+  }, [gameState, movePlayer]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -779,19 +787,17 @@ export default function BlockMuncherGame() {
         </View>
       </View>
 
-      {/* Controls */}
+      {/* Controls - Enhanced D-Pad */}
       <View style={styles.controlsContainer}>
-        <View style={styles.controlRow}>
-          <ControlButton direction="UP" icon="arrow-up" />
-        </View>
-        <View style={styles.controlRow}>
-          <ControlButton direction="LEFT" icon="arrow-back" />
-          <View style={styles.controlSpacer} />
-          <ControlButton direction="RIGHT" icon="arrow-forward" />
-        </View>
-        <View style={styles.controlRow}>
-          <ControlButton direction="DOWN" icon="arrow-down" />
-        </View>
+        <EnhancedDPad
+          onUp={() => movePlayer('UP')}
+          onDown={() => movePlayer('DOWN')}
+          onLeft={() => movePlayer('LEFT')}
+          onRight={() => movePlayer('RIGHT')}
+          size="md"
+          color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : COLORS.chainGold}
+          disabled={gameState !== 'playing'}
+        />
       </View>
 
       {/* Menu Overlay */}

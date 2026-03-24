@@ -413,7 +413,7 @@ export const useFloatingScores = () => {
 export const useComboSystem = (resetDelay: number = 2000) => {
   const [combo, setCombo] = useState(0);
   const [showCombo, setShowCombo] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const incrementCombo = useCallback(() => {
     // Clear existing timer

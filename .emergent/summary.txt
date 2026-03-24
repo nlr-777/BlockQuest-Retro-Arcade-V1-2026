@@ -1,503 +1,1366 @@
 <analysis>
-**original_problem_statement**: The user wants to perform a final, comprehensive pre-export audit and enhancement of the application. The goal is to conduct a full review of the codebase (frontend, backend, DB) for bugs, security vulnerabilities, performance issues, and UI/UX flaws. All identified issues should be fixed, and polish should be added to make the app launch ready. This includes preparing the app for deployment on Vercel and export to GitHub with a proper README.md, Privacy Policy, and Terms & Conditions. The user also requested several specific UI/UX enhancements, including making text more readable, adding color variety to the UI, and ensuring all user progress (scores, XP, badges, faction data, etc.) is fully synchronized across devices and sessions.
+**original_problem_statement**: The user initially requested a full pre-export audit of the application, including fixing bugs, patching security vulnerabilities, addressing performance issues, and polishing the UI/UX to make it launch ready for Vercel deployment.
 
-PRODUCT REQUIREMENTS:
-- A fully audited, secure, and polished retro game arcade application.
-- All backend vulnerabilities (XSS, rate-limiting) must be patched.
-- A comprehensive data synchronization system must be in place for all player progress.
-- The UI must be polished, with improved text readability and vibrant, varied colors.
-- The app must be ready for App Store submission, with necessary  and  configurations.
-- Legal pages (Privacy Policy, Terms & Conditions) must be created, be accessible in the app, and tailored for an Australian context.
-- The project must be configured for static web deployment on Vercel.
-- A comprehensive  must be generated.
+This evolved into several major tasks:
+1.  **Database Migration**: The user mandated a complete migration from MongoDB to Supabase. This involved removing all MongoDB logic and drivers, and adapting the entire backend and frontend data flow to use Supabase with two new tables:  and .
+2.  **Welcome Screen & Hero Unlock Overhaul**: The user requested a significant enhancement of the welcome/hero selection screen. This included adding a TRY ME! playable mini-game, a completion screen that redirects to an external hub with progress data, visual hero unlock progression, Web3-themed quotes, and confetti effects.
+3.  **Game Controls & Visuals Upgrade**: The user asked to standardize and improve the controls and visual feedback across all games, starting with . This included adding keyboard support, a visual combo system, screen shake, and particle effects.
+4.  **Code Quality & Bug Squashing**: The user requested a thorough bug check, removal of duplicate code, and a comprehensive effort to fix all TypeScript compilation errors to prepare for future game upgrades.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a fully-featured, polished retro game arcade hub. The backend security has been significantly hardened with input sanitization and robust rate-limiting. A comprehensive, full-stack data synchronization system is in place, persisting all aspects of a player's profile (scores, XP, level, badges, faction/DAO status, recent game activity) to the MongoDB backend. The UI has undergone a major visual overhaul with unique color themes for each page, brighter text for readability, and a magenta XP progress bar. Key UX improvements like toast notifications have been added. The project has been prepared for App Store submission (, ) and Vercel deployment (, build scripts in , updated ).
+The application is a retro game arcade hub that has been significantly refactored. The entire backend has been migrated from MongoDB to **Supabase**, and it successfully connects and fetches data using the user-provided credentials. The welcome screen has been completely overhauled with a new hero selection flow, an embedded playable Chain Builder mini-game, and a completion/redirect flow. The UI has been improved with globally brightened font colors for better readability. A new, enhanced game control system (D-Pad and keyboard) and visual feedback system (combos, screen shake) have been implemented and applied as a prototype to the Chain Builder game. A large number of bugs and TypeScript errors have been resolved.
 
 **Last working item**:
--   Last item agent was working: Preparing the application for Vercel deployment. This involved creating a  for static export configuration, adding an  file, updating  with  and declare -x DEBIAN_FRONTEND="noninteractive"
-declare -x ENABLE_RELOAD="true"
-declare -x GPG_KEY="A035C8C19219BA821ECEA86B64E628F8D684696D"
-declare -x HOME="/root"
-declare -x HOSTNAME="agent-env-25ace009-1c61-46f2-a6ab-2763f20c05c6"
-declare -x KUBERNETES_PORT="tcp://34.118.224.1:443"
-declare -x KUBERNETES_PORT_443_TCP="tcp://34.118.224.1:443"
-declare -x KUBERNETES_PORT_443_TCP_ADDR="34.118.224.1"
-declare -x KUBERNETES_PORT_443_TCP_PORT="443"
-declare -x KUBERNETES_PORT_443_TCP_PROTO="tcp"
-declare -x KUBERNETES_SERVICE_HOST="34.118.224.1"
-declare -x KUBERNETES_SERVICE_PORT="443"
-declare -x KUBERNETES_SERVICE_PORT_HTTPS="443"
-declare -x LANG="C.UTF-8"
-declare -x NEXT_TELEMETRY_DISABLED="1"
-declare -x NODE_VERSION="20"
-declare -x OLDPWD="/app"
-declare -x PATH="/root/.venv/bin:/opt/plugins-venv/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-declare -x PIP_NO_INPUT="1"
-declare -x PLAYWRIGHT_BROWSERS_PATH="/pw-browsers"
-declare -x PLUGIN_VENV_PATH="/opt/plugins-venv"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT="tcp://34.118.232.80:80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP="tcp://34.118.232.80:80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_ADDR="34.118.232.80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PORT="80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PROTO="tcp"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_HOST="34.118.232.80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT="80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT_HTTP="80"
-declare -x PREVIEW_PROXY_SERVICE_PORT="tcp://34.118.225.58:80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP="tcp://34.118.225.58:80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_ADDR="34.118.225.58"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PORT="80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PROTO="tcp"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_HOST="34.118.225.58"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT="80"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT_HTTP="80"
-declare -x PWD="/app/frontend"
-declare -x PYTHONUNBUFFERED="1"
-declare -x PYTHON_SHA256="8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b78"
-declare -x PYTHON_VERSION="3.11.14"
-declare -x SHLVL="1"
-declare -x STRIPE_API_KEY="sk_test_emergent"
-declare -x UV_COMPILE_BYTECODE="1"
-declare -x VIRTUAL_ENV="/root/.venv"
-declare -x base_url="https://demobackend.emergentagent.com"
-declare -x code_server_password="cf92d522"
-declare -x integration_proxy_url="https://integrations.emergentagent.com"
-declare -x monitor_polling_interval="1"
-declare -x preview_endpoint="https://pixelpolishup.preview.emergentagent.com"
-declare -x run_id="25ace009-1c61-46f2-a6ab-2763f20c05c6" scripts, and adding deployment instructions to the .
+-   Last item agent was working: A comprehensive bug-squashing and code cleanup phase, specifically focused on eliminating TypeScript errors reported by app/factions.tsx(615,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/block-muncher.tsx(660,13): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
+app/games/block-muncher.tsx(660,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+app/games/stake-smash.tsx(822,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/token-tumble.tsx(202,16): error TS2503: Cannot find namespace 'JSX'.
+app/index.tsx(695,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/settings.tsx(293,9): error TS2322: Type '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/settings.tsx(294,9): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+app/settings.tsx(636,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/tutorial.tsx(343,20): error TS2322: Type '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+app/tutorial.tsx(458,18): error TS2741: Property 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+app/tutorial.tsx(547,15): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/tutorial.tsx(608,17): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/vault.tsx(669,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/CRTEffects.tsx(227,11): error TS2353: Object literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+src/components/ChainBuilderMini.tsx(209,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/components/CharacterDialogue.tsx(507,5): error TS2345: Argument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/PixelText.tsx(37,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+src/components/StoryViewer.tsx(365,35): error TS2345: Argument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+src/hooks/usePowerUpEffects.ts(79,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/NFTBadgeService.ts(70,46): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(82,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(97,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(122,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(132,41): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(154,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(164,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(186,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(196,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(218,35): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(228,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(250,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(260,49): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(272,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(466,17): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(470,24): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(532,7): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+src/services/StoryAchievements.ts(460,63): error TS2339: Property 'chapterId' does not exist on type 'StoryMapping'.
+src/store/factionStore.ts(461,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/factionStore.ts(466,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/gameStore.ts(168,7): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(334,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/AudioManager.ts(544,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(567,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/GameEnhancements.tsx(292,5): error TS2345: Argument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(381,5): error TS2345: Argument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(443,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/GameEnhancements.tsx(851,5): error TS2345: Argument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.. The agent was systematically going through the list of errors, fixing them one by one. The last specific actions involved reverting an unwanted  integration and then continuing to fix type definitions related to  in .
 -   Status: IN PROGRESS
--   Agent Testing Done: N (The agent configured the files but did not run a local build/export to verify the process.)
--   Which testing method agent to use? The main agent must run env: load .env
-env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
-Fast resolver is enabled.
-Starting Metro Bundler
-Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% ( 21/140)
-λ node_modules/expo-router/node/render.js ░░░░░░░░░░░░░░░░  5.7% ( 18/160)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% ( 37/199)
-λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░ 11.7% (113/331)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (128/321)
-λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░ 11.7% (113/331)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (138/330)
-λ node_modules/expo-router/node/render.js ▓▓░░░░░░░░░░░░░░ 16.3% (154/381)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (214/425)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 40.3% (329/518)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 42.3% (333/554)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 40.3% (356/615)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 43.8% (407/615)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 54.5% (490/664)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 44.7% (411/615)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 56.0% (518/692)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 44.7% (411/615)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 56.0% (520/696)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 51.1% (571/821)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.8% (621/862)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 62.0% (711/903)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.9% (694/904)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.2% (811/989)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 62.8% (766/967)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 78.7% ( 952/1073)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.4% ( 902/1053)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 84.5% (1024/1120)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 83.5% (1039/1145)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94.3% (1210/1246)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 90.8% (1237/1298)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1378/1378)
-λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1473/1473)
-λ Bundled 52420ms node_modules/expo-router/node/render.js (1473 modules)
-Web Bundled 52720ms node_modules/expo-router/entry.js (1378 modules)
+-   Agent Testing Done: Y (The agent periodically runs app/factions.tsx(615,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/block-muncher.tsx(660,13): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
+app/games/block-muncher.tsx(660,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+app/games/stake-smash.tsx(822,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/token-tumble.tsx(202,16): error TS2503: Cannot find namespace 'JSX'.
+app/index.tsx(695,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/settings.tsx(293,9): error TS2322: Type '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/settings.tsx(294,9): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+app/settings.tsx(636,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/tutorial.tsx(343,20): error TS2322: Type '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+app/tutorial.tsx(458,18): error TS2741: Property 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+app/tutorial.tsx(547,15): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/tutorial.tsx(608,17): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/vault.tsx(669,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/CRTEffects.tsx(227,11): error TS2353: Object literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+src/components/ChainBuilderMini.tsx(209,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/components/CharacterDialogue.tsx(507,5): error TS2345: Argument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/PixelText.tsx(37,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+src/components/StoryViewer.tsx(365,35): error TS2345: Argument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+src/hooks/usePowerUpEffects.ts(79,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/NFTBadgeService.ts(70,46): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(82,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(97,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(122,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(132,41): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(154,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(164,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(186,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(196,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(218,35): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(228,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(250,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(260,49): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(272,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(466,17): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(470,24): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(532,7): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+src/services/StoryAchievements.ts(460,63): error TS2339: Property 'chapterId' does not exist on type 'StoryMapping'.
+src/store/factionStore.ts(461,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/factionStore.ts(466,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/gameStore.ts(168,7): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(334,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/AudioManager.ts(544,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(567,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/GameEnhancements.tsx(292,5): error TS2345: Argument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(381,5): error TS2345: Argument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(443,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/GameEnhancements.tsx(851,5): error TS2345: Argument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'. to check progress)
+-   Which testing method agent to use? The agent should continue using [96mapp/factions.tsx[0m:[93m615[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
 
-› web bundles (1):
-_expo/static/js/web/entry-7e854e24ed4e3c339a467f3698de1fac.js (3.39 MB)
+[7m615[0m     textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+[7m   [0m [91m    ~~~~~~~~~~[0m
 
-› Static routes (37):
-/dao (23 kB)
-/daily (23 kB)
-/ (index) (23 kB)
-/login (23 kB)
-/ranks (23 kB)
-/story (23 kB)
-/terms (23 kB)
-/vault (23 kB)
-/badges (23 kB)
-/config (23 kB)
-/privacy (23 kB)
-/welcome (23 kB)
-/factions (23 kB)
-/progress (23 kB)
-/settings (23 kB)
-/tutorial (23 kB)
-/_sitemap (22.7 kB)
-/characters (23 kB)
-/+not-found (22.7 kB)
-/leaderboard (23 kB)
-/games/dao-duel (23 kB)
-/games/coming-soon (23 kB)
-/games/hash-hopper (23 kB)
-/games/ledger-leap (23 kB)
-/games/quest-vault (23 kB)
-/games/seed-sprint (23 kB)
-/games/stake-smash (23 kB)
-/games/ipfs-pinball (23 kB)
-/games/mine-blaster (23 kB)
-/games/token-tumble (23 kB)
-/games/block-muncher (23 kB)
-/games/chain-builder (23 kB)
-/games/bridge-bouncer (23 kB)
-/games/chain-invaders (23 kB)
-/games/crypto-climber (23 kB)
-/games/lightning-dash (23 kB)
-/games/contract-crusher (23 kB)
+[96mapp/games/block-muncher.tsx[0m:[93m660[0m:[93m13[0m - [91merror[0m[90m TS2607: [0mJSX element class does not support attributes because it does not have a 'props' property.
 
-Exported: dist from the  directory to test the static build process locally.
+[7m660[0m             <Text style={styles.bonusIndicator}>
+[7m   [0m [91m            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mapp/games/block-muncher.tsx[0m:[93m660[0m:[93m14[0m - [91merror[0m[90m TS2786: [0m'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+
+[7m660[0m             <Text style={styles.bonusIndicator}>
+[7m   [0m [91m             ~~~~[0m
+
+[96mapp/games/stake-smash.tsx[0m:[93m822[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m822[0m     textShadow: '1px 1px 2px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/games/token-tumble.tsx[0m:[93m202[0m:[93m16[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m202[0m   const cells: JSX.Element[] = [];
+[7m   [0m [91m               ~~~[0m
+
+[96mapp/index.tsx[0m:[93m695[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m695[0m     textShadow: '0 0 15px #FF00FF, 0 0 30px #FF00FF',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/settings.tsx[0m:[93m293[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+[7m293[0m         faction_id: factionState.playerFaction,
+[7m   [0m [91m        ~~~~~~~~~~[0m
+
+  [96msrc/services/AuthService.ts[0m:[93m215[0m:[93m5[0m
+    [7m215[0m     faction_id?: string;
+    [7m   [0m [96m    ~~~~~~~~~~[0m
+    The expected type comes from property 'faction_id' which is declared here on type '{ high_scores?: Record<string, number> | undefined; total_xp?: number | undefined; level?: number | undefined; badges?: any[] | undefined; avatar_id?: string | undefined; dao_voting_power?: number | undefined; ... 10 more ...; faction_votes?: Record<...> | undefined; }'
+
+[96mapp/settings.tsx[0m:[93m294[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+
+[7m294[0m         faction_joined_at: factionState.joinedAt,
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~[0m
+
+  [96msrc/services/AuthService.ts[0m:[93m216[0m:[93m5[0m
+    [7m216[0m     faction_joined_at?: number;
+    [7m   [0m [96m    ~~~~~~~~~~~~~~~~~[0m
+    The expected type comes from property 'faction_joined_at' which is declared here on type '{ high_scores?: Record<string, number> | undefined; total_xp?: number | undefined; level?: number | undefined; badges?: any[] | undefined; avatar_id?: string | undefined; dao_voting_power?: number | undefined; ... 10 more ...; faction_votes?: Record<...> | undefined; }'
+
+[96mapp/settings.tsx[0m:[93m636[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m636[0m     textShadow: '0 0 10px #00FF88',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m343[0m:[93m20[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+
+[7m343[0m       <ScreenShake active={showShake} intensity={15}>
+[7m   [0m [91m                   ~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m458[0m:[93m18[0m - [91merror[0m[90m TS2741: [0mProperty 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+
+[7m458[0m                 <ParticleBurst
+[7m   [0m [91m                 ~~~~~~~~~~~~~[0m
+
+  [96msrc/utils/GameEnhancements.tsx[0m:[93m559[0m:[93m3[0m
+    [7m559[0m   trigger: number;
+    [7m   [0m [96m  ~~~~~~~[0m
+    'trigger' is declared here.
+
+[96mapp/tutorial.tsx[0m:[93m547[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+
+[7m547[0m               rarity="common"
+[7m   [0m [91m              ~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m608[0m:[93m17[0m - [91merror[0m[90m TS2322: [0mType '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+
+[7m608[0m                 rarity="common"
+[7m   [0m [91m                ~~~~~~[0m
+
+[96mapp/vault.tsx[0m:[93m669[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m669[0m     textShadow: '0 0 10px #FFD700',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/components/CRTEffects.tsx[0m:[93m227[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+
+[7m227[0m           textShadow: `0 0 8px ${CRT_COLORS.primaryGlow}`,
+[7m   [0m [91m          ~~~~~~~~~~[0m
+
+[96msrc/components/ChainBuilderMini.tsx[0m:[93m209[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m209[0m       gameLoopRef.current = setInterval(gameLoop, speed);
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/CharacterDialogue.tsx[0m:[93m507[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m507[0m     textShadow: '0 0 4px rgba(0, 255, 200, 0.5)',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/components/PixelText.tsx[0m:[93m37[0m:[93m11[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+
+[7m37[0m           textShadow: glow ? `0 0 10px ${color}` : 'none',
+[7m  [0m [91m          ~~~~~~~~~~[0m
+
+
+[96msrc/components/StoryViewer.tsx[0m:[93m365[0m:[93m35[0m - [91merror[0m[90m TS2345: [0mArgument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+
+[7m365[0m                       router.push(`/games/${game.gameId}`);
+[7m   [0m [91m                                  ~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/hooks/usePowerUpEffects.ts[0m:[93m79[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m79[0m     checkIntervalRef.current = setInterval(() => {
+[7m  [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m70[0m:[93m46[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m70[0m     rewards: { booster: '2x XP for 3 games', timeBonus: 30, skinId: 'cyber_punk' },
+[7m  [0m [91m                                             ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m82[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m82[0m       timeBonus: 60,
+[7m  [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m97[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m97[0m       timeBonus: 120,
+[7m  [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m122[0m:[93m40[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m122[0m     rewards: { booster: 'Speed Boost', timeBonus: 15 },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m132[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m132[0m     rewards: { booster: 'Ghost Shield', timeBonus: 30, skinId: 'pac_gold' },
+[7m   [0m [91m                                        ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m154[0m:[93m40[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m154[0m     rewards: { booster: 'Triple Shot', timeBonus: 20 },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m164[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m164[0m     rewards: { booster: 'Laser Beam', timeBonus: 45, skinId: 'cosmic_ship' },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m186[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m186[0m     rewards: { booster: 'Hold Piece', timeBonus: 20 },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m196[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m196[0m     rewards: { booster: 'Ghost Preview', timeBonus: 40, skinId: 'crystal_blocks' },
+[7m   [0m [91m                                         ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m218[0m:[93m35[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m218[0m     rewards: { booster: 'Magnet', timeBonus: 25 },
+[7m   [0m [91m                                  ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m228[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m228[0m     rewards: { booster: 'Invincibility', timeBonus: 45, skinId: 'golden_climber' },
+[7m   [0m [91m                                         ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m250[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m250[0m     rewards: { booster: '1.5x Score', timeBonus: 10 },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m260[0m:[93m49[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m260[0m     rewards: { booster: '2x Score for 5 games', timeBonus: 30, skinId: 'retro_master' },
+[7m   [0m [91m                                                ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m272[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m272[0m       timeBonus: 60,
+[7m   [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m466[0m:[93m17[0m - [91merror[0m[90m TS2339: [0mProperty 'collectibleId' does not exist on type 'BadgeReward'.
+
+[7m466[0m     if (rewards.collectibleId) {
+[7m   [0m [91m                ~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m470[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'collectibleId' does not exist on type 'BadgeReward'.
+
+[7m470[0m         value: rewards.collectibleId,
+[7m   [0m [91m                       ~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m532[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+
+[7m532[0m       rarity: badge.rarity,
+[7m   [0m [91m      ~~~~~~[0m
+
+[96msrc/services/StoryAchievements.ts[0m:[93m460[0m:[93m63[0m - [91merror[0m[90m TS2339: [0mProperty 'chapterId' does not exist on type 'StoryMapping'.
+
+[7m460[0m     characterStore.getState().unlockStoryChapter(storyMapping.chapterId);
+[7m   [0m [91m                                                              ~~~~~~~~~[0m
+
+[96msrc/store/factionStore.ts[0m:[93m461[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+
+[7m461[0m               playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+[7m   [0m [91m              ~~~~~~~~~~~[0m
+
+[96msrc/store/factionStore.ts[0m:[93m466[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+
+[7m466[0m               playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+[7m   [0m [91m              ~~~~~~~~~~~[0m
+
+[96msrc/store/gameStore.ts[0m:[93m168[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+
+[7m168[0m       updateScore: async (gameId: string, score: number, duration: number) => {
+[7m   [0m [91m      ~~~~~~~~~~~[0m
+
+  [96msrc/store/gameStore.ts[0m:[93m79[0m:[93m3[0m
+    [7m79[0m   updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
+    [7m  [0m [96m  ~~~~~~~~~~~[0m
+    The expected type comes from property 'updateScore' which is declared here on type 'GameState'
+
+[96msrc/utils/AudioManager.ts[0m:[93m334[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m334[0m       this.priorityTimeout = setTimeout(() => {
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/utils/AudioManager.ts[0m:[93m544[0m:[93m26[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'Timeout'.
+
+[7m544[0m     this.musicLoops.push(mainLoop);
+[7m   [0m [91m                         ~~~~~~~~[0m
+
+[96msrc/utils/AudioManager.ts[0m:[93m567[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'Timeout'.
+
+[7m567[0m       this.musicLoops.push(arpLoop);
+[7m   [0m [91m                           ~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m292[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m292[0m     textShadow: '2px 2px 4px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m381[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m381[0m     textShadow: '1px 1px 2px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m443[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m443[0m     timerRef.current = setTimeout(() => {
+[7m   [0m [91m    ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m851[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m851[0m     textShadow: '0 0 20px #00FF41',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+
+Found 48 errors in 20 files.
+
+Errors  Files
+     1  app/factions.tsx[90m:615[0m
+     2  app/games/block-muncher.tsx[90m:660[0m
+     1  app/games/stake-smash.tsx[90m:822[0m
+     1  app/games/token-tumble.tsx[90m:202[0m
+     1  app/index.tsx[90m:695[0m
+     3  app/settings.tsx[90m:293[0m
+     4  app/tutorial.tsx[90m:343[0m
+     1  app/vault.tsx[90m:669[0m
+     1  src/components/CRTEffects.tsx[90m:227[0m
+     1  src/components/ChainBuilderMini.tsx[90m:209[0m
+     1  src/components/CharacterDialogue.tsx[90m:507[0m
+     1  src/components/PixelText.tsx[90m:37[0m
+     1  src/components/StoryViewer.tsx[90m:365[0m
+     1  src/hooks/usePowerUpEffects.ts[90m:79[0m
+    17  src/services/NFTBadgeService.ts[90m:70[0m
+     1  src/services/StoryAchievements.ts[90m:460[0m
+     2  src/store/factionStore.ts[90m:461[0m
+     1  src/store/gameStore.ts[90m:168[0m
+     3  src/utils/AudioManager.ts[90m:334[0m
+     4  src/utils/GameEnhancements.tsx[90m:292[0m to identify and work through the remaining TypeScript errors.
 -   User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  Issue 1: (P0) Vercel Deployment Build Verification
+  Issue 1: (P0) Finish TypeScript Error Cleanup
   Issue 2: (P1) Potential Unhandled Crash in Chain Builder Mini-Game
   Issue 3: (P2) Settings Page Scroll Behavior
-  Issue 4: (P3) Linter Configuration for TypeScript
 
   Issues Detail:
   - Issue 1: 
-     - Attempted fixes: The agent created , updated  with build scripts, and created . However, it did not attempt to run the build process itself.
+     - Attempted fixes: The agent has fixed over 200 TypeScript errors in the last session by correcting type definitions (, ), fixing incorrect imports, removing duplicate code (), and resolving component prop mismatches. The error count was last reported at 50.
      - Next debug checklist:
-        1. Navigate to the  directory.
-        2. Run the command: env: load .env
-env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
-Fast resolver is enabled.
-Starting Metro Bundler
-Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
-λ Bundled 1119ms node_modules/expo-router/node/render.js (1431 modules)
-Web Bundled 1462ms node_modules/expo-router/entry.js (1378 modules)
+        1. Run [96mapp/factions.tsx[0m:[93m615[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
 
-› web bundles (1):
-_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
+[7m615[0m     textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+[7m   [0m [91m    ~~~~~~~~~~[0m
 
-› Static routes (37):
-/dao (23 kB)
-/daily (23 kB)
-/ (index) (23 kB)
-/login (23 kB)
-/ranks (23 kB)
-/story (23 kB)
-/terms (23 kB)
-/vault (23 kB)
-/badges (23 kB)
-/config (23 kB)
-/privacy (23 kB)
-/welcome (23 kB)
-/factions (23 kB)
-/progress (23 kB)
-/settings (23 kB)
-/tutorial (23 kB)
-/_sitemap (22.7 kB)
-/characters (23 kB)
-/+not-found (22.7 kB)
-/leaderboard (23 kB)
-/games/dao-duel (23 kB)
-/games/coming-soon (23 kB)
-/games/hash-hopper (23 kB)
-/games/ledger-leap (23 kB)
-/games/quest-vault (23 kB)
-/games/seed-sprint (23 kB)
-/games/stake-smash (23 kB)
-/games/ipfs-pinball (23 kB)
-/games/mine-blaster (23 kB)
-/games/token-tumble (23 kB)
-/games/block-muncher (23 kB)
-/games/chain-builder (23 kB)
-/games/bridge-bouncer (23 kB)
-/games/chain-invaders (23 kB)
-/games/crypto-climber (23 kB)
-/games/lightning-dash (23 kB)
-/games/contract-crusher (23 kB)
+[96mapp/games/block-muncher.tsx[0m:[93m660[0m:[93m13[0m - [91merror[0m[90m TS2607: [0mJSX element class does not support attributes because it does not have a 'props' property.
 
-Exported: dist.
-        3. Observe the output for any build errors (e.g., dependency issues, path problems, configuration errors).
-        4. If the build fails, debug the errors. If it succeeds, the task is complete.
-     - Why fix this issue and what will be achieved with the fix? This is a critical verification step to ensure the Vercel deployment preparation was successful and the app can actually be deployed as intended.
+[7m660[0m             <Text style={styles.bonusIndicator}>
+[7m   [0m [91m            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mapp/games/block-muncher.tsx[0m:[93m660[0m:[93m14[0m - [91merror[0m[90m TS2786: [0m'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+
+[7m660[0m             <Text style={styles.bonusIndicator}>
+[7m   [0m [91m             ~~~~[0m
+
+[96mapp/games/stake-smash.tsx[0m:[93m822[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m822[0m     textShadow: '1px 1px 2px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/games/token-tumble.tsx[0m:[93m202[0m:[93m16[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m202[0m   const cells: JSX.Element[] = [];
+[7m   [0m [91m               ~~~[0m
+
+[96mapp/index.tsx[0m:[93m695[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m695[0m     textShadow: '0 0 15px #FF00FF, 0 0 30px #FF00FF',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/settings.tsx[0m:[93m293[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+[7m293[0m         faction_id: factionState.playerFaction,
+[7m   [0m [91m        ~~~~~~~~~~[0m
+
+  [96msrc/services/AuthService.ts[0m:[93m215[0m:[93m5[0m
+    [7m215[0m     faction_id?: string;
+    [7m   [0m [96m    ~~~~~~~~~~[0m
+    The expected type comes from property 'faction_id' which is declared here on type '{ high_scores?: Record<string, number> | undefined; total_xp?: number | undefined; level?: number | undefined; badges?: any[] | undefined; avatar_id?: string | undefined; dao_voting_power?: number | undefined; ... 10 more ...; faction_votes?: Record<...> | undefined; }'
+
+[96mapp/settings.tsx[0m:[93m294[0m:[93m9[0m - [91merror[0m[90m TS2322: [0mType 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+
+[7m294[0m         faction_joined_at: factionState.joinedAt,
+[7m   [0m [91m        ~~~~~~~~~~~~~~~~~[0m
+
+  [96msrc/services/AuthService.ts[0m:[93m216[0m:[93m5[0m
+    [7m216[0m     faction_joined_at?: number;
+    [7m   [0m [96m    ~~~~~~~~~~~~~~~~~[0m
+    The expected type comes from property 'faction_joined_at' which is declared here on type '{ high_scores?: Record<string, number> | undefined; total_xp?: number | undefined; level?: number | undefined; badges?: any[] | undefined; avatar_id?: string | undefined; dao_voting_power?: number | undefined; ... 10 more ...; faction_votes?: Record<...> | undefined; }'
+
+[96mapp/settings.tsx[0m:[93m636[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m636[0m     textShadow: '0 0 10px #00FF88',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m343[0m:[93m20[0m - [91merror[0m[90m TS2322: [0mType '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+
+[7m343[0m       <ScreenShake active={showShake} intensity={15}>
+[7m   [0m [91m                   ~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m458[0m:[93m18[0m - [91merror[0m[90m TS2741: [0mProperty 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+
+[7m458[0m                 <ParticleBurst
+[7m   [0m [91m                 ~~~~~~~~~~~~~[0m
+
+  [96msrc/utils/GameEnhancements.tsx[0m:[93m559[0m:[93m3[0m
+    [7m559[0m   trigger: number;
+    [7m   [0m [96m  ~~~~~~~[0m
+    'trigger' is declared here.
+
+[96mapp/tutorial.tsx[0m:[93m547[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+
+[7m547[0m               rarity="common"
+[7m   [0m [91m              ~~~~~~[0m
+
+[96mapp/tutorial.tsx[0m:[93m608[0m:[93m17[0m - [91merror[0m[90m TS2322: [0mType '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+
+[7m608[0m                 rarity="common"
+[7m   [0m [91m                ~~~~~~[0m
+
+[96mapp/vault.tsx[0m:[93m669[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m669[0m     textShadow: '0 0 10px #FFD700',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/components/CRTEffects.tsx[0m:[93m227[0m:[93m11[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+
+[7m227[0m           textShadow: `0 0 8px ${CRT_COLORS.primaryGlow}`,
+[7m   [0m [91m          ~~~~~~~~~~[0m
+
+[96msrc/components/ChainBuilderMini.tsx[0m:[93m209[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m209[0m       gameLoopRef.current = setInterval(gameLoop, speed);
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/CharacterDialogue.tsx[0m:[93m507[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m507[0m     textShadow: '0 0 4px rgba(0, 255, 200, 0.5)',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/components/PixelText.tsx[0m:[93m37[0m:[93m11[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+
+[7m37[0m           textShadow: glow ? `0 0 10px ${color}` : 'none',
+[7m  [0m [91m          ~~~~~~~~~~[0m
+
+
+[96msrc/components/StoryViewer.tsx[0m:[93m365[0m:[93m35[0m - [91merror[0m[90m TS2345: [0mArgument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+
+[7m365[0m                       router.push(`/games/${game.gameId}`);
+[7m   [0m [91m                                  ~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/hooks/usePowerUpEffects.ts[0m:[93m79[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m79[0m     checkIntervalRef.current = setInterval(() => {
+[7m  [0m [91m    ~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m70[0m:[93m46[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m70[0m     rewards: { booster: '2x XP for 3 games', timeBonus: 30, skinId: 'cyber_punk' },
+[7m  [0m [91m                                             ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m82[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m82[0m       timeBonus: 60,
+[7m  [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m97[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m97[0m       timeBonus: 120,
+[7m  [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m122[0m:[93m40[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m122[0m     rewards: { booster: 'Speed Boost', timeBonus: 15 },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m132[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m132[0m     rewards: { booster: 'Ghost Shield', timeBonus: 30, skinId: 'pac_gold' },
+[7m   [0m [91m                                        ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m154[0m:[93m40[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m154[0m     rewards: { booster: 'Triple Shot', timeBonus: 20 },
+[7m   [0m [91m                                       ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m164[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m164[0m     rewards: { booster: 'Laser Beam', timeBonus: 45, skinId: 'cosmic_ship' },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m186[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m186[0m     rewards: { booster: 'Hold Piece', timeBonus: 20 },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m196[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m196[0m     rewards: { booster: 'Ghost Preview', timeBonus: 40, skinId: 'crystal_blocks' },
+[7m   [0m [91m                                         ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m218[0m:[93m35[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m218[0m     rewards: { booster: 'Magnet', timeBonus: 25 },
+[7m   [0m [91m                                  ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m228[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m228[0m     rewards: { booster: 'Invincibility', timeBonus: 45, skinId: 'golden_climber' },
+[7m   [0m [91m                                         ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m250[0m:[93m39[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m250[0m     rewards: { booster: '1.5x Score', timeBonus: 10 },
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m260[0m:[93m49[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m260[0m     rewards: { booster: '2x Score for 5 games', timeBonus: 30, skinId: 'retro_master' },
+[7m   [0m [91m                                                ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m272[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m272[0m       timeBonus: 60,
+[7m   [0m [91m      ~~~~~~~~~[0m
+
+  [96msrc/services/NFTBadgeService.ts[0m:[93m21[0m:[93m3[0m
+    [7m21[0m   timeBonus?: string;
+    [7m  [0m [96m  ~~~~~~~~~[0m
+    The expected type comes from property 'timeBonus' which is declared here on type 'BadgeReward'
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m466[0m:[93m17[0m - [91merror[0m[90m TS2339: [0mProperty 'collectibleId' does not exist on type 'BadgeReward'.
+
+[7m466[0m     if (rewards.collectibleId) {
+[7m   [0m [91m                ~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m470[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'collectibleId' does not exist on type 'BadgeReward'.
+
+[7m470[0m         value: rewards.collectibleId,
+[7m   [0m [91m                       ~~~~~~~~~~~~~[0m
+
+[96msrc/services/NFTBadgeService.ts[0m:[93m532[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+
+[7m532[0m       rarity: badge.rarity,
+[7m   [0m [91m      ~~~~~~[0m
+
+[96msrc/services/StoryAchievements.ts[0m:[93m460[0m:[93m63[0m - [91merror[0m[90m TS2339: [0mProperty 'chapterId' does not exist on type 'StoryMapping'.
+
+[7m460[0m     characterStore.getState().unlockStoryChapter(storyMapping.chapterId);
+[7m   [0m [91m                                                              ~~~~~~~~~[0m
+
+[96msrc/store/factionStore.ts[0m:[93m461[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+
+[7m461[0m               playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+[7m   [0m [91m              ~~~~~~~~~~~[0m
+
+[96msrc/store/factionStore.ts[0m:[93m466[0m:[93m15[0m - [91merror[0m[90m TS2322: [0mType '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+
+[7m466[0m               playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+[7m   [0m [91m              ~~~~~~~~~~~[0m
+
+[96msrc/store/gameStore.ts[0m:[93m168[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+
+[7m168[0m       updateScore: async (gameId: string, score: number, duration: number) => {
+[7m   [0m [91m      ~~~~~~~~~~~[0m
+
+  [96msrc/store/gameStore.ts[0m:[93m79[0m:[93m3[0m
+    [7m79[0m   updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
+    [7m  [0m [96m  ~~~~~~~~~~~[0m
+    The expected type comes from property 'updateScore' which is declared here on type 'GameState'
+
+[96msrc/utils/AudioManager.ts[0m:[93m334[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m334[0m       this.priorityTimeout = setTimeout(() => {
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/utils/AudioManager.ts[0m:[93m544[0m:[93m26[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'Timeout'.
+
+[7m544[0m     this.musicLoops.push(mainLoop);
+[7m   [0m [91m                         ~~~~~~~~[0m
+
+[96msrc/utils/AudioManager.ts[0m:[93m567[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type 'number' is not assignable to parameter of type 'Timeout'.
+
+[7m567[0m       this.musicLoops.push(arpLoop);
+[7m   [0m [91m                           ~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m292[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m292[0m     textShadow: '2px 2px 4px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m381[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m381[0m     textShadow: '1px 1px 2px #000',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m443[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'Timeout'.
+
+[7m443[0m     timerRef.current = setTimeout(() => {
+[7m   [0m [91m    ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/utils/GameEnhancements.tsx[0m:[93m851[0m:[93m5[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+
+[7m851[0m     textShadow: '0 0 20px #00FF41',
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+
+Found 48 errors in 20 files.
+
+Errors  Files
+     1  app/factions.tsx[90m:615[0m
+     2  app/games/block-muncher.tsx[90m:660[0m
+     1  app/games/stake-smash.tsx[90m:822[0m
+     1  app/games/token-tumble.tsx[90m:202[0m
+     1  app/index.tsx[90m:695[0m
+     3  app/settings.tsx[90m:293[0m
+     4  app/tutorial.tsx[90m:343[0m
+     1  app/vault.tsx[90m:669[0m
+     1  src/components/CRTEffects.tsx[90m:227[0m
+     1  src/components/ChainBuilderMini.tsx[90m:209[0m
+     1  src/components/CharacterDialogue.tsx[90m:507[0m
+     1  src/components/PixelText.tsx[90m:37[0m
+     1  src/components/StoryViewer.tsx[90m:365[0m
+     1  src/hooks/usePowerUpEffects.ts[90m:79[0m
+    17  src/services/NFTBadgeService.ts[90m:70[0m
+     1  src/services/StoryAchievements.ts[90m:460[0m
+     2  src/store/factionStore.ts[90m:461[0m
+     1  src/store/gameStore.ts[90m:168[0m
+     3  src/utils/AudioManager.ts[90m:334[0m
+     4  src/utils/GameEnhancements.tsx[90m:292[0m in  to get the current list of errors.
+        2. Analyze the remaining errors. Prioritize runtime-breaking issues (e.g., incorrect props, missing properties on types) over benign style-related type conflicts.
+        3. Systematically fix the errors, file by file.
+     - Why fix this issue and what will be achieved with the fix? To improve code quality, stability, and maintainability, and to satisfy the user's explicit request before proceeding with new game upgrades.
      - Status:  IN PROGRESS
      - Is recurring issue? N
-     - Should Test frontend/backend/both after fix? frontend
+     - Should Test frontend/backend/both after fix? frontend (by running app/factions.tsx(615,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/block-muncher.tsx(660,13): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
+app/games/block-muncher.tsx(660,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+app/games/stake-smash.tsx(822,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/token-tumble.tsx(202,16): error TS2503: Cannot find namespace 'JSX'.
+app/index.tsx(695,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/settings.tsx(293,9): error TS2322: Type '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/settings.tsx(294,9): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+app/settings.tsx(636,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/tutorial.tsx(343,20): error TS2322: Type '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+app/tutorial.tsx(458,18): error TS2741: Property 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+app/tutorial.tsx(547,15): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/tutorial.tsx(608,17): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/vault.tsx(669,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/CRTEffects.tsx(227,11): error TS2353: Object literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+src/components/ChainBuilderMini.tsx(209,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/components/CharacterDialogue.tsx(507,5): error TS2345: Argument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/PixelText.tsx(37,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+src/components/StoryViewer.tsx(365,35): error TS2345: Argument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+src/hooks/usePowerUpEffects.ts(79,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/NFTBadgeService.ts(70,46): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(82,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(97,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(122,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(132,41): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(154,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(164,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(186,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(196,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(218,35): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(228,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(250,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(260,49): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(272,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(466,17): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(470,24): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(532,7): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+src/services/StoryAchievements.ts(460,63): error TS2339: Property 'chapterId' does not exist on type 'StoryMapping'.
+src/store/factionStore.ts(461,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/factionStore.ts(466,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/gameStore.ts(168,7): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(334,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/AudioManager.ts(544,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(567,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/GameEnhancements.tsx(292,5): error TS2345: Argument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(381,5): error TS2345: Argument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(443,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/GameEnhancements.tsx(851,5): error TS2345: Argument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.)
      - Blocked on other issue: None
 
   - Issue 2: 
-     - Attempted fixes: An early  block was added, but the user was not convinced this fixed the root cause of a crash on self-collision. This issue was then forgotten during subsequent tasks.
+     - Attempted fixes: None in this session. This issue was identified in the initial handover but was deprioritized.
      - Next debug checklist:
-        1. Review the  and game-over state logic in .
-        2. Specifically, check the collision detection logic to ensure no race conditions or invalid state access occur on self-collision.
-        3. Purposefully trigger a self-collision multiple times to confirm the game-over state is handled gracefully without crashing.
-     - Why fix this issue and what will be achieved with the fix? Ensures the new mini-game is stable and provides a good user experience.
+        1. Review the game-over logic in .
+        2. Deliberately cause a self-collision repeatedly to test for race conditions or crashes.
+        3. Ensure the game-over state is handled gracefully every time.
+     - Why fix this issue and what will be achieved with the fix? Ensures the stability of a core mini-game.
      - Status:  NOT STARTED
      - Is recurring issue? Y
      - Should Test frontend/backend/both after fix? frontend
      - Blocked on other issue: None
 
   - Issue 3: 
-     - Attempted fixes: None in this session. This issue was noted in the initial summary but was not re-verified.
+     - Attempted fixes: None in this session. This was noted in the initial handover.
      - Next debug checklist:
-        1. Navigate to the  page in the app.
-        2. Attempt to scroll to the very bottom to view the Logout and Delete Data buttons.
-        3. If scrolling fails or bounces back, investigate the  implementation in .
-     - Why fix this issue and what will be achieved with the fix? Fixes a broken user experience, allowing users to access all available settings.
+        1. Navigate to the  page in the running application.
+        2. Attempt to scroll to the bottom to access the Logout and Delete Data buttons.
+        3. If scrolling is not possible or bounces, investigate the  implementation in .
+     - Why fix this issue and what will be achieved with the fix? Restores basic functionality and access to important user controls on the settings page.
      - Status:  NOT STARTED
      - Is recurring issue? Y
      - Should Test frontend/backend/both after fix? frontend
      - Blocked on other issue: None
 
-  - Issue 4: 
-     - Attempted fixes: The agent encountered ESLint parsing errors for TypeScript syntax (, ) multiple times. It correctly identified them as configuration issues and ignored them to proceed with the task.
-     - Next debug checklist:
-        1. Review the ESLint configuration file ( or similar) in the  directory.
-        2. Ensure the parser and plugins are correctly set up for TypeScript (e.g., , ).
-        3. Run the linter again to confirm the parsing errors are resolved.
-     - Why fix this issue and what will be achieved with the fix? This is a low-priority developer experience improvement. Fixing it will provide accurate linting feedback and prevent future confusion.
-     - Status:  NOT STARTED
-     - Is recurring issue? Y
-     - Should Test frontend/backend/both after fix? NA
-     - Blocked on other issue: None
-
 **In progress Task List**:
-- Task 1: Complete Vercel Deployment Preparation
-     - Where to resume: The agent needs to run a local build test to verify the configuration.
-     - What will be achieved with this? A project that is confirmed to be ready for one-click deployment to Vercel.
+- Task 1: (P0) TypeScript Error Cleanup
+     - Where to resume: The agent has just finished reverting the  changes and fixing related types. The next step is to run the TypeScript checker again and continue fixing the remaining ~50 errors.
+     - What will be achieved with this? A stable, type-safe codebase ready for further development.
      - Status: IN PROGRESS
      - Should Test frontend/backend/both after fix? frontend
      - Blocked on something: None
 
 **Upcoming and Future Tasks**
-- (P1) Add Analytics Tracking: The backend now has analytics endpoints, but a dedicated UI or dashboard to view these stats could be built.
-- (P2) Implement Root Error Boundary: This was completed, but could be enhanced with a report issue button.
+-   **(P0) Apply Enhanced Controls/Visuals to All Games:** The user requested that the new controls and visuals be applied across all equally. The new system (using , combo counter, screen shake) has only been implemented in . This task involves refactoring all other game files in  to use the new, standardized system.
+-   **(P1) New Game Upgrades:** The user's reason for the cleanup was to start some game upgrades, implying new features, modes, or games will be requested next.
 
 **Completed work in this session**
--   **Security Hardening**: Fully patched backend vulnerabilities in  by adding comprehensive input sanitization and robust, IP-aware rate-limiting to all relevant endpoints. Verified with the backend testing agent.
--   **COMPLETE Profile Sync**: Implemented a full-stack data synchronization system. All player data (High Scores, Total XP, Level, Games Played, Total Score, Recent Scores, Unlocked Badges, Faction/DAO membership) is now synced between the client and backend on login and via a manual sync button.
--   **UI/UX Overhaul**:
-    -   **Retro Color Themes**: Applied unique, vibrant background colors to each main page (, , , , , ).
-    -   **Text Readability**: Brightened all dim/muted text colors across the app to be more vibrant and kid-friendly.
-    -   **XP Bar Color**: Changed the XP progress bar color to magenta as requested.
--   **Bug Fixes & Polish**:
-    -   **Logout Functionality**: Fixed a critical bug where the logout button was non-functional and incorrectly cleared user data. Logout now correctly clears the session while preserving local progress.
-    -   **Stats Sync Bug**: Fixed a bug where stats were not syncing on login due to an incorrect state reference in .
-    -   **Toast Notifications**: Implemented a new  component and added non-intrusive feedback for actions like login, score submission, badge unlocking, and data sync.
--   **Pre-Export & Deployment Prep**:
-    -   ****: Generated a comprehensive README file with setup instructions, tech stack overview, and deployment guide.
-    -   **Legal Pages**: Created  and  pages, along with static HTML versions (, ), tailored for an Australian context.
-    -   **App Store Readiness**: Configured  and  for future App Store/Play Store submissions.
-    -   **Vercel Prep**: Created  and , and added build scripts to .
-    -   **Code Cleanup**: Removed numerous  statements, replacing some with a production-safe debug utility.
-    -   **Error Handling**: Implemented a global  to prevent the entire app from crashing on unexpected errors.
+-   **Database Migration (MongoDB → Supabase)**: The entire application backend was migrated to use Supabase. This included installing the python client, rewriting , updating all data access logic, and configuring the environment with the user's credentials. The connection is live and verified.
+-   **Welcome Screen & Hero Unlock Overhaul**:  was completely rewritten to feature a new hero selection UI, an embedded playable Chain Builder game, a completion screen that redirects to an external URL, and confetti/animation effects.
+-   **Game Controls & Visuals Upgrade (Prototype)**: Implemented a new shared game control system in  and applied it, along with a combo counter, screen shake, and particle effects, to .
+-   **Deployment Readiness Fixes**: Resolved critical  issues found by a deployment health check, including fixing hardcoded URLs and optimizing several inefficient N+1 database queries in .
+-   **Global Font Color Readability**: Audited and fixed all instances of dark, grey, or muted text colors across the entire application, making the UI brighter and more kid-friendly. Verified with screenshots.
+-   **Extensive Bug & TypeScript Fixes**: Systematically resolved over 200 TypeScript errors and other bugs, including  naming conflicts, incorrect data access in game state, broken imports, and duplicate function definitions.
 
 **Code Architecture**
-loadFromCloud
+resetProfileresetProfile
 
 **Key Technical Concepts**
--   **Full-Stack Data Sync**: A comprehensive merge-on-sync strategy implemented on the backend ( endpoint in ) that compares local and server data and returns a merged profile. The frontend now sends the complete player state (scores, xp, level, badges, faction data, etc.) on login and manual sync.
--   **Backend Security**: Hardened the FastAPI backend by implementing rate-limiting that correctly handles  headers in a containerized environment, and applied  for input sanitization.
--   **Static Web Export (Expo)**: Configured the project for Vercel deployment by setting up  for the metro bundler, adding build scripts to , and creating a  file.
--   **Global State Management (Zustand)**: Heavily modified  and  to manage a complex state, including profile data, game progress, and faction details, and to handle loading this data from a cloud source.
--   **Global Components (React)**: Implemented an  and a  at the root layout () to provide app-wide error handling and user feedback, improving robustness and UX.
+-   **Supabase Integration**: The entire backend now relies on the  client to interact with a PostgreSQL database. It uses Supabase for user authentication, data storage (), and content delivery ().
+-   **JSONB for Flexible Data**: The migration strategy uses a  column named  in the  table to store complex, nested data like badges, faction info, and other user progress, avoiding a rigid schema.
+-   **Component-Driven Game Enhancements**: A new pattern was established by creating a reusable  component. This allows for standardizing complex UI elements like D-pads and keyboard listeners across multiple games.
+-   **State-Driven UI**: The enhanced  screen heavily relies on React state (, ) to manage complex UI flows, such as showing/hiding the hero info modal, the playable game modal, and the final completion screen.
+-   **Static Code Analysis for QA**: The agent used app/factions.tsx(615,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/block-muncher.tsx(660,13): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
+app/games/block-muncher.tsx(660,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+app/games/stake-smash.tsx(822,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/token-tumble.tsx(202,16): error TS2503: Cannot find namespace 'JSX'.
+app/index.tsx(695,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/settings.tsx(293,9): error TS2322: Type '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/settings.tsx(294,9): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+app/settings.tsx(636,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/tutorial.tsx(343,20): error TS2322: Type '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+app/tutorial.tsx(458,18): error TS2741: Property 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+app/tutorial.tsx(547,15): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/tutorial.tsx(608,17): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/vault.tsx(669,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/CRTEffects.tsx(227,11): error TS2353: Object literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+src/components/ChainBuilderMini.tsx(209,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/components/CharacterDialogue.tsx(507,5): error TS2345: Argument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/PixelText.tsx(37,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+src/components/StoryViewer.tsx(365,35): error TS2345: Argument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+src/hooks/usePowerUpEffects.ts(79,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/NFTBadgeService.ts(70,46): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(82,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(97,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(122,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(132,41): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(154,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(164,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(186,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(196,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(218,35): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(228,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(250,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(260,49): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(272,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(466,17): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(470,24): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(532,7): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+src/services/StoryAchievements.ts(460,63): error TS2339: Property 'chapterId' does not exist on type 'StoryMapping'.
+src/store/factionStore.ts(461,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/factionStore.ts(466,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/gameStore.ts(168,7): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(334,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/AudioManager.ts(544,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(567,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/GameEnhancements.tsx(292,5): error TS2345: Argument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(381,5): error TS2345: Argument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(443,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/GameEnhancements.tsx(851,5): error TS2345: Argument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'. and  extensively as a primary method for identifying and cleaning up code quality issues and potential bugs before they manifest at runtime.
+
+**key DB schema**
+-   **game_stats**:
+    -   uid=0(root) gid=0(root) groups=0(root) (UUID, Primary Key)
+    -    (UUID, references auth.users)
+    -    (Integer)
+    -    (JSONB) - *Stores complex data like badges, faction status, XP, level etc.*
+    -    (Timestamptz)
+-   **site_content**:
+    -   uid=0(root) gid=0(root) groups=0(root) (Serial, Primary Key)
+    -    (Text)
+    -    (Text: 'video', 'book', 'game')
+    -    (Text)
+    -    (Text)
+
+**changes in tech stack**
+-   **Database**: Migrated from **MongoDB** to **Supabase (PostgreSQL)**.
 
 **All files of reference**
--   **/app/frontend/package.json**: Key file for the next step, contains the new declare -x DEBIAN_FRONTEND="noninteractive"
-declare -x ENABLE_RELOAD="true"
-declare -x GPG_KEY="A035C8C19219BA821ECEA86B64E628F8D684696D"
-declare -x HOME="/root"
-declare -x HOSTNAME="agent-env-25ace009-1c61-46f2-a6ab-2763f20c05c6"
-declare -x KUBERNETES_PORT="tcp://34.118.224.1:443"
-declare -x KUBERNETES_PORT_443_TCP="tcp://34.118.224.1:443"
-declare -x KUBERNETES_PORT_443_TCP_ADDR="34.118.224.1"
-declare -x KUBERNETES_PORT_443_TCP_PORT="443"
-declare -x KUBERNETES_PORT_443_TCP_PROTO="tcp"
-declare -x KUBERNETES_SERVICE_HOST="34.118.224.1"
-declare -x KUBERNETES_SERVICE_PORT="443"
-declare -x KUBERNETES_SERVICE_PORT_HTTPS="443"
-declare -x LANG="C.UTF-8"
-declare -x NEXT_TELEMETRY_DISABLED="1"
-declare -x NODE_VERSION="20"
-declare -x OLDPWD="/app"
-declare -x PATH="/root/.venv/bin:/opt/plugins-venv/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-declare -x PIP_NO_INPUT="1"
-declare -x PLAYWRIGHT_BROWSERS_PATH="/pw-browsers"
-declare -x PLUGIN_VENV_PATH="/opt/plugins-venv"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT="tcp://34.118.232.80:80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP="tcp://34.118.232.80:80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_ADDR="34.118.232.80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PORT="80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_PORT_80_TCP_PROTO="tcp"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_HOST="34.118.232.80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT="80"
-declare -x PREVIEW_PROXY_FALLBACK_SERVICE_SERVICE_PORT_HTTP="80"
-declare -x PREVIEW_PROXY_SERVICE_PORT="tcp://34.118.225.58:80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP="tcp://34.118.225.58:80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_ADDR="34.118.225.58"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PORT="80"
-declare -x PREVIEW_PROXY_SERVICE_PORT_80_TCP_PROTO="tcp"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_HOST="34.118.225.58"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT="80"
-declare -x PREVIEW_PROXY_SERVICE_SERVICE_PORT_HTTP="80"
-declare -x PWD="/app/frontend"
-declare -x PYTHONUNBUFFERED="1"
-declare -x PYTHON_SHA256="8d3ed8ec5c88c1c95f5e558612a725450d2452813ddad5e58fdb1a53b1209b78"
-declare -x PYTHON_VERSION="3.11.14"
-declare -x SHLVL="1"
-declare -x STRIPE_API_KEY="sk_test_emergent"
-declare -x UV_COMPILE_BYTECODE="1"
-declare -x VIRTUAL_ENV="/root/.venv"
-declare -x base_url="https://demobackend.emergentagent.com"
-declare -x code_server_password="cf92d522"
-declare -x integration_proxy_url="https://integrations.emergentagent.com"
-declare -x monitor_polling_interval="1"
-declare -x preview_endpoint="https://pixelpolishup.preview.emergentagent.com"
-declare -x run_id="25ace009-1c61-46f2-a6ab-2763f20c05c6" script.
--   **/app/frontend/vercel.json**: Configuration for the Vercel build.
--   **/app/backend/server.py**: Contains all the final security and data sync logic.
--   **/app/frontend/app/login.tsx**: Contains the primary logic for triggering the full profile sync upon user login.
--   **/app/frontend/app/settings.tsx**: Contains the manual sync trigger and the fixed logout logic.
--   **/app/frontend/src/store/gameStore.ts**: The heart of the frontend state, contains the logic for loading and managing the complete synced player profile.
--   **/app/frontend/src/store/factionStore.ts**: Contains the logic for syncing faction-related data.
--   **/app/README.md**: The new, comprehensive documentation file.
+-   : The heart of the backend, now fully integrated with Supabase.
+-   : The heavily modified welcome/hero selection screen.
+-   : The prototype for the new game controls and visuals.
+-   : The new reusable component for game controls.
+-   : The central Zustand store, modified for Supabase data structures.
+-    & : Key files for the global color theme.
 
 **Critical Info for New Agent**
--   **Your immediate priority is to verify the Vercel build.** The configuration has been set up, but you must run env: load .env
-env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
-Fast resolver is enabled.
-Starting Metro Bundler
-Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
-λ Bundled 1090ms node_modules/expo-router/node/render.js (1403 modules)
-Web Bundled 1424ms node_modules/expo-router/entry.js (1378 modules)
-
-› web bundles (1):
-_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
-
-› Static routes (37):
-/dao (23 kB)
-/daily (23 kB)
-/ (index) (23 kB)
-/login (23 kB)
-/ranks (23 kB)
-/story (23 kB)
-/terms (23 kB)
-/vault (23 kB)
-/badges (23 kB)
-/config (23 kB)
-/privacy (23 kB)
-/welcome (23 kB)
-/factions (23 kB)
-/progress (23 kB)
-/settings (23 kB)
-/tutorial (23 kB)
-/_sitemap (22.7 kB)
-/characters (23 kB)
-/+not-found (22.7 kB)
-/leaderboard (23 kB)
-/games/dao-duel (23 kB)
-/games/coming-soon (23 kB)
-/games/hash-hopper (23 kB)
-/games/ledger-leap (23 kB)
-/games/quest-vault (23 kB)
-/games/seed-sprint (23 kB)
-/games/stake-smash (23 kB)
-/games/ipfs-pinball (23 kB)
-/games/mine-blaster (23 kB)
-/games/token-tumble (23 kB)
-/games/block-muncher (23 kB)
-/games/chain-builder (23 kB)
-/games/bridge-bouncer (23 kB)
-/games/chain-invaders (23 kB)
-/games/crypto-climber (23 kB)
-/games/lightning-dash (23 kB)
-/games/contract-crusher (23 kB)
-
-Exported: dist inside  to ensure the app can be statically exported without errors.
--   The user's core requirement is a **complete and robust data sync**. The system is now designed to sync everything, but you should be mindful of this if any further changes are made.
--   Several older, minor bugs (Chain Builder crash, Settings scroll) were mentioned in the initial audit but were not addressed in this session. Be prepared to investigate them if the user brings them up again.
--   The project has separate in-app pages () and static HTML files () for the legal documents. If you update one, remember to update the other for consistency.
--   The ESLint configuration has issues with TypeScript syntax. This has been ignored so far but could be fixed for a better development experience.
+-   **Your immediate priority is to finish the TypeScript cleanup.** The user explicitly requested this before moving on to game upgrades. Run app/factions.tsx(615,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; justifyContent: "space-between"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 94 more ...; modalBtnConfirmTex...'.
+  Property 'statusText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/block-muncher.tsx(660,13): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
+app/games/block-muncher.tsx(660,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type '{ new (data?: string | undefined): Text; prototype: Text; }' is not a valid JSX element type.
+    Type '{ new (data?: string | undefined): Text; prototype: Text; }' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'Text' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, render, and 2 more.
+app/games/stake-smash.tsx(822,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; backBtn: { ...; }; ... 36 more ...; controlHint: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; }; ... 37 more ...; controlHint: { ...; }; } & NamedStyles<...>'.
+  Property 'brickText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/games/token-tumble.tsx(202,16): error TS2503: Cannot find namespace 'JSX'.
+app/index.tsx(695,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; marquee: { marginHorizontal: number; marginTop: number; paddingVertical: number; alignItems: "center"; borderBottomWidth: number; borderBottomColor: string; }; ... 74 more ...; disclaimer: { ...; }; } & NamedStyles<...>'.
+  Property 'marqueeTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/settings.tsx(293,9): error TS2322: Type '"miners" | "builders" | "validators" | "explorers" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/settings.tsx(294,9): error TS2322: Type 'number | null' is not assignable to type 'number | undefined'.
+  Type 'null' is not assignable to type 'number | undefined'.
+app/settings.tsx(636,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; }' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 42 more ...; footerJoke: { ...; }; } & NamedStyles<...>'.
+  Property 'title' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+app/tutorial.tsx(343,20): error TS2322: Type '{ children: Element; active: boolean; intensity: number; }' is not assignable to type 'IntrinsicAttributes & ScreenShakeProps'.
+  Property 'active' does not exist on type 'IntrinsicAttributes & ScreenShakeProps'.
+app/tutorial.tsx(458,18): error TS2741: Property 'trigger' is missing in type '{ x: number; y: number; count: number; color: string; }' but required in type 'ParticleBurstProps'.
+app/tutorial.tsx(547,15): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/tutorial.tsx(608,17): error TS2322: Type '{ size: number; rarity: string; icon: string; label: string; animated: true; }' is not assignable to type 'IntrinsicAttributes & HexBadgeProps'.
+  Property 'rarity' does not exist on type 'IntrinsicAttributes & HexBadgeProps'.
+app/vault.tsx(669,5): error TS2345: Argument of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...' is not assignable to parameter of type '{ container: { flex: number; backgroundColor: string; }; safeArea: { flex: number; }; header: { flexDirection: "row"; alignItems: "center"; justifyContent: "space-between"; paddingHorizontal: number; paddingVertical: number; borderBottomWidth: number; borderBottomColor: string; }; ... 161 more ...; storyHintText: { ...'.
+  Property 'headerTitle' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/CRTEffects.tsx(227,11): error TS2353: Object literal may only specify known properties, and 'textShadow' does not exist in type 'SharedValueDisableContravariance<""> | (TextStyle & Partial<CSSAnimationProperties> & Partial<...>) | ... 8 more ... | readonly (false | ... 15 more ... | undefined)[]'.
+src/components/ChainBuilderMini.tsx(209,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/components/CharacterDialogue.tsx(507,5): error TS2345: Argument of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; }' is not assignable to parameter of type '{ overlay: { flex: number; backgroundColor: string; justifyContent: "center"; alignItems: "center"; }; dismissArea: { position: "absolute"; top: number; left: number; right: number; bottom: number; }; ... 26 more ...; miniText: { ...; }; } & NamedStyles<...>'.
+  Property 'funFactText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/components/PixelText.tsx(37,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextProps): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+  Overload 2 of 2, '(props: TextProps, context: any): Text', gave the following error.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'TextStyle | RecursiveArray<TextStyle | Falsy | RegisteredStyle<TextStyle>> | readonly (TextStyle | Falsy | RegisteredStyle<...>)[]'.
+src/components/StoryViewer.tsx(365,35): error TS2345: Argument of type '`/games/${string}`' is not assignable to parameter of type '"/games/chain-builder" | "/games/block-muncher" | "/games/token-tumble" | "/games/chain-invaders" | "/games/hash-hopper" | "/games/seed-sprint" | "/games/crypto-climber" | ... 140 more ... | { ...; }'.
+src/hooks/usePowerUpEffects.ts(79,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/services/NFTBadgeService.ts(70,46): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(82,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(97,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(122,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(132,41): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(154,40): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(164,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(186,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(196,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(218,35): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(228,42): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(250,39): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(260,49): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(272,7): error TS2322: Type 'number' is not assignable to type 'string'.
+src/services/NFTBadgeService.ts(466,17): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(470,24): error TS2339: Property 'collectibleId' does not exist on type 'BadgeReward'.
+src/services/NFTBadgeService.ts(532,7): error TS2353: Object literal may only specify known properties, and 'rarity' does not exist in type 'NFTBadgeMetadata'.
+src/services/StoryAchievements.ts(460,63): error TS2339: Property 'chapterId' does not exist on type 'StoryMapping'.
+src/store/factionStore.ts(461,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/factionStore.ts(466,15): error TS2322: Type '{ [x: string]: string; }' is not assignable to type 'Record<string, "for" | "against">'.
+  'string' index signatures are incompatible.
+    Type 'string' is not assignable to type '"for" | "against"'.
+src/store/gameStore.ts(168,7): error TS2322: Type '(gameId: string, score: number, duration: number) => Promise<boolean | undefined>' is not assignable to type '(gameId: string, score: number, duration: number) => Promise<void>'.
+  Type 'Promise<boolean | undefined>' is not assignable to type 'Promise<void>'.
+    Type 'boolean | undefined' is not assignable to type 'void'.
+      Type 'boolean' is not assignable to type 'void'.
+src/utils/AudioManager.ts(334,7): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/AudioManager.ts(544,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/AudioManager.ts(567,28): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Timeout'.
+src/utils/GameEnhancements.tsx(292,5): error TS2345: Argument of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; top: number; alignSelf: "center"; alignItems: "center"; zIndex: number; }; comboNumber: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; comboText: { ...; }; } & NamedStyles<...>'.
+  Property 'comboNumber' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(381,5): error TS2345: Argument of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; }' is not assignable to parameter of type '{ container: { zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; popup: { position: "absolute"; }; text: { fontSize: number; fontWeight: "bold"; fontFamily: string; textShadow: string; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'.
+src/utils/GameEnhancements.tsx(443,5): error TS2322: Type 'number' is not assignable to type 'Timeout'.
+src/utils/GameEnhancements.tsx(851,5): error TS2345: Argument of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; }' is not assignable to parameter of type '{ container: { justifyContent: "center"; alignItems: "center"; backgroundColor: string; zIndex: number; position: "absolute"; left: 0; right: 0; top: 0; bottom: 0; }; levelText: { fontSize: number; fontWeight: "bold"; color: string; fontFamily: string; textShadow: string; }; upText: { ...; }; } & NamedStyles<...>'.
+  Property 'levelText' is incompatible with index signature.
+    Object literal may only specify known properties, and 'textShadow' does not exist in type 'ViewStyle | TextStyle | ImageStyle'. to get the latest list of errors and continue fixing them.
+-   **Supabase is now the single source of truth.** The user has provided a working key which is configured in . All data operations go through the backend to Supabase.
+-   **The next major task will be to refactor the other games.** The enhancements made to  are a template that needs to be applied to all other games in .
+-   Two old, low-priority bugs from the initial project state (, ) have not been addressed. Keep them in mind as they may need to be fixed eventually.
+-   The user asked to revert the  integration. Ensure no remnants of this are left and do not attempt to re-integrate it without explicit instructions.
 
 **Last 10 User Messages and any pending HUMAN messages**
-10.  - (COMPLETED) Agent implemented full-stack sync for faction/DAO data.
-9.   - (COMPLETED) Agent performed a major overhaul to sync all player profile aspects (XP, scores, badges, etc.).
-8.   - (COMPLETED) Agent fixed a bug in  preventing high scores from syncing correctly.
-7.   - (COMPLETED) Agent corrected the logout logic to preserve user game data.
-6.   - (COMPLETED) Agent found and implemented the missing  method in .
-5.   - (COMPLETED) Agent added toast notifications and fixed sync-related type definitions.
-4.   - (COMPLETED) Agent ran backend tests and confirmed analytics endpoints were working.
-3.   - (COMPLETED) Agent performed a final UI check and fixed remaining text readability issues.
-2.   - (COMPLETED) Agent created and integrated T&C pages (React & HTML).
-1.   - (COMPLETED) Agent updated the XP bar and added varied colors to UI tabs and page backgrounds.
+10.  - (COMPLETED) Agent removed  and updated  to remove the dependency.
+9.  - (COMPLETED) Agent continued fixing TypeScript errors.
+8.  - (IN PROGRESS) Agent began a large-scale effort to fix all TS errors. This is the current active task.
+7.  - (IN PROGRESS) This initiated the bug check and TypeScript fixing session.
+6.  - (COMPLETED) User provided the key again. Agent verified it was already configured and working.
+5.  - (COMPLETED) Agent audited and brightened all dim/grey/black text colors across the app.
+4.  - (COMPLETED) User provided the Supabase key. Agent successfully connected the backend.
+3.  - (COMPLETED) Agent ran the health check, found critical issues, and fixed them.
+2.  - (PARTIALLY COMPLETE) Agent implemented the new system but only applied it to one game () as a prototype.
+1.  - (COMPLETED) This message set the direction for the game control/visuals enhancement task.
 
 **Project Health Check:**
--   **Broken**: No. Core functionality is stable. The Vercel build process is the only unverified component.
--   **Mocked**: No. All features are using the live backend and database.
+-   **Broken**: No. The application is functional and connects to the live Supabase backend.
+-   **Mocked**: No. All data is live from the user's Supabase instance.
 
 **3rd Party Integrations**
+-   **Supabase**: The primary backend-as-a-service for database and authentication.
 -   **DiceBear**: Used for generating placeholder pixel art avatars.
 -   **Zustand**: For frontend state management.
 -   **React Native Reanimated**: For animations.
 -   **Expo AV**: For the audio engine.
 
 **Testing status**
--   Testing agent used after significant changes: YES. The backend testing agent was used to verify security fixes and again to verify analytics endpoints.
+-   Testing agent used after significant changes: NO (not in the last session). The agent relied on static analysis (, ), , and .
 -   Troubleshoot agent used after agent stuck in loop: NO.
 -   Test files created: []
--   Known regressions: None.
+-   Known regressions: None identified.
+
+**Credentials to test flow:**
+The Supabase credentials have been provided by the user and are configured in . The application should connect and work without needing further input.
 
 **What agent forgot to execute**
-- The agent forgot to run a local build test (env: load .env
-env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
-Fast resolver is enabled.
-Starting Metro Bundler
-Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
-λ Bundled 1081ms node_modules/expo-router/node/render.js (1437 modules)
-Web Bundled 1405ms node_modules/expo-router/entry.js (1378 modules)
+-   The agent has consistently overlooked two issues from the very first handover summary:
+    1.  A potential unhandled crash on self-collision in the  component.
+    2.  The scrolling behavior on the  page, which may prevent access to bottom buttons.
+-   The agent has not yet fulfilled the full scope of the update controls and visual formatting across all equally request. It has only been done for one game.
 
-› web bundles (1):
-_expo/static/js/web/entry-797173500efacc3d4b7045641f629b7f.js (3.39 MB)
-
-› Static routes (37):
-/dao (23 kB)
-/daily (23 kB)
-/ (index) (23 kB)
-/login (23 kB)
-/ranks (23 kB)
-/story (23 kB)
-/terms (23 kB)
-/vault (23 kB)
-/badges (23 kB)
-/config (23 kB)
-/privacy (23 kB)
-/welcome (23 kB)
-/factions (23 kB)
-/progress (23 kB)
-/settings (23 kB)
-/tutorial (23 kB)
-/_sitemap (22.7 kB)
-/characters (23 kB)
-/+not-found (22.7 kB)
-/leaderboard (23 kB)
-/games/dao-duel (23 kB)
-/games/coming-soon (23 kB)
-/games/hash-hopper (23 kB)
-/games/ledger-leap (23 kB)
-/games/quest-vault (23 kB)
-/games/seed-sprint (23 kB)
-/games/stake-smash (23 kB)
-/games/ipfs-pinball (23 kB)
-/games/mine-blaster (23 kB)
-/games/token-tumble (23 kB)
-/games/block-muncher (23 kB)
-/games/chain-builder (23 kB)
-/games/bridge-bouncer (23 kB)
-/games/chain-invaders (23 kB)
-/games/crypto-climber (23 kB)
-/games/lightning-dash (23 kB)
-/games/contract-crusher (23 kB)
-
-Exported: dist) after setting up the Vercel deployment configuration.
-- The agent did not re-investigate or verify fixes for the Chain Builder mini-game crash and Settings page scroll behavior issues mentioned in the very first handover summary. They were superseded by other user requests.
 </analysis>

@@ -47,6 +47,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -537,6 +538,15 @@ export default function PowerSmashGame() {
       </View>
     );
   };
+
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') movePaddle('left');
+    if (dir === 'right') movePaddle('right');
+  }, [gameState, movePaddle]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

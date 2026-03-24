@@ -47,6 +47,11 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  EnhancedDPad,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -536,6 +541,20 @@ export default function CryptoClimberGame() {
     }
   };
 
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    switch (dir) {
+      case 'left': startMove('left'); break;
+      case 'right': startMove('right'); break;
+      case 'up': startMove('up'); break;
+      case 'down': startMove('down'); break;
+      case 'action': handleJump(); break;
+    }
+  }, [gameState, handleJump]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
   return (
     <View style={styles.container}>
       <Scanlines opacity={0.05} />
@@ -679,49 +698,18 @@ export default function CryptoClimberGame() {
           </View>
         </View>
 
-        {/* Controls */}
+        {/* Controls - Enhanced D-Pad with Jump */}
         <View style={styles.controls}>
-          <View style={styles.dpad}>
-            <TouchableOpacity
-              style={[styles.dpadBtn, styles.dpadUp]}
-              onPressIn={() => startMove('up')}
-              onPressOut={stopMove}
-              delayPressOut={0}
-            >
-              <Text style={styles.dpadText}>▲</Text>
-            </TouchableOpacity>
-            <View style={styles.dpadMiddle}>
-              <TouchableOpacity
-                style={[styles.dpadBtn, styles.dpadLeft]}
-                onPressIn={() => startMove('left')}
-                onPressOut={stopMove}
-                delayPressOut={0}
-              >
-                <Text style={styles.dpadText}>◀</Text>
-              </TouchableOpacity>
-              <View style={styles.dpadCenter} />
-              <TouchableOpacity
-                style={[styles.dpadBtn, styles.dpadRight]}
-                onPressIn={() => startMove('right')}
-                onPressOut={stopMove}
-                delayPressOut={0}
-              >
-                <Text style={styles.dpadText}>▶</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={[styles.dpadBtn, styles.dpadDown]}
-              onPressIn={() => startMove('down')}
-              onPressOut={stopMove}
-              delayPressOut={0}
-            >
-              <Text style={styles.dpadText}>▼</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <TouchableOpacity style={styles.jumpBtn} onPress={handleJump}>
-            <Text style={styles.jumpText}>JUMP</Text>
-          </TouchableOpacity>
+          <EnhancedDPad
+            onUp={() => startMove('up')}
+            onDown={() => startMove('down')}
+            onLeft={() => startMove('left')}
+            onRight={() => startMove('right')}
+            onAction={handleJump}
+            size="md"
+            color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : COLORS.chainGold}
+            disabled={gameState !== 'playing'}
+          />
         </View>
         
         {/* Character Story Dialogue */}

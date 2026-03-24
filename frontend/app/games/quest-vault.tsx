@@ -40,6 +40,11 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  EnhancedDPad,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'quest-vault')!;
 
@@ -352,6 +357,17 @@ export default function QuestVaultGame() {
     });
   }, [gameState, playerPos, map, vault, collectedSigners, enemies, gold, level, score, playMove, playCollect, playPowerup, playHit, playLevelUp, playGameOver, initGame, submitScore, addXP]);
 
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    const keyMap: Record<string, [number, number]> = {
+      up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0],
+    };
+    if (keyMap[dir]) movePlayer(keyMap[dir][0], keyMap[dir][1]);
+  }, [gameState, movePlayer]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
   // Enemy movement
   useEffect(() => {
     if (gameState !== 'playing') return;
@@ -524,28 +540,18 @@ export default function QuestVaultGame() {
           </View>
         </View>
 
-        {/* D-Pad Controls */}
+        {/* D-Pad Controls - Enhanced */}
         {gameState === 'playing' && (
           <View style={styles.controls}>
-            <View style={styles.dpadRow}>
-              <TouchableOpacity style={styles.dpadButton} onPress={() => movePlayer(0, -1)}>
-                <PixelText size="lg" color={COLORS.neonCyan}>▲</PixelText>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.dpadRow}>
-              <TouchableOpacity style={styles.dpadButton} onPress={() => movePlayer(-1, 0)}>
-                <PixelText size="lg" color={COLORS.neonCyan}>◀</PixelText>
-              </TouchableOpacity>
-              <View style={styles.dpadCenter} />
-              <TouchableOpacity style={styles.dpadButton} onPress={() => movePlayer(1, 0)}>
-                <PixelText size="lg" color={COLORS.neonCyan}>▶</PixelText>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.dpadRow}>
-              <TouchableOpacity style={styles.dpadButton} onPress={() => movePlayer(0, 1)}>
-                <PixelText size="lg" color={COLORS.neonCyan}>▼</PixelText>
-              </TouchableOpacity>
-            </View>
+            <EnhancedDPad
+              onUp={() => movePlayer(0, -1)}
+              onDown={() => movePlayer(0, 1)}
+              onLeft={() => movePlayer(-1, 0)}
+              onRight={() => movePlayer(1, 0)}
+              size="md"
+              color={combo >= 5 ? '#FF00FF' : COLORS.neonCyan}
+              disabled={gameState !== 'playing'}
+            />
           </View>
         )}
 

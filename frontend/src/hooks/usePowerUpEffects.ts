@@ -65,7 +65,7 @@ export const usePowerUpEffects = (): PowerUpEffects => {
   } = usePowerUpStore();
   
   const [extraLifeUsed, setExtraLifeUsed] = useState(false);
-  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Update unlocked power-ups based on badges
   useEffect(() => {

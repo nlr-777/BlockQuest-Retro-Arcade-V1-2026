@@ -54,6 +54,11 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  EnhancedDPad,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -253,6 +258,17 @@ export default function HashHopperGame() {
       return { x: newX, y: newY };
     });
   }, [gameState, pathTaken, highestRow, combo, level, score, difficulty, getMultiplier, incrementCombo, addPopup]);
+
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    const keyMap: Record<string, [number, number]> = {
+      up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0],
+    };
+    if (keyMap[dir]) movePlayer(keyMap[dir][0], keyMap[dir][1]);
+  }, [gameState, movePlayer]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   // Game loop
   useEffect(() => {
@@ -509,27 +525,17 @@ export default function HashHopperGame() {
         </PixelText>
       </View>
 
-      {/* Controls */}
+      {/* Controls - Enhanced D-Pad */}
       <View style={styles.controls}>
-        <View style={styles.controlRow}>
-          <TouchableOpacity style={styles.controlButton} onPress={() => movePlayer(0, -1)}>
-            <Ionicons name="arrow-up" size={32} color={COLORS.hashGreen} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.controlRow}>
-          <TouchableOpacity style={styles.controlButton} onPress={() => movePlayer(-1, 0)}>
-            <Ionicons name="arrow-back" size={32} color={COLORS.hashGreen} />
-          </TouchableOpacity>
-          <View style={styles.controlSpacer} />
-          <TouchableOpacity style={styles.controlButton} onPress={() => movePlayer(1, 0)}>
-            <Ionicons name="arrow-forward" size={32} color={COLORS.hashGreen} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.controlRow}>
-          <TouchableOpacity style={styles.controlButton} onPress={() => movePlayer(0, 1)}>
-            <Ionicons name="arrow-down" size={32} color={COLORS.hashGreen} />
-          </TouchableOpacity>
-        </View>
+        <EnhancedDPad
+          onUp={() => movePlayer(0, -1)}
+          onDown={() => movePlayer(0, 1)}
+          onLeft={() => movePlayer(-1, 0)}
+          onRight={() => movePlayer(1, 0)}
+          size="md"
+          color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : COLORS.hashGreen}
+          disabled={gameState !== 'playing'}
+        />
       </View>
 
       {/* Menu Overlay */}

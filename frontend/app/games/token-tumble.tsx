@@ -47,6 +47,10 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -199,7 +203,7 @@ const Cell: React.FC<{ color: string | null; x: number; y: number }> = ({ color,
 
 // Active piece component
 const ActivePiece: React.FC<{ piece: Piece }> = ({ piece }) => {
-  const cells: JSX.Element[] = [];
+  const cells: React.ReactElement[] = [];
   const color = BLOCKS[piece.type].color;
 
   for (let y = 0; y < piece.shape.length; y++) {
@@ -428,6 +432,20 @@ export default function BlockTumbleGame() {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
   }, [gameState, level, movePiece]);
+
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    switch (dir) {
+      case 'left': movePiece(-1, 0); break;
+      case 'right': movePiece(1, 0); break;
+      case 'down': movePiece(0, 1); break;
+      case 'up': rotatePiece(); break;
+      case 'action': hardDrop(); break;
+    }
+  }, [gameState, movePiece, rotatePiece, hardDrop]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   // Handle rewards -> gameover transition
   const handleRewardsContinue = useCallback(() => {

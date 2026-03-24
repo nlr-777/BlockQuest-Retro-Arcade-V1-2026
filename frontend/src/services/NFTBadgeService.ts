@@ -9,6 +9,9 @@ export interface NFTBadgeMetadata {
   description: string;
   image: string;
   attributes: { trait_type: string; value: string | number }[];
+  rarity?: string;
+  gameId?: string;
+  unlockedAt?: number;
 }
 
 export interface BadgeReward {
@@ -18,7 +21,8 @@ export interface BadgeReward {
   title?: string;
   powerUp?: string;
   multiplier?: number;
-  timeBonus?: string;
+  timeBonus?: number;
+  collectibleId?: string;
 }
 
 // Badge definitions with unlock criteria and rewards

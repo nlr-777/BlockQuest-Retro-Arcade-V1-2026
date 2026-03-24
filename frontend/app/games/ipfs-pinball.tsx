@@ -46,6 +46,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'ipfs-pinball')!;
 
@@ -362,6 +363,16 @@ export default function IPFSPinballGame() {
   const rightFlipperStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rightFlipperAngle.value}deg` }],
   }));
+
+  // Keyboard controls for web (Left/Right flippers, Space to launch)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') setLeftFlipperUp(prev => !prev);
+    if (dir === 'right') setRightFlipperUp(prev => !prev);
+    if (dir === 'action') launchBall();
+  }, [gameState, launchBall]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

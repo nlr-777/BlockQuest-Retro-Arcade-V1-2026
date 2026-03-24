@@ -457,7 +457,7 @@ export const processGameCompletion = async (
   
   if (storyMapping && score > 0) {
     // Unlock the chapter in character store
-    characterStore.getState().unlockStoryChapter(storyMapping.chapterId);
+    characterStore.getState().unlockStoryChapter(storyMapping.gameId);
     chaptersUnlocked = true;
     
     // Check if character should be unlocked

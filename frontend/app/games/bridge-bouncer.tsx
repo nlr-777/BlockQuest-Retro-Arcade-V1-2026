@@ -38,6 +38,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -359,6 +360,18 @@ export default function BridgeBouncerGame() {
   };
 
   const playerPos = getTilePosition(playerRow, playerCol);
+
+  // Keyboard controls for web (arrows mapped to diagonal Q*Bert movement)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    // Map arrow keys to Q*Bert diagonal movement
+    if (dir === 'up') movePlayer('ul');      // Up-Left
+    if (dir === 'right') movePlayer('ur');   // Up-Right
+    if (dir === 'left') movePlayer('dl');    // Down-Left
+    if (dir === 'down') movePlayer('dr');    // Down-Right
+  }, [gameState, movePlayer]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

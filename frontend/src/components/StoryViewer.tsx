@@ -362,7 +362,7 @@ const ChapterDetailModal: React.FC<{
                     style={[styles.playGameBtn, { backgroundColor: character.colors.primary }]}
                     onPress={() => {
                       onClose();
-                      router.push(`/games/${game.gameId}`);
+                      router.push(`/games/${game.gameId}` as any);
                     }}
                   >
                     <Text style={styles.playGameText}>

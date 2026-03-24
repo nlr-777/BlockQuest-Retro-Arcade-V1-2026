@@ -50,6 +50,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -252,6 +253,14 @@ export default function SeedSprintGame() {
       if (Platform.OS !== 'web') Vibration.vibrate([0, 10, 50, 10]);
     }
   }, [gameState, isJumping, jumpCount, canDoubleJump, playJump, powerUps.jumpModifier]);
+
+  // Keyboard controls for web (Space/Up = Jump)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'up' || dir === 'action') jump();
+  }, [gameState, jump]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   // Game loop with power-up effects
   useEffect(() => {

@@ -38,6 +38,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -320,6 +321,15 @@ export default function LightningDashGame() {
   }, [gameState, playerLane, speedLevel, isBoosting, score, distance, submitScore]);
 
   const playerX = playerLane * LANE_WIDTH + LANE_WIDTH / 2 - PLAYER_WIDTH / 2;
+
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') moveLeft();
+    if (dir === 'right') moveRight();
+  }, [gameState, moveLeft, moveRight]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

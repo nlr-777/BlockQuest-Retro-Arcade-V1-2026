@@ -48,6 +48,11 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import {
+  useKeyboardControls,
+  EnhancedDPad,
+  KeyDirection,
+} from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -268,6 +273,18 @@ export default function ChainInvadersGame() {
     playShoot();
     if (Platform.OS !== 'web') Vibration.vibrate(10);
   }, [gameState, playerX, rapidFire, playShoot]);
+
+  // Keyboard controls for web
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    switch (dir) {
+      case 'left': movePlayer(-1); break;
+      case 'right': movePlayer(1); break;
+      case 'action': shoot(); break;
+    }
+  }, [gameState, movePlayer, shoot]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   // Vote for power-up (DAO mechanic)
   const voteForPowerUp = useCallback((type: 'rapid' | 'shield' | 'spread') => {
@@ -640,31 +657,18 @@ export default function ChainInvadersGame() {
         </PixelText>
       </View>
 
-      {/* Controls */}
+      {/* Controls - Enhanced with EnhancedDPad */}
       <View style={styles.controls}>
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={() => movePlayer(-1)}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={32} color={COLORS.tokenPurple} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.controlButton, styles.fireButton]}
-          onPress={shoot}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="flame" size={32} color={COLORS.seedRed} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={() => movePlayer(1)}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-forward" size={32} color={COLORS.tokenPurple} />
-        </TouchableOpacity>
+        <EnhancedDPad
+          onUp={() => {}}
+          onDown={() => {}}
+          onLeft={() => movePlayer(-1)}
+          onRight={() => movePlayer(1)}
+          onAction={shoot}
+          size="md"
+          color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : COLORS.tokenPurple}
+          disabled={gameState !== 'playing'}
+        />
       </View>
 
       {/* Menu Overlay */}

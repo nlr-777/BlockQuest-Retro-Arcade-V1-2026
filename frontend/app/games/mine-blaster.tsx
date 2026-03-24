@@ -38,6 +38,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -470,6 +471,16 @@ export default function RockBlasterGame() {
 
   const rotateLeft = () => setShipRotation(prev => prev - ROTATION_SPEED);
   const rotateRight = () => setShipRotation(prev => prev + ROTATION_SPEED);
+
+  // Keyboard controls for web (Left/Right rotate, Up/Space to shoot)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'left') rotateLeft();
+    if (dir === 'right') rotateRight();
+    if (dir === 'up' || dir === 'action') shoot();
+  }, [gameState, shoot]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

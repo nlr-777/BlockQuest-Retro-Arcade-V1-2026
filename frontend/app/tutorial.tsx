@@ -340,7 +340,7 @@ export default function TutorialScreen() {
       <PixelRain count={15} />
       <CRTScanlines opacity={0.06} />
       
-      <ScreenShake active={showShake} intensity={15}>
+      <ScreenShake trigger={showShake ? 1 : 0} intensity={15}>
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           {/* Header HUD */}
           <View style={styles.header}>
@@ -460,6 +460,7 @@ export default function TutorialScreen() {
                   y={showBurst.y}
                   count={8}
                   color={CRT_COLORS.primary}
+                  trigger={1}
                 />
               )}
             </View>

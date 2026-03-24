@@ -76,7 +76,7 @@ interface GameState {
     achievements?: string[];
     recentScores?: any[];
   }) => void;
-  updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
+  updateScore: (gameId: string, score: number, duration: number) => Promise<boolean | undefined>;
   mintBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
   toggleMute: () => void;
   setMusicVolume: (vol: number) => void;

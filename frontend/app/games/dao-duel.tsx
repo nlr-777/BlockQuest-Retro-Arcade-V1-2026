@@ -38,6 +38,7 @@ import {
   LevelUpFlash,
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
+import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -321,6 +322,15 @@ export default function DAODuelGame() {
   const stopMove = () => {
     moveDirectionRef.current = null;
   };
+
+  // Keyboard controls for web (Up/Down paddle, Space to serve)
+  const handleKeyDirection = useCallback((dir: KeyDirection) => {
+    if (gameState !== 'playing') return;
+    if (dir === 'up') startMove('up');
+    if (dir === 'down') startMove('down');
+  }, [gameState, startMove]);
+
+  useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
 
   return (
     <View style={styles.container}>

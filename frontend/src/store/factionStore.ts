@@ -458,12 +458,12 @@ export const useFactionStore = create<FactionState>()(
               xpContributed: Math.max(cloudXP, localXP),
               votesParticipated: Math.max(cloudData.faction_votes_participated || 0, votesParticipated),
               memberRank: cloudData.faction_member_rank || 'Rookie',
-              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) } as Record<string, 'for' | 'against'>,
             });
           } else {
             // Keep local but merge votes
             set({
-              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) },
+              playerVotes: { ...playerVotes, ...(cloudData.faction_votes || {}) } as Record<string, 'for' | 'against'>,
               xpContributed: Math.max(cloudXP, localXP),
               votesParticipated: Math.max(cloudData.faction_votes_participated || 0, votesParticipated),
             });
