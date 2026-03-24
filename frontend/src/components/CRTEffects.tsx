@@ -395,4 +395,72 @@ export const HexBadge: React.FC<HexBadgeProps> = ({
   );
 };
 
+// GhostHand - Animated hand tutorial guide
+interface GhostHandProps {
+  targetX: number;
+  targetY: number;
+  visible: boolean;
+  action?: 'tap' | 'swipe' | 'drag';
+}
+
+export const GhostHand: React.FC<GhostHandProps> = ({
+  targetX,
+  targetY,
+  visible,
+  action = 'tap',
+}) => {
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (visible) {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withRepeat(
+        withSequence(
+          withTiming(-10, { duration: 500 }),
+          withTiming(0, { duration: 500 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      opacity.value = withTiming(0, { duration: 200 });
+    }
+  }, [visible]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+    opacity: opacity.value,
+  }));
+
+  if (!visible) return null;
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          left: targetX - 20,
+          top: targetY,
+          zIndex: 1000,
+        },
+        animatedStyle,
+      ]}
+    >
+      <Text style={{ fontSize: 32 }}>👆</Text>
+      {action === 'tap' && (
+        <Text style={{
+          fontSize: 10,
+          color: CRT_COLORS.accentGold,
+          textAlign: 'center',
+          marginTop: 4,
+          fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+        }}>
+          TAP!
+        </Text>
+      )}
+    </Animated.View>
+  );
+};
+
 export { CRT_COLORS };
