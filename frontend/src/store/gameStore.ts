@@ -70,6 +70,11 @@ interface GameState {
     highScores: Record<string, number>;
     badges: any[];
     unlockedStoryBadges: string[];
+    gamesPlayed?: number;
+    totalScore?: number;
+    daoVotingPower?: number;
+    achievements?: string[];
+    recentScores?: any[];
   }) => void;
   updateScore: (gameId: string, score: number, duration: number) => Promise<void>;
   mintBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
