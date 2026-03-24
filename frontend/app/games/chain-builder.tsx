@@ -1,6 +1,6 @@
 // BlockQuest Official - Chain Builder Full Game
 // 🐍 Snake-style blockchain building game!
-// Full standalone version (also available as mini-game on welcome screen)
+// Full standalone version with enhanced controls & visuals
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
@@ -18,6 +18,8 @@ import Animated, {
   useAnimatedStyle,
   withSequence,
   withSpring,
+  withTiming,
+  withRepeat,
   FadeIn,
   ZoomIn,
 } from 'react-native-reanimated';
@@ -26,6 +28,24 @@ import { CRTGlowBorder, CRTScanlines, PixelRain } from '../../src/components/CRT
 import { PixelText } from '../../src/components/PixelText';
 import { useGameStore } from '../../src/store/gameStore';
 import audioManager from '../../src/utils/AudioManager';
+import { 
+  useKeyboardControls, 
+  EnhancedDPad, 
+  NeonText, 
+  ScoreDisplay,
+  GameHeader,
+  CollectEffect,
+  GameProgressBar,
+  GameInstructions,
+} from '../../src/utils/GameControls';
+import { 
+  GameHaptics, 
+  ScreenShake, 
+  ComboDisplay, 
+  useComboSystem,
+  ParticleBurst,
+} from '../../src/utils/GameEnhancements';
+import { ConfettiEffect } from '../../src/components/ConfettiEffect';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
