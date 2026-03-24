@@ -386,6 +386,15 @@ export const useGameStore = create<GameState>()(
       recentScores: [],
     });
   },
+  
+  // Reset profile only (keeps settings)
+  resetProfile: () => {
+    set({
+      profile: null,
+      highScores: {},
+      recentScores: [],
+    });
+  },
 }),
     {
       name: 'blockquest-game-storage',
