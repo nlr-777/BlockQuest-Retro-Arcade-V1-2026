@@ -91,7 +91,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'v
 
 export default function LedgerLeapGame() {
   const router = useRouter();
-  const { submitScore } = useGameStore();
+  const { submitScore, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -505,6 +505,7 @@ export default function LedgerLeapGame() {
         gameEmoji="👑"
         gameColor="#00BFFF"
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['ledger-leap'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

@@ -53,6 +53,7 @@ interface GameState {
   
   // Scores
   highScores: Record<string, number>;
+  modeHighScores: Record<string, { classic: number; survival: number }>;
   recentScores: GameScore[];
   
   // Hydration tracking
@@ -76,7 +77,7 @@ interface GameState {
     achievements?: string[];
     recentScores?: any[];
   }) => void;
-  updateScore: (gameId: string, score: number, duration: number) => Promise<boolean | undefined>;
+  updateScore: (gameId: string, score: number, duration: number, mode?: 'classic' | 'survival') => Promise<boolean | undefined>;
   mintBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
   toggleMute: () => void;
   setMusicVolume: (vol: number) => void;
@@ -137,6 +138,7 @@ export const useGameStore = create<GameState>()(
       vfxEnabled: true,
       vfxIntensity: 1,
       highScores: {},
+      modeHighScores: {},
       recentScores: [],
       
       // Hydration tracking
@@ -165,14 +167,28 @@ export const useGameStore = create<GameState>()(
         set({ isLoading: false });
       },
 
-      updateScore: async (gameId: string, score: number, duration: number) => {
-        const { profile, highScores, recentScores, mintBadge } = get();
+      updateScore: async (gameId: string, score: number, duration: number, mode?: 'classic' | 'survival') => {
+        const { profile, highScores, modeHighScores, recentScores, mintBadge } = get();
         if (!profile) return;
 
+        // Update overall high scores
         const newHighScores = { ...highScores };
         const isNewHighScore = !newHighScores[gameId] || score > newHighScores[gameId];
         if (isNewHighScore) {
           newHighScores[gameId] = score;
+        }
+
+        // Update mode-specific high scores
+        const newModeHighScores = { ...modeHighScores };
+        const gameMode = mode || 'classic';
+        if (!newModeHighScores[gameId]) {
+          newModeHighScores[gameId] = { classic: 0, survival: 0 };
+        } else {
+          newModeHighScores[gameId] = { ...newModeHighScores[gameId] };
+        }
+        const isNewModeHighScore = score > (newModeHighScores[gameId][gameMode] || 0);
+        if (isNewModeHighScore) {
+          newModeHighScores[gameId][gameMode] = score;
         }
 
         const newScore: GameScore = {
@@ -204,11 +220,15 @@ export const useGameStore = create<GameState>()(
         set({
           profile: updatedProfile,
           highScores: newHighScores,
+          modeHighScores: newModeHighScores,
           recentScores: [newScore, ...recentScores.slice(0, 19)],
         });
 
         // Show toast for new high score
-        if (isNewHighScore) {
+        if (isNewModeHighScore) {
+          const modeLabel = gameMode === 'survival' ? '💀 Survival' : '🏆 Classic';
+          showToast(`${modeLabel} High Score: ${score}!`, 'success');
+        } else if (isNewHighScore) {
           showToast(`🏆 New High Score: ${score}!`, 'success');
         }
         

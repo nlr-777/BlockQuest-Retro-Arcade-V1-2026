@@ -70,7 +70,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'v
 
 export default function DAODuelGame() {
   const router = useRouter();
-  const { submitScore } = useGameStore();
+  const { submitScore, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playHit, playCollect, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'tension' });
@@ -368,6 +368,7 @@ export default function DAODuelGame() {
         gameEmoji="🎯"
         gameColor={COLORS.neonPink}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['dao-duel'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

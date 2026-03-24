@@ -144,7 +144,7 @@ const generateDungeon = (level: number): number[][] => {
 
 export default function QuestVaultGame() {
   const router = useRouter();
-  const { submitScore, addXP } = useGameStore();
+  const { submitScore, addXP, modeHighScores } = useGameStore();
   const { playCollect, playHit, playGameStart, playGameOver, playPowerup, playLevelUp, playMove } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -467,6 +467,7 @@ export default function QuestVaultGame() {
         gameEmoji="🏰"
         gameColor={COLORS.neonCyan}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['quest-vault'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

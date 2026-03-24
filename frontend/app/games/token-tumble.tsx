@@ -272,7 +272,7 @@ const NextPiecePreview: React.FC<{ type: BlockType | null }> = ({ type }) => {
 
 export default function BlockTumbleGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -533,6 +533,7 @@ export default function BlockTumbleGame() {
         gameEmoji="💰"
         gameColor={COLORS.tokenPurple}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['token-tumble'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

@@ -104,7 +104,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'v
 
 export default function ContractCrusherGame() {
   const router = useRouter();
-  const { submitScore, addXP } = useGameStore();
+  const { submitScore, addXP, modeHighScores } = useGameStore();
   const { playCollect, playHit, playGameStart, playGameOver, playPowerup, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -491,6 +491,7 @@ export default function ContractCrusherGame() {
         gameEmoji="📜"
         gameColor={COLORS.neonCyan}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['contract-crusher'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

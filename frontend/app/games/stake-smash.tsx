@@ -120,7 +120,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'v
 
 export default function PowerSmashGame() {
   const router = useRouter();
-  const { submitScore, addBadge } = useGameStore();
+  const { submitScore, addBadge, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'action' });
@@ -584,6 +584,7 @@ export default function PowerSmashGame() {
         gameEmoji="⚡"
         gameColor={COLORS.neonCyan}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['stake-smash'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

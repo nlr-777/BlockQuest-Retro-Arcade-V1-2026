@@ -102,7 +102,7 @@ interface WordCollectable {
 
 export default function SeedSprintGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -481,6 +481,7 @@ export default function SeedSprintGame() {
         gameEmoji="🏃"
         gameColor={COLORS.seedRed}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['seed-sprint'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

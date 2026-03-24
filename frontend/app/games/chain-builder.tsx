@@ -99,7 +99,7 @@ const ACHIEVEMENTS = [
 
 export default function ChainBuilderGame() {
   const router = useRouter();
-  const { submitScore, addXP, mintBadge } = useGameStore();
+  const { submitScore, addXP, mintBadge, modeHighScores } = useGameStore();
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('modeselect');
@@ -454,8 +454,8 @@ export default function ChainBuilderGame() {
         gameEmoji="⛓️"
         gameColor={CRT_COLORS.accentGold}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['chain-builder'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
-        highScores={{ classic: highScore, survival: 0 }}
       />
     );
   }

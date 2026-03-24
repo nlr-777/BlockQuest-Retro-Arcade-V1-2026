@@ -102,7 +102,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'v
 
 export default function RockBlasterGame() {
   const router = useRouter();
-  const { submitScore } = useGameStore();
+  const { submitScore, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playShoot, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'action' });
@@ -518,6 +518,7 @@ export default function RockBlasterGame() {
         gameEmoji="⛏️"
         gameColor="#FFD700"
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['mine-blaster'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

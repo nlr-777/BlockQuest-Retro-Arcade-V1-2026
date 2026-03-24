@@ -103,7 +103,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'gameover' | 'rewards';
 
 export default function IPFSPinballGame() {
   const router = useRouter();
-  const { submitScore, addXP } = useGameStore();
+  const { submitScore, addXP, modeHighScores } = useGameStore();
   const { playCollect, playHit, playGameStart, playGameOver, playPowerup } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -410,6 +410,7 @@ export default function IPFSPinballGame() {
         gameEmoji="🎯"
         gameColor="#FF6AD5"
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['ipfs-pinball'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

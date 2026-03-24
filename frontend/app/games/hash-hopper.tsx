@@ -99,7 +99,7 @@ const generateHash = (input: string): string => {
 
 export default function HashHopperGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -460,6 +460,7 @@ export default function HashHopperGame() {
         gameEmoji="🐸"
         gameColor={COLORS.hashGreen}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['hash-hopper'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

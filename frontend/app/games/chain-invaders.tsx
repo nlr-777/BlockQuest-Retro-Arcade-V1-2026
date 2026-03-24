@@ -135,7 +135,7 @@ const InvaderSprite: React.FC<{ invader: Invader }> = ({ invader }) => {
 
 export default function ChainInvadersGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   
   // Audio hook for game sounds and music
   const { 
@@ -560,6 +560,7 @@ export default function ChainInvadersGame() {
         gameEmoji="👾"
         gameColor={COLORS.tokenPurple}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['chain-invaders'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

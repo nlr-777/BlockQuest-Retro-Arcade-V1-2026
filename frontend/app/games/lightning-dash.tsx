@@ -87,7 +87,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'r
 
 export default function LightningDashGame() {
   const router = useRouter();
-  const { submitScore } = useGameStore();
+  const { submitScore, modeHighScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp, playPowerup } = useGameAudio({ musicTrack: 'euphoria' });
@@ -367,6 +367,7 @@ export default function LightningDashGame() {
         gameEmoji="⚡"
         gameColor="#FFD700"
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['lightning-dash'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

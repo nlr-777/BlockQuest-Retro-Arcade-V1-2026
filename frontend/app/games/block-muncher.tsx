@@ -287,7 +287,7 @@ const ChainSegment: React.FC<{ position: Position; index: number }> = ({ positio
 
 export default function BlockMuncherGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   
   // Audio hook for game sounds and music
   const { 
@@ -695,6 +695,7 @@ export default function BlockMuncherGame() {
         gameColor={COLORS.chainGold}
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+        highScores={modeHighScores['block-muncher'] || { classic: 0, survival: 0 }}
       />
     );
   }
