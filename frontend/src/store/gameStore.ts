@@ -428,6 +428,7 @@ export const useGameStore = create<GameState>()(
       partialize: (state) => ({
         profile: state.profile,
         highScores: state.highScores,
+        modeHighScores: state.modeHighScores,
         recentScores: state.recentScores,
         isMuted: state.isMuted,
         musicVolume: state.musicVolume,
