@@ -51,6 +51,14 @@ import {
   useKeyboardControls,
   KeyDirection,
 } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -104,7 +112,7 @@ const BLOCKS = {
 };
 
 type BlockType = keyof typeof BLOCKS;
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards';
+type GameState = 'modeselect' | 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards';
 type Board = (string | null)[][];
 
 interface Piece {
@@ -285,7 +293,11 @@ export default function BlockTumbleGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('menu');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -496,6 +508,35 @@ export default function BlockTumbleGame() {
       <Ionicons name={icon as any} size={size} color={COLORS.blockCyan} />
     </TouchableOpacity>
   );
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('menu');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => { if (survivalTimerRef.current) clearInterval(survivalTimerRef.current); };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Block Tumble"
+        gameEmoji="💰"
+        gameColor={COLORS.tokenPurple}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>

@@ -47,6 +47,14 @@ import {
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
 import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'ipfs-pinball')!;
 
@@ -91,7 +99,7 @@ interface Pin {
   active: boolean;
 }
 
-type GameState = 'ready' | 'playing' | 'gameover' | 'rewards';
+type GameState = 'modeselect' | 'ready' | 'playing' | 'gameover' | 'rewards';
 
 export default function IPFSPinballGame() {
   const router = useRouter();
@@ -116,7 +124,11 @@ export default function IPFSPinballGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('ready');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -373,6 +385,35 @@ export default function IPFSPinballGame() {
   }, [gameState, launchBall]);
 
   useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('ready');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => { if (survivalTimerRef.current) clearInterval(survivalTimerRef.current); };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="IPFS Pinball"
+        gameEmoji="🎯"
+        gameColor="#FF6AD5"
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>

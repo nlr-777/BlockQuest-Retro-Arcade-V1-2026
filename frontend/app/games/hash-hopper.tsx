@@ -59,6 +59,14 @@ import {
   EnhancedDPad,
   KeyDirection,
 } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
@@ -71,7 +79,7 @@ const GAME_WIDTH = GRID_COLS * CELL_SIZE;
 const GAME_HEIGHT = GRID_ROWS * CELL_SIZE;
 
 type Position = { x: number; y: number };
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards' | 'victory';
+type GameState = 'modeselect' | 'menu' | 'playing' | 'paused' | 'gameover' | 'rewards' | 'victory';
 
 interface Lane {
   type: 'safe' | 'road' | 'water' | 'goal';
@@ -114,7 +122,11 @@ export default function HashHopperGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('menu');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [playerPos, setPlayerPos] = useState<Position>({ x: 4, y: 10 });
@@ -423,6 +435,35 @@ export default function HashHopperGame() {
       </View>
     );
   };
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('menu');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => { if (survivalTimerRef.current) clearInterval(survivalTimerRef.current); };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Hash Hopper"
+        gameEmoji="🐸"
+        gameColor={COLORS.hashGreen}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>

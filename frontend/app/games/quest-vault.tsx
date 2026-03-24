@@ -45,6 +45,14 @@ import {
   EnhancedDPad,
   KeyDirection,
 } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'quest-vault')!;
 
@@ -102,7 +110,7 @@ interface Vault {
   unlocked: boolean;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
+type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 // Generate dungeon map
 const generateDungeon = (level: number): number[][] => {
@@ -157,7 +165,11 @@ export default function QuestVaultGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('ready');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -430,6 +442,35 @@ export default function QuestVaultGame() {
       default: return '👾';
     }
   };
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('ready');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => { if (survivalTimerRef.current) clearInterval(survivalTimerRef.current); };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Quest Vault"
+        gameEmoji="🏰"
+        gameColor={COLORS.neonCyan}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>

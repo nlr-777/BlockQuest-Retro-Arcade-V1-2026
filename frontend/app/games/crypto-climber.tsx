@@ -52,6 +52,14 @@ import {
   EnhancedDPad,
   KeyDirection,
 } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -175,7 +183,11 @@ export default function CryptoClimberGame() {
   const { getSelectedCharacter } = useCharacterStore();
   
   // Game state
-  const [gameState, setGameState] = useState<'ready' | 'playing' | 'paused' | 'gameover' | 'won' | 'rewards'>('ready');
+  const [gameState, setGameState] = useState<'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'won' | 'rewards'>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -554,6 +566,39 @@ export default function CryptoClimberGame() {
   }, [gameState, handleJump]);
 
   useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
+  // Mode selector handler
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('ready');
+  }, []);
+
+  // Survival timer
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => {
+      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
+    };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Treasure Climber"
+        gameEmoji="🦍"
+        gameColor={COLORS.chainGold}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>

@@ -39,6 +39,14 @@ import {
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
 import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -79,7 +87,7 @@ interface Enemy {
   platformId: number;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
+type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function LedgerLeapGame() {
   const router = useRouter();
@@ -106,7 +114,11 @@ export default function LedgerLeapGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('ready');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -468,6 +480,35 @@ export default function LedgerLeapGame() {
   }, [gameState, startMove, handleJump]);
 
   useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('ready');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => { if (survivalTimerRef.current) clearInterval(survivalTimerRef.current); };
+  }, [gameState, gameMode]);
+
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Ledger Leap"
+        gameEmoji="👑"
+        gameColor="#00BFFF"
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
