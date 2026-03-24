@@ -528,7 +528,7 @@ export default function TutorialScreen() {
       </ScreenShake>
 
       {/* Confetti */}
-      <ConfettiBurst active={showConfetti} />
+      <ConfettiEffect visible={showConfetti} />
 
       {/* Intro Overlay */}
       {gameState === 'intro' && (
@@ -594,7 +594,7 @@ export default function TutorialScreen() {
       {/* Badge Earned Modal */}
       <Modal visible={showBadgeModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <ConfettiBurst active={true} />
+          <ConfettiEffect visible={true} />
           
           <Animated.View entering={ZoomIn} style={styles.badgeModal}>
             <CRTFlickerText style={styles.badgeTitle} color={CRT_COLORS.primary} glitch>
