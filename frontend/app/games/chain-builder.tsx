@@ -167,7 +167,8 @@ export default function ChainBuilderGame() {
 
   // Spawn a new block to collect
   const spawnBlock = useCallback(() => {
-    let newX, newY;
+    let newX: number = 0;
+    let newY: number = 0;
     let attempts = 0;
     do {
       newX = Math.floor(Math.random() * GRID_COLS);
