@@ -260,7 +260,7 @@ const NextPiecePreview: React.FC<{ type: BlockType | null }> = ({ type }) => {
 
 export default function BlockTumbleGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -372,7 +372,7 @@ export default function BlockTumbleGame() {
         if (checkCollision(clearedBoard, nextPiece)) {
           playGameOver();
           // Check high score before showing rewards
-          const currentHighScore = profile?.highScores?.['token-tumble'] || 0;
+          const currentHighScore = highScores?.['token-tumble'] || 0;
           if (score > currentHighScore) {
             setHighScoreBeaten(true);
           }

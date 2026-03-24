@@ -86,7 +86,7 @@ const generateHash = (input: string): string => {
 
 export default function HashHopperGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -286,7 +286,7 @@ export default function HashHopperGame() {
               
               setLives(l => {
                 if (l <= 1) {
-                  const currentHighScore = profile?.highScores?.['hash-hopper'] || 0;
+                  const currentHighScore = highScores?.['hash-hopper'] || 0;
                   if (score > currentHighScore) {
                     setHighScoreBeaten(true);
                   }
@@ -324,7 +324,7 @@ export default function HashHopperGame() {
             
             setLives(l => {
               if (l <= 1) {
-                const currentHighScore = profile?.highScores?.['hash-hopper'] || 0;
+                const currentHighScore = highScores?.['hash-hopper'] || 0;
                 if (score > currentHighScore) {
                   setHighScoreBeaten(true);
                 }

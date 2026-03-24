@@ -122,7 +122,7 @@ const InvaderSprite: React.FC<{ invader: Invader }> = ({ invader }) => {
 
 export default function ChainInvadersGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
   
   // Audio hook for game sounds and music
   const { 
@@ -430,7 +430,7 @@ export default function ChainInvadersGame() {
               
               setLives(l => {
                 if (l <= 1) {
-                  const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
+                  const currentHighScore = highScores?.['chain-invaders'] || 0;
                   if (score > currentHighScore) {
                     setHighScoreBeaten(true);
                   }
@@ -457,7 +457,7 @@ export default function ChainInvadersGame() {
 
       // Check if invaders reached bottom
       if (invaders.some(i => i.alive && i.y > GAME_HEIGHT - 60)) {
-        const currentHighScore = profile?.highScores?.['chain-invaders'] || 0;
+        const currentHighScore = highScores?.['chain-invaders'] || 0;
         if (score > currentHighScore) {
           setHighScoreBeaten(true);
         }

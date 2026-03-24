@@ -93,7 +93,7 @@ interface WordCollectable {
 
 export default function SeedSprintGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
   
   // Audio hook
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -320,7 +320,7 @@ export default function SeedSprintGame() {
               
               // Hit obstacle - game over!
               playHit();
-              const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
+              const currentHighScore = highScores?.['seed-sprint'] || 0;
               if (score > currentHighScore) {
                 setHighScoreBeaten(true);
               }
@@ -396,7 +396,7 @@ export default function SeedSprintGame() {
       setGameState('playing');
       if (Platform.OS !== 'web') GameHaptics.medium();
     } else {
-      const currentHighScore = profile?.highScores?.['seed-sprint'] || 0;
+      const currentHighScore = highScores?.['seed-sprint'] || 0;
       if (score > currentHighScore) {
         setHighScoreBeaten(true);
       }
