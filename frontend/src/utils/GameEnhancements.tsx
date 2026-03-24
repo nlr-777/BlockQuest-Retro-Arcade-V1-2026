@@ -17,6 +17,8 @@ import {
   GestureResponderEvent,
   PanResponderGestureState,
   Text,
+  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import Animated, {
   useSharedValue,
