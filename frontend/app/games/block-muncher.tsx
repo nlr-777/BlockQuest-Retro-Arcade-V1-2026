@@ -525,7 +525,7 @@ export default function BlockMuncherGame() {
           if (l <= 1) {
             playGameOver();
             // Check if high score was beaten
-            const currentHighScore = profile?.highScores?.['block-muncher'] || 0;
+            const currentHighScore = highScores?.['block-muncher'] || 0;
             previousHighScore.current = currentHighScore;
             if (score > currentHighScore) {
               setHighScoreBeaten(true);
