@@ -131,7 +131,7 @@ export default function LedgerLeapGame() {
   const [facing, setFacing] = useState<'left' | 'right'>('right');
 
   // World state
-  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [platforms, setPlatforms] = useState<GamePlatform[]>([]);
   const [enemies, setEnemies] = useState<Enemy[]>([]);
   const [worldOffset, setWorldOffset] = useState(0);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
@@ -141,8 +141,8 @@ export default function LedgerLeapGame() {
   const moveDirectionRef = useRef<'left' | 'right' | null>(null);
 
   // Generate platforms
-  const generatePlatforms = useCallback((startX: number, count: number): Platform[] => {
-    const newPlatforms: Platform[] = [];
+  const generatePlatforms = useCallback((startX: number, count: number): GamePlatform[] => {
+    const newPlatforms: GamePlatform[] = [];
     let x = startX;
     let lastY = GAME_HEIGHT - 80;
 
@@ -174,7 +174,7 @@ export default function LedgerLeapGame() {
 
   // Initialize game state
   const initGame = useCallback(() => {
-    const initialPlatforms: Platform[] = [
+    const initialPlatforms: GamePlatform[] = [
       { id: 0, x: 0, y: GAME_HEIGHT - 20, width: 150 }, // Ground start
       ...generatePlatforms(100, 15),
     ];
