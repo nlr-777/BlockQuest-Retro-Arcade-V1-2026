@@ -218,6 +218,7 @@ class AudioManager {
     notification: 200,
     // Longer cooldowns for important sounds
     hit: 200,
+    damage: 200,
     powerup: 400,
     error: 300,
     start: 300,
