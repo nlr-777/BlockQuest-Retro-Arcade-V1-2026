@@ -65,7 +65,7 @@ const CLIMB_SPEED = 3;
 
 // Unique Egg traits for educational element
 const EGG_TRAITS = [
-  { rarity: 'Common', color: '#A0A0A0', points: 10, trait: 'Gray Shell' },
+  { rarity: 'Common', color: '#C0C0C0', points: 10, trait: 'Silver Shell' },
   { rarity: 'Rare', color: '#00BFFF', points: 25, trait: 'Crystal Shell' },
   { rarity: 'Epic', color: '#BF00FF', points: 50, trait: 'Mystic Shell' },
   { rarity: 'Legendary', color: '#FFD700', points: 100, trait: 'Golden Shell' },
