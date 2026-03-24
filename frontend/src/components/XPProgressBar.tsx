@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: CRT_COLORS.cardBg,
+    backgroundColor: CRT_COLORS.bgMedium,
     borderRadius: 12,
     padding: 12,
     marginHorizontal: 16,
