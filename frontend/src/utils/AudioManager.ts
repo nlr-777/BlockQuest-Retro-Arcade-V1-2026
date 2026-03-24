@@ -14,6 +14,7 @@ export type SoundEffect =
   | 'jump'
   | 'collect'
   | 'hit'
+  | 'damage'      // Damage/hurt sound
   | 'powerup'
   | 'gameover'
   | 'victory'
