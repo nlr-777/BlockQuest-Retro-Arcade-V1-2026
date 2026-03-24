@@ -457,8 +457,9 @@ export default function WelcomeScreen() {
     const xpEarned = Math.floor(gameScore * 0.5) + 50;
     const nextHero = !unlockedCharacterIds.includes('sam') ? 'sam' : 'next';
     
-    // Build the redirect URL with progress params
-    const redirectUrl = `https://blockquestofficial.com?progress=arcade_complete&xp=${xpEarned}&unlock=${nextHero}&score=${gameScore}`;
+    // Build the redirect URL with progress params - use env variable for HQ URL
+    const hqBaseUrl = process.env.EXPO_PUBLIC_HQ_URL || 'https://blockquestofficial.com';
+    const redirectUrl = `${hqBaseUrl}?progress=arcade_complete&xp=${xpEarned}&unlock=${nextHero}&score=${gameScore}`;
     
     try {
       await Linking.openURL(redirectUrl);
@@ -480,8 +481,9 @@ export default function WelcomeScreen() {
   // Navigate back to HQ
   const handleBackToHQ = async () => {
     audioManager.playSound('click');
+    const hqUrl = process.env.EXPO_PUBLIC_HQ_URL || 'https://blockquestofficial.com';
     try {
-      await Linking.openURL('https://blockquestofficial.com');
+      await Linking.openURL(hqUrl);
     } catch (error) {
       console.error('Failed to open HQ link:', error);
     }
