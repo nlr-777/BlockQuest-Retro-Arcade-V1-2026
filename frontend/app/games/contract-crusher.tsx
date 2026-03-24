@@ -129,6 +129,7 @@ export default function ContractCrusherGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -515,6 +516,7 @@ export default function ContractCrusherGame() {
         onSelectMode={handleModeSelect}
         highScores={modeHighScores['contract-crusher'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }

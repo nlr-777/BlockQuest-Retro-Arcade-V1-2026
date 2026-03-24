@@ -327,6 +327,7 @@ export default function BlockMuncherGame() {
   }, [playGameStart]);
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   
   // Game mode
@@ -732,6 +733,7 @@ export default function BlockMuncherGame() {
         gameColor={COLORS.chainGold}
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
         highScores={modeHighScores['block-muncher'] || { classic: 0, survival: 0 }}
       />
     );

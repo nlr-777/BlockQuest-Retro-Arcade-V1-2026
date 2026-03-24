@@ -114,6 +114,7 @@ export default function LightningDashGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -400,6 +401,7 @@ export default function LightningDashGame() {
         onSelectMode={handleModeSelect}
         highScores={modeHighScores['lightning-dash'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }

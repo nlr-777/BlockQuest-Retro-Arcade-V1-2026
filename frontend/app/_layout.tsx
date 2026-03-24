@@ -11,6 +11,7 @@ import PixelText from '../src/components/PixelText';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { ToastContainer } from '../src/components/Toast';
 import audioManager from '../src/utils/AudioManager';
+import { LoadingScreen } from '../src/components/LoadingScreen';
 
 // Prevent auto-hide of splash screen
 SplashScreen.preventAutoHideAsync();
@@ -66,11 +67,7 @@ export default function RootLayout() {
         
         {/* HYDRATION GATE: Block ALL navigation until store is ready */}
         {(!hasHydrated || !isReady) ? (
-          <View style={styles.loadingOverlay}>
-            <PixelText size="xl" color={COLORS.chainGold} glow>
-              LOADING...
-            </PixelText>
-          </View>
+          <LoadingScreen />
         ) : (
           <>
             {showGenesis && <VFXLayer type="genesis-birth" />}
@@ -92,12 +89,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bgDark,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: COLORS.bgDark,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
   },
 });

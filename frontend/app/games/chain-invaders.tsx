@@ -165,6 +165,7 @@ export default function ChainInvadersGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -584,6 +585,7 @@ export default function ChainInvadersGame() {
         onSelectMode={handleModeSelect}
         highScores={modeHighScores['chain-invaders'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }
