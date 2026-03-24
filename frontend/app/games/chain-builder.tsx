@@ -231,6 +231,9 @@ export default function ChainBuilderGame() {
       if (prevChain.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
         setGameState('gameover');
         audioManager.playSound('damage');
+        GameHaptics.error();
+        setShakeCount(prev => prev + 1);
+        resetCombo();
         if (score > highScore) {
           setHighScore(score);
         }
@@ -242,13 +245,39 @@ export default function ChainBuilderGame() {
       if (newHead.x === block.x && newHead.y === block.y) {
         newChain = [newHead, ...prevChain];
         
-        const points = newChain.length * 10;
+        // Apply combo multiplier to points
+        const basePoints = newChain.length * 10;
+        const comboMultiplier = getMultiplier();
+        const points = Math.floor(basePoints * comboMultiplier);
         setScore(prev => prev + points);
         
+        // Increment combo
+        incrementCombo();
+        
+        // Visual feedback
         scoreScale.value = withSequence(
           withSpring(1.3),
           withSpring(1)
         );
+        
+        // Show collect effect at block position
+        setCollectEffectPos({
+          x: block.x * CELL_SIZE + CELL_SIZE / 2,
+          y: block.y * CELL_SIZE + CELL_SIZE / 2,
+        });
+        setCollectTrigger(prev => prev + 1);
+        
+        // Particle burst for combos
+        if (combo >= 2) {
+          setParticleBurst({
+            x: block.x * CELL_SIZE + CELL_SIZE / 2,
+            y: block.y * CELL_SIZE + CELL_SIZE / 2,
+            trigger: Date.now(),
+          });
+          GameHaptics.medium();
+        } else {
+          GameHaptics.light();
+        }
         
         audioManager.playSound('collect');
         setTimeout(spawnBlock, 0);
@@ -260,7 +289,7 @@ export default function ChainBuilderGame() {
 
       return newChain;
     });
-  }, [gameState, nextDirection, block, score, highScore, spawnBlock, checkAchievements, submitScore]);
+  }, [gameState, nextDirection, block, score, highScore, spawnBlock, checkAchievements, submitScore, combo, incrementCombo, resetCombo, getMultiplier]);
 
   // Start/stop game loop
   useEffect(() => {
