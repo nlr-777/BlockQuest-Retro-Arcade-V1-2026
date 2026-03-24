@@ -44,6 +44,7 @@ export const COLORS = {
   textSecondary: '#F8F0FF',  // BRIGHTENED - very light purple-white
   textMuted: '#EED8FF',      // BRIGHTENED - light lavender, easy to read!
   textGlow: '#00FFFF',
+  textBright: '#FFFFFF',      // Pure white for maximum visibility
   
   // Game-specific (keeping original names for compatibility)
   chainGold: '#FFD700',
