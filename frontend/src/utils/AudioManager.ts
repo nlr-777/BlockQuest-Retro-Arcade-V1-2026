@@ -155,6 +155,7 @@ const SFX_CONFIG: Record<SoundEffect, { freqs: number[]; duration: number; type:
   jump: { freqs: [400, 600], duration: 100, type: 'square', envelope: 'pluck', priority: 5 },
   collect: { freqs: [800, 1200, 1600], duration: 120, type: 'sine', envelope: 'pluck', priority: 4 },
   hit: { freqs: [150, 100], duration: 200, type: 'sawtooth', envelope: 'hit', priority: 8 },
+  damage: { freqs: [200, 100, 50], duration: 250, type: 'sawtooth', envelope: 'hit', priority: 8 },
   powerup: { freqs: [400, 500, 600, 800, 1000], duration: 400, type: 'sine', envelope: 'pad', priority: 7 },
   gameover: { freqs: [400, 300, 200, 150], duration: 600, type: 'square', envelope: 'pad', priority: 10 },
   victory: { freqs: [523, 659, 784, 1047], duration: 500, type: 'sine', envelope: 'pad', priority: 10 },
