@@ -94,7 +94,7 @@ export const XPProgressBar: React.FC<XPProgressBarProps> = ({
       <View style={styles.progressSection}>
         {/* XP Label */}
         <View style={styles.xpHeader}>
-          <PixelText size="xs" color={CRT_COLORS.neonGreen} glow>
+          <PixelText size="xs" color={CRT_COLORS.primary} glow>
             ⚡ XP PROGRESS
           </PixelText>
           <PixelText size="xs" color={CRT_COLORS.textMuted}>
@@ -121,7 +121,7 @@ export const XPProgressBar: React.FC<XPProgressBarProps> = ({
             {xpToNextLevel} XP to Level {level + 1}
           </PixelText>
           {level >= 5 && (
-            <PixelText size="xs" color={CRT_COLORS.chainGold}>
+            <PixelText size="xs" color={CRT_COLORS.accentGold}>
               🏅 Badge Eligible!
             </PixelText>
           )}
@@ -130,7 +130,7 @@ export const XPProgressBar: React.FC<XPProgressBarProps> = ({
 
       {/* Total XP */}
       <View style={styles.totalXP}>
-        <PixelText size="xl" color={CRT_COLORS.neonGreen} glow>
+        <PixelText size="xl" color={CRT_COLORS.primary} glow>
           {currentXP}
         </PixelText>
         <PixelText size="xs" color={CRT_COLORS.textMuted}>TOTAL</PixelText>
@@ -149,10 +149,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 12,
     borderWidth: 2,
-    borderColor: CRT_COLORS.neonGreen + '60',
+    borderColor: CRT_COLORS.primary + '60',
     overflow: 'hidden',
     // CRT glow effect - web compatible
-    boxShadow: `0 0 10px ${CRT_COLORS.neonGreen}4D`,
+    boxShadow: `0 0 10px ${CRT_COLORS.primary}4D`,
     elevation: 5,
   },
   scanline: {
@@ -160,18 +160,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: CRT_COLORS.neonGreen + '20',
+    backgroundColor: CRT_COLORS.primary + '20',
   },
   levelBadge: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: CRT_COLORS.neonGreen,
+    backgroundColor: CRT_COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     // Glow - web compatible
-    boxShadow: `0 0 8px ${CRT_COLORS.neonGreen}CC`,
+    boxShadow: `0 0 8px ${CRT_COLORS.primary}CC`,
   },
   levelNumber: {
     marginTop: -4,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     paddingLeft: 12,
     borderLeftWidth: 1,
-    borderLeftColor: CRT_COLORS.neonGreen + '40',
+    borderLeftColor: CRT_COLORS.primary + '40',
   },
 });
 
