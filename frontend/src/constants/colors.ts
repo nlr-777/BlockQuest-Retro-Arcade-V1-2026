@@ -65,8 +65,8 @@ export const COLORS = {
   vfxLightning: '#FFFF00',
   vfxGrid: '#FF00FF',
   
-  // Rarity colors (for badges)
-  rarityCommon: '#A0A0A0',
+  // Rarity colors (for badges) - brightened for visibility
+  rarityCommon: '#C0C0C0',    // Bright silver
   rarityRare: '#00BFFF',
   rarityEpic: '#BF00FF',
   rarityLegendary: '#FFD700',
