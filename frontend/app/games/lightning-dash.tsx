@@ -596,7 +596,7 @@ export default function LightningDashGame() {
           powerUpTimer={survival.powerUpTimer}
           isBossWave={survival.isBossWave}
           bossHealth={survival.bossHealth}
-          color={levelTheme.primary}
+          color={'#39FF14'}
           visible={gameState === 'playing'}
         />
       )}
