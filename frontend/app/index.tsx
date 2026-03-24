@@ -405,7 +405,6 @@ export default function ArcadeHub() {
       await initProfile(username.trim(), selectedCharacter.id);
       // Also select the character in the character store
       selectCharacter(selectedCharacter.id);
-      setShowOnboarding(false);
       setOnboardingComplete();
       
       // Record first login for loyalty
