@@ -242,22 +242,30 @@ export default function ChainBuilderGame() {
       if (newHead.y < 0) newHead.y = GRID_ROWS - 1;
       if (newHead.y >= GRID_ROWS) newHead.y = 0;
 
-      // Check self-collision
-      if (prevChain.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
-        setGameState('gameover');
-        audioManager.playSound('damage');
-        GameHaptics.error();
-        setShakeCount(prev => prev + 1);
-        resetCombo();
-        if (score > highScore) {
-          setHighScore(score);
-        }
-        submitScore('chain-builder', score);
+      // Check if collecting food
+      const isCollecting = block && newHead.x === block.x && newHead.y === block.y;
+
+      // Check self-collision (exclude tail if not collecting - tail moves away)
+      const chainToCheck = isCollecting ? prevChain : prevChain.slice(0, -1);
+      if (chainToCheck.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+        // Schedule game over outside setChain to avoid race condition
+        setTimeout(() => {
+          setGameState('gameover');
+          try { audioManager.playSound('damage'); } catch (e) { /* ignore */ }
+          GameHaptics.error();
+          setShakeCount(prev => prev + 1);
+          resetCombo();
+          setHighScore(prev => {
+            if (score > prev) return score;
+            return prev;
+          });
+          submitScore('chain-builder', score);
+        }, 0);
         return prevChain;
       }
 
       let newChain: Position[];
-      if (newHead.x === block.x && newHead.y === block.y) {
+      if (isCollecting) {
         newChain = [newHead, ...prevChain];
         
         // Apply combo multiplier to points
@@ -423,21 +431,7 @@ export default function ChainBuilderGame() {
     setGameState('intro');
   }, []);
 
-  // Mode selector screen
-  if (gameState === 'modeselect') {
-    return (
-      <GameModeSelector
-        gameTitle="Chain Builder"
-        gameEmoji="⛓️"
-        gameColor={CRT_COLORS.accentGold}
-        onSelectMode={handleModeSelect}
-        onBack={() => router.back()}
-        highScores={{ classic: highScore, survival: 0 }}
-      />
-    );
-  }
-
-  // Survival timer
+  // Survival timer (MUST be before any conditional returns - rules of hooks)
   useEffect(() => {
     if (gameState === 'playing' && gameMode === 'survival') {
       survivalTimerRef.current = setInterval(() => {
@@ -451,6 +445,20 @@ export default function ChainBuilderGame() {
       if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
     };
   }, [gameState, gameMode]);
+
+  // Mode selector screen
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Chain Builder"
+        gameEmoji="⛓️"
+        gameColor={CRT_COLORS.accentGold}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+        highScores={{ classic: highScore, survival: 0 }}
+      />
+    );
+  }
 
   // Intro screen
   if (gameState === 'intro') {

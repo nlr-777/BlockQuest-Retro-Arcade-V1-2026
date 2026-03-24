@@ -147,25 +147,29 @@ export const ChainBuilderMini: React.FC<ChainBuilderMiniProps> = ({
       if (newHead.y < 0) newHead.y = GRID_ROWS - 1;
       if (newHead.y >= GRID_ROWS) newHead.y = 0;
 
-      // Check self-collision (game over)
-      if (prevChain.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
-        setGameState('gameover');
-        try {
-          audioManager.playSound('damage');
-        } catch (e) {
-          // Audio error - silently ignore
-        }
-        if (score > highScore) {
-          setHighScore(score);
-        }
-        // Call game complete callback
-        onGameComplete?.(score, prevChain.length);
+      // Check if collecting food
+      const isCollecting = block && newHead.x === block.x && newHead.y === block.y;
+      
+      // Check self-collision (exclude tail if not collecting - tail moves away)
+      const chainToCheck = isCollecting ? prevChain : prevChain.slice(0, -1);
+      if (chainToCheck.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+        // Schedule game over outside of setChain to avoid state-in-state race
+        setTimeout(() => {
+          setGameState('gameover');
+          try { audioManager.playSound('damage'); } catch (e) { /* ignore */ }
+          setHighScore(prev => {
+            const currentScore = score;
+            if (currentScore > prev) return currentScore;
+            return prev;
+          });
+          onGameComplete?.(score, prevChain.length);
+        }, 0);
         return prevChain;
       }
 
       // Check if we collected a block
       let newChain: Position[];
-      if (newHead.x === block.x && newHead.y === block.y) {
+      if (isCollecting) {
         // Grow the chain
         newChain = [newHead, ...prevChain];
         
