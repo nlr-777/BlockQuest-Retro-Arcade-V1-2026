@@ -15,6 +15,8 @@ export interface BadgeReward {
   xp: number;
   powerUp?: string;
   title?: string;
+  booster?: string;
+  multiplier?: number;
 }
 
 export const APERTUM_CONFIG = {
