@@ -293,13 +293,15 @@ interface FlickerTextProps {
   color?: string;
   size?: number;
   style?: any;
+  glitch?: boolean;
 }
 
 export const CRTFlickerText: React.FC<FlickerTextProps> = ({ 
   children, 
   color = CRT_COLORS.primary, 
   size = 14,
-  style 
+  style,
+  glitch = false,
 }) => {
   const opacity = useSharedValue(1);
 
