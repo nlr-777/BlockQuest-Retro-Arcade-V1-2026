@@ -7,7 +7,7 @@ import requests
 
 def test_endpoint_discovery():
     """Test for additional endpoints"""
-    base_url = "https://arcade-cleanup.preview.emergentagent.com/api"
+    base_url = "https://survival-arcade-5.preview.emergentagent.com/api"
     
     # Common endpoint patterns to test
     endpoints_to_test = [

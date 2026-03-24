@@ -49,11 +49,15 @@ import { ConfettiEffect } from '../../src/components/ConfettiEffect';
 import {
   GameModeSelector,
   LevelTransition,
-  SurvivalHUD,
   getLevelTheme,
   getSurvivalTheme,
   GameMode,
 } from '../../src/components/GameModeSelector';
+import {
+  useSurvivalEngine,
+  SurvivalOverlay,
+  WaveAnnouncement,
+} from '../../src/utils/SurvivalEngine';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -104,9 +108,39 @@ export default function ChainBuilderGame() {
   // Game state
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
-  const [survivalTime, setSurvivalTime] = useState(0);
-  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
-  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Wave announcement state
+  const [showWaveAnnouncement, setShowWaveAnnouncement] = useState(false);
+  const [announcedWave, setAnnouncedWave] = useState(1);
+  const waveAnnouncementTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Survival Engine hook - must be before any early returns
+  const survival = useSurvivalEngine({
+    enabled: gameMode === 'survival' && gameState === 'playing',
+    waveInterval: 25,
+    bossInterval: 90,
+    powerUpInterval: 15,
+    onWaveChange: (wave) => {
+      setAnnouncedWave(wave);
+      setShowWaveAnnouncement(true);
+      if (waveAnnouncementTimer.current) clearTimeout(waveAnnouncementTimer.current);
+      waveAnnouncementTimer.current = setTimeout(() => setShowWaveAnnouncement(false), 2500);
+    },
+    onBossSpawn: () => {},
+    onBossDefeat: () => {
+      setScore(s => s + 500);
+    },
+  });
+
+  // Auto-collect spawned power-ups in survival mode
+  useEffect(() => {
+    if (survival.spawnedPowerUp && gameMode === 'survival') {
+      survival.collectPowerUp();
+    }
+  }, [survival.spawnedPowerUp, gameMode]);
+
+  // Survival difficulty affects game speed
+  const survivalSpeedBoost = gameMode === 'survival' ? Math.floor(survival.difficultyScale * 10) : 0;
+  const survivalScoreMultiplier = gameMode === 'survival' ? survival.multiplier : 1.0;
   const [chain, setChain] = useState<Position[]>([{ x: 7, y: 10 }]);
   const [direction, setDirection] = useState<Direction>('RIGHT');
   const [nextDirection, setNextDirection] = useState<Direction>('RIGHT');
@@ -431,21 +465,6 @@ export default function ChainBuilderGame() {
     setGameState('intro');
   }, []);
 
-  // Survival timer (MUST be before any conditional returns - rules of hooks)
-  useEffect(() => {
-    if (gameState === 'playing' && gameMode === 'survival') {
-      survivalTimerRef.current = setInterval(() => {
-        setSurvivalTime(t => t + 1);
-        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
-        // Increase speed in survival
-        setSpeed(s => Math.max(60, s - 1));
-      }, 1000);
-    }
-    return () => {
-      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
-    };
-  }, [gameState, gameMode]);
-
   // Mode selector screen
   if (gameState === 'modeselect') {
     return (
@@ -683,6 +702,25 @@ export default function ChainBuilderGame() {
         </View>
       </SafeAreaView>
       </ScreenShake>
+      
+      {/* Survival Overlay HUD (Enhanced) */}
+      {gameMode === 'survival' && (
+        <SurvivalOverlay
+          timeAlive={survival.timeAlive}
+          multiplier={survival.multiplier}
+          wave={survival.wave}
+          waveTimer={survival.waveTimer}
+          activePowerUp={survival.activePowerUp}
+          powerUpTimer={survival.powerUpTimer}
+          isBossWave={survival.isBossWave}
+          bossHealth={survival.bossHealth}
+          color={'#39FF14'}
+          visible={gameState === 'playing'}
+        />
+      )}
+      
+      {/* Wave Announcement */}
+      <WaveAnnouncement wave={announcedWave} visible={showWaveAnnouncement} />
       
       {/* Confetti for achievements */}
       <ConfettiEffect visible={showConfetti} onComplete={() => setShowConfetti(false)} />

@@ -72,11 +72,15 @@ import {
 import {
   GameModeSelector,
   LevelTransition,
-  SurvivalHUD,
   getLevelTheme,
   getSurvivalTheme,
   GameMode,
 } from '../../src/components/GameModeSelector';
+import {
+  useSurvivalEngine,
+  SurvivalOverlay,
+  WaveAnnouncement,
+} from '../../src/utils/SurvivalEngine';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
 const GAME_MECHANICS = getGameMechanics('block-muncher')!;
@@ -287,7 +291,7 @@ const ChainSegment: React.FC<{ position: Position; index: number }> = ({ positio
 
 export default function BlockMuncherGame() {
   const router = useRouter();
-  const { profile, updateScore, mintBadge, addXP, highScores } = useGameStore();
+  const { profile, updateScore, mintBadge, addXP, highScores, modeHighScores } = useGameStore();
   
   // Audio hook for game sounds and music
   const { 
@@ -327,9 +331,39 @@ export default function BlockMuncherGame() {
   
   // Game mode
   const [gameMode, setGameMode] = useState<GameMode>('classic');
-  const [survivalTime, setSurvivalTime] = useState(0);
-  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
-  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Wave announcement state
+  const [showWaveAnnouncement, setShowWaveAnnouncement] = useState(false);
+  const [announcedWave, setAnnouncedWave] = useState(1);
+  const waveAnnouncementTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Survival Engine hook - must be before any early returns
+  const survival = useSurvivalEngine({
+    enabled: gameMode === 'survival' && gameState === 'playing',
+    waveInterval: 25,
+    bossInterval: 90,
+    powerUpInterval: 15,
+    onWaveChange: (wave) => {
+      setAnnouncedWave(wave);
+      setShowWaveAnnouncement(true);
+      if (waveAnnouncementTimer.current) clearTimeout(waveAnnouncementTimer.current);
+      waveAnnouncementTimer.current = setTimeout(() => setShowWaveAnnouncement(false), 2500);
+    },
+    onBossSpawn: () => {
+      if (Platform.OS !== 'web') GameHaptics.error();
+    },
+    onBossDefeat: () => {
+      setScore(s => s + 500);
+      if (Platform.OS !== 'web') GameHaptics.success();
+    },
+  });
+  
+  // Auto-collect spawned power-ups in survival mode
+  useEffect(() => {
+    if (survival.spawnedPowerUp && gameMode === 'survival') {
+      survival.collectPowerUp();
+    }
+  }, [survival.spawnedPowerUp, gameMode]);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
@@ -347,6 +381,10 @@ export default function BlockMuncherGame() {
   
   // Level theme (must come after score/level state)
   const levelTheme = gameMode === 'survival' ? getSurvivalTheme(score) : getLevelTheme(level);
+  
+  // Survival difficulty affects game speed
+  const survivalSpeedBoost = gameMode === 'survival' ? Math.floor(survival.difficultyScale * 10) : 0;
+  const survivalScoreMultiplier = gameMode === 'survival' ? survival.multiplier : 1.0;
   const [lives, setLives] = useState(3);
   const [playerPos, setPlayerPos] = useState<Position>({ x: 7, y: 7 });
   const [playerDir, setPlayerDir] = useState<Direction>('RIGHT');
@@ -433,9 +471,9 @@ export default function BlockMuncherGame() {
     setLives(3);
     setLevel(1);
     setBqoCollected(0);
-    setSurvivalTime(0);
-    setSurvivalMultiplier(1.0);
     setShowLevelTransition(false);
+    setShowWaveAnnouncement(false);
+    survival.reset();
     generateBlockchainItems();
   }, [generateBlockchainItems]);
 
@@ -494,7 +532,8 @@ export default function BlockMuncherGame() {
       setBlocks(prev => {
         const collected = prev.find(b => b.x === playerPos.x && b.y === playerPos.y);
         if (collected) {
-          setScore(s => s + 10);
+          const basePoints = survival.hasDouble ? 20 : 10;
+          setScore(s => s + Math.floor(basePoints * survivalScoreMultiplier));
           setChain(c => [...c, { ...playerPos }]);
           playCollect();
           if (Platform.OS !== 'web') GameHaptics.light();
@@ -507,7 +546,8 @@ export default function BlockMuncherGame() {
       setBqoTokens(prev => {
         const collected = prev.find(t => t.x === playerPos.x && t.y === playerPos.y);
         if (collected) {
-          setScore(s => s + 50);
+          const basePoints = survival.hasDouble ? 100 : 50;
+          setScore(s => s + Math.floor(basePoints * survivalScoreMultiplier));
           setBqoCollected(c => c + 1);
           setShowTokenEffect({ x: playerPos.x, y: playerPos.y, amount: 1 });
           playPowerup();
@@ -525,7 +565,8 @@ export default function BlockMuncherGame() {
           const points = collected.rarity === 'legendary' ? 500 : 
                         collected.rarity === 'epic' ? 200 : 
                         collected.rarity === 'rare' ? 100 : 25;
-          setScore(s => s + points);
+          const finalPoints = survival.hasDouble ? points * 2 : points;
+          setScore(s => s + Math.floor(finalPoints * survivalScoreMultiplier));
           playLevelUp();
           if (Platform.OS !== 'web') GameHaptics.medium();
           return prev.filter(g => !(g.pos.x === playerPos.x && g.pos.y === playerPos.y));
@@ -550,30 +591,37 @@ export default function BlockMuncherGame() {
         return prev;
       });
 
-      // Move ghosts
-      setGhosts(prev => prev.map(ghost => moveGhost(ghost, playerPos, walls)));
+      // Move ghosts (slower if freeze power-up active)
+      if (!survival.hasFreeze) {
+        setGhosts(prev => prev.map(ghost => moveGhost(ghost, playerPos, walls)));
+      }
 
       // Check ghost collision
       const hitGhost = ghosts.some(g => g.x === playerPos.x && g.y === playerPos.y);
       if (hitGhost) {
-        playHit();
-        setLives(l => {
-          if (l <= 1) {
-            playGameOver();
-            // Check if high score was beaten
-            const currentHighScore = highScores?.['block-muncher'] || 0;
-            previousHighScore.current = currentHighScore;
-            if (score > currentHighScore) {
-              setHighScoreBeaten(true);
+        // Shield from survival engine protects from death
+        if (survival.hasShield) {
+          // Shield absorbs the hit - boss gets damaged if active
+          if (survival.isBossWave) survival.damageBoss(15);
+          if (Platform.OS !== 'web') GameHaptics.medium();
+        } else {
+          playHit();
+          setLives(l => {
+            if (l <= 1) {
+              playGameOver();
+              const currentHighScore = highScores?.['block-muncher'] || 0;
+              previousHighScore.current = currentHighScore;
+              if (score > currentHighScore) {
+                setHighScoreBeaten(true);
+              }
+              setGameState('rewards');
+              return 0;
             }
-            setGameState('rewards'); // Show rewards first!
-            return 0;
-          }
-          // Reset player position
-          setPlayerPos({ x: 7, y: 7 });
-          if (Platform.OS !== 'web') GameHaptics.error();
-          return l - 1;
-        });
+            setPlayerPos({ x: 7, y: 7 });
+            if (Platform.OS !== 'web') GameHaptics.error();
+            return l - 1;
+          });
+        }
       }
 
       // Check victory (all blocks collected)
@@ -587,29 +635,18 @@ export default function BlockMuncherGame() {
           // Survival: Just regenerate and continue
           setLevel(l => l + 1);
           setBlocks(generateBlocks());
-          setScore(s => s + Math.floor(100 * survivalMultiplier));
+          setScore(s => s + Math.floor(100 * survivalScoreMultiplier));
           generateBlockchainItems();
+          // Damage boss if in boss wave
+          if (survival.isBossWave) survival.damageBoss(25);
         }
       }
-    }, Math.max(80, 200 - level * 15 - (gameMode === 'survival' ? survivalTime : 0)));
+    }, Math.max(80, 200 - level * 15 - survivalSpeedBoost));
 
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [gameState, playerPos, ghosts, blocks.length, level, walls, gameMode, survivalMultiplier, survivalTime]);
-
-  // Survival mode timer - increases difficulty over time
-  useEffect(() => {
-    if (gameState === 'playing' && gameMode === 'survival') {
-      survivalTimerRef.current = setInterval(() => {
-        setSurvivalTime(t => t + 1);
-        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
-      }, 1000);
-    }
-    return () => {
-      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
-    };
-  }, [gameState, gameMode]);
+  }, [gameState, playerPos, ghosts, blocks.length, level, walls, gameMode, survivalScoreMultiplier, survivalSpeedBoost, survival.hasFreeze, survival.hasShield, survival.hasDouble, survival.isBossWave]);
 
   // Handle level transition complete (classic mode)
   const handleLevelTransitionComplete = useCallback(() => {
@@ -695,6 +732,7 @@ export default function BlockMuncherGame() {
         gameColor={COLORS.chainGold}
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+        highScores={modeHighScores['block-muncher'] || { classic: 0, survival: 0 }}
       />
     );
   }
@@ -973,16 +1011,24 @@ export default function BlockMuncherGame() {
         onComplete={handleLevelTransitionComplete} 
       />
       
-      {/* Survival HUD */}
-      {gameState === 'playing' && gameMode === 'survival' && (
-        <View style={styles.survivalHudContainer}>
-          <SurvivalHUD 
-            timeAlive={survivalTime} 
-            multiplier={survivalMultiplier} 
-            color={levelTheme.primary} 
-          />
-        </View>
+      {/* Survival Overlay HUD (Enhanced) */}
+      {gameMode === 'survival' && (
+        <SurvivalOverlay
+          timeAlive={survival.timeAlive}
+          multiplier={survival.multiplier}
+          wave={survival.wave}
+          waveTimer={survival.waveTimer}
+          activePowerUp={survival.activePowerUp}
+          powerUpTimer={survival.powerUpTimer}
+          isBossWave={survival.isBossWave}
+          bossHealth={survival.bossHealth}
+          color={levelTheme.primary}
+          visible={gameState === 'playing'}
+        />
       )}
+      
+      {/* Wave Announcement */}
+      <WaveAnnouncement wave={announcedWave} visible={showWaveAnnouncement} />
     </ScreenShake>
     </SafeAreaView>
   );
@@ -1224,11 +1270,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginVertical: 8,
-  },
-  survivalHudContainer: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 100 : 60,
-    right: 8,
-    zIndex: 50,
   },
 });
