@@ -73,7 +73,7 @@ const ToastItem = ({ toast }: { toast: Toast }) => {
       case 'error':
         return { bg: CRT_COLORS.accentRed + '20', border: CRT_COLORS.accentRed, icon: '❌' };
       case 'warning':
-        return { bg: CRT_COLORS.accentYellow + '20', border: CRT_COLORS.accentYellow, icon: '⚠️' };
+        return { bg: CRT_COLORS.accentGold + '20', border: CRT_COLORS.accentGold, icon: '⚠️' };
       default:
         return { bg: CRT_COLORS.accentCyan + '20', border: CRT_COLORS.accentCyan, icon: 'ℹ️' };
     }
