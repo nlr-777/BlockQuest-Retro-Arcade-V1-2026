@@ -105,14 +105,65 @@ export default function ChainBuilderGame() {
   const [currentAchievement, setCurrentAchievement] = useState<typeof ACHIEVEMENTS[0] | null>(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
   
+  // Enhanced visual state
+  const [shakeCount, setShakeCount] = useState(0);
+  const [collectEffectPos, setCollectEffectPos] = useState({ x: 0, y: 0 });
+  const [collectTrigger, setCollectTrigger] = useState(0);
+  const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
+  const [showConfetti, setShowConfetti] = useState(false);
+  
+  // Combo system
+  const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(2000);
+  
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const scoreScale = useSharedValue(1);
+  const chainGlow = useSharedValue(0);
 
   // Score animation
   const scoreAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scoreScale.value }],
   }));
+
+  // Chain glow effect when combo is active
+  useEffect(() => {
+    if (combo >= 3) {
+      chainGlow.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 300 }),
+          withTiming(0.5, { duration: 300 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      chainGlow.value = withTiming(0, { duration: 200 });
+    }
+  }, [combo]);
+
+  // Keyboard controls
+  useKeyboardControls({
+    onDirection: (dir) => {
+      if (gameState === 'playing') {
+        const dirMap: Record<string, Direction> = {
+          up: 'UP',
+          down: 'DOWN',
+          left: 'LEFT',
+          right: 'RIGHT',
+        };
+        if (dirMap[dir]) {
+          handleDirectionChange(dirMap[dir]);
+        }
+      } else if (gameState === 'intro' && (dir === 'action')) {
+        startGame();
+      } else if (gameState === 'gameover' && (dir === 'action')) {
+        restartGame();
+      } else if (gameState === 'achievement' && (dir === 'action')) {
+        continueGame();
+      }
+    },
+    enabled: gameState !== 'paused',
+  });
 
   // Spawn a new block to collect
   const spawnBlock = useCallback(() => {
