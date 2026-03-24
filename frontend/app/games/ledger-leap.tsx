@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Text,
-  Platform,
+  Platform as RNPlatform,
   Vibration,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
