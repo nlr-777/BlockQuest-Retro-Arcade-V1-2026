@@ -899,8 +899,8 @@ async def google_session_auth(session_data: GoogleSessionRequest, request: Reque
     sanitized_name = sanitize_string(session_data.name, 50)
     
     try:
-        # Check if user exists
-        existing_response = db.table("game_stats").select("*").execute()
+        # Check if user exists - optimized with limit
+        existing_response = db.table("game_stats").select("user_id,inventory,score,last_played").limit(1000).execute()
         existing_user = None
         for record in existing_response.data:
             if record.get("inventory", {}).get("email") == email:
