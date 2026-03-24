@@ -20,12 +20,13 @@ export const CRT_COLORS = {
   bgLight: '#003300',        // Medium green
   bgPanel: 'rgba(0, 34, 0, 0.95)',
   
-  // Text colors - all made brighter for better readability
+  // Text colors - all made VERY bright for kids to read easily
   textBright: '#00FF41',
-  textDim: '#88FFAA',      // EXTRA BRIGHT for kids - was #66FF99
-  textMuted: '#77EEAA',    // EXTRA BRIGHT for kids - was #44DD77  
-  textSecondary: '#AAFFCC', // EXTRA BRIGHT for kids - was #88FFBB
+  textDim: '#AAFFCC',      // BRIGHTENED - was #88FFAA, now even brighter green
+  textMuted: '#99FFBB',    // BRIGHTENED - was #77EEAA, now bright mint green  
+  textSecondary: '#CCFFDD', // BRIGHTENED - was #AAFFCC, now very light green
   textWhite: '#FFFFFF',
+  textPrimary: '#E0FFE0',  // NEW - light green for primary text
   
   // Rarity colors (hex badge borders)
   rarityCommon: '#00FF41',   // Green
