@@ -133,7 +133,7 @@ export default function LightningDashGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const spawnTimerRef = useRef(0);
 
   // Get current speed

@@ -116,7 +116,7 @@ export default function ChainBuilderGame() {
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(2000);
   
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scoreScale = useSharedValue(1);
   const chainGlow = useSharedValue(0);
 

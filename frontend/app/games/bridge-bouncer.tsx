@@ -125,7 +125,7 @@ export default function BridgeBouncerGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const enemyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const enemyTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Initialize pyramid tiles
   const initializeTiles = useCallback(() => {

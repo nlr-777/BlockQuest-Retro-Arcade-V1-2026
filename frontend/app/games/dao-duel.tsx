@@ -120,7 +120,7 @@ export default function DAODuelGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const moveDirectionRef = useRef<'up' | 'down' | null>(null);
 
   // Reset ball to center

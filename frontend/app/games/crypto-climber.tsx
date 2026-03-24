@@ -203,8 +203,8 @@ export default function CryptoClimberGame() {
   const [barrels, setBarrels] = useState<Barrel[]>([]);
   
   // Refs for game loop
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
-  const barrelSpawnRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const barrelSpawnRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const moveDirectionRef = useRef<'left' | 'right' | 'up' | 'down' | null>(null);
 
   // Initialize eggs on platforms
@@ -489,7 +489,7 @@ export default function CryptoClimberGame() {
   }, [gameState]);
 
   // Controls - use interval-based continuous movement for web compatibility
-  const moveIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const moveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startMove = (direction: 'left' | 'right' | 'up' | 'down') => {
     // Clear any existing interval

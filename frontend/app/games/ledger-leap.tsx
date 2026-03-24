@@ -137,7 +137,7 @@ export default function LedgerLeapGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const moveDirectionRef = useRef<'left' | 'right' | null>(null);
 
   // Generate platforms

@@ -164,7 +164,7 @@ export default function PowerSmashGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const ballSpeedRef = useRef(5);
 
   // Initialize bricks for a level

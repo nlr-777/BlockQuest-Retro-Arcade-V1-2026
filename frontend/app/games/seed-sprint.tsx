@@ -146,7 +146,7 @@ export default function SeedSprintGame() {
 
   const playerY = useSharedValue(0);
   const groundOffset = useSharedValue(0);
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
 
   // Generate seed phrase

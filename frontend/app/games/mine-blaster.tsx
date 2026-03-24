@@ -148,7 +148,7 @@ export default function RockBlasterGame() {
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
   // Refs
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastShotRef = useRef(0);
 
   // Spawn rocks for a level
@@ -444,7 +444,7 @@ export default function RockBlasterGame() {
   // Rotation state for smooth controls
   const [isRotatingLeft, setIsRotatingLeft] = useState(false);
   const [isRotatingRight, setIsRotatingRight] = useState(false);
-  const rotationRef = useRef<NodeJS.Timeout | null>(null);
+  const rotationRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Handle continuous rotation
   useEffect(() => {

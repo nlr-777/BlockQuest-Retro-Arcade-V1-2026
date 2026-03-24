@@ -130,7 +130,7 @@ export default function HashHopperGame() {
   const { combo, showCombo, incrementCombo, resetCombo, getMultiplier } = useComboSystem(1500);
   const difficulty = useDifficultyScaling(score);
 
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
 
   // Initialize lanes

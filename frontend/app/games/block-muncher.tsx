@@ -347,7 +347,7 @@ export default function BlockMuncherGame() {
   const [showTokenEffect, setShowTokenEffect] = useState<{x: number; y: number; amount: number} | null>(null);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
   const previousHighScore = useRef<number>(0);
 

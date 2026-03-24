@@ -304,7 +304,7 @@ export default function BlockTumbleGame() {
   const [collectionValue, setCollectionValue] = useState(0);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
 
   // Initialize game

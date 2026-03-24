@@ -175,7 +175,7 @@ export default function ChainInvadersGame() {
   const [rapidFire, setRapidFire] = useState(false);
   const [highScoreBeaten, setHighScoreBeaten] = useState(false);
 
-  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
+  const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastShotRef = useRef<number>(0);
   const startTimeRef = useRef<number>(0);
 
