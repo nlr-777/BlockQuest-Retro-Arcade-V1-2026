@@ -268,7 +268,7 @@ export default function LedgerLeapGame() {
           const record = RECORD_TYPES[platform.recordType || 0];
           setScore(s => s + record.points);
           setRecordsCollected(r => r + 1);
-          if (Platform.OS !== 'web') Vibration.vibrate(30);
+          if (RNPlatform.OS !== 'web') Vibration.vibrate(30);
           return { ...platform, recordCollected: true };
         }
       }
@@ -333,7 +333,7 @@ export default function LedgerLeapGame() {
             setPlayerY(GAME_HEIGHT - 100);
             setPlayerVY(0);
             setWorldOffset(Math.max(0, worldOffset - 200));
-            if (Platform.OS !== 'web') Vibration.vibrate(200);
+            if (RNPlatform.OS !== 'web') Vibration.vibrate(200);
             return l - 1;
           });
         }
@@ -420,7 +420,7 @@ export default function LedgerLeapGame() {
               setPlayerY(GAME_HEIGHT - 100);
               setPlayerVY(0);
               setWorldOffset(Math.max(0, worldOffset - 200));
-              if (Platform.OS !== 'web') Vibration.vibrate(200);
+              if (RNPlatform.OS !== 'web') Vibration.vibrate(200);
               return l - 1;
             });
           }
@@ -445,7 +445,7 @@ export default function LedgerLeapGame() {
     if (!isJumping && gameState === 'playing') {
       setPlayerVY(JUMP_FORCE);
       setIsJumping(true);
-      if (Platform.OS !== 'web') GameHaptics.light();
+      if (RNPlatform.OS !== 'web') GameHaptics.light();
     }
   };
 
@@ -698,12 +698,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#32CD32',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   subtitle: {
     fontSize: 9,
     color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   statsContainer: {
     alignItems: 'flex-end',
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.neonYellow,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   lives: {
     flexDirection: 'row',
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     textAlign: 'center',
     marginTop: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   gameArea: {
     alignSelf: 'center',
@@ -835,7 +835,7 @@ const styles = StyleSheet.create({
   recordsText: {
     fontSize: 12,
     color: '#FFF',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     color: '#32CD32',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 8,
   },
   overlayIcon: {
@@ -859,25 +859,25 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: COLORS.neonYellow,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 8,
   },
   overlayText: {
     fontSize: 12,
     color: COLORS.textSecondary,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     marginBottom: 4,
   },
   overlayHint: {
     fontSize: 10,
     color: COLORS.neonYellow,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 8,
   },
   lessonText: {
     fontSize: 11,
     color: COLORS.neonCyan,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'center',
     marginVertical: 12,
     paddingHorizontal: 16,
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   infoBox: {
     backgroundColor: COLORS.bgMedium,
@@ -908,12 +908,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#32CD32',
     fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   infoText: {
     fontSize: 9,
     color: COLORS.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
     marginTop: 4,
   },
   controls: {
@@ -956,6 +956,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: '#000',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: RNPlatform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
