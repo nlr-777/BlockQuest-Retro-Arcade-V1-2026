@@ -32,13 +32,14 @@ import {
   CRTScanlines,
   CRTGlowBorder,
   PixelRain,
-  ParticleBurst,
-  ConfettiBurst,
-  ScreenShake,
-  GhostHand,
   HexBadge,
   CRTFlickerText,
 } from '../src/components/CRTEffects';
+import {
+  ParticleBurst,
+  ScreenShake,
+} from '../src/utils/GameEnhancements';
+import { ConfettiEffect } from '../src/components/ConfettiEffect';
 import { useTutorialStore, TUTORIAL_STEPS } from '../src/store/tutorialStore';
 import { useGameStore } from '../src/store/gameStore';
 import audioManager from '../src/utils/AudioManager';
