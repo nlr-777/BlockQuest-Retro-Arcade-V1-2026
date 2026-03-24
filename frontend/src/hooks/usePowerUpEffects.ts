@@ -51,7 +51,8 @@ interface PowerUpEffects {
 }
 
 export const usePowerUpEffects = (): PowerUpEffects => {
-  const { badges } = useGameStore();
+  const { profile } = useGameStore();
+  const badges = profile?.badges || [];
   const {
     unlockedPowerUps,
     activePowerUps,
