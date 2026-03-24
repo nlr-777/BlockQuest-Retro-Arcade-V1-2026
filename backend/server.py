@@ -1139,7 +1139,8 @@ async def sync_profile(profile_data: SyncProfileRequest, request: Request, user 
 async def get_game_stats(db: Client = Depends(get_supabase)):
     """Get statistics for all games"""
     try:
-        response = db.table("game_stats").select("*").execute()
+        # Optimized: Limit results and only fetch needed fields
+        response = db.table("game_stats").select("inventory").limit(500).execute()
         
         game_stats = {}
         for record in response.data:
@@ -1175,7 +1176,8 @@ async def get_game_stats(db: Client = Depends(get_supabase)):
 async def get_global_stats(db: Client = Depends(get_supabase)):
     """Get global arcade statistics"""
     try:
-        response = db.table("game_stats").select("*").execute()
+        # Optimized: Limit results and only fetch needed fields
+        response = db.table("game_stats").select("inventory").limit(1000).execute()
         
         total_players = len(response.data)
         total_games = 0
