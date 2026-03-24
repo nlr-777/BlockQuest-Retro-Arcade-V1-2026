@@ -522,13 +522,7 @@ export default function LedgerLeapGame() {
     setGameState('ready');
   }, []);
 
-  useEffect(() => {
-    if (gameState === 'playing' && gameMode === 'survival') {
-      survivalSpeedBoostrRef.current = setInterval(() => {
-      }, 1000);
-    }
-    return () => { if (survivalSpeedBoostrRef.current) clearInterval(survivalSpeedBoostrRef.current); };
-  }, [gameState, gameMode]);
+
 
   if (gameState === 'modeselect') {
     return (
@@ -766,7 +760,7 @@ export default function LedgerLeapGame() {
           powerUpTimer={survival.powerUpTimer}
           isBossWave={survival.isBossWave}
           bossHealth={survival.bossHealth}
-          color={levelTheme.primary}
+          color={'#39FF14'}
           visible={gameState === 'playing'}
         />
       )}
