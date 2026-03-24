@@ -18,6 +18,7 @@ export interface BadgeReward {
   title?: string;
   powerUp?: string;
   multiplier?: number;
+  timeBonus?: string;
 }
 
 // Badge definitions with unlock criteria and rewards
