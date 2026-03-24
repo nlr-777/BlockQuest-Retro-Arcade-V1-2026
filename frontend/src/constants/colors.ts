@@ -39,10 +39,10 @@ export const COLORS = {
   cardBorder: '#FF00FF',
   cardGlow: 'rgba(255, 0, 255, 0.3)',
   
-  // Text colors - all brightened for better visibility
+  // Text colors - all SUPER bright for kids to read easily
   textPrimary: '#FFFFFF',
-  textSecondary: '#F0E8FF',  // EXTRA BRIGHT for kids
-  textMuted: '#DDD0FF',      // EXTRA BRIGHT for kids - easy to read!
+  textSecondary: '#F8F0FF',  // BRIGHTENED - very light purple-white
+  textMuted: '#EED8FF',      // BRIGHTENED - light lavender, easy to read!
   textGlow: '#00FFFF',
   
   // Game-specific (keeping original names for compatibility)
