@@ -535,31 +535,42 @@ export default function ChainBuilderGame() {
   return (
     <View style={styles.container}>
       <CRTScanlines opacity={0.04} />
-      
+      <ScreenShake trigger={shakeCount} intensity={8}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        {/* Header */}
+        {/* Header with enhanced score display */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
             <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
-          <PixelText size="md" color={CRT_COLORS.accentGold} glow>
-            ⛓️ CHAIN BUILDER
-          </PixelText>
-          <Animated.View style={[styles.scoreBox, scoreAnimStyle]}>
-            <Text style={styles.scoreLabel}>SCORE</Text>
-            <Text style={styles.scoreValue}>{score}</Text>
-          </Animated.View>
+          <View style={styles.titleBox}>
+            <NeonText color={CRT_COLORS.accentGold} size={14} pulsate={combo >= 5}>
+              ⛓️ CHAIN BUILDER
+            </NeonText>
+          </View>
+          <ScoreDisplay 
+            score={score} 
+            size="sm" 
+            color={CRT_COLORS.accentGold}
+            showCombo={combo > 1}
+            combo={combo}
+          />
         </View>
         
-        {/* Stats row */}
+        {/* Combo Display */}
+        <ComboDisplay combo={combo} visible={showCombo} />
+        
+        {/* Stats row with progress bar */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>CHAIN</Text>
             <Text style={styles.statValue}>{chain.length}</Text>
           </View>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${Math.min(100, (chain.length / 50) * 100)}%` }]} />
-          </View>
+          <GameProgressBar
+            progress={(chain.length / 50) * 100}
+            color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : CRT_COLORS.primary}
+            height={10}
+            showLabel={false}
+          />
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>GOAL</Text>
             <Text style={styles.statValue}>50</Text>
@@ -567,43 +578,39 @@ export default function ChainBuilderGame() {
         </View>
 
         {/* Game Area */}
-        <CRTGlowBorder color={CRT_COLORS.primary} style={styles.gameAreaBorder}>
+        <CRTGlowBorder color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : CRT_COLORS.primary} style={styles.gameAreaBorder}>
           <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
             {renderGrid()}
+            
+            {/* Collect effect */}
+            <CollectEffect
+              x={collectEffectPos.x}
+              y={collectEffectPos.y}
+              color={CHAIN_COLORS[chain.length % CHAIN_COLORS.length]}
+              trigger={collectTrigger}
+            />
+            
+            {/* Particle burst for combos */}
+            <ParticleBurst
+              x={particleBurst.x}
+              y={particleBurst.y}
+              color={combo >= 5 ? '#FF00FF' : '#00FFFF'}
+              count={combo >= 5 ? 12 : 8}
+              trigger={particleBurst.trigger}
+            />
           </View>
         </CRTGlowBorder>
 
-        {/* D-Pad Controls */}
+        {/* Enhanced D-Pad Controls */}
         <View style={styles.controlsContainer}>
-          <View style={styles.dpad}>
-            <TouchableOpacity
-              style={[styles.dpadButton, styles.dpadUp]}
-              onPress={() => handleDirectionChange('UP')}
-            >
-              <Text style={styles.dpadText}>▲</Text>
-            </TouchableOpacity>
-            <View style={styles.dpadMiddle}>
-              <TouchableOpacity
-                style={[styles.dpadButton, styles.dpadLeft]}
-                onPress={() => handleDirectionChange('LEFT')}
-              >
-                <Text style={styles.dpadText}>◀</Text>
-              </TouchableOpacity>
-              <View style={styles.dpadCenter} />
-              <TouchableOpacity
-                style={[styles.dpadButton, styles.dpadRight]}
-                onPress={() => handleDirectionChange('RIGHT')}
-              >
-                <Text style={styles.dpadText}>▶</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              style={[styles.dpadButton, styles.dpadDown]}
-              onPress={() => handleDirectionChange('DOWN')}
-            >
-              <Text style={styles.dpadText}>▼</Text>
-            </TouchableOpacity>
-          </View>
+          <EnhancedDPad
+            onUp={() => handleDirectionChange('UP')}
+            onDown={() => handleDirectionChange('DOWN')}
+            onLeft={() => handleDirectionChange('LEFT')}
+            onRight={() => handleDirectionChange('RIGHT')}
+            size="md"
+            color={combo >= 5 ? '#FF00FF' : combo >= 3 ? '#00FFFF' : CRT_COLORS.primary}
+          />
           
           {/* Earned badges */}
           {unlockedAchievements.length > 0 && (
@@ -617,6 +624,10 @@ export default function ChainBuilderGame() {
           )}
         </View>
       </SafeAreaView>
+      </ScreenShake>
+      
+      {/* Confetti for achievements */}
+      <ConfettiEffect visible={showConfetti} onComplete={() => setShowConfetti(false)} />
     </View>
   );
 }
