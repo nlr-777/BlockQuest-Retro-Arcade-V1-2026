@@ -749,7 +749,9 @@ async def login(credentials: UserLogin, request: Request, db: Client = Depends(g
         raise HTTPException(status_code=429, detail="Too many login attempts. Please try again later.")
     
     try:
-        response = db.table("game_stats").select("*").execute()
+        # Optimized: Limit query to reasonable number of records
+        # For production, add a proper email index/column
+        response = db.table("game_stats").select("user_id,inventory,score,last_played").limit(1000).execute()
         
         user_record = None
         for record in response.data:
