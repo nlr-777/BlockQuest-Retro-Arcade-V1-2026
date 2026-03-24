@@ -461,7 +461,8 @@ async def get_global_leaderboard(limit: int = 50, db: Client = Depends(get_supab
 async def get_game_leaderboard(game_id: str, limit: int = 50, db: Client = Depends(get_supabase)):
     """Get top scores for a specific game"""
     try:
-        response = db.table("game_stats").select("*").execute()
+        # Optimized: Only fetch top records by score, limited
+        response = db.table("game_stats").select("user_id,score,inventory,last_played").order("score", desc=True).limit(100).execute()
         
         entries = []
         for record in response.data:
