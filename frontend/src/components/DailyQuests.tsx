@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { CRT_COLORS, CRT_PUNS } from '../constants/crtTheme';
 import { ConfettiEffect } from './ConfettiEffect';
+import { CRTFlickerText, CRTGlowBorder } from './CRTEffects';
 import { useGameStore } from '../store/gameStore';
 
 interface Quest {
