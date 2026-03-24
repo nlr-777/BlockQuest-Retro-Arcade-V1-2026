@@ -88,7 +88,7 @@ type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'l
 
 export default function BridgeBouncerGame() {
   const router = useRouter();
-  const { submitScore } = useGameStore();
+  const { submitScore, modeHighScores } = useGameStore();
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
 
   // Power-up effects hook
@@ -436,6 +436,7 @@ export default function BridgeBouncerGame() {
         gameEmoji="🌉"
         gameColor="#00CED1"
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['bridge-bouncer'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );

@@ -164,7 +164,7 @@ interface Barrel {
 
 export default function CryptoClimberGame() {
   const router = useRouter();
-  const { submitScore, addBadge } = useGameStore();
+  const { submitScore, addBadge, modeHighScores } = useGameStore();
   
   // Audio hook - must be called before any other hooks
   const { playJump, playCollect, playHit, playGameStart, playGameOver, playLevelUp } = useGameAudio({ musicTrack: 'action' });
@@ -617,6 +617,7 @@ export default function CryptoClimberGame() {
         gameEmoji="🦍"
         gameColor={COLORS.chainGold}
         onSelectMode={handleModeSelect}
+        highScores={modeHighScores['crypto-climber'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
       />
     );
