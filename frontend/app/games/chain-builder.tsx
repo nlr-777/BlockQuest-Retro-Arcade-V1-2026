@@ -659,6 +659,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: CRT_COLORS.primary,
   },
+  titleBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   placeholder: {
     width: 60,
   },
