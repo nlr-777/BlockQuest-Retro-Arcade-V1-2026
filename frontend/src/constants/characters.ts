@@ -82,7 +82,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#7B2CBF',
       accent: '#C77DFF',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Code Boost',
@@ -149,7 +149,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#E5673D',
       accent: '#FFA07A',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Scam Shield',
@@ -216,7 +216,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#20B2AA',
       accent: '#40E0D0',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Creative Surge',
@@ -283,7 +283,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#228B22',
       accent: '#7CFC00',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Gamer Reflex',
@@ -350,7 +350,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#DAA520',
       accent: '#FFEC8B',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Community Power',
@@ -417,7 +417,7 @@ export const CHARACTERS: CharacterConfig[] = [
       secondary: '#9400D3',
       accent: '#DA70D6',
     },
-    imageUrl: 'https://customer-assets.emergentagent.com/job_pixelpal-quest/artifacts/obvkodsz_generated_image_20260128_051915_1.png',
+    imageUrl: 'https://customer-assets.emergentagent.com/job_50cf79ff-2f81-4795-88b3-78e49b66d076/artifacts/dk4d08wv_generated_image_20260128_052024_1.png',
     
     specialAbility: {
       name: 'Full Synergy',

@@ -23,6 +23,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/colors';
+import { PixelCharacter, PixelPortrait } from './PixelCharacter';
+import { NeonParticles } from './NeonEffects';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -78,6 +80,7 @@ interface GameModeSelectorProps {
   onSelectMode: (mode: GameMode) => void;
   onBack: () => void;
   highScores?: { classic: number; survival: number };
+  characterId?: string;
 }
 
 export const GameModeSelector: React.FC<GameModeSelectorProps> = ({
@@ -87,6 +90,7 @@ export const GameModeSelector: React.FC<GameModeSelectorProps> = ({
   onSelectMode,
   onBack,
   highScores,
+  characterId,
 }) => {
   // Pulsing glow animation
   const glowAnim = useSharedValue(0.5);
@@ -110,18 +114,35 @@ export const GameModeSelector: React.FC<GameModeSelectorProps> = ({
     <View style={styles.container}>
       {/* Background glow */}
       <Animated.View style={[styles.bgGlow, { backgroundColor: gameColor }, glowStyle]} />
+      
+      {/* Neon particle effects */}
+      <NeonParticles count={15} colors={[gameColor, '#FFFFFF', gameColor + '80']} />
 
       {/* Back button */}
       <TouchableOpacity style={styles.backBtn} onPress={onBack}>
         <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
       </TouchableOpacity>
 
-      {/* Title area */}
+      {/* Title area with pixel character */}
       <Animated.View entering={FadeInDown.delay(100).duration(500)} style={styles.titleArea}>
-        <Text style={styles.emoji}>{gameEmoji}</Text>
-        <Text style={[styles.title, { textShadow: `0 0 20px ${gameColor}` }]}>
-          {gameTitle}
-        </Text>
+        <View style={styles.titleRow}>
+          {characterId && (
+            <View style={styles.pixelCharWrapper}>
+              <PixelCharacter characterId={characterId} size={2} animate={true} glowColor={gameColor} />
+            </View>
+          )}
+          <View style={styles.titleTextArea}>
+            <Text style={styles.emoji}>{gameEmoji}</Text>
+            <Text style={[styles.title, { textShadow: `0 0 20px ${gameColor}` }]}>
+              {gameTitle}
+            </Text>
+          </View>
+          {characterId && (
+            <View style={styles.pixelCharWrapper}>
+              <PixelCharacter characterId={characterId} size={2} animate={true} glowColor={gameColor} />
+            </View>
+          )}
+        </View>
         <Text style={styles.subtitle}>SELECT MODE</Text>
       </Animated.View>
 
@@ -166,12 +187,13 @@ export const GameModeSelector: React.FC<GameModeSelectorProps> = ({
               <Text style={[styles.modeTitle, { color: '#FF073A' }]}>SURVIVAL</Text>
             </View>
             <Text style={styles.modeDesc}>
-              Endless play with ever-increasing difficulty. How long can you survive? No checkpoints, no mercy!
+              Endless play with ever-increasing difficulty. Boss waves, power-ups, and score multipliers!
             </Text>
             <View style={styles.modeFeatures}>
-              <Text style={styles.featureTag}>♾️ Endless</Text>
-              <Text style={styles.featureTag}>⚡ Ramping Speed</Text>
-              <Text style={styles.featureTag}>🔥 Score Multiplier</Text>
+              <Text style={styles.featureTag}>♾️ Endless Waves</Text>
+              <Text style={styles.featureTag}>👾 Boss Battles</Text>
+              <Text style={styles.featureTag}>⚡ Power-Ups</Text>
+              <Text style={styles.featureTag}>🔥 Score x5</Text>
             </View>
             {highScores && highScores.survival > 0 && (
               <Text style={[styles.highScore, { color: '#FF073A' }]}>
@@ -301,6 +323,20 @@ const styles = StyleSheet.create({
   titleArea: {
     alignItems: 'center',
     marginBottom: 32,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 4,
+  },
+  titleTextArea: {
+    alignItems: 'center',
+  },
+  pixelCharWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   emoji: {
     fontSize: 48,

@@ -187,6 +187,7 @@ export default function CryptoClimberGame() {
   const { getSelectedCharacter } = useCharacterStore();
   
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'won' | 'rewards'>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -618,6 +619,7 @@ export default function CryptoClimberGame() {
         gameColor={COLORS.chainGold}
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }

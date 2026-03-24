@@ -118,6 +118,7 @@ export default function LedgerLeapGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -538,6 +539,7 @@ export default function LedgerLeapGame() {
         onSelectMode={handleModeSelect}
         highScores={modeHighScores['ledger-leap'] || { classic: 0, survival: 0 }}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }

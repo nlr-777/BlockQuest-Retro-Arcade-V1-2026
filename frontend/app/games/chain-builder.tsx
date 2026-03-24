@@ -58,6 +58,7 @@ import {
   SurvivalOverlay,
   WaveAnnouncement,
 } from '../../src/utils/SurvivalEngine';
+import { useCharacterStore } from '../../src/store/characterStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -106,6 +107,7 @@ export default function ChainBuilderGame() {
   const { submitScore, addXP, mintBadge } = useGameStore();
   
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -474,6 +476,7 @@ export default function ChainBuilderGame() {
         gameColor={CRT_COLORS.accentGold}
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
         highScores={{ classic: highScore, survival: 0 }}
       />
     );

@@ -109,6 +109,7 @@ export default function BridgeBouncerGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
+  const selectedCharacterId = useCharacterStore(s => s.selectedCharacterId);
   const [gameState, setGameState] = useState<GameState>('modeselect');
   const [gameMode, setGameMode] = useState<GameMode>('classic');
   // Wave announcement state
@@ -437,6 +438,7 @@ export default function BridgeBouncerGame() {
         gameColor="#00CED1"
         onSelectMode={handleModeSelect}
         onBack={() => router.back()}
+          characterId={selectedCharacterId}
       />
     );
   }
