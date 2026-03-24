@@ -385,13 +385,7 @@ export default function DAODuelGame() {
     setGameState('ready');
   }, []);
 
-  useEffect(() => {
-    if (gameState === 'playing' && gameMode === 'survival') {
-      survivalSpeedBoostrRef.current = setInterval(() => {
-      }, 1000);
-    }
-    return () => { if (survivalSpeedBoostrRef.current) clearInterval(survivalSpeedBoostrRef.current); };
-  }, [gameState, gameMode]);
+
 
   if (gameState === 'modeselect') {
     return (
