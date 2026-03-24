@@ -186,6 +186,8 @@ export default function ChainBuilderGame() {
         setCurrentAchievement(achievement);
         setGameState('achievement');
         audioManager.playSound('victory');
+        GameHaptics.success();
+        setShowConfetti(true);
         
         // Add XP
         addXP(achievement.xp);
