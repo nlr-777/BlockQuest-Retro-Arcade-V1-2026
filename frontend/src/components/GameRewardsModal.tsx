@@ -18,6 +18,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../constants/crtTheme';
 import { ConfettiEffect } from './ConfettiEffect';
+import { CRTScanlines, CRTFlickerText } from './CRTEffects';
 import { useFactionStore, FACTIONS } from '../store/factionStore';
 import { useGameStore } from '../store/gameStore';
 import { useCharacterStore } from '../store/characterStore';
