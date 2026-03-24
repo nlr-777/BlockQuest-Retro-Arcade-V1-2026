@@ -34,6 +34,7 @@ import {
   PixelRain,
   HexBadge,
   CRTFlickerText,
+  GhostHand,
 } from '../src/components/CRTEffects';
 import {
   ParticleBurst,
