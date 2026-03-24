@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { CRT_COLORS } from '../constants/crtTheme';
 import { ConfettiEffect } from './ConfettiEffect';
+import { CRTFlickerText } from './CRTEffects';
 import { LoginReward, loyaltyService } from '../services/LoyaltyService';
 import { useGameStore } from '../store/gameStore';
 import audioManager from '../utils/AudioManager';
