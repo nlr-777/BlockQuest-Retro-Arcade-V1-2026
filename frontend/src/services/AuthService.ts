@@ -20,6 +20,16 @@ export interface User {
   badges: any[];
   dao_voting_power: number;
   unlocked_story_badges: string[];
+  achievements?: string[];
+  games_played?: number;
+  total_score?: number;
+  recent_scores?: any[];
+  faction_id?: string;
+  faction_joined_at?: number;
+  faction_xp_contributed?: number;
+  faction_votes_participated?: number;
+  faction_member_rank?: string;
+  faction_votes?: Record<string, string>;
 }
 
 export interface AuthResponse {
@@ -48,18 +58,15 @@ class AuthService {
       const token = await AsyncStorage.getItem(AUTH_TOKEN_KEY);
       const userData = await AsyncStorage.getItem(USER_DATA_KEY);
       
-      if (token && userData) {
+      if (token) {
         this.token = token;
+      }
+      if (userData) {
         this.user = JSON.parse(userData);
       }
     } catch (error) {
       console.error('Failed to load stored auth:', error);
     }
-  }
-
-  // Store auth data from Google OAuth
-  async storeAuthFromGoogle(token: string, user: User) {
-    await this.storeAuth(token, user);
   }
 
   // Store auth data
@@ -74,31 +81,33 @@ class AuthService {
     }
   }
 
-  // Clear auth data
-  async logout() {
-    try {
-      await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
-      await AsyncStorage.removeItem(USER_DATA_KEY);
-      this.token = null;
-      this.user = null;
-    } catch (error) {
-      console.error('Failed to clear auth:', error);
-    }
-  }
-
   // Get current token
   getToken(): string | null {
     return this.token;
   }
 
-  // Get current user
+  // Get current user without fetching
   getUser(): User | null {
     return this.user;
   }
 
   // Check if user is logged in
   isLoggedIn(): boolean {
-    return this.token !== null && this.user !== null;
+    return !!this.token;
+  }
+
+  // Logout - clear auth token only, keep user game data locally
+  async logout(): Promise<void> {
+    try {
+      this.token = null;
+      this.user = null;
+      // Only clear auth token - user's game progress stays in local storage
+      await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+      // DO NOT clear USER_DATA_KEY - that contains profile info needed for display
+      // Game progress is stored separately in gameStore via Zustand persist
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
   }
 
   // Register with email and password
@@ -123,24 +132,17 @@ class AuthService {
 
   // Login with email and password
   async login(email: string, password: string): Promise<AuthResponse> {
-    const cleanEmail = email.trim().toLowerCase();
-    
-    if (!cleanEmail || !password) {
-      throw new Error('Email and password are required');
-    }
-    
     const response = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email: cleanEmail, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Login error response:', error);
-      throw new Error(error.detail || 'Login failed - please check your email and password');
+      throw new Error(error.detail || 'Login failed');
     }
 
     const data: AuthResponse = await response.json();
@@ -148,7 +150,7 @@ class AuthService {
     return data;
   }
 
-  // Login with Google
+  // Google OAuth login
   async googleLogin(idToken: string): Promise<AuthResponse> {
     const response = await fetch(`${API_BASE}/api/auth/google`, {
       method: 'POST',
@@ -168,7 +170,7 @@ class AuthService {
     return data;
   }
 
-  // Get current user profile from server
+  // Fetch current user profile from server
   async fetchProfile(): Promise<User | null> {
     if (!this.token) return null;
 
@@ -181,12 +183,13 @@ class AuthService {
 
       if (!response.ok) {
         if (response.status === 401) {
+          // Token expired, clear auth
           await this.logout();
         }
         return null;
       }
 
-      const user = await response.json();
+      const user: User = await response.json();
       this.user = user;
       await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
       return user;
@@ -198,13 +201,23 @@ class AuthService {
 
   // Sync local progress to cloud
   async syncProgress(profileData: {
-    high_scores: Record<string, number>;
-    total_xp: number;
-    level: number;
-    badges: any[];
+    high_scores?: Record<string, number>;
+    total_xp?: number;
+    level?: number;
+    badges?: any[];
     avatar_id?: string;
-    dao_voting_power: number;
-    unlocked_story_badges: string[];
+    dao_voting_power?: number;
+    unlocked_story_badges?: string[];
+    achievements?: string[];
+    games_played?: number;
+    total_score?: number;
+    recent_scores?: any[];
+    faction_id?: string;
+    faction_joined_at?: number;
+    faction_xp_contributed?: number;
+    faction_votes_participated?: number;
+    faction_member_rank?: string;
+    faction_votes?: Record<string, string>;
   }): Promise<User | null> {
     if (!this.token) return null;
 
@@ -225,7 +238,7 @@ class AuthService {
         return null;
       }
 
-      const user = await response.json();
+      const user: User = await response.json();
       this.user = user;
       await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
       return user;
@@ -233,30 +246,6 @@ class AuthService {
       console.error('Failed to sync progress:', error);
       return null;
     }
-  }
-
-  // Logout - clear auth token only, keep user game data locally
-  async logout(): Promise<void> {
-    try {
-      this.token = null;
-      this.user = null;
-      // Only clear auth token - user's game progress stays in local storage
-      await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
-      // DO NOT clear USER_DATA_KEY - that contains profile info needed for display
-      // Game progress is stored separately in gameStore via Zustand persist
-    } catch (error) {
-      console.error('Failed to logout:', error);
-    }
-  }
-
-  // Check if user is logged in
-  isLoggedIn(): boolean {
-    return !!this.token;
-  }
-
-  // Get current user without fetching
-  getUser(): User | null {
-    return this.user;
   }
 
   // Initialize on app start - check stored auth and fetch fresh profile
