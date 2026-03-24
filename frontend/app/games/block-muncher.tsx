@@ -69,6 +69,14 @@ import {
   ScoreDisplay,
   KeyDirection,
 } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'block-muncher')!;
 const GAME_MECHANICS = getGameMechanics('block-muncher')!;
@@ -92,7 +100,7 @@ const DIRECTIONS = {
 
 type Direction = keyof typeof DIRECTIONS;
 type Position = { x: number; y: number };
-type GameState = 'menu' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
+type GameState = 'modeselect' | 'menu' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards' | 'leveltransition';
 
 // Generate maze/blocks
 const generateBlocks = () => {
@@ -315,13 +323,20 @@ export default function BlockMuncherGame() {
   }, [playGameStart]);
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('menu');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  
+  // Game mode
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Enhanced game features
   const [shakeCount, setShakeCount] = useState(0);
   const [particleBurst, setParticleBurst] = useState({ x: 0, y: 0, trigger: 0 });
   const [level, setLevel] = useState(1);
   const [levelUpTrigger, setLevelUpTrigger] = useState(0);
+  const [showLevelTransition, setShowLevelTransition] = useState(false);
   
   // Game enhancement hooks
   const { popups, addPopup, FloatingScoresComponent } = useFloatingScores();
@@ -329,6 +344,9 @@ export default function BlockMuncherGame() {
   
   const [score, setScore] = useState(0);
   const difficulty = useDifficultyScaling(score);
+  
+  // Level theme (must come after score/level state)
+  const levelTheme = gameMode === 'survival' ? getSurvivalTheme(score) : getLevelTheme(level);
   const [lives, setLives] = useState(3);
   const [playerPos, setPlayerPos] = useState<Position>({ x: 7, y: 7 });
   const [playerDir, setPlayerDir] = useState<Direction>('RIGHT');
@@ -415,8 +433,18 @@ export default function BlockMuncherGame() {
     setLives(3);
     setLevel(1);
     setBqoCollected(0);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setShowLevelTransition(false);
     generateBlockchainItems();
   }, [generateBlockchainItems]);
+
+  // Mode selection handler
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    initGame();
+    setGameState('menu');
+  }, [initGame]);
 
   // Start game - shows intro dialogue first
   const startGame = useCallback(() => {
@@ -548,19 +576,58 @@ export default function BlockMuncherGame() {
         });
       }
 
-      // Check victory
+      // Check victory (all blocks collected)
       if (blocks.length === 0) {
         playLevelUp();
-        setLevel(l => l + 1);
-        setBlocks(generateBlocks());
-        setScore(s => s + 100); // Level bonus
+        if (gameMode === 'classic') {
+          // Classic: Show level transition
+          setShowLevelTransition(true);
+          setGameState('leveltransition');
+        } else {
+          // Survival: Just regenerate and continue
+          setLevel(l => l + 1);
+          setBlocks(generateBlocks());
+          setScore(s => s + Math.floor(100 * survivalMultiplier));
+          generateBlockchainItems();
+        }
       }
-    }, 200 - level * 10);
+    }, Math.max(80, 200 - level * 15 - (gameMode === 'survival' ? survivalTime : 0)));
 
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [gameState, playerPos, ghosts, blocks.length, level, walls]);
+  }, [gameState, playerPos, ghosts, blocks.length, level, walls, gameMode, survivalMultiplier, survivalTime]);
+
+  // Survival mode timer - increases difficulty over time
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => {
+      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
+    };
+  }, [gameState, gameMode]);
+
+  // Handle level transition complete (classic mode)
+  const handleLevelTransitionComplete = useCallback(() => {
+    setShowLevelTransition(false);
+    setLevel(l => l + 1);
+    setBlocks(generateBlocks());
+    setScore(s => s + 100); // Level bonus
+    setLevelUpTrigger(t => t + 1);
+    generateBlockchainItems();
+    // Add extra ghost every 2 levels
+    if (level % 2 === 0) {
+      setGhosts(prev => [...prev, { 
+        x: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2, 
+        y: Math.floor(Math.random() * (GRID_SIZE - 4)) + 2 
+      }]);
+    }
+    setGameState('playing');
+  }, [level, generateBlockchainItems]);
 
   // Handle rewards -> gameover transition
   useEffect(() => {
@@ -618,6 +685,19 @@ export default function BlockMuncherGame() {
   }, [gameState, movePlayer]);
 
   useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
+  // Mode selector screen - full screen, no game behind
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle={GAME_CONFIG.title}
+        gameEmoji={GAME_CONFIG.icon}
+        gameColor={COLORS.chainGold}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -685,7 +765,13 @@ export default function BlockMuncherGame() {
 
       {/* Game Area */}
       <View style={styles.gameContainer}>
-        <View style={[styles.gameArea, { width: GAME_WIDTH, height: GAME_HEIGHT }]}>
+        <View style={[styles.gameArea, { 
+          width: GAME_WIDTH, 
+          height: GAME_HEIGHT,
+          borderColor: levelTheme.primary + '60',
+          borderWidth: 2,
+          borderRadius: 4,
+        }]}>
           {/* Chain trail */}
           {chain.map((pos, i) => (
             <ChainLink key={`chain-${i}`} x={pos.x} y={pos.y} cellSize={CELL_SIZE} index={i} />
@@ -800,7 +886,7 @@ export default function BlockMuncherGame() {
         />
       </View>
 
-      {/* Menu Overlay */}
+      {/* Menu Overlay (after mode selected) */}
       {gameState === 'menu' && (
         <View style={styles.overlay}>
           <VFXLayer type="pixel-chain-rain" intensity={0.6} />
@@ -810,12 +896,24 @@ export default function BlockMuncherGame() {
             </PixelText>
             <PixelText size="md" style={styles.menuIcon}>{GAME_CONFIG.icon}</PixelText>
             
+            {/* Mode indicator */}
+            <View style={[styles.modeIndicator, { borderColor: gameMode === 'survival' ? '#FF073A' : '#39FF14' }]}>
+              <PixelText size="xs" color={gameMode === 'survival' ? '#FF073A' : '#39FF14'}>
+                {gameMode === 'survival' ? '💀 SURVIVAL MODE' : '🏆 CLASSIC MODE'}
+              </PixelText>
+            </View>
+
             {/* Instructions */}
             <View style={styles.instructionBox}>
               <PixelText size="xs" color={COLORS.neonCyan}>HOW TO PLAY</PixelText>
               <PixelText size="xs" color={COLORS.textSecondary} style={styles.instructionText}>
                 {GAME_CONFIG.instructions}
               </PixelText>
+              {gameMode === 'survival' && (
+                <PixelText size="xs" color="#FF073A" style={styles.instructionText}>
+                  ⚡ Difficulty increases over time! Score multiplier ramps up!
+                </PixelText>
+              )}
             </View>
             
             {/* Controls */}
@@ -826,15 +924,6 @@ export default function BlockMuncherGame() {
               </PixelText>
             </View>
             
-            {/* Difficulty */}
-            <PixelText size="xs" color={
-              GAME_CONFIG.difficulty === 'Easy' ? '#32CD32' :
-              GAME_CONFIG.difficulty === 'Medium' ? '#FFD700' : '#FF4500'
-            }>
-              {GAME_CONFIG.difficulty === 'Easy' ? '★☆☆' :
-               GAME_CONFIG.difficulty === 'Medium' ? '★★☆' : '★★★'} {GAME_CONFIG.difficulty}
-            </PixelText>
-            
             <PixelButton
               title="▶ PLAY"
               onPress={startGame}
@@ -842,6 +931,10 @@ export default function BlockMuncherGame() {
               size="lg"
               style={{ marginTop: 20 }}
             />
+            
+            <TouchableOpacity onPress={() => setGameState('modeselect')} style={{ marginTop: 12 }}>
+              <PixelText size="xs" color={COLORS.textMuted}>← CHANGE MODE</PixelText>
+            </TouchableOpacity>
           </Animated.View>
         </View>
       )}
@@ -872,6 +965,24 @@ export default function BlockMuncherGame() {
         visible={showIntroDialogue}
         onDismiss={handleDialogueDismiss}
       />
+      
+      {/* Level Transition (Classic Mode) */}
+      <LevelTransition 
+        level={level + 1} 
+        visible={showLevelTransition} 
+        onComplete={handleLevelTransitionComplete} 
+      />
+      
+      {/* Survival HUD */}
+      {gameState === 'playing' && gameMode === 'survival' && (
+        <View style={styles.survivalHudContainer}>
+          <SurvivalHUD 
+            timeAlive={survivalTime} 
+            multiplier={survivalMultiplier} 
+            color={levelTheme.primary} 
+          />
+        </View>
+      )}
     </ScreenShake>
     </SafeAreaView>
   );
@@ -1106,5 +1217,18 @@ const styles = StyleSheet.create({
   gameOverButtons: {
     gap: 12,
     marginTop: 24,
+  },
+  modeIndicator: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginVertical: 8,
+  },
+  survivalHudContainer: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 100 : 60,
+    right: 8,
+    zIndex: 50,
   },
 });

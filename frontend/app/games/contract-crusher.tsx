@@ -41,6 +41,14 @@ import {
   DangerWarning,
 } from '../../src/utils/GameEnhancements';
 import { useKeyboardControls, KeyDirection } from '../../src/utils/GameControls';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const GAME_CONFIG = GAMES.find(g => g.id === 'contract-crusher')!;
 
@@ -92,7 +100,7 @@ interface PowerUp {
   vy: number;
 }
 
-type GameState = 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
+type GameState = 'modeselect' | 'ready' | 'playing' | 'paused' | 'gameover' | 'victory' | 'rewards';
 
 export default function ContractCrusherGame() {
   const router = useRouter();
@@ -117,7 +125,11 @@ export default function ContractCrusherGame() {
   const { getSelectedCharacter } = useCharacterStore();
 
   // Game state
-  const [gameState, setGameState] = useState<GameState>('ready');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [contractsExecuted, setContractsExecuted] = useState(0);
@@ -449,6 +461,40 @@ export default function ContractCrusherGame() {
   }, [gameState, launchBall]);
 
   useKeyboardControls({ onDirection: handleKeyDirection, enabled: gameState === 'playing' });
+
+  // Mode selector handler
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setSurvivalTime(0);
+    setSurvivalMultiplier(1.0);
+    setGameState('ready');
+  }, []);
+
+  // Survival timer
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+      }, 1000);
+    }
+    return () => {
+      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
+    };
+  }, [gameState, gameMode]);
+
+  // Mode selector screen
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Contract Crusher"
+        gameEmoji="📜"
+        gameColor={COLORS.neonCyan}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>

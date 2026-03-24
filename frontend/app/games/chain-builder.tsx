@@ -46,6 +46,14 @@ import {
   ParticleBurst,
 } from '../../src/utils/GameEnhancements';
 import { ConfettiEffect } from '../../src/components/ConfettiEffect';
+import {
+  GameModeSelector,
+  LevelTransition,
+  SurvivalHUD,
+  getLevelTheme,
+  getSurvivalTheme,
+  GameMode,
+} from '../../src/components/GameModeSelector';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -66,7 +74,7 @@ const DIRECTIONS = {
 
 type Direction = keyof typeof DIRECTIONS;
 type Position = { x: number; y: number };
-type GameState = 'intro' | 'playing' | 'paused' | 'gameover' | 'achievement' | 'complete';
+type GameState = 'modeselect' | 'intro' | 'playing' | 'paused' | 'gameover' | 'achievement' | 'complete';
 
 // Block colors for the chain
 const CHAIN_COLORS = [
@@ -94,7 +102,11 @@ export default function ChainBuilderGame() {
   const { submitScore, addXP, mintBadge } = useGameStore();
   
   // Game state
-  const [gameState, setGameState] = useState<GameState>('intro');
+  const [gameState, setGameState] = useState<GameState>('modeselect');
+  const [gameMode, setGameMode] = useState<GameMode>('classic');
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const [survivalMultiplier, setSurvivalMultiplier] = useState(1.0);
+  const survivalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [chain, setChain] = useState<Position[]>([{ x: 7, y: 10 }]);
   const [direction, setDirection] = useState<Direction>('RIGHT');
   const [nextDirection, setNextDirection] = useState<Direction>('RIGHT');
@@ -404,6 +416,41 @@ export default function ChainBuilderGame() {
 
     return cells;
   };
+
+  // Mode selection handler
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    setGameState('intro');
+  }, []);
+
+  // Mode selector screen
+  if (gameState === 'modeselect') {
+    return (
+      <GameModeSelector
+        gameTitle="Chain Builder"
+        gameEmoji="⛓️"
+        gameColor={CRT_COLORS.accentGold}
+        onSelectMode={handleModeSelect}
+        onBack={() => router.back()}
+        highScores={{ classic: highScore, survival: 0 }}
+      />
+    );
+  }
+
+  // Survival timer
+  useEffect(() => {
+    if (gameState === 'playing' && gameMode === 'survival') {
+      survivalTimerRef.current = setInterval(() => {
+        setSurvivalTime(t => t + 1);
+        setSurvivalMultiplier(m => Math.min(5.0, m + 0.05));
+        // Increase speed in survival
+        setSpeed(s => Math.max(60, s - 1));
+      }, 1000);
+    }
+    return () => {
+      if (survivalTimerRef.current) clearInterval(survivalTimerRef.current);
+    };
+  }, [gameState, gameMode]);
 
   // Intro screen
   if (gameState === 'intro') {
