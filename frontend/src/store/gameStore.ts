@@ -84,6 +84,7 @@ interface GameState {
   addBadge: (badge: Omit<Badge, 'id' | 'mintedAt'>) => Promise<Badge>;
   logout: () => Promise<void>;
   resetAllData: () => Promise<void>;
+  resetProfile: () => void;
 }
 
 // Helper to check if we're on the client side
