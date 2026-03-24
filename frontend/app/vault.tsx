@@ -49,8 +49,8 @@ import {
   PixelRain,
   CRTFlickerText,
   HexBadge,
-  ConfettiEffect,
 } from '../src/components/CRTEffects';
+import { ConfettiEffect } from '../src/components/ConfettiEffect';
 import audioManager from '../src/utils/AudioManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
