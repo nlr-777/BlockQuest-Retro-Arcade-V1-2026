@@ -117,7 +117,8 @@ export const PowerUpBar: React.FC<PowerUpBarProps> = ({
   onActivate,
   compact = false,
 }) => {
-  const { badges } = useGameStore();
+  const { profile } = useGameStore();
+  const badges = profile?.badges || [];
   const { 
     unlockedPowerUps, 
     updateUnlockedPowerUps, 
