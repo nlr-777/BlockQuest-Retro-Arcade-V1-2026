@@ -1,7 +1,24 @@
 // BlockQuest Official - NFT Badge Service
-// Handles badge NFT creation, tracking, and rewards
-import { NFTBadgeMetadata, BadgeReward, APERTUM_CONFIG } from './ApertumService';
+// Handles badge creation, tracking, and rewards (local storage only)
+// Note: NFT minting integration (Apertum/OpenPlaza) coming soon
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Local type definitions (NFT integration types will be added later)
+export interface NFTBadgeMetadata {
+  name: string;
+  description: string;
+  image: string;
+  attributes: { trait_type: string; value: string | number }[];
+}
+
+export interface BadgeReward {
+  xp?: number;
+  booster?: string;
+  skinId?: string;
+  title?: string;
+  powerUp?: string;
+  multiplier?: number;
+}
 
 // Badge definitions with unlock criteria and rewards
 export interface BadgeDefinition {
