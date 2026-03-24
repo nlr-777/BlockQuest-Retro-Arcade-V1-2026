@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
   star: { position: 'absolute', width: 2, height: 2, backgroundColor: '#FFF', borderRadius: 1 },
   particle: { position: 'absolute', width: 4, height: 4, borderRadius: 2 },
   rock: { position: 'absolute', backgroundColor: '#2a2a3a', borderWidth: 2, justifyContent: 'center', alignItems: 'center' },
-  rockIcon: { color: '#888' },
+  rockIcon: { color: '#CCCCCC' },
   bullet: { position: 'absolute', width: BULLET_SIZE, height: BULLET_SIZE, backgroundColor: COLORS.neonCyan, borderRadius: BULLET_SIZE / 2 },
   ship: { position: 'absolute', width: SHIP_SIZE, height: SHIP_SIZE },
   shipBody: { position: 'absolute', top: 0, left: SHIP_SIZE / 2 - 4, width: 8, height: 16, backgroundColor: COLORS.neonCyan, borderRadius: 2 },
